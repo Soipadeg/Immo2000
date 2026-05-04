@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Copier requirements et installer les dépendances Python
-COPY requirements.txt .
+COPY backend/requirements.txt .
 RUN pip install --no-cache-dir --user -r requirements.txt
 
 # Runtime stage
@@ -26,8 +26,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Copier les dépendances Python depuis le builder
 COPY --from=builder /root/.local /root/.local
 
-# Copier le code source
-COPY . .
+# Copier le code source (backend uniquement)
+COPY backend/ .
 
 # Ajouter le répertoire local aux chemins Python
 ENV PATH=/root/.local/bin:$PATH \
