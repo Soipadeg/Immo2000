@@ -1,0 +1,43 @@
+# Backend Dependencies - Immo2000
+
+# Web Framework
+Flask==3.0.0
+Flask-CORS==4.0.0
+Flask-SQLAlchemy==3.1.1
+python-dotenv==1.0.0
+gunicorn==21.2.0
+
+# API & HTTP
+requests==2.31.0
+urllib3>=2.0.0
+
+# Database
+SQLAlchemy==2.0.23
+psycopg2-binary==2.9.9
+alembic==1.12.1
+
+# Validation
+pydantic==2.5.0
+marshmallow==3.20.1
+
+# Authentication
+PyJWT==2.12.1
+bcrypt==4.1.2
+Flask-HTTPAuth==4.4.0
+
+# Testing
+pytest==7.4.3
+pytest-cov==4.1.0
+pytest-mock==3.12.0
+
+# Logging & Monitoring
+python-json-logger==2.0.7
+
+# Code Quality
+black==23.12.0
+flake8==6.1.0
+pylint==3.0.3
+mypy==1.7.1
+
+# Development
+ipython==8.18.1
