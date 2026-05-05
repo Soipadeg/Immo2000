@@ -1,5 +1,5 @@
 # Build stage
-FROM python:3.12-slim as builder
+FROM python:3.12-slim AS builder
 
 WORKDIR /app
 
@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Copier requirements et installer les dépendances Python
 COPY backend/requirements.txt .
-RUN pip install --no-cache-dir --user -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Runtime stage
 FROM python:3.12-slim
@@ -21,20 +21,23 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
     postgresql-client \
     curl \
+    bash \
     && rm -rf /var/lib/apt/lists/*
 
 # Copier les dépendances Python depuis le builder
-COPY --from=builder /root/.local /root/.local
+COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
 
 # Copier le code source (backend uniquement)
-COPY backend/ .
+COPY backend/ /app/backend/
 
 # Ajouter le répertoire local aux chemins Python
-ENV PATH=/root/.local/bin:$PATH \
+ENV PATH=/usr/local/bin:$PATH \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONPATH=/app/backend:$PYTHONPATH \
     FLASK_APP=src.app \
-    FLASK_ENV=production
+    FLASK_ENV=development
 
 # Healthcheck
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
