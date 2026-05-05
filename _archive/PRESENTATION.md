@@ -9,7 +9,6 @@
 ## 📍 Le Début: Jour 1
 
 ### Demande Initiale
-> "J'aimerai tester en local Immo2000"
 
 ### État Initial
 - Application web immobilière partiellement développée
