@@ -1,33 +1,74 @@
 # Immo2000 - Plateforme Immobilière
 
-Plateforme complète de gestion immobilière avec authentification JWT, gestion d'annonces et administration.
+**MVP Phase 1 - Production Ready**
+
+Plateforme immobilière complète avec API Flask, authentification JWT, gestion de biens et intégration Melo API.
 
 ---
 
-## 🚀 Quick Start
+## 🎯 Commencer
 
-### Développement (5 min)
+👉 **[Lire INDEX.md en premier](INDEX.md)** - Guide de navigation complet
+
+---
+
+## 📚 Documentation Essentielle
+
+| Besoin | Fichier |
+|--------|---------|
+| **Utiliser l'API** | [docs/MVP_PHASE1_API.md](docs/MVP_PHASE1_API.md) |
+| **Lancer l'application** | [docs/MVP_PHASE1_SETUP.md](docs/MVP_PHASE1_SETUP.md) |
+| **Vue d'ensemble projet** | [RECAPITULATIF_COMPLET.md](RECAPITULATIF_COMPLET.md) |
+| **Architecture système** | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
+| **Déploiement** | [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) |
+
+---
+
+## 🚀 Quick Start (Docker)
+
 ```bash
-# Backend
-cd backend && pip install -r requirements.txt && python -m pytest
+docker-compose --env-file .env.docker up --build
 
-# Frontend
-cd frontend && npm install && npm run dev
+# Ensuite:
+# Frontend: http://localhost:3000
+# Backend: http://localhost:5000
+# Créer un compte → Utiliser l'API
 ```
 
-### Déploiement (15 min)
-👉 **[Voir docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)**
+👉 Pour plus de détails: [docs/MVP_PHASE1_SETUP.md](docs/MVP_PHASE1_SETUP.md)
 
 ---
 
-## 📚 Documentation
+## 📦 Contenu du Projet
 
-**Tout est documenté dans [docs/](docs/)** - Voici les points d'entrée:
+### Backend (Flask)
+- ✅ 9 endpoints (auth + biens + estimations)
+- ✅ JWT authentication
+- ✅ Role-based access (acheteur/vendeur/agent)
+- ✅ SQLAlchemy ORM
+- ✅ 15 unit tests
 
-| Besoin | Lien |
-|--------|------|
-| Vue générale | [docs/INDEX.md](docs/INDEX.md) |
-| Déploiement | [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) |
+### Frontend (React)
+- ✅ Login/Register pages
+- ✅ Protected routing
+- ✅ Material-UI design
+- ✅ JWT token management
+
+### Database (PostgreSQL)
+- ✅ 3 tables (utilisateurs, annonces, biens)
+- ✅ SQL migrations
+- ✅ Indexes optimisés
+
+### Documentation
+**4 fichiers essentiels:**
+1. `INDEX.md` - Guide de navigation (COMMENCER ICI)
+2. `docs/MVP_PHASE1_API.md` - Référence API complète
+3. `docs/MVP_PHASE1_SETUP.md` - Guide de déploiement
+4. `RECAPITULATIF_COMPLET.md` - Vue d'ensemble projet
+
+---
+
+## 🎯 Points d'Entrée
 | Audit & Validation | [docs/AUDIT.md](docs/AUDIT.md) |
 | Architecture | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
 | Authentification JWT | [docs/auth/](docs/auth/) |

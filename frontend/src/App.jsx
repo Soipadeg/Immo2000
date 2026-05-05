@@ -20,6 +20,8 @@ import {
 import { fr } from 'date-fns/locale';
 import VendeurDashboard from './components/VendeurDashboard';
 import RechercheBiens from './components/RechercheBiens';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 
 // Importer les services
 import { authApi } from './services/api';
@@ -102,6 +104,27 @@ const UserMenu = ({ user, onLogout }) => {
  * Composant principal de l'application
  */
 function App() {
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Router>
+        <Routes>
+          {/* Routes publiques */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+
+          {/* Routes protégées */}
+          <Route path="/*" element={<ProtectedLayout />} />
+        </Routes>
+      </Router>
+    </ThemeProvider>
+  );
+}
+
+/**
+ * Layout protégé pour les routes authentifiées
+ */
+function ProtectedLayout() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState(null);
   const [user, setUser] = useState(null);
@@ -133,84 +156,87 @@ function App() {
   // Si pas authentifié, rediriger vers login
   if (!isAuthenticated) {
     return (
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Box sx={{ textAlign: 'center', py: 8 }}>
-          <Typography variant="h4" gutterBottom>
-            🏠 Immo2000
-          </Typography>
-          <Typography variant="body1" gutterBottom>
-            Veuillez vous connecter pour accéder à l'application
-          </Typography>
+      <Box sx={{ textAlign: 'center', py: 8 }}>
+        <Typography variant="h4" gutterBottom>
+          🏠 Immo2000
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Veuillez vous connecter pour accéder à l'application
+        </Typography>
+        <Box sx={{ mt: 2 }}>
           <Button
             variant="contained"
             color="primary"
             href="/login"
-            sx={{ mt: 2 }}
+            sx={{ mr: 1 }}
           >
             Se connecter
           </Button>
+          <Button
+            variant="outlined"
+            color="primary"
+            href="/register"
+          >
+            S'inscrire
+          </Button>
         </Box>
-      </ThemeProvider>
+      </Box>
     );
   }
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
-        {/* En-tête */}
-        <AppBar position="sticky">
-          <Toolbar>
-            <Typography variant="h6" sx={{ flexGrow: 1 }}>
-              🏠 Immo2000
-            </Typography>
+    <>
+      {/* En-tête */}
+      <AppBar position="sticky">
+        <Toolbar>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            🏠 Immo2000
+          </Typography>
 
-            {/* Navigation */}
-            {userRole === 'vendeur' && (
-              <Button color="inherit" href="/dashboard">
-                Mon tableau de bord
-              </Button>
-            )}
-
-            <Button color="inherit" href="/search">
-              Rechercher
-            </Button>
-
-            {userRole === 'agent' && (
-              <Button color="inherit" href="/admin">
-                Admin
-              </Button>
-            )}
-
-            {/* Menu utilisateur */}
-            {user && <UserMenu user={user} onLogout={handleLogout} />}
-          </Toolbar>
-        </AppBar>
-
-        {/* Routes */}
-        <Routes>
-          {/* Tableau de bord vendeur */}
+          {/* Navigation */}
           {userRole === 'vendeur' && (
-            <Route path="/dashboard" element={<VendeurDashboard />} />
+            <Button color="inherit" href="/dashboard">
+              Mon tableau de bord
+            </Button>
           )}
 
-          {/* Recherche publique */}
-          <Route path="/search" element={<RechercheBiens />} />
+          <Button color="inherit" href="/search">
+            Rechercher
+          </Button>
 
-          {/* Redirection par défaut */}
-          <Route
-            path="/"
-            element={
-              <Navigate
-                to={userRole === 'vendeur' ? '/dashboard' : '/search'}
-                replace
-              />
-            }
-          />
-        </Routes>
-      </Router>
-    </ThemeProvider>
+          {userRole === 'agent' && (
+            <Button color="inherit" href="/admin">
+              Admin
+            </Button>
+          )}
+
+          {/* Menu utilisateur */}
+          {user && <UserMenu user={user} onLogout={handleLogout} />}
+        </Toolbar>
+      </AppBar>
+
+      {/* Routes protégées */}
+      <Routes>
+        {/* Tableau de bord vendeur */}
+        {userRole === 'vendeur' && (
+          <Route path="/dashboard" element={<VendeurDashboard />} />
+        )}
+
+        {/* Recherche publique */}
+        <Route path="/search" element={<RechercheBiens />} />
+
+        {/* Redirection par défaut */}
+        <Route
+          path="/"
+          element={
+            <Navigate
+              to={userRole === 'vendeur' ? '/dashboard' : '/search'}
+              replace
+            />
+          }
+        />
+      </Routes>
+    </>
   );
 }
 

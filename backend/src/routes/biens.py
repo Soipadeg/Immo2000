@@ -12,12 +12,22 @@ Endpoints :
 from flask import Blueprint, request, jsonify, current_app
 from src.auth.decorators import token_required, role_required
 from src.auth.models import User, db
+from src.models.biens import Bien
+from src.crud.biens import (
+    create_bien as crud_create_bien,
+    get_bien as crud_get_bien,
+    get_user_biens as crud_get_user_biens,
+    list_biens as crud_list_biens,
+    update_bien as crud_update_bien,
+    delete_bien as crud_delete_bien,
+    get_bien_stats as crud_get_bien_stats,
+)
 from datetime import datetime
 
-bp = Blueprint("biens", __name__, url_prefix="/api/biens")
+biens_bp = Blueprint("biens", __name__, url_prefix="/api/v1/biens")
 
 
-@bp.route("", methods=["GET"])
+@biens_bp.route("", methods=["GET"])
 @token_required
 def list_biens(current_user):
     """
@@ -50,26 +60,35 @@ def list_biens(current_user):
         }
     """
     try:
-        # TODO: Implémenter les requêtes avec SQLAlchemy
-        # Exemple :
-        # query = Bien.query
-        #
-        # if current_user["role"] == "vendeur":
-        #     query = query.filter_by(utilisateur_id=current_user["user_id"])
-        #
-        # type_bien = request.args.get("type_bien")
-        # if type_bien:
-        #     query = query.filter_by(type_bien=type_bien)
-        #
-        # biens = query.all()
+        # Récupérer les filtres depuis les query params
+        filters = {
+            "type_bien": request.args.get("type_bien"),
+            "ville": request.args.get("ville"),
+            "code_postal": request.args.get("code_postal"),
+            "surface_min": request.args.get("surface_min", type=int),
+            "surface_max": request.args.get("surface_max", type=int),
+            "etat": request.args.get("etat"),
+        }
+
+        # Pagination
+        limit = request.args.get("limit", default=50, type=int)
+        offset = request.args.get("offset", default=0, type=int)
+
+        if limit > 100:
+            limit = 100
+
+        # Récupérer les biens
+        biens, total = crud_list_biens(filters=filters, limit=limit, offset=offset)
 
         current_app.logger.info(f"User {current_user['user_id']} ({current_user['role']}) listing properties")
 
         return {
-            "biens": [],
-            "count": 0,
-            "role": current_user["role"],
-            "note": "Implementation pending: create Bien model (SQLAlchemy)"
+            "biens": [bien.to_dict() for bien in biens],
+            "count": len(biens),
+            "total": total,
+            "limit": limit,
+            "offset": offset,
+            "role": current_user["role"]
         }, 200
 
     except Exception as e:
@@ -77,7 +96,7 @@ def list_biens(current_user):
         return {"error": "Internal server error"}, 500
 
 
-@bp.route("", methods=["POST"])
+@biens_bp.route("", methods=["POST"])
 @token_required
 @role_required(roles=["vendeur"])
 def create_bien(current_user):
@@ -138,39 +157,53 @@ def create_bien(current_user):
         if type_bien not in valid_types:
             return {"error": f"type_bien must be one of {valid_types}"}, 400
 
-        # TODO: Sauvegarder en base avec SQLAlchemy
-        # bien = Bien(
-        #     utilisateur_id=current_user["user_id"],
-        #     adresse=adresse,
-        #     surface=surface,
-        #     type_bien=type_bien,
-        #     code_postal=data.get("code_postal"),
-        #     ville=data.get("ville"),
-        #     nombre_pieces=data.get("nombre_pieces"),
-        #     nombre_chambres=data.get("nombre_chambres"),
-        #     etage=data.get("etage"),
-        #     date_construction=data.get("date_construction"),
-        #     description=data.get("description")
-        # )
-        # db.session.add(bien)
-        # db.session.commit()
+        # Récupérer les paramètres optionnels
+        code_postal = data.get("code_postal", "").strip()
+        ville = data.get("ville", "").strip()
 
-        current_app.logger.info(f"Vendor {current_user['user_id']} creating property: {adresse}")
+        if not code_postal or not ville:
+            return {"error": "code_postal and ville are required"}, 400
 
-        return {
-            "message": "Bien créé avec succès",
-            "bien_id": None,  # TODO: Remplacer par bien.bien_id
-            "utilisateur_id": current_user["user_id"],
-            "timestamp": datetime.utcnow().isoformat(),
-            "note": "Implementation pending: create Bien model (SQLAlchemy)"
-        }, 201
+        try:
+            # Créer le bien via CRUD
+            bien = crud_create_bien(
+                utilisateur_id=current_user["user_id"],
+                adresse=adresse,
+                code_postal=code_postal,
+                ville=ville,
+                surface=surface,
+                type_bien=type_bien,
+                nombre_pieces=data.get("nombre_pieces"),
+                nombre_chambres=data.get("nombre_chambres"),
+                nombre_salles_bain=data.get("nombre_salles_bain"),
+                etage=data.get("etage"),
+                date_construction=data.get("date_construction"),
+                description=data.get("description"),
+                prix_demande=data.get("prix_demande"),
+                etat=data.get("etat", "bon"),
+                equipements=data.get("equipements"),
+                commodites=data.get("commodites"),
+            )
+
+            current_app.logger.info(f"Vendor {current_user['user_id']} creating property: {adresse}")
+
+            return {
+                "message": "Bien créé avec succès",
+                "bien": bien.to_dict(),
+                "bien_id": bien.bien_id,
+                "utilisateur_id": current_user["user_id"],
+                "timestamp": datetime.utcnow().isoformat(),
+            }, 201
+
+        except ValueError as e:
+            return {"error": str(e)}, 400
 
     except Exception as e:
         current_app.logger.error(f"Create bien error: {str(e)}")
         return {"error": "Internal server error"}, 500
 
 
-@bp.route("/me", methods=["GET"])
+@biens_bp.route("/me", methods=["GET"])
 @token_required
 def my_biens(current_user):
     """
@@ -193,16 +226,15 @@ def my_biens(current_user):
         }
     """
     try:
-        # TODO: Implémenter avec SQLAlchemy
-        # biens = Bien.query.filter_by(utilisateur_id=current_user["user_id"]).all()
+        # Récupérer les biens de l'utilisateur
+        biens = crud_get_user_biens(utilisateur_id=current_user["user_id"])
 
         current_app.logger.info(f"User {current_user['user_id']} listing their properties")
 
         return {
-            "biens": [],
-            "count": 0,
-            "utilisateur_id": current_user["user_id"],
-            "note": "Implementation pending: create Bien model (SQLAlchemy)"
+            "biens": [bien.to_dict() for bien in biens],
+            "count": len(biens),
+            "utilisateur_id": current_user["user_id"]
         }, 200
 
     except Exception as e:
@@ -210,7 +242,7 @@ def my_biens(current_user):
         return {"error": "Internal server error"}, 500
 
 
-@bp.route("/stats", methods=["GET"])
+@biens_bp.route("/stats", methods=["GET"])
 @token_required
 @role_required(roles=["agent"])
 def get_stats(current_user):
@@ -236,27 +268,13 @@ def get_stats(current_user):
         }
     """
     try:
-        # TODO: Calculer les statistiques depuis la base
-        # total_biens = Bien.query.count()
-        # total_utilisateurs = User.query.count()
-        # etc.
+        # Récupérer les statistiques
+        stats = crud_get_bien_stats()
 
         current_app.logger.info(f"Agent {current_user['user_id']} requesting stats")
 
         return {
-            "stats": {
-                "total_biens": 0,
-                "total_utilisateurs": 0,
-                "distribution_types": {
-                    "appartement": 0,
-                    "maison": 0,
-                    "terrain": 0,
-                    "commercial": 0
-                },
-                "surface_moyenne": 0,
-                "estimations_moyennes": 0
-            },
-            "note": "Implementation pending: create Bien model (SQLAlchemy)"
+            "stats": stats,
         }, 200
 
     except Exception as e:
@@ -264,7 +282,7 @@ def get_stats(current_user):
         return {"error": "Internal server error"}, 500
 
 
-@bp.route("/<int:bien_id>", methods=["GET"])
+@biens_bp.route("/<int:bien_id>", methods=["GET"])
 @token_required
 def get_bien(current_user, bien_id):
     """
@@ -321,4 +339,4 @@ def get_bien(current_user, bien_id):
         return {"error": "Internal server error"}, 500
 
 
-__all__ = ["bp"]
+__all__ = ["biens_bp"]

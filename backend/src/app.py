@@ -23,6 +23,8 @@ from src.auth.routes import auth_bp
 from src.routes.annonces import annonces_bp
 from src.routes.notifications import notifications_bp
 from src.routes.admin import admin_bp
+from src.routes.biens import biens_bp
+from src.routes.estimations import estimations_bp
 from src.config import get_config
 
 # Configuration
@@ -91,11 +93,11 @@ def create_app(config_name: str = None) -> Flask:
     # Blueprints - Admin
     app.register_blueprint(admin_bp)
 
-    # Blueprints à ajouter
-    # from src.routes import biens, estimations, utilisateurs
-    # app.register_blueprint(biens.bp)
-    # app.register_blueprint(estimations.bp)
-    # app.register_blueprint(utilisateurs.bp)
+    # Blueprints - Biens immobiliers
+    app.register_blueprint(biens_bp)
+
+    # Blueprints - Estimations (Melo API)
+    app.register_blueprint(estimations_bp)
 
     # Error handlers
     @app.errorhandler(404)

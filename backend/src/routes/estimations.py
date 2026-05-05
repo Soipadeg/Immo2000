@@ -12,10 +12,10 @@ from src.auth.decorators import token_required, role_required
 from src.melo_api import get_estimation_melo, compare_biens
 from datetime import datetime
 
-bp = Blueprint("estimations", __name__, url_prefix="/api/estimations")
+estimations_bp = Blueprint("estimations", __name__, url_prefix="/api/v1/estimations")
 
 
-@bp.route("", methods=["POST"])
+@estimations_bp.route("", methods=["POST"])
 @token_required
 def create_estimation(current_user):
     """
@@ -77,13 +77,14 @@ def create_estimation(current_user):
 
         # Vérifier le statut de la réponse
         if result.get("metadata", {}).get("status") == "success":
-            # TODO: Sauvegarder en base (voir INTEGRATION_MELO.md Section 3)
-            # estimation_id = inserer_estimation_melo(current_user["user_id"], result)
+            # La réponse est directement retournée (pas de stockage en BD pour l'instant)
+            # TODO: Stocker l'estimation en base (créer une table Estimation si nécessaire)
 
             return {
                 "message": "Estimation créée avec succès",
                 "estimation": result,
                 "user_id": current_user["user_id"],
+                "adresse": adresse,
                 "timestamp": datetime.utcnow().isoformat()
             }, 201
 
@@ -99,7 +100,7 @@ def create_estimation(current_user):
         return {"error": "Internal server error"}, 500
 
 
-@bp.route("/compare", methods=["POST"])
+@estimations_bp.route("/compare", methods=["POST"])
 @token_required
 @role_required(roles=["vendeur", "agent"])
 def compare_estimations(current_user):
@@ -184,7 +185,7 @@ def compare_estimations(current_user):
         return {"error": "Internal server error"}, 500
 
 
-@bp.route("", methods=["GET"])
+@estimations_bp.route("", methods=["GET"])
 @token_required
 def get_estimations(current_user):
     """
@@ -209,17 +210,13 @@ def get_estimations(current_user):
         }
     """
     try:
-        # TODO: Implémenter la requête en base
-        # if current_user["role"] == "agent":
-        #     estimations = Estimation.query.all()
-        # else:
-        #     estimations = Estimation.query.filter_by(utilisateur_id=current_user["user_id"]).all()
-
-        # Pour l'instant, retourner une liste vide (à adapter avec SQLAlchemy)
+        # Pour l'instant, retourner une liste vide (estimations pas persistées)
+        # TODO: Créer table Estimation si persistance requise
         return {
             "estimations": [],
             "count": 0,
-            "note": "Implementation pending: see INTEGRATION_MELO.md Section 3"
+            "note": "Estimations retournées via Melo API (pas de persistance actuellement)",
+            "hint": "Utilisez POST /api/v1/estimations pour créer une estimation Melo"
         }, 200
 
     except Exception as e:
@@ -227,4 +224,4 @@ def get_estimations(current_user):
         return {"error": "Internal server error"}, 500
 
 
-__all__ = ["bp"]
+__all__ = ["estimations_bp"]
