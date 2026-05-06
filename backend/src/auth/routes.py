@@ -189,15 +189,39 @@ def register():
         )
         user.set_password(password)
 
+        # Générer le token de vérification d'email
+        from .utils import generate_email_verification_token
+        from src.services.email_service import EmailService
+        from datetime import timedelta
+
+        verification_token = generate_email_verification_token(user.utilisateur_id, email)
+        user.verification_token = verification_token
+        user.verification_token_expires = datetime.utcnow() + timedelta(hours=24)
+
         db.session.add(user)
         db.session.commit()
+
+        # Envoyer l'email de vérification
+        try:
+            verification_url = f"{current_app.config.get('FRONTEND_URL', 'http://localhost:3000')}/verify-email?token={verification_token}"
+            email_html = EmailService.generer_email_verification(prenom, verification_url)
+            EmailService.envoyer_email(
+                destinataire=email,
+                sujet="Vérifiez votre adresse email - Immo2000",
+                corps_html=email_html
+            )
+            current_app.logger.info(f"✅ Email de vérification envoyé à {email}")
+        except Exception as e:
+            current_app.logger.error(f"⚠️ Erreur envoi email vérification: {str(e)}")
+            # Ne pas bloquer l'inscription si l'email échoue
 
         return (
             jsonify(
                 {
-                    "message": "User created successfully",
+                    "message": "User created successfully. Please verify your email.",
                     "user_id": user.utilisateur_id,
                     "email": user.email,
+                    "email_verified": user.email_verified,
                 }
             ),
             201,
@@ -295,6 +319,7 @@ def login():
                     "refresh_token": refresh_token,
                     "token_type": "Bearer",
                     "expires_in": access_expires_in,
+                    "email_verified": user.email_verified,
                 }
             ),
             200,
@@ -302,6 +327,85 @@ def login():
 
     except Exception as e:
         current_app.logger.error(f"Login error: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500
+
+
+@auth_bp.route("/verify-email", methods=["POST"])
+def verify_email():
+    """
+    Vérifie l'adresse email de l'utilisateur via token (RGPD compliance).
+
+    Request JSON:
+        {
+            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        }
+
+    Response:
+        200 OK : {
+            "message": "Email verified successfully",
+            "email": "user@example.com"
+        }
+
+        400 Bad Request : {
+            "error": "Invalid or expired verification token"
+        }
+
+    Examples:
+        >>> curl -X POST http://localhost:5000/auth/verify-email \\
+        ...   -H "Content-Type: application/json" \\
+        ...   -d '{
+        ...     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        ...   }'
+        {
+            "message": "Email verified successfully",
+            "email": "user@example.com"
+        }
+    """
+    try:
+        data = request.get_json()
+
+        if not data:
+            return jsonify({"error": "Request body must be JSON"}), 400
+
+        token = data.get("token", "").strip()
+
+        if not token:
+            return jsonify({"error": "Verification token is required"}), 400
+
+        # Vérifier le token
+        from .utils import verify_email_token
+        payload = verify_email_token(token)
+
+        if not payload:
+            return jsonify({"error": "Invalid or expired verification token"}), 400
+
+        # Récupérer l'utilisateur
+        user = User.find_by_id(payload.get("user_id"))
+
+        if not user or user.email != payload.get("email"):
+            return jsonify({"error": "Invalid token"}), 400
+
+        # Marquer l'email comme vérifié
+        user.email_verified = True
+        user.verification_token = None
+        user.verification_token_expires = None
+        db.session.commit()
+
+        current_app.logger.info(f"✅ Email vérifié pour {user.email}")
+
+        return (
+            jsonify(
+                {
+                    "message": "Email verified successfully",
+                    "email": user.email,
+                }
+            ),
+            200,
+        )
+
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Email verification error: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
 
 

@@ -191,7 +191,6 @@
                                 <div class="form-group mb-3">
                                     <label for="password" class="form-label">Mot de passe</label>
                                     <input type="password" class="form-control" id="password" name="password" required>
-                                    <small class="form-text">Minimum 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial</small>
 
                                     <!-- Password Strength Indicator -->
                                     <div class="password-strength-container mt-2">
@@ -493,19 +492,25 @@
                         role: 'acheteur'  // Rôle par défaut à l'inscription
                     });
 
-                    // Affiche le message de succès
+                    // Affiche le message de succès avec instruction de vérification
                     const successMsg = `
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <i class="fas fa-check-circle"></i> Compte créé avec succès ! Redirection vers la connexion...
+                            <i class="fas fa-check-circle"></i> <strong>Compte créé avec succès !</strong>
+                            <br><br>
+                            📧 Un email de vérification a été envoyé à <strong>${email}</strong>
+                            <br>
+                            Veuillez cliquer sur le lien dans l'email pour confirmer votre adresse.
+                            <br><br>
+                            ⏱️ Le lien est valable pendant 24 heures.
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
                     `;
                     successMessage.innerHTML = successMsg;
 
-                    // Redirection vers la page de connexion après 2 secondes
+                    // Redirection vers verify-email après 4 secondes
                     setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 2000);
+                        window.location.href = 'verify-email.html';
+                    }, 4000);
                 } catch (error) {
                     hideLoadingSpinner();
                     let errorText = 'Erreur lors de la création du compte. Veuillez réessayer.';
