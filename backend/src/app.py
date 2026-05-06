@@ -26,6 +26,7 @@ from src.routes.notifications import notifications_bp
 from src.routes.admin import admin_bp
 from src.routes.biens import biens_bp
 from src.routes.estimations import estimations_bp
+from src.routes.simulateur_pret import simulateur_bp
 from src.config import get_config
 
 # Configuration
@@ -102,6 +103,9 @@ def create_app(config_name: str = None) -> Flask:
 
     # Blueprints - Estimations (Melo API)
     app.register_blueprint(estimations_bp)
+
+    # Blueprints - Simulateur de prêt
+    app.register_blueprint(simulateur_bp)
 
     # Error handlers
     @app.errorhandler(404)
