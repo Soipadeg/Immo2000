@@ -72,6 +72,56 @@
             </div>
         </section>
 
+        <!-- Offres Section with Carousel -->
+        <section class="py-5 bg-light">
+            <div class="container">
+                <h2 class="text-center mb-5">
+                    <i class="fas fa-building text-primary"></i> Dernières Offres
+                </h2>
+
+                <!-- Carousel des offres -->
+                <div id="offresCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <!-- Carousel indicators -->
+                    <div class="carousel-indicators" id="carouselIndicators"></div>
+
+                    <!-- Carousel items -->
+                    <div class="carousel-inner" id="carouselContent">
+                        <!-- Items générés dynamiquement -->
+                        <div class="carousel-item active">
+                            <div class="d-flex justify-content-center align-items-center" style="height: 400px;">
+                                <div class="text-center">
+                                    <i class="fas fa-inbox text-muted" style="font-size: 64px; margin-bottom: 16px;"></i>
+                                    <h4 class="text-muted">Aucune offre actuellement</h4>
+                                    <p class="text-muted mb-3">Les offres immobilières seront affichées ici dès leur publication</p>
+                                    <a href="matching.html" class="btn btn-primary">
+                                        <i class="fas fa-search"></i> Parcourir tous les biens
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Carousel controls (hidden for now, shown when items exist) -->
+                    <button class="carousel-control-prev" type="button" data-bs-target="#offresCarousel" data-bs-slide="prev" id="prevBtn" style="display: none;">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Précédent</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#offresCarousel" data-bs-slide="next" id="nextBtn" style="display: none;">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Suivant</span>
+                    </button>
+                </div>
+
+                <!-- Optional: Info message -->
+                <div class="alert alert-info mt-4 text-center" role="alert">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Astuce:</strong> Allez à la page
+                    <a href="matching.html" class="alert-link">Matching</a>
+                    pour trouver tous les biens disponibles
+                </div>
+            </div>
+        </section>
+
         <!-- Features Section -->
         <section class="py-5">
             <div class="container">
@@ -194,5 +244,6 @@
     <script src="https://cdn.jsdelivr.net/npm/axios@1.4.0/dist/axios.min.js"></script>
     <script src="/static/js/app.js"></script>
     <script src="/static/js/chatbot.js"></script>
+    <script src="/static/js/offres-carousel.js"></script>
 </body>
 </html>
