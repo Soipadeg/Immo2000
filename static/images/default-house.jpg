@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <!-- Background -->
+  <rect width="400" height="300" fill="#f0f0f0"/>
+
+  <!-- Sky -->
+  <rect width="400" height="150" fill="#87CEEB"/>
+
+  <!-- Sun -->
+  <circle cx="350" cy="50" r="25" fill="#FFD700"/>
+
+  <!-- House body -->
+  <rect x="80" y="120" width="240" height="150" fill="#CD853F"/>
+
+  <!-- Roof -->
+  <polygon points="200,80 80,120 320,120" fill="#8B4513"/>
+
+  <!-- Door -->
+  <rect x="170" y="200" width="60" height="70" fill="#654321"/>
+  <circle cx="225" cy="235" r="3" fill="#FFD700"/>
+
+  <!-- Windows -->
+  <rect x="100" y="140" width="40" height="40" fill="#87CEEB"/>
+  <rect x="155" y="140" width="40" height="40" fill="#87CEEB"/>
+  <rect x="260" y="140" width="40" height="40" fill="#87CEEB"/>
+
+  <!-- Window panes -->
+  <line x1="120" y1="140" x2="120" y2="180" stroke="#333" stroke-width="2"/>
+  <line x1="100" y1="160" x2="140" y2="160" stroke="#333" stroke-width="2"/>
+
+  <line x1="175" y1="140" x2="175" y2="180" stroke="#333" stroke-width="2"/>
+  <line x1="155" y1="160" x2="195" y2="160" stroke="#333" stroke-width="2"/>
+
+  <line x1="280" y1="140" x2="280" y2="180" stroke="#333" stroke-width="2"/>
+  <line x1="260" y1="160" x2="300" y2="160" stroke="#333" stroke-width="2"/>
+
+  <!-- Chimney -->
+  <rect x="310" y="100" width="25" height="40" fill="#A0522D"/>
+
+  <!-- Text -->
+  <text x="200" y="290" font-size="16" text-anchor="middle" fill="#666" font-family="Arial">
+    Immo2000 - Plateforme Immobilière
+  </text>
+</svg>
