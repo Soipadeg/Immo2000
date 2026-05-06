@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - Immo2000</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+    <link href="/static/css/chatbot.css" rel="stylesheet">
+    <style>
+        .faq-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .faq-tabs {
+            margin: 30px 0;
+        }
+
+        .faq-tabs .nav-link {
+            border-radius: 8px 8px 0 0;
+            font-weight: 600;
+            padding: 12px 24px;
+            border: none;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .faq-tabs .nav-link:hover {
+            background-color: #f0f0f0;
+            color: #2E86C1;
+        }
+
+        .faq-tabs .nav-link.active {
+            background-color: #2E86C1;
+            color: white;
+        }
+
+        .faq-search {
+            margin-bottom: 30px;
+        }
+
+        .faq-search input {
+            border-radius: 8px;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .faq-search input:focus {
+            border-color: #2E86C1;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(46, 134, 193, 0.1);
+        }
+
+        .faq-item {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: #2E86C1;
+        }
+
+        .faq-question {
+            padding: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #333;
+            user-select: none;
+            transition: background-color 0.3s;
+        }
+
+        .faq-question:hover {
+            background-color: #f9f9f9;
+        }
+
+        .faq-question .icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #2E86C1;
+            color: white;
+            border-radius: 50%;
+            font-size: 12px;
+            transition: transform 0.3s;
+        }
+
+        .faq-item.open .faq-question .icon {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            padding: 0 16px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .faq-item.open .faq-answer {
+            max-height: 500px;
+            padding: 16px;
+        }
+
+        .faq-answer p {
+            margin: 0 0 12px 0;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .faq-answer p:last-child {
+            margin-bottom: 0;
+        }
+
+        .faq-category {
+            display: inline-block;
+            background-color: #f0f0f0;
+            color: #2E86C1;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .faq-link {
+            display: inline-block;
+            margin-top: 12px;
+        }
+
+        .faq-link a {
+            color: #2E86C1;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .faq-link a:hover {
+            color: #1a4c7a;
+            text-decoration: underline;
+        }
+
+        .faq-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .faq-empty i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .faq-stats {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .faq-stats .stat {
+            display: inline-block;
+            margin: 0 30px;
+        }
+
+        .faq-stats .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2E86C1;
+        }
+
+        .faq-stats .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .faq-container {
+                padding: 0 15px;
+            }
+
+            .faq-tabs .nav-link {
+                padding: 10px 16px;
+                font-size: 14px;
+            }
+
+            .faq-question {
+                padding: 12px;
+                font-size: 14px;
+            }
+
+            .faq-answer {
+                font-size: 14px;
+            }
+
+            .faq-stats .stat {
+                margin: 10px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-home"></i> Immo2000
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="matching.html">Matching</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="simulateur_pret.html">Simulateur</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="faq.html">FAQ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="guides.html">Guides</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="modeles.html">Modèles</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container faq-container py-5">
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <h1><i class="fas fa-question-circle text-primary me-3"></i>Questions Fréquemment Posées</h1>
+                <p class="lead text-muted">Trouvez les réponses à vos questions sur Immo2000</p>
+            </div>
+
+            <!-- Stats -->
+            <div class="faq-stats">
+                <div class="stat">
+                    <div class="stat-value" id="totalFaq">20+</div>
+                    <div class="stat-label">Questions répondues</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">24/7</div>
+                    <div class="stat-label">Disponible</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">2</div>
+                    <div class="stat-label">Catégories</div>
+                </div>
+            </div>
+
+            <!-- Search -->
+            <div class="faq-search">
+                <input
+                    type="text"
+                    id="faqSearch"
+                    class="form-control form-control-lg"
+                    placeholder="🔍 Rechercher une question..."
+                    autocomplete="off"
+                >
+            </div>
+
+            <!-- Tabs -->
+            <ul class="nav nav-tabs faq-tabs" id="faqTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button
+                        class="nav-link active"
+                        id="acheteur-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#acheteur"
+                        type="button"
+                        role="tab"
+                    >
+                        <i class="fas fa-user-tie me-2"></i>Acheteurs
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button
+                        class="nav-link"
+                        id="vendeur-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#vendeur"
+                        type="button"
+                        role="tab"
+                    >
+                        <i class="fas fa-home me-2"></i>Vendeurs
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Content -->
+            <div class="tab-content" id="faqContent">
+                <!-- Acheteurs -->
+                <div class="tab-pane fade show active" id="acheteur" role="tabpanel">
+                    <div id="acheteurFaq" class="mt-4"></div>
+                </div>
+
+                <!-- Vendeurs -->
+                <div class="tab-pane fade" id="vendeur" role="tabpanel">
+                    <div id="vendeurFaq" class="mt-4"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 immo2000. Tous droits réservés.</p>
+            <p>
+                <a href="legal/cgu.html">CGU</a> |
+                <a href="legal/politique-confidentialite.html">Politique de Confidentialité</a> |
+                <a href="faq.html">FAQ</a> |
+                <a href="guides.html">Guides</a> |
+                <a href="modeles.html">Modèles</a> |
+                <a href="outils.html">Outils</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Chatbot -->
+    <div class="chatbot-container">
+        <button class="chatbot-toggle" id="chatbotToggle">
+            <i class="fas fa-comments"></i>
+        </button>
+        <div class="chatbot-window" id="chatbotWindow">
+            <div class="chatbot-header">
+                <h5><i class="fas fa-robot me-2"></i>Chatbot Immo2000</h5>
+                <button class="chatbot-close" id="chatbotClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="chatbot-messages" id="chatbotMessages"></div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbotInput" placeholder="Posez votre question..." autocomplete="off">
+                <button id="chatbotSend"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.4.0/dist/axios.min.js"></script>
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/chatbot.js"></script>
+    <script>
+        class FAQManager {
+            constructor() {
+                this.acheteurFaq = [];
+                this.vendeurFaq = [];
+                this.allFaq = [];
+                this.init();
+            }
+
+            async init() {
+                await this.loadFAQ();
+                this.renderFAQ();
+                this.setupEventListeners();
+            }
+
+            async loadFAQ() {
+                try {
+                    const response = await axios.get('/api/v1/faq');
+                    if (response.data.status === 'success') {
+                        const data = response.data.data;
+                        this.acheteurFaq = data.acheteur || [];
+                        this.vendeurFaq = data.vendeur || [];
+                        this.allFaq = [...this.acheteurFaq, ...this.vendeurFaq];
+                    }
+                } catch (error) {
+                    console.error('Erreur chargement FAQ:', error);
+                    this.showErrorMessage('Erreur lors du chargement des FAQ');
+                }
+            }
+
+            renderFAQ() {
+                this.renderCategory('acheteurFaq', this.acheteurFaq);
+                this.renderCategory('vendeurFaq', this.vendeurFaq);
+            }
+
+            renderCategory(elementId, faqList) {
+                const container = document.getElementById(elementId);
+
+                if (!faqList || faqList.length === 0) {
+                    container.innerHTML = '<div class="faq-empty"><i class="fas fa-inbox"></i><p>Aucune question disponible</p></div>';
+                    return;
+                }
+
+                container.innerHTML = faqList.map((faq, index) => `
+                    <div class="faq-item" data-id="${faq.id}">
+                        <div class="faq-question" onclick="faqManager.toggleFAQ(this)">
+                            <span>${faq.question}</span>
+                            <span class="icon">
+                                <i class="fas fa-chevron-down"></i>
+                            </span>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-category">${faq.catégorie}</div>
+                            <p>${faq.réponse}</p>
+                            ${faq.lien_utile ? `
+                                <div class="faq-link">
+                                    <a href="${faq.lien_utile}" target="_blank" rel="noopener noreferrer">
+                                        En savoir plus <i class="fas fa-external-link-alt"></i>
+                                    </a>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            toggleFAQ(element) {
+                const item = element.closest('.faq-item');
+
+                // Fermer les autres
+                document.querySelectorAll('.faq-item.open').forEach(el => {
+                    if (el !== item) el.classList.remove('open');
+                });
+
+                // Toggle le courant
+                item.classList.toggle('open');
+            }
+
+            setupEventListeners() {
+                const searchInput = document.getElementById('faqSearch');
+                searchInput.addEventListener('input', (e) => this.searchFAQ(e.target.value));
+            }
+
+            searchFAQ(query) {
+                const q = query.toLowerCase();
+                const allItems = document.querySelectorAll('.faq-item');
+
+                allItems.forEach(item => {
+                    const question = item.querySelector('.faq-question span').textContent.toLowerCase();
+                    const answer = item.querySelector('.faq-answer').textContent.toLowerCase();
+
+                    if (question.includes(q) || answer.includes(q)) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                // Afficher message si aucun résultat
+                const visibleItems = Array.from(allItems).filter(el => el.style.display !== 'none');
+                if (visibleItems.length === 0 && q) {
+                    const activeTab = document.querySelector('.tab-pane.active');
+                    if (!activeTab.querySelector('.faq-empty')) {
+                        const empty = document.createElement('div');
+                        empty.className = 'faq-empty';
+                        empty.innerHTML = `
+                            <i class="fas fa-search"></i>
+                            <p>Aucune question ne correspond à votre recherche</p>
+                            <small class="text-muted">Essayez avec d'autres mots-clés</small>
+                        `;
+                        activeTab.appendChild(empty);
+                    }
+                }
+            }
+
+            showErrorMessage(message) {
+                const container = document.querySelector('.faq-container');
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-danger alert-dismissible fade show';
+                alert.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                container.insertBefore(alert, container.firstChild);
+            }
+        }
+
+        // Initialiser le gestionnaire FAQ
+        const faqManager = new FAQManager();
+    </script>
+</body>
+</html>
