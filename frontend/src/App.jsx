@@ -24,6 +24,7 @@ import Chatbot from './components/Chatbot';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import MatchingPage from './pages/MatchingPage';
+import SimulateurPret from './pages/SimulateurPret';
 
 // Importer les services
 import { authApi } from './services/api';
@@ -207,6 +208,10 @@ function ProtectedLayout() {
             Trouver un bien
           </Button>
 
+          <Button color="inherit" href="/simulateur-pret">
+            Simulateur de prêt
+          </Button>
+
           <Button color="inherit" href="/search">
             Rechercher
           </Button>
@@ -231,6 +236,9 @@ function ProtectedLayout() {
 
         {/* Page de matching */}
         <Route path="/matching" element={<MatchingPage />} />
+
+        {/* Simulateur de prêt */}
+        <Route path="/simulateur-pret" element={<SimulateurPret />} />
 
         {/* Recherche publique */}
         <Route path="/search" element={<RechercheBiens />} />
