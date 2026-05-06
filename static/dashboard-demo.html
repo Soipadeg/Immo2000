@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - Immo2000 - DÉMO</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .card {
+            border: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
+            color: white;
+            border-radius: 8px 8px 0 0;
+            padding: 15px 20px;
+        }
+        .nav-tabs .nav-link {
+            color: #666;
+            border: none;
+            border-bottom: 3px solid transparent;
+            padding: 12px 20px;
+        }
+        .nav-tabs .nav-link.active {
+            color: #0066cc;
+            border-color: #0066cc;
+            background-color: transparent;
+        }
+        .annonce-card {
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+        }
+        .annonce-title {
+            font-weight: 600;
+            color: #0066cc;
+            margin-bottom: 8px;
+        }
+        .badge-match {
+            background-color: #28a745;
+            color: white;
+        }
+        .role-badge {
+            font-size: 12px;
+            padding: 4px 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-home"></i> <strong>Immo2000</strong>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-home"></i> Matching</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-calculator"></i> Simulateur</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user"></i> Test Utilisateur
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Paramètres</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-key"></i> Rôles & Profils</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt"></i> Déconnexion</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container-fluid mt-4">
+            <h1 class="mb-4">
+                <i class="fas fa-tachometer-alt"></i> Tableau de Bord
+                <span class="badge badge-match role-badge ms-2">Acheteur</span>
+            </h1>
+
+            <!-- Tabs Navigation -->
+            <ul class="nav nav-tabs mb-4" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="buyerTab" data-bs-toggle="tab" data-bs-target="#buyerPanel" type="button" role="tab">
+                        <i class="fas fa-search"></i> Acheteur
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="sellerTab" data-bs-toggle="tab" data-bs-target="#sellerPanel" type="button" role="tab">
+                        <i class="fas fa-building"></i> Vendeur
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Tabs Content -->
+            <div class="tab-content">
+                <!-- Buyer Tab -->
+                <div class="tab-pane fade show active" id="buyerPanel" role="tabpanel">
+                    <div class="row">
+                        <!-- Annonces Matchées -->
+                        <div class="col-md-12 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="fas fa-heart"></i> Annonces Matchées</h5>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Annonce 1 -->
+                                    <div class="annonce-card">
+                                        <div class="annonce-title">
+                                            <i class="fas fa-check-circle"></i> Bel Appartement 2 Pièces - 75005 Paris
+                                            <span class="badge badge-match float-end">92% Match</span>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-map-marker-alt"></i> 50 rue Mouffetard, 75005 Paris
+                                                </small>
+                                                <br>
+                                                <strong class="text-primary">450 000€</strong> • 75m² • 2 pièces
+                                                <br>
+                                                <small class="text-muted">Publié il y a 2 jours</small>
+                                            </div>
+                                            <div class="col-md-4 text-end">
+                                                <button class="btn btn-sm btn-primary"><i class="fas fa-eye"></i> Voir</button>
+                                                <button class="btn btn-sm btn-outline-primary"><i class="fas fa-heart"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Annonce 2 -->
+                                    <div class="annonce-card">
+                                        <div class="annonce-title">
+                                            <i class="fas fa-check-circle"></i> Studio Cosy - 75006 Paris
+                                            <span class="badge badge-match float-end">85% Match</span>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-map-marker-alt"></i> 10 rue de l'Odéon, 75006 Paris
+                                                </small>
+                                                <br>
+                                                <strong class="text-primary">380 000€</strong> • 35m² • Studio
+                                                <br>
+                                                <small class="text-muted">Publié il y a 5 jours</small>
+                                            </div>
+                                            <div class="col-md-4 text-end">
+                                                <button class="btn btn-sm btn-primary"><i class="fas fa-eye"></i> Voir</button>
+                                                <button class="btn btn-sm btn-outline-primary"><i class="fas fa-heart"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Annonce 3 -->
+                                    <div class="annonce-card">
+                                        <div class="annonce-title">
+                                            <i class="fas fa-check-circle"></i> Maison avec Jardin - 75014 Paris
+                                            <span class="badge badge-match float-end">78% Match</span>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-map-marker-alt"></i> 100 rue d'Alésia, 75014 Paris
+                                                </small>
+                                                <br>
+                                                <strong class="text-primary">650 000€</strong> • 120m² • 4 pièces
+                                                <br>
+                                                <small class="text-muted">Publié il y a 1 jour</small>
+                                            </div>
+                                            <div class="col-md-4 text-end">
+                                                <button class="btn btn-sm btn-primary"><i class="fas fa-eye"></i> Voir</button>
+                                                <button class="btn btn-sm btn-outline-primary"><i class="fas fa-heart"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mes Recherches -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="fas fa-search"></i> Mes Recherches Sauvegardées</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="list-group">
+                                        <a href="#" class="list-group-item list-group-item-action">
+                                            <h6 class="mb-1"><strong>Appartement 2-3 pièces - 75005</strong></h6>
+                                            <small class="text-muted">Budget: 400k-500k€ | 15 annonces</small>
+                                        </a>
+                                        <a href="#" class="list-group-item list-group-item-action">
+                                            <h6 class="mb-1"><strong>Studio - 75006-75007</strong></h6>
+                                            <small class="text-muted">Budget: 300k-400k€ | 8 annonces</small>
+                                        </a>
+                                        <a href="#" class="list-group-item list-group-item-action">
+                                            <h6 class="mb-1"><strong>Maison - IDF proche transports</strong></h6>
+                                            <small class="text-muted">Budget: 600k-800k€ | 22 annonces</small>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Simulateur -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="fas fa-calculator"></i> Mon Simulateur</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="alert alert-info">
+                                        <strong>Capacité d'emprunt estimée:</strong> 450 000€
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <small class="text-muted">Apport personnel</small>
+                                            <p class="mb-2"><strong>100 000€</strong></p>
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="text-muted">Taux moyen</small>
+                                            <p class="mb-2"><strong>3.50%</strong></p>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary w-100"><i class="fas fa-calculator"></i> Modifier simulateur</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seller Tab -->
+                <div class="tab-pane fade" id="sellerPanel" role="tabpanel">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-info-circle"></i> <strong>Vous n'avez pas encore activé le rôle vendeur.</strong>
+                        <a href="#" class="alert-link">Cliquez ici pour devenir vendeur</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-light py-4 mt-5 border-top">
+        <div class="container-fluid">
+            <p class="text-muted text-center mb-0">© 2026 Immo2000 | Tous droits réservés</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
