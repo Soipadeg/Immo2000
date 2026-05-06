@@ -27,6 +27,8 @@ from src.routes.admin import admin_bp
 from src.routes.biens import biens_bp
 from src.routes.estimations import estimations_bp
 from src.routes.simulateur_pret import simulateur_bp
+from src.routes.visites import visites_bp, feedbacks_bp
+from src.services.scheduler import SchedulerService
 from src.config import get_config
 
 # Configuration
@@ -107,6 +109,12 @@ def create_app(config_name: str = None) -> Flask:
     # Blueprints - Simulateur de prêt
     app.register_blueprint(simulateur_bp)
 
+    # Blueprints - Visites (Réservations de visites)
+    app.register_blueprint(visites_bp)
+
+    # Blueprints - Feedbacks (Avis post-visite)
+    app.register_blueprint(feedbacks_bp)
+
     # Error handlers
     @app.errorhandler(404)
     def not_found(error):
@@ -121,8 +129,9 @@ def create_app(config_name: str = None) -> Flask:
     with app.app_context():
         db.create_all()
 
-    return app
-
+        # Initialiser le scheduler pour les tâches planifiées (feedback reminders)
+        if os.getenv("FLASK_ENV") != "testing":
+            SchedulerService.init_scheduler()
 
     return app
 
