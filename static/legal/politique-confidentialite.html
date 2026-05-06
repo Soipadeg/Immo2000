@@ -313,7 +313,6 @@
                 </div>
                 <div class="text-end">
                     <button class="btn btn-light btn-sm me-2" onclick="exportPDF('privacy')"><i class="fas fa-file-pdf"></i> Télécharger PDF</button>
-                    <button class="btn btn-light btn-sm" onclick="requestSignature()"><i class="fas fa-pen-fancy"></i> Signer</button>
                 </div>
             </div>
         </div>
@@ -323,16 +322,127 @@
     <main class="container mb-5">
         <div class="legal-content-wrapper">
             <div id="privacy-content" class="legal-content">
-                <div class="legal-loading">
-                    <div class="spinner-border" role="status">
-                        <span class="visually-hidden">Chargement...</span>
-                    </div>
-                    <p>Chargement du document...</p>
-                </div>
-            </div>
-        </div>
+                <h1>Politique de Confidentialité</h1>
+                <p><em>En vigueur au 05/05/2026</em></p>
 
-        <!-- Information Box -->
+                <p>La présente Politique de Confidentialité décrit comment <strong>immo2000</strong> (ci-après « nous », « notre », ou « la Plateforme ») <strong>collecte, utilise, et protège</strong> vos données personnelles.</p>
+
+                <h2>1. Données personnelles collectées</h2>
+                <p>Nous collectons les données suivantes :</p>
+
+                <h3>1.1. Données d'inscription</h3>
+                <ul>
+                    <li><strong>Nom et prénom</strong> : Obligatoire, utilisé pour la création de compte</li>
+                    <li><strong>Email</strong> : Obligatoire, utilisé pour la communication et authentification</li>
+                    <li><strong>Téléphone</strong> : Optionnel, utilisé pour contacter lors des visites</li>
+                    <li><strong>Mot de passe</strong> : Obligatoire, pour la sécurité du compte</li>
+                </ul>
+
+                <h3>1.2. Données liées aux annonces (vendeurs)</h3>
+                <ul>
+                    <li><strong>Adresse du bien</strong> : Utilisée pour la publication de l'annonce</li>
+                    <li><strong>Photos du bien</strong> : Utilisées pour illustrer l'annonce</li>
+                    <li><strong>Surface, nombre de pièces</strong> : Caractéristiques du bien</li>
+                    <li><strong>Prix</strong> : Information pour les acheteurs</li>
+                    <li><strong>Diagnostics</strong> : DPE, conformité légale</li>
+                </ul>
+
+                <h3>1.3. Données liées aux transactions</h3>
+                <ul>
+                    <li><strong>Offres d'achat</strong> : Utilisées pour la négociation entre parties</li>
+                    <li><strong>Compromis de vente</strong> : Documents PDF signés</li>
+                    <li><strong>Coordonnées bancaires</strong> : Utilisées pour le paiement des commissions</li>
+                </ul>
+
+                <h3>1.4. Données techniques</h3>
+                <ul>
+                    <li><strong>Adresse IP</strong> : Sécurité et analyse technique</li>
+                    <li><strong>Cookies</strong> : Amélioration de l'expérience utilisateur</li>
+                    <li><strong>Historique de navigation</strong> : Personnalisation des recommandations</li>
+                </ul>
+
+                <h2>2. Finalités de la collecte</h2>
+                <p>Vos données sont utilisées pour :</p>
+                <ul>
+                    <li><strong>Gérer votre compte</strong> (connexion, profil)</li>
+                    <li><strong>Publier et gérer des annonces</strong> (pour les vendeurs)</li>
+                    <li><strong>Faciliter les transactions</strong> (offres, compromis, signature)</li>
+                    <li><strong>Améliorer la Plateforme</strong> (statistiques, feedbacks)</li>
+                    <li><strong>Vous envoyer des communications</strong> (alertes, newsletters, notifications)</li>
+                    <li><strong>Respecter nos obligations légales</strong> (conservation des données pour les transactions)</li>
+                </ul>
+
+                <h2>3. Base légale du traitement</h2>
+                <p>Nous traitons vos données sur la base :</p>
+                <ul>
+                    <li>De <strong>votre consentement</strong> (inscription, cookies)</li>
+                    <li>De <strong>l'exécution d'un contrat</strong> (gestion du compte, transaction)</li>
+                    <li>De <strong>notre intérêt légitime</strong> (amélioration de la Plateforme, sécurité)</li>
+                    <li>Du <strong>respect d'une obligation légale</strong> (conservation pour les notaires)</li>
+                </ul>
+
+                <h2>4. Partage des données</h2>
+                <h3>4.1. Avec les autres utilisateurs</h3>
+                <ul>
+                    <li><strong>Vendeurs</strong> : Vos coordonnées (nom, prénom, email, téléphone) sont partagées avec les acheteurs qui font une offre</li>
+                    <li><strong>Acheteurs</strong> : Votre offre d'achat est partagée avec le vendeur concerné</li>
+                </ul>
+
+                <h3>4.2. Avec des tiers</h3>
+                <p>Nous partageons vos données uniquement avec :</p>
+                <ul>
+                    <li><strong>Yousign</strong> : Nom, prénom, email pour la signature électronique</li>
+                    <li><strong>Notaires</strong> : Compromis et coordonnées pour la finalisation légale</li>
+                    <li><strong>Banques</strong> : Offre et compromis si prêt immobilier</li>
+                    <li><strong>Autorités légales</strong> : Si requises par la loi</li>
+                </ul>
+                <p><strong>⚠️ Nous ne vendons JAMAIS vos données à des tiers.</strong></p>
+
+                <h2>5. Durée de conservation</h2>
+                <ul>
+                    <li><strong>Données de compte</strong> : 5 ans après la dernière activité</li>
+                    <li><strong>Données de transaction</strong> : 10 ans (obligation légale)</li>
+                    <li><strong>Données techniques</strong> : 1 an</li>
+                    <li><strong>Cookies</strong> : 13 mois</li>
+                </ul>
+
+                <h2>6. Vos droits RGPD</h2>
+                <p>Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez des droits suivants :</p>
+                <ul>
+                    <li><strong>Droit d'accès</strong> : Demander une copie de vos données</li>
+                    <li><strong>Droit de rectification</strong> : Corriger des données inexactes</li>
+                    <li><strong>Droit à l'effacement</strong> : Supprimer vos données (sous réserve des obligations légales)</li>
+                    <li><strong>Droit à la limitation</strong> : Limiter le traitement de vos données</li>
+                    <li><strong>Droit à la portabilité</strong> : Récupérer vos données dans un format structuré</li>
+                    <li><strong>Droit d'opposition</strong> : Vous opposer au traitement de vos données</li>
+                </ul>
+
+                <h3>Pour exercer ces droits :</h3>
+                <p>Envoyez un email à <strong>dpo@immo2000.fr</strong> avec :</p>
+                <ul>
+                    <li>Votre nom, prénom, et email</li>
+                    <li>La demande précise</li>
+                    <li>Une copie de votre pièce d'identité (pour vérification)</li>
+                </ul>
+
+                <h2>7. Sécurité des données</h2>
+                <p>Nous mettons en place des mesures de sécurité pour protéger vos données :</p>
+                <ul>
+                    <li>Chiffrement SSL/TLS pour les connexions</li>
+                    <li>Hachage des mots de passe</li>
+                    <li>Accès restrictif aux données</li>
+                    <li>Audits de sécurité réguliers</li>
+                </ul>
+
+                <h2>8. Modifications de cette politique</h2>
+                <p>Nous nous réservons le droit de modifier cette Politique de Confidentialité à tout moment. Les modifications entrent en vigueur dès leur publication. L'utilisation continue de la Plateforme après modifications vaut acceptation des nouvelles conditions.</p>
+
+                <h2>9. Contact</h2>
+                <p>Pour toute question ou pour exercer vos droits :</p>
+                <ul>
+                    <li><strong>Email</strong> : <a href="mailto:dpo@immo2000.fr">dpo@immo2000.fr</a></li>
+                    <li><strong>Adresse</strong> : Immo2000, Paris, France</li>
+                </ul>
         <div class="mt-5 p-3 bg-info bg-opacity-10 border-start border-4 border-info rounded">
             <h4><i class="fas fa-info-circle"></i> Vos droits RGPD</h4>
             <p class="mb-0">Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez de droits spécifiques concernant vos données personnelles. Pour en savoir plus, consultez la section "Vos droits" dans ce document.</p>
@@ -359,8 +469,6 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Marked.js for Markdown parsing -->
-    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/+esm"></script>
     <!-- html2pdf for PDF export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <!-- Utility scripts -->
@@ -368,16 +476,35 @@
     <script src="../js/cgu-manager.js"></script>
 
     <script>
-        // Configure marked
-        marked.setOptions({
-            breaks: true,
-            gfm: true
+        // Load document on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ Politique de Confidentialité chargée avec succès');
+            window.scrollTo(0, 0);
         });
+
+        // Export PDF
+        function exportPDF(docType) {
+            if (typeof PDFExporter !== 'undefined') {
+                PDFExporter.exportPDF(docType);
+            } else {
+                alert('Fonctionnalité d\'export non disponible');
+            }
+        }
+
+
+
+        // Chatbot integration
+        function openChatbot() {
+            if (typeof window.chatbotWidget !== 'undefined') {
+                window.chatbotWidget.open();
+            }
+        }
+    </script>
 
         // Load and parse markdown file
         async function loadLegalDocument() {
             try {
-                const response = await fetch('politique-confidentialite.md');
+                const response = await fetch('/static/legal/politique-confidentialite.md');
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
                 const markdown = await response.text();

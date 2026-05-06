@@ -313,7 +313,6 @@
                 </div>
                 <div class="text-end">
                     <button class="btn btn-light btn-sm me-2" onclick="exportPDF('cgu')"><i class="fas fa-file-pdf"></i> Télécharger PDF</button>
-                    <button class="btn btn-light btn-sm" onclick="requestSignature()"><i class="fas fa-pen-fancy"></i> Signer</button>
                 </div>
             </div>
         </div>
@@ -323,16 +322,86 @@
     <main class="container mb-5">
         <div class="legal-content-wrapper">
             <div id="cgu-content" class="legal-content">
-                <div class="legal-loading">
-                    <div class="spinner-border" role="status">
-                        <span class="visually-hidden">Chargement...</span>
-                    </div>
-                    <p>Chargement du document...</p>
-                </div>
-            </div>
-        </div>
+                <h1>Conditions Générales d'Utilisation (CGU)</h1>
+                <p><em>En vigueur au 05/05/2026</em></p>
 
-        <!-- Table of Contents (optional) -->
+                <p>Les présentes Conditions Générales d'Utilisation (CGU) régissent l'utilisation de la plateforme <strong>immo2000</strong> (ci-après « la Plateforme »), accessible à l'adresse <a href="https://immo2000.fr" target="_blank">https://immo2000.fr</a>.</p>
+
+                <h2>1. Objet</h2>
+                <p>La Plateforme <strong>immo2000</strong> est une solution en ligne permettant aux <strong>particuliers</strong> de :</p>
+                <ul>
+                    <li><strong>Vendre</strong> un bien immobilier <strong>sans agence</strong>, avec une commission réduite à <strong>1,5%</strong>.</li>
+                    <li><strong>Acheter</strong> un bien immobilier <strong>sans frais d'agence</strong>.</li>
+                    <li><strong>Gérer</strong> les étapes de la transaction (offres, compromis, signature électronique).</li>
+                </ul>
+
+                <h2>2. Acceptation des CGU</h2>
+                <p>En créant un compte ou en utilisant la Plateforme, vous <strong>acceptez sans réserve</strong> les présentes CGU.
+                Si vous n'acceptez pas ces conditions, <strong>n'utilisez pas la Plateforme</strong>.</p>
+
+                <h2>3. Inscription et compte utilisateur</h2>
+                <h3>3.1. Création de compte</h3>
+                <p>Pour utiliser la Plateforme, vous devez <strong>créer un compte</strong> en fournissant :</p>
+                <ul>
+                    <li>Un <strong>email valide</strong>.</li>
+                    <li>Un <strong>mot de passe sécurisé</strong> (8 caractères minimum).</li>
+                    <li>Votre <strong>nom et prénom</strong>.</li>
+                </ul>
+                <p>Vous <strong>garantissez</strong> que les informations fournies sont <strong>exactes et à jour</strong>.</p>
+
+                <h3>3.2. Responsabilités de l'utilisateur</h3>
+                <p>Vous êtes <strong>seul responsable</strong> de la <strong>sécurité de votre compte</strong> (mot de passe, accès).
+                Vous <strong>ne devez pas</strong> :</p>
+                <ul>
+                    <li>Partager votre compte avec un tiers.</li>
+                    <li>Utiliser un faux nom ou une fausse identité.</li>
+                    <li>Publier des <strong>informations fausses ou trompeuses</strong> (notamment sur les annonces).</li>
+                </ul>
+
+                <h2>4. Utilisation de la Plateforme</h2>
+                <h3>4.1. Pour les vendeurs</h3>
+                <p>Vous pouvez :</p>
+                <ul>
+                    <li><strong>Créer, modifier, ou supprimer</strong> une annonce.</li>
+                    <li><strong>Recevoir et gérer</strong> les offres d'achat.</li>
+                    <li><strong>Négocier</strong> directement avec les acheteurs.</li>
+                </ul>
+                <p>Vous <strong>devez</strong> :</p>
+                <ul>
+                    <li>Fournir des <strong>informations exactes</strong> sur votre bien (surface, état, diagnostics).</li>
+                    <li><strong>Respecter les lois en vigueur</strong> (notamment le Code de la consommation).</li>
+                    <li><strong>Payer la commission de 1,5%</strong> à la conclusion de la vente.</li>
+                </ul>
+
+                <h3>4.2. Pour les acheteurs</h3>
+                <p>Vous pouvez :</p>
+                <ul>
+                    <li><strong>Rechercher</strong> des biens selon vos critères.</li>
+                    <li><strong>Faire des offres</strong> d'achat.</li>
+                    <li><strong>Consulter</strong> les documents et diagnostics du bien.</li>
+                </ul>
+
+                <h2>5. Commission et paiement</h2>
+                <ul>
+                    <li><strong>Vendeurs</strong> : Commission de 1,5% TTC sur le prix de vente final.</li>
+                    <li><strong>Acheteurs</strong> : Aucun frais d'agence (transaction directe vendeur/acheteur).</li>
+                    <li>Le paiement doit intervenir à la signature de l'acte définitif.</li>
+                </ul>
+
+                <h2>6. Responsabilité limitée</h2>
+                <p>Immo2000 met la Plateforme à disposition en l'état. Immo2000 ne peut être tenu responsable :</p>
+                <ul>
+                    <li>Des défauts de la Plateforme.</li>
+                    <li>Des pertes de données ou des dysfonctionnements techniques.</li>
+                    <li>De la qualité ou de l'exactitude des annonces.</li>
+                    <li>Des litiges entre vendeurs et acheteurs.</li>
+                </ul>
+
+                <h2>7. Droit de modifier les CGU</h2>
+                <p>Immo2000 se réserve le droit de modifier ces CGU à tout moment. Les modifications entrent en vigueur dès leur publication. L'utilisation continue de la Plateforme après modifications vaut acceptation des nouvelles conditions.</p>
+
+                <h2>8. Contact</h2>
+                <p>Pour toute question, contact: <a href="mailto:support@immo2000.fr">support@immo2000.fr</a></p>
         <div class="mt-5 p-3 bg-light rounded">
             <h4><i class="fas fa-list"></i> Navigation rapide</h4>
             <ul class="mb-0">
@@ -374,122 +443,23 @@
     <script src="../js/cgu-manager.js"></script>
 
     <script>
-        // Configure marked
-        marked.setOptions({
-            breaks: true,
-            gfm: true
+        // Load document on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ CGU chargées avec succès');
+            // Scroll to top
+            window.scrollTo(0, 0);
         });
-
-        // Load and parse markdown file
-        async function loadLegalDocument() {
-            try {
-                const response = await fetch('cgu.md');
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-                const markdown = await response.text();
-                const html = marked.parse(markdown);
-
-                document.getElementById('cgu-content').innerHTML = html;
-
-                // Extract and set last update date
-                const dateMatch = markdown.match(/date:\s*"([^"]+)"/);
-                if (dateMatch) {
-                    document.getElementById('lastUpdateDate').textContent = dateMatch[1];
-                    checkForUpdates('cgu', dateMatch[1]);
-                }
-            } catch (error) {
-                document.getElementById('cgu-content').innerHTML = `
-                    <div class="legal-error">
-                        <i class="fas fa-exclamation-circle"></i>
-                        <p>Erreur lors du chargement du document. Veuillez réessayer.</p>
-                    </div>
-                `;
-                console.error('Erreur lors du chargement du document:', error);
-            }
-        }
-
-        // Check if CGU has been updated
-        function checkForUpdates(docType, currentDate) {
-            const storageKey = `${docType}_last_accepted_date`;
-            const lastAcceptedDate = localStorage.getItem(storageKey);
-
-            if (lastAcceptedDate && lastAcceptedDate !== currentDate) {
-                document.getElementById('updateNotification').style.display = 'block';
-            }
-        }
 
         // Export PDF - delegate to PDFExporter utility
         function exportPDF(docType) {
-            PDFExporter.exportPDF(docType);
+            if (typeof PDFExporter !== 'undefined') {
+                PDFExporter.exportPDF(docType);
+            } else {
+                alert('Fonctionnalité d\'export non disponible');
+            }
         }
 
-        // Request signature
-        function requestSignature() {
-            const modal = new bootstrap.Modal(document.getElementById('signatureModal') || createSignatureModal());
-            modal.show();
-        }
 
-        // Create signature modal
-        function createSignatureModal() {
-            const modal = document.createElement('div');
-            modal.id = 'signatureModal';
-            modal.className = 'modal fade';
-            modal.setAttribute('tabindex', '-1');
-            modal.innerHTML = `
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header bg-primary text-white">
-                            <h5 class="modal-title"><i class="fas fa-pen-fancy"></i> Signature Électronique</h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body">
-                            <p><strong>Signer ce document électroniquement</strong></p>
-                            <form id="signatureForm">
-                                <div class="mb-3">
-                                    <label class="form-label">Nom complet</label>
-                                    <input type="text" class="form-control" id="signerName" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="signerEmail" required>
-                                </div>
-                                <div class="alert alert-info">
-                                    <i class="fas fa-info-circle"></i>
-                                    Signature sécurisée via <strong>YousSign</strong>
-                                </div>
-                                <button type="submit" class="btn btn-primary w-100">
-                                    <i class="fas fa-check"></i> Envoyer la demande
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            document.getElementById('signatureForm').addEventListener('submit', handleSignature);
-            return modal;
-        }
-
-        // Handle signature
-        function handleSignature(e) {
-            e.preventDefault();
-            const name = document.getElementById('signerName').value;
-            const email = document.getElementById('signerEmail').value;
-
-            localStorage.setItem('signature_pending', JSON.stringify({
-                name, email,
-                documentType: 'cgu',
-                timestamp: new Date().toISOString()
-            }));
-
-            alert('✅ Demande de signature envoyée.\nUn email confirmatif a été envoyé à ' + email);
-            bootstrap.Modal.getInstance(document.getElementById('signatureModal')).hide();
-        }
-
-        // Load document on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            loadLegalDocument();
-        });
 
         // Chatbot integration
         function openChatbot() {
@@ -499,11 +469,6 @@
                 console.log('Chatbot not loaded yet');
             }
         }
-
-        // Scroll to top
-        window.addEventListener('load', function() {
-            window.scrollTo(0, 0);
-        });
     </script>
 </body>
 </html>
