@@ -24,7 +24,10 @@ class User(db.Model):
         prenom (str): Prénom de l'utilisateur.
         telephone (str, optional): Numéro de téléphone.
         adresse_contact (str, optional): Adresse postale.
-        role (str): Rôle enum ('vendeur', 'acheteur', 'agent').
+        role (str): Rôle héritée (ancien système, pour compatibilité).
+        role_actif (str): Rôle actuellement actif ('acheteur' ou 'vendeur').
+        est_acheteur (bool): Utilisateur peut agir comme acheteur.
+        est_vendeur (bool): Utilisateur peut agir comme vendeur.
         actif (bool): Indique si le compte est actif.
         date_inscription (datetime): Datetime d'inscription.
         date_derniere_connexion (datetime, optional): Dernière connexion.
@@ -53,6 +56,11 @@ class User(db.Model):
     date_inscription = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
     date_derniere_connexion = db.Column(db.DateTime(timezone=True), nullable=True)
     updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Colonnes rôles multiples (système unifié)
+    est_acheteur = db.Column(db.Boolean, default=True, index=True)  # Tous les utilisateurs sont acheteurs par défaut
+    est_vendeur = db.Column(db.Boolean, default=False, index=True)  # Optionnel : peut devenir vendeur
+    role_actif = db.Column(db.String(50), default="acheteur")  # 'acheteur' ou 'vendeur' - rôle actuellement actif
 
     # Colonnes OAuth
     google_id = db.Column(db.String(255), nullable=True, unique=True, index=True)
@@ -126,6 +134,9 @@ class User(db.Model):
             "nom": self.nom,
             "prenom": self.prenom,
             "role": self.role,
+            "role_actif": self.role_actif,
+            "est_acheteur": self.est_acheteur,
+            "est_vendeur": self.est_vendeur,
             "actif": self.actif,
             "date_inscription": self.date_inscription.isoformat() if self.date_inscription else None,
         }
@@ -134,6 +145,47 @@ class User(db.Model):
             data["email"] = self.email
 
         return data
+
+    def switch_role(self, new_role: str) -> bool:
+        """
+        Change le rôle actif de l'utilisateur.
+
+        Args:
+            new_role (str): Nouveau rôle ('acheteur' ou 'vendeur').
+
+        Returns:
+            bool: True si le switch est réussi, False sinon.
+
+        Example:
+            >>> user.switch_role('vendeur')
+            True
+        """
+        if new_role == 'acheteur' and self.est_acheteur:
+            self.role_actif = 'acheteur'
+            return True
+        elif new_role == 'vendeur' and self.est_vendeur:
+            self.role_actif = 'vendeur'
+            return True
+        return False
+
+    def enable_vendor_role(self) -> bool:
+        """
+        Active le rôle vendeur pour l'utilisateur.
+
+        Returns:
+            bool: True si l'activation est réussie, False sinon.
+
+        Example:
+            >>> user.enable_vendor_role()
+            True
+        """
+        if not self.est_vendeur:
+            self.est_vendeur = True
+            # Si l'utilisateur devient vendeur, le rendre actif
+            if self.role_actif == 'acheteur':
+                pass  # Garder l'acheteur actif, l'utilisateur peut switcher manuellement
+            return True
+        return False
 
     @classmethod
     def find_by_email(cls, email: str):
