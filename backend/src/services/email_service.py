@@ -1,0 +1,386 @@
+"""
+Service d'envoi d'emails via SMTP.
+
+Gère l'envoi d'emails HTML pour les notifications de visite et feedbacks.
+"""
+
+import os
+import smtplib
+import logging
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from typing import Optional
+
+logger = logging.getLogger(__name__)
+
+
+class EmailServiceError(Exception):
+    """Exception personnalisée pour les erreurs d'email."""
+    pass
+
+
+class EmailService:
+    """Service pour envoyer des emails via SMTP."""
+
+    @staticmethod
+    def envoyer_email(
+        destinataire: str,
+        sujet: str,
+        corps_html: str,
+        corps_texte: Optional[str] = None
+    ) -> bool:
+        """
+        Envoyer un email au format HTML.
+
+        Args:
+            destinataire: Adresse email du destinataire
+            sujet: Sujet de l'email
+            corps_html: Contenu HTML de l'email
+            corps_texte: Contenu texte (fallback si HTML non supporté)
+
+        Returns:
+            True si succès, False si erreur
+
+        Raises:
+            EmailServiceError: En cas d'erreur SMTP ou configuration manquante
+        """
+        try:
+            # Récupérer config SMTP des variables d'environnement
+            smtp_host = os.getenv("SMTP_HOST")
+            smtp_port = os.getenv("SMTP_PORT")
+            email_user = os.getenv("EMAIL_USER")
+            email_password = os.getenv("EMAIL_PASSWORD")
+
+            # Vérifier que les variables d'env sont présentes
+            if not all([smtp_host, smtp_port, email_user, email_password]):
+                raise EmailServiceError(
+                    "Variables SMTP manquantes (.env): SMTP_HOST, SMTP_PORT, EMAIL_USER, EMAIL_PASSWORD"
+                )
+
+            # Créer le message MIME
+            msg = MIMEMultipart("alternative")
+            msg["From"] = email_user
+            msg["To"] = destinataire
+            msg["Subject"] = sujet
+
+            # Ajouter version texte (fallback)
+            if corps_texte:
+                msg.attach(MIMEText(corps_texte, "plain"))
+
+            # Ajouter version HTML (préféré)
+            msg.attach(MIMEText(corps_html, "html"))
+
+            # Envoyer via SMTP
+            with smtplib.SMTP(smtp_host, int(smtp_port)) as server:
+                # Utiliser STARTTLS pour sécuriser la connexion
+                server.starttls()
+                # Se connecter
+                server.login(email_user, email_password)
+                # Envoyer le message
+                server.send_message(msg)
+
+            logger.info(f"✅ Email envoyé à {destinataire} - Sujet: {sujet}")
+            return True
+
+        except smtplib.SMTPAuthenticationError as e:
+            logger.error(f"❌ Erreur authentification SMTP: {e}")
+            raise EmailServiceError(f"Authentification SMTP échouée: {e}")
+
+        except smtplib.SMTPException as e:
+            logger.error(f"❌ Erreur SMTP: {e}")
+            raise EmailServiceError(f"Erreur SMTP: {e}")
+
+        except Exception as e:
+            logger.error(f"❌ Erreur envoi email à {destinataire}: {e}")
+            raise EmailServiceError(f"Erreur envoi email: {e}")
+
+    @staticmethod
+    def generer_email_feedback(
+        visite,
+        acheteur,
+        annonce,
+        est_rappel: bool = True
+    ) -> str:
+        """
+        Générer le HTML pour un email de feedback.
+
+        Args:
+            visite: Objet Visite
+            acheteur: Objet Acheteur
+            annonce: Objet Annonce
+            est_rappel: True si c'est un rappel, False si confirmation
+
+        Returns:
+            Contenu HTML formaté
+        """
+        nom_acheteur = acheteur.utilisateur.prenom if acheteur and acheteur.utilisateur else "Ami"
+        adresse = annonce.adresse if annonce else "Bien immobilier"
+        code_postal = annonce.code_postal if annonce else ""
+        ville = annonce.ville if annonce else ""
+        date_heure = visite.date_heure.strftime("%d/%m/%Y à %H:%M") if visite.date_heure else ""
+        visite_id = visite.id
+        annonce_id = annonce.annonce_id if annonce else ""
+
+        if est_rappel:
+            titre = "Votre avis compte pour nous !"
+            bouton_text = "Laisser un feedback"
+            intro = f"Vous avez visité l'annonce <strong>{adresse} ({code_postal} {ville})</strong> le <strong>{date_heure}</strong>."
+            message = "Pouvez-vous nous laisser un <strong>feedback</strong> ? Cela nous aide à améliorer notre service et aide les autres acheteurs."
+        else:
+            titre = "Merci pour votre feedback !"
+            bouton_text = "Voir votre avis"
+            intro = f"Merci d'avoir visité l'annonce <strong>{adresse}</strong> et d'avoir pris le temps de nous laisser un avis."
+            message = "Consultez votre feedback et celui des autres acheteurs."
+
+        html = f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {{
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }}
+        .container {{
+            max-width: 600px;
+            margin: 20px auto;
+            background: #FFFFFF;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }}
+        .header {{
+            text-align: center;
+            margin-bottom: 20px;
+        }}
+        .logo {{
+            font-size: 24px;
+            font-weight: bold;
+            color: #2E86C1;
+        }}
+        h2 {{
+            color: #2E86C1;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }}
+        p {{
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }}
+        .button {{
+            background-color: #2E86C1;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            font-weight: bold;
+            margin: 20px 0;
+            transition: background-color 0.3s;
+        }}
+        .button:hover {{
+            background-color: #1a5a96;
+        }}
+        .link {{
+            color: #2E86C1;
+            text-decoration: none;
+        }}
+        .link:hover {{
+            text-decoration: underline;
+        }}
+        .details {{
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-left: 4px solid #2E86C1;
+            margin: 20px 0;
+        }}
+        .footer {{
+            margin-top: 30px;
+            font-size: 12px;
+            color: #777;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+            text-align: center;
+        }}
+        .address {{
+            font-style: italic;
+            color: #666;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🏠 Immo2000</div>
+        </div>
+
+        <h2>{titre}</h2>
+        <p>Bonjour {nom_acheteur},</p>
+
+        <div class="details">
+            <p><strong>Annonce:</strong> <span class="address">{adresse} ({code_postal} {ville})</span></p>
+            <p><strong>Date de visite:</strong> {date_heure}</p>
+        </div>
+
+        <p>{intro}</p>
+        <p>{message}</p>
+
+        <center>
+            <a href="https://immo2000.fr/feedback?visite_id={visite_id}" class="button">{bouton_text}</a>
+        </center>
+
+        <p>Ou <a href="https://immo2000.fr/annonces/{annonce_id}" class="link">consultez l'annonce</a>.</p>
+
+        <div class="footer">
+            <p>© 2026 Immo2000. Tous droits réservés.</p>
+            <p><a href="https://immo2000.fr" class="link">immo2000.fr</a></p>
+            <p><small>Cet email a été envoyé à {acheteur.utilisateur.email if acheteur and acheteur.utilisateur else destinataire}.</small></p>
+        </div>
+    </div>
+</body>
+</html>
+"""
+        return html
+
+    @staticmethod
+    def generer_email_modification_rdv(
+        vendeur,
+        acheteur,
+        annonce,
+        visite,
+        est_modification: bool = True
+    ) -> str:
+        """
+        Générer le HTML pour un email de modification/annulation de RDV.
+
+        Args:
+            vendeur: Objet Utilisateur (vendeur)
+            acheteur: Objet Acheteur
+            annonce: Objet Annonce
+            visite: Objet Visite
+            est_modification: True si modification, False si annulation
+
+        Returns:
+            Contenu HTML formaté
+        """
+        nom_vendeur = vendeur.prenom if vendeur else "Propriétaire"
+        nom_acheteur = acheteur.utilisateur.prenom if acheteur and acheteur.utilisateur else "Acheteur"
+        adresse = annonce.adresse if annonce else "Bien immobilier"
+        date_heure = visite.date_heure.strftime("%d/%m/%Y à %H:%M") if visite.date_heure else ""
+
+        if est_modification:
+            titre = "Modification de votre RDV"
+            message = f"Le RDV pour l'annonce <strong>{adresse}</strong> a été <strong>déplacé</strong> au <strong>{date_heure}</strong>."
+            icone = "🔔"
+        else:
+            titre = "Annulation de votre RDV"
+            message = f"Le RDV pour l'annonce <strong>{adresse}</strong> a été <strong>annulé</strong>."
+            icone = "❌"
+
+        html = f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {{
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }}
+        .container {{
+            max-width: 600px;
+            margin: 20px auto;
+            background: #FFFFFF;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }}
+        .header {{
+            text-align: center;
+            margin-bottom: 20px;
+        }}
+        .logo {{
+            font-size: 24px;
+            font-weight: bold;
+            color: #2E86C1;
+        }}
+        h2 {{
+            color: #2E86C1;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }}
+        p {{
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }}
+        .alert {{
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+        }}
+        .alert-danger {{
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+        }}
+        .details {{
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-left: 4px solid #2E86C1;
+            margin: 20px 0;
+        }}
+        .footer {{
+            margin-top: 30px;
+            font-size: 12px;
+            color: #777;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+            text-align: center;
+        }}
+        .link {{
+            color: #2E86C1;
+            text-decoration: none;
+        }}
+        .link:hover {{
+            text-decoration: underline;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🏠 Immo2000</div>
+        </div>
+
+        <h2>{icone} {titre}</h2>
+
+        <p>Bonjour {nom_vendeur},</p>
+
+        <div class="alert {'alert-danger' if not est_modification else ''}">
+            <p>{message}</p>
+        </div>
+
+        <div class="details">
+            <p><strong>Annonce:</strong> {adresse}</p>
+            <p><strong>Acheteur:</strong> {nom_acheteur}</p>
+            <p><strong>Date et heure:</strong> {date_heure if est_modification else 'Annulé'}</p>
+        </div>
+
+        <p>Pour consulter tous vos RDV, connectez-vous à votre <a href="https://immo2000.fr/dashboard" class="link">dashboard</a>.</p>
+
+        <div class="footer">
+            <p>© 2026 Immo2000. Tous droits réservés.</p>
+            <p><a href="https://immo2000.fr" class="link">immo2000.fr</a></p>
+        </div>
+    </div>
+</body>
+</html>
+"""
+        return html
