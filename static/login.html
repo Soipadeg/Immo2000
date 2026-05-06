@@ -55,9 +55,7 @@
                                     <small class="form-text">Minimum 6 caractères</small>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary w-100 mb-3">
-                                    <i class="fas fa-sign-in-alt"></i> Se connecter
-                                </button>
+                                <div class=\"alert alert-info\" role=\"alert\">\n                                    <small>\n                                        <i class=\"fas fa-shield-alt\"></i> En vous connectant, vous acceptez nos <a href=\"legal/cgu.html\" target=\"_blank\" class=\"text-primary fw-bold\">Conditions Générales</a> et notre <a href=\"legal/politique-confidentialite.html\" target=\"_blank\" class=\"text-primary fw-bold\">Politique de Confidentialité</a>\n                                    </small>\n                                </div>\n\n                                <button type=\"submit\" class=\"btn btn-primary w-100 mb-3\">\n                                    <i class=\"fas fa-sign-in-alt\"></i> Se connecter\n                                </button>
                             </form>
 
                             <!-- Loading Spinner -->
@@ -81,7 +79,15 @@
     <!-- Footer -->
     <footer>
         <div class="container">
-            <p>&copy; 2024 Immo2000. Tous droits réservés.</p>
+            <p>&copy; 2026 immo2000. Tous droits réservés.</p>
+            <p>
+                <a href="legal/cgu.html">CGU</a> |
+                <a href="legal/politique-confidentialite.html">Politique de Confidentialité</a> |
+                <a href="faq.html">FAQ</a> |
+                <a href="guides.html">Guides</a> |
+                <a href="modeles.html">Modèles</a> |
+                <a href="outils.html">Outils</a>
+            </p>
         </div>
     </footer>
 
@@ -110,6 +116,7 @@
     <script src="https://cdn.jsdelivr.net/npm/axios@1.4.0/dist/axios.min.js"></script>
     <script src="/static/js/app.js"></script>
     <script src="/static/js/chatbot.js"></script>
+    <script src="/static/js/cgu-manager.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const loginForm = document.getElementById('loginForm');

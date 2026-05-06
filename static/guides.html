@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guides - immo2000</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2E86C1;
+            --secondary-color: #1E5A7A;
+            --light-color: #E8F4F8;
+            --text-dark: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-dark);
+            background-color: #f8f9fa;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: var(--primary-color);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white !important;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: white !important;
+        }
+
+        /* Header */
+        .guides-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 3rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .guides-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .guides-header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        /* Tabs Navigation */
+        .nav-tabs {
+            border-bottom: 2px solid #dee2e6;
+            margin-bottom: 2rem;
+        }
+
+        .nav-tabs .nav-link {
+            color: var(--text-dark);
+            border: none;
+            border-bottom: 3px solid transparent;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .nav-tabs .nav-link:hover {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+            background-color: var(--light-color);
+        }
+
+        .nav-tabs .nav-link.active {
+            color: var(--primary-color);
+            background-color: transparent;
+            border-bottom-color: var(--primary-color);
+        }
+
+        /* Content Container */
+        .tab-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            min-height: 400px;
+        }
+
+        .tab-pane {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Markdown Styling */
+        .guide-content h1 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--light-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .guide-content h2 {
+            color: var(--secondary-color);
+            font-size: 1.5rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .guide-content h3 {
+            color: var(--text-dark);
+            font-size: 1.2rem;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .guide-content p {
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .guide-content ul,
+        .guide-content ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .guide-content li {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+
+        .guide-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .guide-content a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        /* Tables */
+        .guide-content table {
+            width: 100%;
+            margin: 1.5rem 0;
+            border-collapse: collapse;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .guide-content table thead {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .guide-content table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            border: none;
+        }
+
+        .guide-content table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .guide-content table tbody tr:hover {
+            background-color: var(--light-color);
+        }
+
+        /* Blockquotes */
+        .guide-content blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem;
+            margin: 1.5rem 0;
+            background-color: var(--light-color);
+            border-radius: 4px;
+            font-style: italic;
+        }
+
+        .guide-content blockquote p {
+            margin-bottom: 0;
+        }
+
+        /* Code */
+        .guide-content code {
+            background-color: #f5f5f5;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #d63384;
+        }
+
+        .guide-content pre {
+            background-color: #f5f5f5;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+
+        .guide-content pre code {
+            color: var(--text-dark);
+            padding: 0;
+        }
+
+        /* Loading State */
+        .guide-loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--primary-color);
+        }
+
+        .spinner-border {
+            color: var(--primary-color);
+        }
+
+        /* Error State */
+        .guide-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        footer a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .guides-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .guides-header p {
+                font-size: 1rem;
+            }
+
+            .nav-tabs .nav-link {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .tab-content {
+                padding: 1rem;
+            }
+
+            .guide-content h1 {
+                font-size: 1.5rem;
+            }
+
+            .guide-content h2 {
+                font-size: 1.2rem;
+            }
+
+            .guide-content table {
+                font-size: 0.9rem;
+            }
+
+            .guide-content table th,
+            .guide-content table td {
+                padding: 0.5rem;
+            }
+        }
+
+        /* Chatbot Integration */
+        .chatbot-widget-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-size: 1.5rem;
+            z-index: 999;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chatbot-widget-btn:hover {
+            background-color: var(--secondary-color);
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-home"></i> immo2000
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Accueil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="matching.html">Annonces</a></li>
+                    <li class="nav-item"><a class="nav-link" href="simulateur_pret.html">Simulateur</a></li>
+                    <li class="nav-item"><a class="nav-link" href="faq.html">FAQ</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="guides.html">Guides</a></li>
+                    <li class="nav-item"><a class="nav-link" href="modeles.html">Modèles</a></li>
+                    <li class="nav-item"><a class="nav-link" href="dashboard.html">Connexion</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <section class="guides-header">
+        <div class="container">
+            <h1><i class="fas fa-book"></i> Nos Guides Pratiques</h1>
+            <p>Tout ce que vous devez savoir pour acheter ou vendre sans agence immobilière</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container mb-5">
+        <!-- Tabs Navigation -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="acheter-tab" data-bs-toggle="tab" data-bs-target="#acheter"
+                    type="button" role="tab" aria-controls="acheter" aria-selected="true">
+                    <i class="fas fa-search"></i> Guide Acheter
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="acheteur-tab" data-bs-toggle="tab" data-bs-target="#acheteur"
+                    type="button" role="tab" aria-controls="acheteur" aria-selected="false">
+                    <i class="fas fa-coins"></i> Financer & Négocier
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="vendre-tab" data-bs-toggle="tab" data-bs-target="#vendre"
+                    type="button" role="tab" aria-controls="vendre" aria-selected="false">
+                    <i class="fas fa-tag"></i> Guide Vendre
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Tab 1: Acheter -->
+            <div class="tab-pane fade show active" id="acheter" role="tabpanel" aria-labelledby="acheter-tab">
+                <div id="acheter-content" class="guide-content">
+                    <div class="guide-loading">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Chargement...</span>
+                        </div>
+                        <p>Chargement du guide...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Acheteur (Financer & Négocier) -->
+            <div class="tab-pane fade" id="acheteur" role="tabpanel" aria-labelledby="acheteur-tab">
+                <div id="acheteur-content" class="guide-content">
+                    <div class="guide-loading">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Chargement...</span>
+                        </div>
+                        <p>Chargement du guide...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Vendre -->
+            <div class="tab-pane fade" id="vendre" role="tabpanel" aria-labelledby="vendre-tab">
+                <div id="vendre-content" class="guide-content">
+                    <div class="guide-loading">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Chargement...</span>
+                        </div>
+                        <p>Chargement du guide...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 immo2000. Tous droits réservés.</p>
+            <p>
+                <a href="legal/cgu.html">CGU</a> |
+                <a href="legal/politique-confidentialite.html">Politique de Confidentialité</a> |
+                <a href="faq.html">FAQ</a> |
+                <a href="guides.html">Guides</a> |
+                <a href="modeles.html">Modèles</a> |
+                <a href="outils.html">Outils</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Chatbot Widget Button -->
+    <button class="chatbot-widget-btn" title="Ouvrir le chatbot" onclick="openChatbot()">
+        <i class="fas fa-comments"></i>
+    </button>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/+esm"></script>
+
+    <script>
+        // Configure marked
+        marked.setOptions({
+            breaks: true,
+            gfm: true
+        });
+
+        // Load and parse markdown files
+        async function loadGuide(filename, elementId) {
+            try {
+                const response = await fetch(`guides/${filename}`);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+                const markdown = await response.text();
+                const html = marked.parse(markdown);
+
+                document.getElementById(elementId).innerHTML = html;
+            } catch (error) {
+                document.getElementById(elementId).innerHTML = `
+                    <div class="guide-error">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>Erreur lors du chargement du guide. Veuillez réessayer.</p>
+                    </div>
+                `;
+                console.error(`Erreur lors du chargement de ${filename}:`, error);
+            }
+        }
+
+        // Load all guides on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadGuide('guide_acheter.md', 'acheter-content');
+            loadGuide('guide_acheteur.md', 'acheteur-content');
+            loadGuide('guide_vendre.md', 'vendre-content');
+        });
+
+        // Chatbot integration (placeholder function)
+        function openChatbot() {
+            // This will be implemented when chatbot widget is loaded
+            if (typeof window.chatbotWidget !== 'undefined') {
+                window.chatbotWidget.open();
+            } else {
+                console.log('Chatbot not loaded yet');
+            }
+        }
+
+        // Scroll to top when tab changes
+        document.querySelectorAll('[role="tab"]').forEach(tab => {
+            tab.addEventListener('click', function() {
+                window.scrollTo(0, 0);
+            });
+        });
+    </script>
+</body>
+</html>

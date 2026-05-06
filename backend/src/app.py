@@ -29,6 +29,7 @@ from src.routes.estimations import estimations_bp
 from src.routes.simulateur_pret import simulateur_bp
 from src.routes.visites import visites_bp, feedbacks_bp
 from src.routes.chatbot import chatbot_bp
+from src.routes.faq import faq_bp
 from src.services.scheduler import SchedulerService
 from src.services.chatbot import init_chatbot
 from src.config import get_config
@@ -115,6 +116,11 @@ def create_app(config_name: str = None) -> Flask:
         """Sert la page d'erreur."""
         return send_from_directory(app.static_folder, "error.html")
 
+    @app.route("/faq", methods=["GET"])
+    def faq_page():
+        """Sert la page FAQ."""
+        return send_from_directory(app.static_folder, "faq.html")
+
     # Fallback pour les routes inconnues - serve index.html pour Single Page App
     @app.route("/<path:path>")
     def fallback(path):
@@ -169,6 +175,10 @@ def create_app(config_name: str = None) -> Flask:
 
     # Blueprints - Chatbot
     app.register_blueprint(chatbot_bp)
+
+    # Blueprints - FAQ
+    app.register_blueprint(faq_bp)
+
     @app.errorhandler(404)
     def not_found(error):
         return {"error": "Not found"}, 404
