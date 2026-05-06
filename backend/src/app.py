@@ -28,7 +28,9 @@ from src.routes.biens import biens_bp
 from src.routes.estimations import estimations_bp
 from src.routes.simulateur_pret import simulateur_bp
 from src.routes.visites import visites_bp, feedbacks_bp
+from src.routes.chatbot import chatbot_bp
 from src.services.scheduler import SchedulerService
+from src.services.chatbot import init_chatbot
 from src.config import get_config
 
 # Configuration
@@ -115,7 +117,8 @@ def create_app(config_name: str = None) -> Flask:
     # Blueprints - Feedbacks (Avis post-visite)
     app.register_blueprint(feedbacks_bp)
 
-    # Error handlers
+    # Blueprints - Chatbot
+    app.register_blueprint(chatbot_bp)
     @app.errorhandler(404)
     def not_found(error):
         return {"error": "Not found"}, 404
@@ -128,6 +131,9 @@ def create_app(config_name: str = None) -> Flask:
     # Context pour créer les tables
     with app.app_context():
         db.create_all()
+
+        # Initialiser le chatbot avec le dataset JSON
+        init_chatbot()
 
         # Initialiser le scheduler pour les tâches planifiées (feedback reminders)
         if os.getenv("FLASK_ENV") != "testing":
