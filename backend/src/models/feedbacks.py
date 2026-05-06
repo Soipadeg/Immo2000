@@ -44,7 +44,7 @@ class Feedback(db.Model):
 
     acheteur_id = db.Column(
         db.Integer,
-        ForeignKey("acheteurs.id", ondelete="CASCADE"),
+        ForeignKey("acheteurs.acheteur_id", ondelete="CASCADE"),
         nullable=False,
         index=True
     )

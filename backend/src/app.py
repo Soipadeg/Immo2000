@@ -9,7 +9,7 @@ Configure :
 - Blueprints
 """
 
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_cors import CORS
 import logging
 import os
@@ -49,7 +49,11 @@ def create_app(config_name: str = None) -> Flask:
     if config_name is None:
         config_name = os.getenv("FLASK_ENV", "development")
 
-    app = Flask(__name__)
+    # Déterminer le chemin du dossier statique (au niveau du projet, pas du backend)
+    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+    static_dir = os.path.join(base_dir, "static")
+
+    app = Flask(__name__, static_folder=static_dir, static_url_path="/static")
 
     # Configuration
     config = get_config(config_name)
@@ -77,7 +81,55 @@ def create_app(config_name: str = None) -> Flask:
 
     @app.route("/", methods=["GET"])
     def index():
-        """Endpoint racine."""
+        """Sert la page d'accueil statique."""
+        return send_from_directory(app.static_folder, "index.html")
+
+    # Routes pour les pages statiques
+    @app.route("/login", methods=["GET"])
+    def login_page():
+        """Sert la page de connexion."""
+        return send_from_directory(app.static_folder, "login.html")
+
+    @app.route("/register", methods=["GET"])
+    def register_page():
+        """Sert la page d'inscription."""
+        return send_from_directory(app.static_folder, "register.html")
+
+    @app.route("/dashboard", methods=["GET"])
+    def dashboard_page():
+        """Sert la page du tableau de bord."""
+        return send_from_directory(app.static_folder, "dashboard.html")
+
+    @app.route("/matching", methods=["GET"])
+    def matching_page():
+        """Sert la page de matching."""
+        return send_from_directory(app.static_folder, "matching.html")
+
+    @app.route("/simulateur-pret", methods=["GET"])
+    def simulateur_pret_page():
+        """Sert la page du simulateur de prêt."""
+        return send_from_directory(app.static_folder, "simulateur_pret.html")
+
+    @app.route("/error", methods=["GET"])
+    def error_page():
+        """Sert la page d'erreur."""
+        return send_from_directory(app.static_folder, "error.html")
+
+    # Fallback pour les routes inconnues - serve index.html pour Single Page App
+    @app.route("/<path:path>")
+    def fallback(path):
+        """Fallback pour les routes statiques."""
+        # Vérifier si c'est un fichier statique
+        file_path = os.path.join(app.static_folder, path)
+        if os.path.isfile(file_path):
+            return send_from_directory(app.static_folder, path)
+        # Sinon, servir la page d'accueil
+        return send_from_directory(app.static_folder, "index.html")
+
+    # Ancien endpoint pour compatibilité
+    @app.route("/api", methods=["GET"])
+    def api_info():
+        """Endpoint API racine."""
         return {
             "name": "Immo2000 Backend API",
             "version": "0.1.0",
@@ -86,8 +138,6 @@ def create_app(config_name: str = None) -> Flask:
             "auth": "/auth/register, /auth/login, /auth/refresh, /auth/me",
             "annonces": "/api/v1/annonces (CRUD operations)"
         }
-
-    # Blueprints - Authentification
     app.register_blueprint(auth_bp)
 
     # Blueprints - Annonces
