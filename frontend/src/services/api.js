@@ -124,6 +124,18 @@ export const authApi = {
 };
 
 /**
+ * Fonction de connexion (pour LoginPage)
+ */
+export const login = (credentials) =>
+  apiClient.post('/auth/login', credentials);
+
+/**
+ * Fonction d'inscription (pour RegisterPage)
+ */
+export const register = (userData) =>
+  apiClient.post('/auth/register', userData);
+
+/**
  * Service administrateur
  */
 export const adminApi = {

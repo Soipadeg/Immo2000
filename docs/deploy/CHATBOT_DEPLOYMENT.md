@@ -48,20 +48,20 @@ grep -q "chatbotOpen" frontend/src/App.jsx && echo "✅ State added" || echo "�
 
 ```bash
 # ✅ API Reference
-test -f docs/CHATBOT_API.md && echo "✅ CHATBOT_API.md EXISTS" || echo "❌ MISSING"
-wc -l docs/CHATBOT_API.md
+test -f ../advanced/CHATBOT_API.md && echo "✅ CHATBOT_API.md EXISTS" || echo "❌ MISSING"
+wc -l ../advanced/CHATBOT_API.md
 
 # ✅ User Guide
-test -f docs/CHATBOT_GUIDE.md && echo "✅ CHATBOT_GUIDE.md EXISTS" || echo "❌ MISSING"
-wc -l docs/CHATBOT_GUIDE.md
+test -f ../advanced/CHATBOT_GUIDE.md && echo "✅ CHATBOT_GUIDE.md EXISTS" || echo "❌ MISSING"
+wc -l ../advanced/CHATBOT_GUIDE.md
 
 # ✅ Implementation
-test -f CHATBOT_IMPLEMENTATION.md && echo "✅ CHATBOT_IMPLEMENTATION.md EXISTS" || echo "❌ MISSING"
-wc -l CHATBOT_IMPLEMENTATION.md
+test -f ../advanced/CHATBOT_IMPLEMENTATION.md && echo "✅ CHATBOT_IMPLEMENTATION.md EXISTS" || echo "❌ MISSING"
+wc -l ../advanced/CHATBOT_IMPLEMENTATION.md
 
 # ✅ Quickstart
-test -f CHATBOT_QUICKSTART.md && echo "✅ CHATBOT_QUICKSTART.md EXISTS" || echo "❌ MISSING"
-wc -l CHATBOT_QUICKSTART.md
+test -f ../start/CHATBOT_QUICKSTART.md && echo "✅ CHATBOT_QUICKSTART.md EXISTS" || echo "❌ MISSING"
+wc -l ../start/CHATBOT_QUICKSTART.md
 ```
 
 ---
@@ -296,17 +296,19 @@ git commit -m "feat: integrate chatbot into app
 ### Commit 4: Documentation
 
 ```bash
-git add docs/CHATBOT_API.md
-git add docs/CHATBOT_GUIDE.md
-git add CHATBOT_IMPLEMENTATION.md
-git add CHATBOT_QUICKSTART.md
+git add docs/advanced/CHATBOT_API.md
+git add docs/advanced/CHATBOT_GUIDE.md
+git add docs/advanced/CHATBOT_IMPLEMENTATION.md
+git add docs/start/CHATBOT_QUICKSTART.md
+git add docs/deploy/CHATBOT_DEPLOYMENT.md
 
 git commit -m "docs: add comprehensive chatbot documentation
 
-- Add CHATBOT_API.md (500+ lines)
-- Add CHATBOT_GUIDE.md (400+ lines)
-- Add CHATBOT_IMPLEMENTATION.md (700+ lines)
-- Add CHATBOT_QUICKSTART.md (350+ lines)"
+- Add CHATBOT_API.md (500+ lines) in docs/advanced/
+- Add CHATBOT_GUIDE.md (400+ lines) in docs/advanced/
+- Add CHATBOT_IMPLEMENTATION.md (700+ lines) in docs/advanced/
+- Add CHATBOT_QUICKSTART.md (350+ lines) in docs/start/
+- Add CHATBOT_DEPLOYMENT.md (350+ lines) in docs/deploy/"
 ```
 
 ---
@@ -373,8 +375,8 @@ Documentation:    ~3,000 lignes
 
 ### Contact
 
-- Documentation: Voir [docs/CHATBOT_API.md](docs/CHATBOT_API.md)
-- Guide Utilisateur: Voir [docs/CHATBOT_GUIDE.md](docs/CHATBOT_GUIDE.md)
+- Documentation: Voir [../advanced/CHATBOT_API.md](../advanced/CHATBOT_API.md)
+- Guide Utilisateur: Voir [../advanced/CHATBOT_GUIDE.md](../advanced/CHATBOT_GUIDE.md)
 - Issues: Créer une issue sur GitHub
 
 ---
@@ -400,8 +402,8 @@ grep -q "chatbot" backend/src/app.py && echo "✅ Backend integrated"
 grep -q "Chatbot" frontend/src/App.jsx && echo "✅ Frontend integrated"
 
 # 5. Vérifier les docs
-test -f docs/CHATBOT_API.md && echo "✅ API doc exists"
-test -f docs/CHATBOT_GUIDE.md && echo "✅ User guide exists"
+test -f docs/advanced/CHATBOT_API.md && echo "✅ API doc exists"
+test -f docs/advanced/CHATBOT_GUIDE.md && echo "✅ User guide exists"
 test -f CHATBOT_IMPLEMENTATION.md && echo "✅ Implementation doc exists"
 test -f CHATBOT_QUICKSTART.md && echo "✅ Quickstart doc exists"
 
