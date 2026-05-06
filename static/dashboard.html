@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - Immo2000</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-home"></i> Immo2000
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="matching.html">Matching</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="simulateur_pret.html">Simulateur</a>
+                    </li>
+                    <li class="nav-item dropdown" id="userMenu">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user"></i> <span id="userName"></span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="logoutBtn">Déconnexion</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container mt-4">
+            <!-- Error Message -->
+            <div id="errorMessage"></div>
+
+            <!-- Success Message -->
+            <div id="successMessage"></div>
+
+            <!-- Loading Message -->
+            <div id="loadingMessage" class="loading-message">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Chargement...</span>
+                </div>
+                <p class="mt-2">Chargement des données...</p>
+            </div>
+
+            <!-- Dashboard Header -->
+            <h1 class="mb-4">
+                <i class="fas fa-tachometer-alt"></i> Tableau de Bord
+            </h1>
+
+            <!-- Tabs Navigation -->
+            <ul class="nav nav-tabs mb-4" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="buyerTab" data-bs-toggle="tab" data-bs-target="#buyerPanel" type="button" role="tab">
+                        <i class="fas fa-user"></i> Acheteur
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="sellerTab" data-bs-toggle="tab" data-bs-target="#sellerPanel" type="button" role="tab">
+                        <i class="fas fa-store"></i> Vendeur
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Tabs Content -->
+            <div class="tab-content">
+                <!-- Buyer Tab -->
+                <div class="tab-pane fade show active" id="buyerPanel" role="tabpanel">
+                    <div class="row">
+                        <!-- Annonces Matchées -->
+                        <div class="col-md-12 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="fas fa-home"></i> Annonces Matchées</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="matchingListBuyer" class="row">
+                                        <p class="text-muted">Aucune annonce matchée pour le moment.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="card">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-calculator fa-3x text-primary mb-3"></i>
+                                            <h5>Simulateur de Prêt</h5>
+                                            <p class="text-muted">Calculez votre capacité d'emprunt</p>
+                                            <a href="simulateur_pret.html" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-arrow-right"></i> Accéder
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <div class="card">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-database fa-3x text-primary mb-3"></i>
+                                            <h5>Lier à Melo/Keyzia</h5>
+                                            <p class="text-muted">Importer vos données financières</p>
+                                            <button class="btn btn-primary btn-sm" id="meloKeyziaBtns">
+                                                <i class="fas fa-link"></i> Lier
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seller Tab -->
+                <div class="tab-pane fade" id="sellerPanel" role="tabpanel">
+                    <div class="row">
+                        <!-- Mes Annonces -->
+                        <div class="col-md-12 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="fas fa-list"></i> Mes Annonces</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="no-results">
+                                        <i class="fas fa-inbox"></i>
+                                        <p class="mt-2">Fonctionnalité à venir : Publiez vos annonces pour les mettre en avant.</p>
+                                        <button class="btn btn-primary btn-sm" data-feature="Publication d'annonces">
+                                            <i class="fas fa-plus"></i> Créer une annonce
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Visites Planifiées -->
+                        <div class="col-md-12 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="fas fa-calendar-check"></i> Visites Planifiées</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="visitsList" class="table-responsive">
+                                        <p class="text-muted">Aucune visite planifiée.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Feedbacks -->
+                        <div class="col-md-12 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="fas fa-comments"></i> Feedbacks Reçus</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="feedbacksList">
+                                        <p class="text-muted">Aucun feedback pour le moment.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Immo2000. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.4.0/dist/axios.min.js"></script>
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>

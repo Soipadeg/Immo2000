@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur de Prêt - Immo2000</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-home"></i> Immo2000
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="matching.html">Matching</a>
+                    </li>
+                    <li class="nav-item" id="authLinks">
+                        <a class="nav-link" href="login.html">Connexion</a>
+                    </li>
+                    <li class="nav-item" id="authLinks">
+                        <a class="nav-link" href="register.html">Inscription</a>
+                    </li>
+                    <li class="nav-item dropdown" id="userMenu" style="display: none;">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user"></i> <span id="userName"></span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="dashboard.html">Tableau de bord</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="logoutBtn">Déconnexion</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container mt-4">
+            <!-- Page Title -->
+            <h1 class="mb-4">
+                <i class="fas fa-calculator"></i> Simulateur de Prêt Immobilier
+            </h1>
+
+            <!-- Error Message -->
+            <div id="errorMessage"></div>
+
+            <div class="row">
+                <!-- Form Column -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-edit"></i> Vos Informations</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="simulatorForm">
+                                <!-- Revenu Mensuel Net -->
+                                <div class="form-group mb-3">
+                                    <label for="revenuMensuel" class="form-label">
+                                        Revenu mensuel net <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="number" class="form-control" id="revenuMensuel" name="revenu_mensuel_net" required min="1" placeholder="€">
+                                    <small class="form-text">Salaire net mensuel</small>
+                                </div>
+
+                                <!-- Apport -->
+                                <div class="form-group mb-3">
+                                    <label for="apport" class="form-label">Apport personnel</label>
+                                    <input type="number" class="form-control" id="apport" name="apport" min="0" placeholder="€" value="0">
+                                    <small class="form-text">Montant que vous pouvez investir</small>
+                                </div>
+
+                                <!-- Taux Intérêt -->
+                                <div class="form-group mb-3">
+                                    <label for="tauxInteret" class="form-label">Taux d'intérêt annuel (%)</label>
+                                    <input type="number" class="form-control" id="tauxInteret" name="taux_interet" min="0" max="15" step="0.01" placeholder="%" value="3.5">
+                                    <small class="form-text">Taux de votre prêt hypothécaire</small>
+                                </div>
+
+                                <!-- Durée -->
+                                <div class="form-group mb-3">
+                                    <label for="duree" class="form-label">Durée du prêt (ans)</label>
+                                    <input type="number" class="form-control" id="duree" name="duree_ans" min="1" max="30" placeholder="ans" value="20">
+                                    <small class="form-text">Durée en années (1 à 30)</small>
+                                </div>
+
+                                <!-- Taux Assurance -->
+                                <div class="form-group mb-3">
+                                    <label for="tauxAssurance" class="form-label">Taux assurance emprunteur (%)</label>
+                                    <input type="number" class="form-control" id="tauxAssurance" name="taux_assurance" min="0" max="1" step="0.01" placeholder="%" value="0.3">
+                                    <small class="form-text">Généralement entre 0.2% et 0.6%</small>
+                                </div>
+
+                                <!-- Buttons -->
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-calculator"></i> Calculer
+                                    </button>
+                                    <button type="reset" class="btn btn-secondary">
+                                        <i class="fas fa-redo"></i> Réinitialiser
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Column -->
+                <div class="col-lg-6 mb-4">
+                    <!-- Loading Message -->
+                    <div id="loadingMessage" class="loading-message">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Chargement...</span>
+                        </div>
+                        <p class="mt-2">Calcul en cours...</p>
+                    </div>
+
+                    <!-- Results Section -->
+                    <div id="resultsSection" style="display: none;">
+                        <!-- Capacité d'Emprunt -->
+                        <div class="result-card mb-3">
+                            <div class="result-label">Capacité d'Emprunt</div>
+                            <div class="result-value" id="capaciteEmprunt">—</div>
+                        </div>
+
+                        <!-- Mensualité -->
+                        <div class="result-card mb-3">
+                            <div class="result-label">Mensualité</div>
+                            <div class="result-value" id="mensualite">—</div>
+                        </div>
+
+                        <!-- Coût Total -->
+                        <div class="result-card mb-3">
+                            <div class="result-label">Coût Total du Crédit</div>
+                            <div class="result-value" id="coutTotal">—</div>
+                        </div>
+
+                        <!-- Amortissement Table Section -->
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Tableau d'Amortissement (12 premiers mois)</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped" id="amortissementTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Mois</th>
+                                                <th>Capital Restant</th>
+                                                <th>Intérêts</th>
+                                                <th>Assurance</th>
+                                                <th>Mensualité</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="amortissementBody">
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <button type="button" class="btn btn-outline-primary btn-sm w-100" id="showFullTableBtn">
+                                    <i class="fas fa-expand"></i> Voir le tableau complet
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Immo2000. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <!-- Full Table Modal -->
+    <div class="modal fade" id="fullTableModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tableau d'Amortissement Complet</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="fullAmortissementTable">
+                            <thead>
+                                <tr>
+                                    <th>Mois</th>
+                                    <th>Capital Restant</th>
+                                    <th>Intérêts</th>
+                                    <th>Assurance</th>
+                                    <th>Mensualité</th>
+                                </tr>
+                            </thead>
+                            <tbody id="fullAmortissementBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.4.0/dist/axios.min.js"></script>
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/simulateur_pret.js"></script>
+</body>
+</html>

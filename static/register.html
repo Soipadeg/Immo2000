@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - Immo2000</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-home"></i> Immo2000
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Accueil</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-5">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="mb-0"><i class="fas fa-user-plus"></i> Créer un Compte</h4>
+                        </div>
+                        <div class="card-body">
+                            <!-- Error Message -->
+                            <div id="errorMessage"></div>
+
+                            <!-- Success Message -->
+                            <div id="successMessage"></div>
+
+                            <!-- Registration Form -->
+                            <form id="registerForm">
+                                <div class="form-group mb-3">
+                                    <label for="name" class="form-label">Nom complet</label>
+                                    <input type="text" class="form-control" id="name" name="name" required>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label for="email" class="form-label">Adresse email</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                    <small class="form-text">Nous ne partagerons jamais votre email</small>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label for="password" class="form-label">Mot de passe</label>
+                                    <input type="password" class="form-control" id="password" name="password" required>
+                                    <small class="form-text">Minimum 6 caractères</small>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label for="password_confirm" class="form-label">Confirmer le mot de passe</label>
+                                    <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="isSeller" name="is_seller">
+                                        <label class="form-check-label" for="isSeller">
+                                            Je suis vendeur
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary w-100 mb-3">
+                                    <i class="fas fa-user-plus"></i> Créer mon compte
+                                </button>
+                            </form>
+
+                            <!-- Loading Spinner -->
+                            <div id="loadingMessage" class="loading-message">
+                                <div class="spinner-border" role="status">
+                                    <span class="visually-hidden">Chargement...</span>
+                                </div>
+                                <p class="mt-2">Création du compte...</p>
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-light">
+                            <p class="mb-0">Vous avez déjà un compte ? <a href="login.html" class="text-primary fw-bold">Se connecter</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Immo2000. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.4.0/dist/axios.min.js"></script>
+    <script src="/static/js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const registerForm = document.getElementById('registerForm');
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+
+            registerForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const passwordConfirm = document.getElementById('password_confirm').value;
+                const isSeller = document.getElementById('isSeller').checked;
+
+                // Validation
+                if (!name.trim()) {
+                    showErrorMessage('Veuillez entrer votre nom complet');
+                    return;
+                }
+
+                if (!validateEmail(email)) {
+                    showErrorMessage('Veuillez entrer une adresse email valide');
+                    return;
+                }
+
+                if (!validatePassword(password)) {
+                    showErrorMessage('Le mot de passe doit contenir au moins 6 caractères');
+                    return;
+                }
+
+                if (password !== passwordConfirm) {
+                    showErrorMessage('Les mots de passe ne correspondent pas');
+                    return;
+                }
+
+                // Affiche le spinner
+                showLoadingSpinner();
+                errorMessage.innerHTML = '';
+                successMessage.innerHTML = '';
+
+                try {
+                    const response = await axios.post('/register', {
+                        name: name,
+                        email: email,
+                        password: password,
+                        is_seller: isSeller
+                    });
+
+                    // Affiche le message de succès
+                    const successMsg = `
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle"></i> Compte créé avec succès ! Redirection vers la connexion...
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    `;
+                    successMessage.innerHTML = successMsg;
+
+                    // Redirection vers la page de connexion après 2 secondes
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                } catch (error) {
+                    hideLoadingSpinner();
+                    let errorText = 'Erreur lors de la création du compte. Veuillez réessayer.';
+
+                    if (error.response) {
+                        if (error.response.data.message) {
+                            errorText = error.response.data.message;
+                        } else if (error.response.status === 400) {
+                            errorText = 'Cet email est déjà utilisé ou les données sont invalides';
+                        }
+                    }
+
+                    showErrorMessage(errorText);
+                } finally {
+                    registerForm.reset();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
