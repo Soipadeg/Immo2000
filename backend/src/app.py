@@ -21,6 +21,7 @@ load_dotenv()
 from src.auth.models import db
 from src.auth.routes import auth_bp
 from src.routes.annonces import annonces_bp
+from src.routes.matching import matching_bp
 from src.routes.notifications import notifications_bp
 from src.routes.admin import admin_bp
 from src.routes.biens import biens_bp
@@ -86,6 +87,9 @@ def create_app(config_name: str = None) -> Flask:
 
     # Blueprints - Annonces
     app.register_blueprint(annonces_bp)
+
+    # Blueprints - Matching (Recommendation system)
+    app.register_blueprint(matching_bp)
 
     # Blueprints - Notifications
     app.register_blueprint(notifications_bp)
