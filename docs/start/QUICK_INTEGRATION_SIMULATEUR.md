@@ -6,15 +6,18 @@
 
 ---
 
-## 📦 Fichiers créés
+## 🆚 Deux versions disponibles
 
-1. **`frontend/src/pages/SimulateurPret.jsx`** (280 lignes)
-   - Composant React principal avec logique de formulaire et appels API
+| Version | Type | Fichiers | Avantages | Idéal pour |
+|---------|------|---------|----------|-----------|
+| **React** | Composant React | SimulateurPret.jsx + .css | Intégration app, state complexe, Material-UI | App React complète |
+| **HTML/JS** | HTML/JS pur | simulateur_pret.html/.js/.css | Test local, zéro build, Bootstrap 5 | Pages statiques, démo |
 
-2. **`frontend/src/pages/SimulateurPret.css`** (250+ lignes)
-   - Styles responsive + dark mode + animations
+👉 **Voir aussi :** [Guide HTML/JS Pure](./SIMULATEUR_HTML_PURE.md)
 
-3. **`frontend/src/App.jsx`** (3 modifications)
+---
+
+## 📦 Fichiers créés (Version React)
    - Import du composant
    - Route `/simulateur-pret` ajoutée
    - Bouton de navigation dans la navbar
