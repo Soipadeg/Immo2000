@@ -214,7 +214,13 @@ const validateEmail = (email) => {
  * Valide un mot de passe
  */
 const validatePassword = (password) => {
-    return password.length >= 6;
+    // Critères de sécurité: min 8 chars, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial
+    if (password.length < 8) return false;
+    if (!/[A-Z]/.test(password)) return false;
+    if (!/[a-z]/.test(password)) return false;
+    if (!/[0-9]/.test(password)) return false;
+    if (!/[!@#$%^&*()_+\-=\[\]{};:'"<>?/\\|`~]/.test(password)) return false;
+    return true;
 };
 
 /**

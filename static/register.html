@@ -8,6 +8,130 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="/static/css/style.css" rel="stylesheet">
     <link href="/static/css/chatbot.css" rel="stylesheet">
+    <style>
+        /* Password Strength Indicator Styles */
+        .password-strength-container {
+            display: none;
+        }
+
+        .password-strength-container.active {
+            display: block;
+        }
+
+        .password-strength-bar {
+            height: 6px;
+            background-color: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .password-strength-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease, background-color 0.3s ease;
+            border-radius: 3px;
+        }
+
+        /* Strength levels */
+        .password-strength-fill.weak {
+            background-color: #dc3545;
+            width: 25%;
+        }
+
+        .password-strength-fill.fair {
+            background-color: #fd7e14;
+            width: 50%;
+        }
+
+        .password-strength-fill.good {
+            background-color: #ffc107;
+            width: 75%;
+        }
+
+        .password-strength-fill.strong {
+            background-color: #28a745;
+            width: 100%;
+        }
+
+        .password-strength-text {
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: block;
+        }
+
+        .password-strength-text.weak {
+            color: #dc3545;
+        }
+
+        .password-strength-text.fair {
+            color: #fd7e14;
+        }
+
+        .password-strength-text.good {
+            color: #ffc107;
+        }
+
+        .password-strength-text.strong {
+            color: #28a745;
+        }
+
+        /* Email Validation Styles */
+        .email-validation-message {
+            display: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-top: 0.3rem;
+        }
+
+        .email-validation-message.show {
+            display: block;
+        }
+
+        .email-validation-message.valid {
+            color: #28a745;
+        }
+
+        .email-validation-message.invalid {
+            color: #dc3545;
+        }
+
+        #email.is-invalid {
+            border-color: #dc3545;
+        }
+
+        #email.is-valid {
+            border-color: #28a745;
+        }
+
+        /* Password Match Validation Styles */
+        .password-match-message {
+            display: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-top: 0.3rem;
+        }
+
+        .password-match-message.show {
+            display: block;
+        }
+
+        .password-match-message.valid {
+            color: #28a745;
+        }
+
+        .password-match-message.invalid {
+            color: #dc3545;
+        }
+
+        #password_confirm.is-invalid {
+            border-color: #dc3545;
+        }
+
+        #password_confirm.is-valid {
+            border-color: #28a745;
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation -->
@@ -47,34 +171,42 @@
                             <!-- Registration Form -->
                             <form id="registerForm">
                                 <div class="form-group mb-3">
-                                    <label for="name" class="form-label">Nom complet</label>
-                                    <input type="text" class="form-control" id="name" name="name" required>
+                                    <label for="prenom" class="form-label">Prénom</label>
+                                    <input type="text" class="form-control" id="prenom" name="prenom" required>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label for="nom" class="form-label">Nom</label>
+                                    <input type="text" class="form-control" id="nom" name="nom" required>
                                 </div>
 
                                 <div class="form-group mb-3">
                                     <label for="email" class="form-label">Adresse email</label>
                                     <input type="email" class="form-control" id="email" name="email" required>
                                     <small class="form-text">Nous ne partagerons jamais votre email</small>
+                                    <!-- Email Validation Message -->
+                                    <small class="email-validation-message" id="emailValidationMessage"></small>
                                 </div>
 
                                 <div class="form-group mb-3">
                                     <label for="password" class="form-label">Mot de passe</label>
                                     <input type="password" class="form-control" id="password" name="password" required>
-                                    <small class="form-text">Minimum 6 caractères</small>
+                                    <small class="form-text">Minimum 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial</small>
+
+                                    <!-- Password Strength Indicator -->
+                                    <div class="password-strength-container mt-2">
+                                        <div class="password-strength-bar">
+                                            <div class="password-strength-fill" id="passwordStrengthFill"></div>
+                                        </div>
+                                        <small class="password-strength-text" id="passwordStrengthText">Entrez un mot de passe</small>
+                                    </div>
                                 </div>
 
                                 <div class="form-group mb-3">
                                     <label for="password_confirm" class="form-label">Confirmer le mot de passe</label>
                                     <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
-                                </div>
-
-                                <div class="form-group mb-3">
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" id="isSeller" name="is_seller">
-                                        <label class="form-check-label" for="isSeller">
-                                            Je suis vendeur
-                                        </label>
-                                    </div>
+                                    <!-- Password Match Validation Message -->
+                                    <small class="password-match-message" id="passwordMatchMessage"></small>
                                 </div>
 
                                 <div class="form-group mb-3">
@@ -151,23 +283,147 @@
     <script src="/static/js/chatbot.js"></script>
     <script src="/static/js/cgu-manager.js"></script>
     <script>
+        // Définir les fonctions au niveau global AVANT DOMContentLoaded
+        window.getPasswordStrength = function(password) {
+            let strength = 0;
+            let feedback = [];
+            if (password.length >= 8) strength++;
+            else feedback.push('8 caractères minimum');
+            if (/[a-z]/.test(password)) strength++;
+            else feedback.push('1 minuscule');
+            if (/[A-Z]/.test(password)) strength++;
+            else feedback.push('1 majuscule');
+            if (/[0-9]/.test(password)) strength++;
+            else feedback.push('1 chiffre');
+            if (/[!@#$%^&*()_+\-=\[\]{};:'"<>?/\\|`~]/.test(password)) strength++;
+            else feedback.push('1 caractère spécial');
+            if (password.length >= 12) strength++;
+            if (password.length >= 16) strength++;
+            let level, text;
+            if (strength <= 2) {
+                level = 'weak';
+                text = 'Mot de passe faible - ' + (feedback.length > 0 ? 'Manque: ' + feedback.slice(0, 2).join(', ') : 'Trop court');
+            } else if (strength <= 3) {
+                level = 'fair';
+                text = 'Mot de passe acceptable - ' + (feedback.length > 0 ? 'Améliorez: ' + feedback[0] : 'Pourrait être plus fort');
+            } else if (strength <= 4) {
+                level = 'good';
+                text = 'Mot de passe bon - Respecte tous les critères';
+            } else {
+                level = 'strong';
+                text = 'Mot de passe très sécurisé - Excellent!';
+            }
+            return { level, text };
+        };
+
+        window.validatePassword = function(password) {
+            if (password.length < 8) return false;
+            if (!/[A-Z]/.test(password)) return false;
+            if (!/[a-z]/.test(password)) return false;
+            if (!/[0-9]/.test(password)) return false;
+            if (!/[!@#$%^&*()_+\-=\[\]{};:'"<>?/\\|`~]/.test(password)) return false;
+            return true;
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
             const registerForm = document.getElementById('registerForm');
             const errorMessage = document.getElementById('errorMessage');
             const successMessage = document.getElementById('successMessage');
+            const emailInput = document.getElementById('email');
+            const emailValidationMessage = document.getElementById('emailValidationMessage');
+            const passwordInput = document.getElementById('password');
+            const passwordConfirmInput = document.getElementById('password_confirm');
+            const passwordMatchMessage = document.getElementById('passwordMatchMessage');
+            const strengthContainer = document.querySelector('.password-strength-container');
+            const strengthFill = document.getElementById('passwordStrengthFill');
+            const strengthText = document.getElementById('passwordStrengthText');
+
+            // Valider l'email en temps réel
+            emailInput.addEventListener('input', () => {
+                const email = emailInput.value.trim();
+
+                if (email.length === 0) {
+                    emailValidationMessage.classList.remove('show', 'valid', 'invalid');
+                    emailInput.classList.remove('is-valid', 'is-invalid');
+                } else if (validateEmail(email)) {
+                    emailValidationMessage.classList.add('show', 'valid');
+                    emailValidationMessage.classList.remove('invalid');
+                    emailValidationMessage.textContent = '✓ Email valide';
+                    emailInput.classList.add('is-valid');
+                    emailInput.classList.remove('is-invalid');
+                } else {
+                    emailValidationMessage.classList.add('show', 'invalid');
+                    emailValidationMessage.classList.remove('valid');
+                    emailValidationMessage.textContent = '✗ Format email invalide';
+                    emailInput.classList.add('is-invalid');
+                    emailInput.classList.remove('is-valid');
+                }
+            });
+
+            // Évaluer la force du mot de passe en temps réel
+            passwordInput.addEventListener('input', () => {
+                const password = passwordInput.value;
+                const strength = getPasswordStrength(password);
+
+                if (password.length === 0) {
+                    strengthContainer.classList.remove('active');
+                    strengthFill.className = 'password-strength-fill';
+                    strengthText.className = 'password-strength-text';
+                    strengthText.textContent = 'Entrez un mot de passe';
+                } else {
+                    strengthContainer.classList.add('active');
+                    strengthFill.className = 'password-strength-fill ' + strength.level;
+                    strengthText.className = 'password-strength-text ' + strength.level;
+                    strengthText.textContent = strength.text;
+                }
+
+                // Mettre à jour la validation du mot de passe confirmé
+                validatePasswordMatch();
+            });
+
+            // Valider la correspondance des mots de passe en temps réel
+            const validatePasswordMatch = () => {
+                const password = passwordInput.value;
+                const passwordConfirm = passwordConfirmInput.value;
+
+                if (passwordConfirm.length === 0) {
+                    passwordMatchMessage.classList.remove('show', 'valid', 'invalid');
+                    passwordConfirmInput.classList.remove('is-valid', 'is-invalid');
+                } else if (password === passwordConfirm) {
+                    passwordMatchMessage.classList.add('show', 'valid');
+                    passwordMatchMessage.classList.remove('invalid');
+                    passwordMatchMessage.textContent = '✓ Les mots de passe correspondent';
+                    passwordConfirmInput.classList.add('is-valid');
+                    passwordConfirmInput.classList.remove('is-invalid');
+                } else {
+                    passwordMatchMessage.classList.add('show', 'invalid');
+                    passwordMatchMessage.classList.remove('valid');
+                    passwordMatchMessage.textContent = '✗ Les mots de passe ne correspondent pas';
+                    passwordConfirmInput.classList.add('is-invalid');
+                    passwordConfirmInput.classList.remove('is-valid');
+                }
+            };
+
+            passwordConfirmInput.addEventListener('input', validatePasswordMatch);
+            passwordInput.addEventListener('input', validatePasswordMatch);
 
             registerForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
 
-                const name = document.getElementById('name').value;
-                const email = document.getElementById('email').value;
+                const prenom = document.getElementById('prenom').value.trim();
+                const nom = document.getElementById('nom').value.trim();
+                const email = document.getElementById('email').value.trim();
                 const password = document.getElementById('password').value;
                 const passwordConfirm = document.getElementById('password_confirm').value;
-                const isSeller = document.getElementById('isSeller').checked;
 
                 // Validation
-                if (!name.trim()) {
-                    showErrorMessage('Veuillez entrer votre nom complet');
+                if (!prenom) {
+                    showErrorMessage('Veuillez entrer votre prénom');
+                    return;
+                }
+
+                if (!nom) {
+                    showErrorMessage('Veuillez entrer votre nom');
                     return;
                 }
 
@@ -177,7 +433,7 @@
                 }
 
                 if (!validatePassword(password)) {
-                    showErrorMessage('Le mot de passe doit contenir au moins 6 caractères');
+                    showErrorMessage('Le mot de passe doit contenir au moins 8 caractères avec 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial');
                     return;
                 }
 
@@ -192,11 +448,12 @@
                 successMessage.innerHTML = '';
 
                 try {
-                    const response = await axios.post('/register', {
-                        name: name,
+                    const response = await axios.post('/auth/register', {
+                        prenom: prenom,
+                        nom: nom,
                         email: email,
-                        password: password,
-                        is_seller: isSeller
+                        mot_de_passe: password,
+                        role: 'acheteur'  // Rôle par défaut à l'inscription
                     });
 
                     // Affiche le message de succès
@@ -217,11 +474,13 @@
                     let errorText = 'Erreur lors de la création du compte. Veuillez réessayer.';
 
                     if (error.response) {
-                        if (error.response.data.message) {
-                            errorText = error.response.data.message;
+                        if (error.response.data.error) {
+                            errorText = error.response.data.error;
                         } else if (error.response.status === 400) {
-                            errorText = 'Cet email est déjà utilisé ou les données sont invalides';
+                            errorText = 'Vérifiez vos données et réessayez';
                         }
+                    } else if (error.request) {
+                        errorText = 'Impossible de contacter le serveur. Vérifiez votre connexion.';
                     }
 
                     showErrorMessage(errorText);
