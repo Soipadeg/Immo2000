@@ -212,6 +212,74 @@ def extract_token_from_header(auth_header: Optional[str]) -> Optional[str]:
     return parts[1]
 
 
+def generate_email_verification_token(user_id: int, email: str, expires_in: int = 86400) -> str:
+    """
+    Génère un token de vérification d'email pour confirmation RGPD.
+
+    Args:
+        user_id (int): ID de l'utilisateur.
+        email (str): Email de l'utilisateur.
+        expires_in (int): Durée de vie en secondes (défaut: 24h).
+
+    Returns:
+        str: Token JWT encodé pour vérification d'email.
+
+    Example:
+        >>> token = generate_email_verification_token(1, "user@example.com")
+        >>> len(token) > 50
+        True
+    """
+    secret_key = current_app.config.get("JWT_SECRET_KEY")
+    if not secret_key:
+        raise RuntimeError("JWT_SECRET_KEY not configured")
+
+    expiration = datetime.utcnow() + timedelta(seconds=expires_in)
+
+    payload = {
+        "user_id": user_id,
+        "email": email,
+        "type": "email_verification",
+        "iat": datetime.utcnow(),
+        "exp": expiration
+    }
+
+    token = jwt.encode(payload, secret_key, algorithm="HS256")
+    return token
+
+
+def verify_email_token(token: str) -> Optional[Dict[str, Any]]:
+    """
+    Vérifie un token de vérification d'email.
+
+    Args:
+        token (str): Token JWT de vérification à vérifier.
+
+    Returns:
+        dict: Payload contenant user_id et email si valide, None sinon.
+
+    Example:
+        >>> payload = verify_email_token("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+        >>> if payload and payload['type'] == 'email_verification':
+        ...     print(f"Email verified: {payload['email']}")
+    """
+    secret_key = current_app.config.get("JWT_SECRET_KEY")
+    if not secret_key:
+        return None
+
+    try:
+        payload = jwt.decode(token, secret_key, algorithms=["HS256"])
+
+        # Vérifier que c'est un token de vérification d'email
+        if payload.get("type") != "email_verification":
+            return None
+
+        return payload
+    except jwt.ExpiredSignatureError:
+        return None
+    except jwt.InvalidTokenError:
+        return None
+
+
 __all__ = [
     "generate_access_token",
     "generate_refresh_token",
@@ -219,4 +287,6 @@ __all__ = [
     "hash_password",
     "verify_password",
     "extract_token_from_header",
+    "generate_email_verification_token",
+    "verify_email_token",
 ]

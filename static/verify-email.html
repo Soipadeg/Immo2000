@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vérification email - Immo2000</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-home"></i> Immo2000
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Accueil</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-5">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="mb-0"><i class="fas fa-envelope"></i> Vérification email</h4>
+                        </div>
+                        <div class="card-body">
+                            <!-- Message d'erreur -->
+                            <div id="errorMessage"></div>
+
+                            <!-- Message de succès -->
+                            <div id="successMessage"></div>
+
+                            <!-- Spinner de chargement -->
+                            <div id="loadingMessage" style="display: none;" class="text-center">
+                                <div class="spinner-border" role="status">
+                                    <span class="visually-hidden">Chargement...</span>
+                                </div>
+                                <p class="mt-2">Vérification en cours...</p>
+                            </div>
+
+                            <!-- Instructions initialement visibles -->
+                            <div id="instructionsDiv">
+                                <p class="text-muted">
+                                    <i class="fas fa-info-circle"></i> Un lien de vérification vous a été envoyé par email.
+                                </p>
+                                <p>Si vous n'avez pas reçu l'email, vérifiez votre dossier spam ou cliquez sur le bouton ci-dessous :</p>
+                                <button id="verifyBtn" class="btn btn-primary w-100">
+                                    <i class="fas fa-check-circle"></i> Vérifier mon email
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-light">
+                            <p class="mb-0">Déjà un compte ? <a href="login.html" class="text-primary fw-bold">Se connecter</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 immo2000. Tous droits réservés.</p>
+            <p>
+                <a href="legal/cgu.html">CGU</a> |
+                <a href="legal/politique-confidentialite.html">Politique de Confidentialité</a> |
+                <a href="faq.html">FAQ</a> |
+                <a href="guides.html">Guides</a> |
+                <a href="modeles.html">Modèles</a> |
+                <a href="outils.html">Outils</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.4.0/dist/axios.min.js"></script>
+    <script>
+        const API_BASE_URL = 'http://localhost:5000/api/v1';
+        const AUTH_BASE_URL = 'http://localhost:5000/auth';
+
+        /**
+         * Récupère le paramètre d'URL 'token'
+         */
+        function getTokenFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('token');
+        }
+
+        /**
+         * Affiche un message d'erreur
+         */
+        function showErrorMessage(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.innerHTML = `
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle"></i> ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+        }
+
+        /**
+         * Affiche un message de succès
+         */
+        function showSuccessMessage(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.innerHTML = `
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle"></i> ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+        }
+
+        /**
+         * Affiche/cache le spinner
+         */
+        function showLoading(show) {
+            document.getElementById('loadingMessage').style.display = show ? 'block' : 'none';
+            document.getElementById('verifyBtn').disabled = show;
+        }
+
+        /**
+         * Vérifie l'email via le token
+         */
+        async function verifyEmail(token) {
+            if (!token) {
+                showErrorMessage('Token de vérification manquant. Vérifiez le lien reçu par email.');
+                return;
+            }
+
+            try {
+                showLoading(true);
+                document.getElementById('instructionsDiv').style.display = 'none';
+
+                const response = await axios.post(`${AUTH_BASE_URL}/verify-email`, {
+                    token: token
+                }, {
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                showLoading(false);
+
+                // Message de succès
+                const successMsg = `
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle"></i> <strong>Succès !</strong> Votre email a été confirmé.
+                        <br>Vous allez être redirigé vers la connexion...
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `;
+                document.getElementById('successMessage').innerHTML = successMsg;
+
+                // Redirection après 2 secondes
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+
+            } catch (error) {
+                showLoading(false);
+                document.getElementById('instructionsDiv').style.display = 'block';
+
+                let errorText = 'Erreur lors de la vérification. Veuillez réessayer.';
+                if (error.response) {
+                    if (error.response.data.error) {
+                        errorText = error.response.data.error;
+                    } else if (error.response.status === 400) {
+                        errorText = 'Token invalide ou expiré. Demandez un nouvel email de vérification.';
+                    }
+                } else if (error.request) {
+                    errorText = 'Impossible de contacter le serveur. Vérifiez votre connexion.';
+                }
+
+                showErrorMessage(errorText);
+            }
+        }
+
+        /**
+         * Initialise la page
+         */
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = getTokenFromURL();
+
+            // Si un token est présent en URL, vérifier automatiquement
+            if (token) {
+                verifyEmail(token);
+            } else {
+                // Sinon, afficher les instructions
+                document.getElementById('verifyBtn').addEventListener('click', function() {
+                    showErrorMessage('Aucun token reçu. Veuillez vérifier le lien dans votre email.');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
