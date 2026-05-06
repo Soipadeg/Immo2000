@@ -16,9 +16,9 @@
 ✅ frontend/src/components/Chatbot.css      (Styles)
 
 # Documentation
-✅ docs/CHATBOT_API.md                      (API Reference)
-✅ docs/CHATBOT_GUIDE.md                    (Guide Utilisateur)
-✅ CHATBOT_IMPLEMENTATION.md                (Ce document)
+✅ docs/advanced/CHATBOT_API.md             (API Reference)
+✅ docs/advanced/CHATBOT_GUIDE.md           (Guide Utilisateur)
+✅ docs/advanced/CHATBOT_IMPLEMENTATION.md  (Vue d'ensemble)
 ```
 
 ### Étape 2: Démarrer le Backend
@@ -105,8 +105,8 @@ npm start
 - [ ] Boutons d'action sont cliquables
 
 ### Documentation
-- [ ] [API Reference](docs/CHATBOT_API.md) lisible
-- [ ] [User Guide](docs/CHATBOT_GUIDE.md) lisible
+- [ ] [API Reference](../advanced/CHATBOT_API.md) lisible
+- [ ] [User Guide](../advanced/CHATBOT_GUIDE.md) lisible
 - [ ] Exemples curl fonctionnent
 
 ---
@@ -152,7 +152,7 @@ Immo2000/
 │   │   └── chatbot_data.json       ← Dataset Q/R
 │   ├── CHATBOT_API.md              ← API Reference
 │   └── CHATBOT_GUIDE.md            ← User Guide
-└── CHATBOT_IMPLEMENTATION.md       ← Vue d'ensemble
+└── docs/advanced/CHATBOT_IMPLEMENTATION.md       ← Vue d'ensemble
 ```
 
 ---
@@ -227,9 +227,9 @@ grep '"tag"' docs/chatbot/chatbot_data.json | wc -l
 Lire la doc dans cet ordre:
 
 1. **Ce fichier** (5 min) - Vue d'ensemble rapide
-2. **[docs/CHATBOT_GUIDE.md](docs/CHATBOT_GUIDE.md)** (10 min) - Guide utilisateur
-3. **[docs/CHATBOT_API.md](docs/CHATBOT_API.md)** (20 min) - Référence API
-4. **[CHATBOT_IMPLEMENTATION.md](CHATBOT_IMPLEMENTATION.md)** (30 min) - Vue d'ensemble technique
+2. **[../advanced/CHATBOT_GUIDE.md](../advanced/CHATBOT_GUIDE.md)** (10 min) - Guide utilisateur
+3. **[../advanced/CHATBOT_API.md](../advanced/CHATBOT_API.md)** (20 min) - Référence API
+4. **[../advanced/CHATBOT_IMPLEMENTATION.md](../advanced/CHATBOT_IMPLEMENTATION.md)** (30 min) - Vue d'ensemble technique
 
 ---
 
@@ -315,17 +315,17 @@ FLASK_APP=src.app:create_app python -m flask run
 ### Bugs ou Problèmes
 
 1. Vérifier les logs (backend + frontend)
-2. Lire [CHATBOT_IMPLEMENTATION.md](CHATBOT_IMPLEMENTATION.md)
-3. Vérifier [FAQ dans User Guide](docs/CHATBOT_GUIDE.md#-problèmes-courants)
+2. Lire [../advanced/CHATBOT_IMPLEMENTATION.md](../advanced/CHATBOT_IMPLEMENTATION.md)
+3. Vérifier [FAQ dans User Guide](../advanced/CHATBOT_GUIDE.md#-problèmes-courants)
 4. Lancer les tests: `pytest tests/test_chatbot.py -v`
 
 ### Questions sur l'API
 
-Consulter: [docs/CHATBOT_API.md](docs/CHATBOT_API.md)
+Consulter: [../advanced/CHATBOT_API.md](../advanced/CHATBOT_API.md)
 
 ### Questions Utilisateur
 
-Consulter: [docs/CHATBOT_GUIDE.md](docs/CHATBOT_GUIDE.md)
+Consulter: [../advanced/CHATBOT_GUIDE.md](../advanced/CHATBOT_GUIDE.md)
 
 ---
 

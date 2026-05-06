@@ -174,11 +174,11 @@ Temps total:        ~2 heures
 
 | Document | Contenu | Durée Lecture |
 |----------|---------|---------------|
-| [CHATBOT_QUICKSTART.md](CHATBOT_QUICKSTART.md) | Démarrage 5 min | 5 min ⚡ |
-| [docs/CHATBOT_GUIDE.md](docs/CHATBOT_GUIDE.md) | Guide utilisateur | 10 min 📖 |
-| [docs/CHATBOT_API.md](docs/CHATBOT_API.md) | Référence API | 20 min 🔧 |
+| [../start/CHATBOT_QUICKSTART.md](../start/CHATBOT_QUICKSTART.md) | Démarrage 5 min | 5 min ⚡ |
+| [CHATBOT_GUIDE.md](CHATBOT_GUIDE.md) | Guide utilisateur | 10 min 📖 |
+| [CHATBOT_API.md](CHATBOT_API.md) | Référence API | 20 min 🔧 |
 | [CHATBOT_IMPLEMENTATION.md](CHATBOT_IMPLEMENTATION.md) | Vue d'ensemble technique | 30 min 📋 |
-| [CHATBOT_DEPLOYMENT.md](CHATBOT_DEPLOYMENT.md) | Déploiement & validation | 15 min 🚀 |
+| [../deploy/CHATBOT_DEPLOYMENT.md](../deploy/CHATBOT_DEPLOYMENT.md) | Déploiement & validation | 15 min 🚀 |
 
 ---
 
@@ -246,11 +246,11 @@ Le chatbot est **production-ready** et peut être déployé immédiatement.
 ## 📞 Besoin d'Aide?
 
 ### Questions sur...
-- **L'utilisation**: Lire [docs/CHATBOT_GUIDE.md](docs/CHATBOT_GUIDE.md)
-- **L'API**: Lire [docs/CHATBOT_API.md](docs/CHATBOT_API.md)
-- **Le déploiement**: Lire [CHATBOT_DEPLOYMENT.md](CHATBOT_DEPLOYMENT.md)
+- **L'utilisation**: Lire [CHATBOT_GUIDE.md](CHATBOT_GUIDE.md)
+- **L'API**: Lire [CHATBOT_API.md](CHATBOT_API.md)
+- **Le déploiement**: Lire [../deploy/CHATBOT_DEPLOYMENT.md](../deploy/CHATBOT_DEPLOYMENT.md)
 - **L'implémentation**: Lire [CHATBOT_IMPLEMENTATION.md](CHATBOT_IMPLEMENTATION.md)
-- **Le démarrage**: Lire [CHATBOT_QUICKSTART.md](CHATBOT_QUICKSTART.md)
+- **Le démarrage**: Lire [../start/CHATBOT_QUICKSTART.md](../start/CHATBOT_QUICKSTART.md)
 
 ### Fichiers importants
 - Composant: `frontend/src/components/Chatbot.jsx`

@@ -156,7 +156,7 @@ python -m pytest tests/test_chatbot.py -v
 
 ### Documentation
 
-#### API Reference (`docs/CHATBOT_API.md`)
+#### API Reference (`CHATBOT_API.md`)
 - **500+ lignes** de documentation technique
 - Endpoints détaillés (request/response)
 - Système d'intents expliqué
@@ -167,7 +167,7 @@ python -m pytest tests/test_chatbot.py -v
 - Tests et monitoring
 - Sécurité et RGPD
 
-#### User Guide (`docs/CHATBOT_GUIDE.md`)
+#### User Guide (`CHATBOT_GUIDE.md`)
 - **400+ lignes** de guide utilisateur
 - Questions et réponses couvertes
 - Conseils d'utilisation
@@ -494,8 +494,8 @@ Else:
 
 ## 📚 Ressources
 
-- API Reference: [docs/CHATBOT_API.md](docs/CHATBOT_API.md)
-- User Guide: [docs/CHATBOT_GUIDE.md](docs/CHATBOT_GUIDE.md)
+- API Reference: [CHATBOT_API.md](CHATBOT_API.md)
+- User Guide: [CHATBOT_GUIDE.md](CHATBOT_GUIDE.md)
 - Service: [backend/src/services/chatbot.py](backend/src/services/chatbot.py)
 - Routes: [backend/src/routes/chatbot.py](backend/src/routes/chatbot.py)
 - Component: [frontend/src/components/Chatbot.jsx](frontend/src/components/Chatbot.jsx)
