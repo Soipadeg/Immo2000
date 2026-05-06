@@ -221,6 +221,26 @@
                                 <button type="submit" class="btn btn-primary w-100 mb-3">
                                     <i class="fas fa-user-plus"></i> Créer mon compte
                                 </button>
+
+                                <!-- Divider -->
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="flex-grow-1" style="height: 1px; background-color: #dee2e6;"></div>
+                                    <span class="px-3 text-muted small">Ou inscrivez-vous avec</span>
+                                    <div class="flex-grow-1" style="height: 1px; background-color: #dee2e6;"></div>
+                                </div>
+
+                                <!-- OAuth Buttons -->
+                                <div class="d-grid gap-2 mb-3">
+                                    <button type="button" class="btn btn-outline-dark oauth-btn" id="googleSignInBtn">
+                                        <i class="fab fa-google me-2"></i>Google
+                                    </button>
+                                    <button type="button" class="btn btn-primary oauth-btn" id="facebookSignInBtn" style="background-color: #1877F2; border-color: #1877F2;">
+                                        <i class="fab fa-facebook me-2"></i>Facebook
+                                    </button>
+                                    <button type="button" class="btn btn-dark oauth-btn" id="appleSignInBtn">
+                                        <i class="fab fa-apple me-2"></i>Apple
+                                    </button>
+                                </div>
                             </form>
 
                             <!-- Loading Spinner -->
@@ -279,9 +299,26 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios@1.4.0/dist/axios.min.js"></script>
+    <!-- Google Sign-In SDK -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Facebook SDK -->
+    <script>
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId: 'YOUR_FACEBOOK_APP_ID',
+                xfbml: true,
+                version: 'v18.0'
+            });
+        };
+    </script>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v18.0"></script>
+    <!-- Apple Sign In SDK -->
+    <script type="text/javascript" src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid.js"></script>
+    <!-- App Scripts -->
     <script src="/static/js/app.js"></script>
     <script src="/static/js/chatbot.js"></script>
     <script src="/static/js/cgu-manager.js"></script>
+    <script src="/static/js/oauth.js"></script>
     <script>
         // Définir les fonctions au niveau global AVANT DOMContentLoaded
         window.getPasswordStrength = function(password) {

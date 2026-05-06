@@ -19,7 +19,7 @@ class User(db.Model):
     Attributes:
         utilisateur_id (int): Identifiant unique (PK).
         email (str): Email unique, utilisé pour la connexion.
-        mot_de_passe_hash (str): Hash bcrypt du mot de passe (jamais stocker en clair).
+        mot_de_passe_hash (str, optional): Hash bcrypt du mot de passe (nullable pour OAuth).
         nom (str): Nom de l'utilisateur.
         prenom (str): Prénom de l'utilisateur.
         telephone (str, optional): Numéro de téléphone.
@@ -29,13 +29,17 @@ class User(db.Model):
         date_inscription (datetime): Datetime d'inscription.
         date_derniere_connexion (datetime, optional): Dernière connexion.
         updated_at (datetime): Dernière modification du profil.
+        google_id (str, optional): ID unique Google OAuth.
+        facebook_id (str, optional): ID unique Facebook OAuth.
+        photo_url (str, optional): URL de la photo de profil.
+        auth_method (str): Méthode d'authentification ('email', 'google', 'facebook').
     """
 
     __tablename__ = "utilisateurs"
 
     utilisateur_id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), nullable=False, unique=True, index=True)
-    mot_de_passe_hash = db.Column(db.String(255), nullable=False)
+    mot_de_passe_hash = db.Column(db.String(255), nullable=True)  # Nullable pour OAuth
     nom = db.Column(db.String(100), nullable=False)
     prenom = db.Column(db.String(100), nullable=False)
     telephone = db.Column(db.String(20), nullable=True)
@@ -45,6 +49,13 @@ class User(db.Model):
     date_inscription = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
     date_derniere_connexion = db.Column(db.DateTime(timezone=True), nullable=True)
     updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Colonnes OAuth
+    google_id = db.Column(db.String(255), nullable=True, unique=True, index=True)
+    facebook_id = db.Column(db.String(255), nullable=True, unique=True, index=True)
+    apple_id = db.Column(db.String(255), nullable=True, unique=True, index=True)
+    photo_url = db.Column(db.String(500), nullable=True)
+    auth_method = db.Column(db.String(50), default="email")  # "email", "google", "facebook", "apple"
 
     def __repr__(self) -> str:
         """Représentation lisible de l'utilisateur."""
