@@ -27,7 +27,7 @@ class Annonce(db.Model):
         ville (str): Ville du bien.
         type_bien (str): Type de bien (maison, appartement, terrain, local commercial).
         nombre_pieces (int): Nombre de pièces (>= 1).
-        utilisateur_id (int): FK vers utilisateurs.utilisateur_id.
+        utilisateur_id (int): FK vers utilisateurs.utilisateur_id (PK).
         date_creation (datetime): Date de création (auto-générée).
 
         # Champs optionnels

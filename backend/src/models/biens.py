@@ -18,7 +18,7 @@ class Bien(db.Model):
     bien_id = db.Column(db.Integer, primary_key=True)
 
     # Foreign key vers l'utilisateur propriétaire
-    utilisateur_id = db.Column(db.Integer, db.ForeignKey("utilisateurs.user_id"), nullable=False, index=True)
+    utilisateur_id = db.Column(db.Integer, db.ForeignKey("utilisateurs.utilisateur_id"), nullable=False, index=True)
 
     # Localisation
     adresse = db.Column(db.String(255), nullable=False)
