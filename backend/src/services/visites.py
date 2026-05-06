@@ -16,11 +16,10 @@ try:
 except ImportError:
     ICALENDAR_AVAILABLE = False
 
-from src.auth.models import db
+from src.auth.models import db, User
 from src.models.visites import Visite
 from src.models.annonces import Annonce
 from src.models.acheteurs import Acheteur
-from src.models.utilisateurs import Utilisateur
 from src.services.email_service import EmailService
 
 logger = logging.getLogger(__name__)
@@ -180,7 +179,7 @@ class VisitesService:
         Note:
             Utilise smtplib pour l'envoi d'email en production.
         """
-        vendeur = Utilisateur.query.filter_by(utilisateur_id=annonce.utilisateur_id).first()
+        vendeur = User.query.filter_by(utilisateur_id=annonce.utilisateur_id).first()
 
         if not vendeur or not vendeur.email:
             logger.warning(f"Impossible d'envoyer notification: vendeur {annonce.utilisateur_id} n'a pas d'email.")
@@ -463,7 +462,7 @@ class VisitesService:
         # Récupérer annonce et utilisateurs
         annonce = Annonce.query.filter_by(annonce_id=visite.annonce_id).first()
         acheteur = Acheteur.query.filter_by(id=visite.acheteur_id).first()
-        vendeur = Utilisateur.query.filter_by(utilisateur_id=annonce.utilisateur_id).first()
+        vendeur = User.query.filter_by(utilisateur_id=annonce.utilisateur_id).first()
 
         if not annonce or not acheteur or not vendeur:
             raise VisitesError("Données manquantes pour générer le .ics")

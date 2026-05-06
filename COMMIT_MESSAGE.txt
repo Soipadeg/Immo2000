@@ -104,6 +104,6 @@ Total changes:    +1500 lines, -1200 lines
 Questions? Check:
   → INDEX.md (main navigation)
   → docs/ folder (feature docs)
-  → COMMIT_RECAP.md (this session summary)
+  → docs/reference/COMMIT_RECAP.md (this session summary)
 
 ═══════════════════════════════════════════════════════════════
