@@ -20,6 +20,7 @@ import {
 import { fr } from 'date-fns/locale';
 import VendeurDashboard from './components/VendeurDashboard';
 import RechercheBiens from './components/RechercheBiens';
+import Chatbot from './components/Chatbot';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 
@@ -128,6 +129,7 @@ function ProtectedLayout() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState(null);
   const [user, setUser] = useState(null);
+  const [chatbotOpen, setChatbotOpen] = useState(false);
 
   // Vérifier l'authentification au montage
   useEffect(() => {
@@ -236,6 +238,42 @@ function ProtectedLayout() {
           }
         />
       </Routes>
+
+      {/* Bouton du chatbot - widget flottant */}
+      {!chatbotOpen && (
+        <Box
+          sx={{
+            position: 'fixed',
+            bottom: 20,
+            right: 20,
+            zIndex: 9998,
+            cursor: 'pointer',
+          }}
+          onClick={() => setChatbotOpen(true)}
+        >
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{
+              borderRadius: '50%',
+              width: 60,
+              height: 60,
+              minWidth: 60,
+              fontSize: 24,
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+              '&:hover': {
+                transform: 'scale(1.1)',
+                boxShadow: '0 6px 16px rgba(0, 0, 0, 0.2)',
+              },
+            }}
+          >
+            💬
+          </Button>
+        </Box>
+      )}
+
+      {/* Composant Chatbot */}
+      <Chatbot isOpen={chatbotOpen} onClose={() => setChatbotOpen(false)} />
     </>
   );
 }
