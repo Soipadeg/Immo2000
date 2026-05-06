@@ -17,6 +17,7 @@
 6. [Guide développeur](#guide-développeur)
 7. [Tests](#tests)
 8. [FAQ](#faq)
+9. [Versions alternatives](#versions-alternatives)
 
 ---
 
@@ -550,9 +551,49 @@ Body (JSON):
 
 ---
 
+---
+
+## 🆚 Versions alternatives
+
+### Version HTML/JS Pure
+**Fichiers :** `frontend/public/simulateur_pret.html/js/css`
+
+**Avantages :**
+- ✅ Zéro dépendances complexes
+- ✅ Testable directement dans le navigateur (double-clic)
+- ✅ Léger (~5KB total)
+- ✅ Pas de build step (Vite ou Webpack)
+- ✅ Bootstrap 5 (responsive)
+
+**Idéal pour :**
+- 🚀 Prototypage rapide
+- 🧪 Tests utilisateurs
+- 📄 Pages statiques
+- 📱 Démo mobile/tablet
+
+**Lire la suite :** [Guide HTML/JS Pure](./SIMULATEUR_HTML_PURE_COMPLET.md)
+
+### Comparaison : React vs HTML/JS
+
+| Critère | React | HTML/JS |
+|---------|-------|---------|
+| **Bundle size** | ~40KB | ~5KB |
+| **Build step** | Oui (Vite) | Non |
+| **Learning curve** | Moyenne | Faible |
+| **État complexe** | Excellent | Limité |
+| **Intégration app** | Native | Iframe/CDP |
+| **Performance** | Optimale | Excellente |
+| **Test local** | Dev server | Double-clic |
+
+---
+
 ## 📞 Support
 
 Pour toute question ou amélioration, consultez la **FAQ** ci-dessus ou ouvrez une issue sur le repo.
+
+**Autres ressources :**
+- [Guide HTML/JS Pure](./SIMULATEUR_HTML_PURE_COMPLET.md) - Version sans React
+- [Quick Integration](../start/QUICK_INTEGRATION_SIMULATEUR.md) - Guide rapide
 
 ---
 

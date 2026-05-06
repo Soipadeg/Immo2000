@@ -1,0 +1,380 @@
+/* Styles personnalisés pour le simulateur de prêt */
+
+body {
+    background-color: #f8f9fa;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+        "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+        sans-serif;
+}
+
+/* En-tête */
+h1 {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.lead {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+}
+
+/* Cartes */
+.card {
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+    transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.card-header {
+    border-radius: 0.75rem 0.75rem 0 0 !important;
+    border: none;
+    font-weight: 600;
+}
+
+.card-header.bg-primary {
+    background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%) !important;
+}
+
+.card-header.bg-success {
+    background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%) !important;
+}
+
+/* Labels de formulaire */
+.form-label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+/* Champs de formulaire */
+.form-control {
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #1976d2;
+    box-shadow: 0 0 0 0.2rem rgba(25, 118, 210, 0.25);
+}
+
+.form-text {
+    font-size: 0.875rem;
+    color: #7f8c8d;
+}
+
+/* Boutons */
+.btn {
+    border-radius: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(25, 118, 210, 0.3);
+}
+
+.btn-outline-secondary {
+    border: 2px solid #6c757d;
+    color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    transform: translateY(-2px);
+}
+
+.btn-outline-primary {
+    border: 2px solid #1976d2;
+    color: #1976d2;
+}
+
+.btn-outline-primary:hover {
+    background-color: #1976d2;
+    border-color: #1976d2;
+    transform: translateY(-2px);
+}
+
+/* Cartes de résultats */
+.result-card {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid #dee2e6;
+    transition: all 0.3s ease;
+}
+
+.result-card:hover {
+    background-color: #f0f2f5;
+    border-color: #4caf50;
+    transform: translateY(-4px);
+    box-shadow: 0 0.5rem 1rem rgba(76, 175, 80, 0.2);
+}
+
+.result-card i {
+    transition: transform 0.3s ease;
+}
+
+.result-card:hover i {
+    transform: scale(1.1);
+}
+
+.result-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #2E86C1;
+    margin: 0.5rem 0;
+    line-height: 1.2;
+}
+
+/* Section d'amortissement */
+.amortissement-section {
+    margin-top: 2rem;
+    border-top: 1px solid #dee2e6;
+    padding-top: 1.5rem;
+}
+
+.amortissement-section h5 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+/* Tableau */
+.table {
+    margin-bottom: 0;
+}
+
+.table thead {
+    background-color: #f8f9fa;
+}
+
+.table th {
+    border: 1px solid #dee2e6;
+    padding: 1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    text-align: center;
+}
+
+.table td {
+    border: 1px solid #dee2e6;
+    padding: 0.75rem 1rem;
+    text-align: center;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #fafbfc;
+}
+
+/* Messages */
+#loadingMessage {
+    color: #2E86C1;
+    margin: 2rem 0;
+}
+
+.spinner-border {
+    width: 2rem;
+    height: 2rem;
+}
+
+#errorMessage {
+    border-radius: 0.75rem;
+    border: none;
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 1rem;
+}
+
+#errorMessage button {
+    color: #721c24;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.75rem;
+    }
+
+    .lead {
+        font-size: 1rem;
+    }
+
+    .result-value {
+        font-size: 1.5rem;
+    }
+
+    .result-card {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .table {
+        font-size: 0.875rem;
+    }
+
+    .table th,
+    .table td {
+        padding: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .lead {
+        font-size: 0.9rem;
+    }
+
+    .result-value {
+        font-size: 1.25rem;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .form-control {
+        font-size: 16px; /* Évite le zoom sur iOS */
+    }
+
+    .table {
+        font-size: 0.75rem;
+    }
+
+    .table th,
+    .table td {
+        padding: 0.4rem;
+    }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #1a1a1a;
+        color: #e0e0e0;
+    }
+
+    h1,
+    .form-label,
+    .amortissement-section h5 {
+        color: #ffffff;
+    }
+
+    .card {
+        background-color: #2d2d2d;
+        color: #e0e0e0;
+    }
+
+    .form-control {
+        background-color: #3a3a3a;
+        border-color: #555;
+        color: #e0e0e0;
+    }
+
+    .form-control:focus {
+        background-color: #3a3a3a;
+        border-color: #1976d2;
+        color: #e0e0e0;
+    }
+
+    .form-text {
+        color: #a0a0a0;
+    }
+
+    .result-card {
+        background-color: #3a3a3a;
+        border-color: #555;
+    }
+
+    .result-card:hover {
+        background-color: #424242;
+    }
+
+    .table thead {
+        background-color: #3a3a3a;
+    }
+
+    .table th {
+        color: #e0e0e0;
+        border-color: #555;
+    }
+
+    .table td {
+        border-color: #555;
+    }
+
+    .table tbody tr:hover {
+        background-color: #3a3a3a;
+    }
+
+    .table tbody tr:nth-child(even) {
+        background-color: #323232;
+    }
+
+    #errorMessage {
+        background-color: #5c2c2c;
+        color: #ff9999;
+    }
+
+    .alert-danger {
+        background-color: #5c2c2c;
+        border: none;
+        color: #ff9999;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#results {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Accessibilité - Mouvement réduit */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .card:hover,
+    .btn:hover,
+    .result-card:hover {
+        transform: none !important;
+    }
+}
