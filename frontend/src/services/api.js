@@ -181,4 +181,30 @@ export const notificationsApi = {
   health: () => apiClient.get('/notifications/health'),
 };
 
+/**
+ * Service de matching pour les acheteurs
+ */
+export const matchingApi = {
+  /**
+   * Récupérer les annonces matchées pour un acheteur
+   * @param {number} acheteur_id - ID de l'acheteur
+   * @param {object} filters - Filtres optionnels (ville, budget_max, surface_min, type_bien)
+   * @returns {Promise} Liste des annonces matchées triées par score
+   */
+  getMatches: (acheteur_id, filters = {}) =>
+    apiClient.post('/matching', {
+      acheteur_id,
+      ...filters,
+    }),
+
+  /**
+   * Récupérer les détails du matching pour une annonce spécifique
+   * @param {number} acheteur_id - ID de l'acheteur
+   * @param {number} annonce_id - ID de l'annonce
+   * @returns {Promise} Détails du matching
+   */
+  getMatchDetails: (acheteur_id, annonce_id) =>
+    apiClient.get(`/matching/${acheteur_id}/${annonce_id}`),
+};
+
 export default apiClient;
