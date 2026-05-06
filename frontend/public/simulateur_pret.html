@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur de Prêt - Immo2000</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS personnalisé -->
+    <link rel="stylesheet" href="simulateur_pret.css">
+</head>
+<body>
+    <div class="container py-4">
+        <!-- En-tête -->
+        <div class="text-center mb-4">
+            <h1><i class="fas fa-home me-2"></i>Simulateur de Prêt Immobilier</h1>
+            <p class="lead">Estimez votre capacité d'emprunt en 2 minutes</p>
+        </div>
+
+        <!-- Formulaire -->
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="fas fa-user me-2"></i>Vos informations</h5>
+            </div>
+            <div class="card-body">
+                <form id="simulateurForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="revenu_mensuel_net" class="form-label">
+                                <i class="fas fa-euro-sign me-1"></i>Revenu mensuel net (€) *
+                            </label>
+                            <input type="number" class="form-control" id="revenu_mensuel_net"
+                                   min="1" required placeholder="Ex: 3000">
+                            <div class="form-text">Revenu après impôts.</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="apport" class="form-label">
+                                <i class="fas fa-piggy-bank me-1"></i>Apport (€)
+                            </label>
+                            <input type="number" class="form-control" id="apport"
+                                   min="0" placeholder="Ex: 50000">
+                            <div class="form-text">Épargne disponible pour l'achat.</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="taux_interet" class="form-label">
+                                <i class="fas fa-percentage me-1"></i>Taux d'intérêt (%)
+                            </label>
+                            <input type="number" class="form-control" id="taux_interet"
+                                   min="0" max="15" step="0.01" value="3.5">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="duree_ans" class="form-label">
+                                <i class="fas fa-calendar-alt me-1"></i>Durée (ans)
+                            </label>
+                            <input type="number" class="form-control" id="duree_ans"
+                                   min="1" max="30" value="20">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="taux_assurance" class="form-label">
+                                <i class="fas fa-shield-alt me-1"></i>Taux assurance (%)
+                            </label>
+                            <input type="number" class="form-control" id="taux_assurance"
+                                   min="0" max="1" step="0.01" value="0.3">
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="button" id="resetBtn" class="btn btn-outline-secondary me-md-2">
+                            <i class="fas fa-undo me-1"></i>Réinitialiser
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Message de chargement -->
+        <div id="loadingMessage" class="text-center d-none">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Calcul en cours...</span>
+            </div>
+            <p class="mt-2">Calcul en cours...</p>
+        </div>
+
+        <!-- Message d'erreur -->
+        <div id="errorMessage" class="alert alert-danger d-none"></div>
+
+        <!-- Résultats -->
+        <div id="results" class="d-none">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h5><i class="fas fa-chart-line me-2"></i>Résultats</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4 mb-3">
+                            <div class="result-card">
+                                <i class="fas fa-coins fa-2x mb-2 text-success"></i>
+                                <h6>Capacité d'emprunt</h6>
+                                <p class="result-value" id="capaciteEmprunt">-</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="result-card">
+                                <i class="fas fa-calendar-check fa-2x mb-2 text-success"></i>
+                                <h6>Mensualité</h6>
+                                <p class="result-value" id="mensualite">-</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="result-card">
+                                <i class="fas fa-file-invoice-dollar fa-2x mb-2 text-success"></i>
+                                <h6>Coût total</h6>
+                                <p class="result-value" id="coutTotal">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tableau d'amortissement -->
+                    <div class="amortissement-section mt-4">
+                        <h5><i class="fas fa-table me-2"></i>Tableau d'amortissement</h5>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Mois</th>
+                                        <th>Capital restant</th>
+                                        <th>Intérêts</th>
+                                        <th>Assurance</th>
+                                        <th>Mensualité</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="amortissementTableBody"></tbody>
+                            </table>
+                        </div>
+                        <button id="showFullTableBtn" class="btn btn-outline-primary d-none mt-2">
+                            <i class="fas fa-chevron-down me-1"></i>Voir tout le tableau
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Axios pour les requêtes API -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- Script personnalisé -->
+    <script src="simulateur_pret.js"></script>
+</body>
+</html>
