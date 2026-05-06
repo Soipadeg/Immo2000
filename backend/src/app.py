@@ -20,6 +20,7 @@ load_dotenv()
 
 from src.auth.models import db
 from src.auth.routes import auth_bp
+from src.auth.oauth import oauth_bp
 from src.routes.annonces import annonces_bp
 from src.routes.matching import matching_bp
 from src.routes.notifications import notifications_bp
@@ -145,6 +146,7 @@ def create_app(config_name: str = None) -> Flask:
             "annonces": "/api/v1/annonces (CRUD operations)"
         }
     app.register_blueprint(auth_bp)
+    app.register_blueprint(oauth_bp)
 
     # Blueprints - Annonces
     app.register_blueprint(annonces_bp)

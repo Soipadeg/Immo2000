@@ -42,6 +42,15 @@ class Config:
     JWT_ACCESS_TOKEN_EXPIRES_IN = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRES_IN", 86400))  # 24h
     JWT_REFRESH_TOKEN_EXPIRES_IN = int(os.getenv("JWT_REFRESH_TOKEN_EXPIRES_IN", 604800))  # 7 jours
 
+    # OAuth (Google & Facebook)
+    GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+    GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+    FACEBOOK_APP_ID = os.getenv("FACEBOOK_APP_ID")
+    FACEBOOK_APP_SECRET = os.getenv("FACEBOOK_APP_SECRET")
+    APPLE_CLIENT_ID = os.getenv("APPLE_CLIENT_ID")
+    APPLE_TEAM_ID = os.getenv("APPLE_TEAM_ID")
+    APPLE_KEY_ID = os.getenv("APPLE_KEY_ID")
+
     # Logging
     LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 
