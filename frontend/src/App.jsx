@@ -23,6 +23,7 @@ import RechercheBiens from './components/RechercheBiens';
 import Chatbot from './components/Chatbot';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import MatchingPage from './pages/MatchingPage';
 
 // Importer les services
 import { authApi } from './services/api';
@@ -202,6 +203,10 @@ function ProtectedLayout() {
             </Button>
           )}
 
+          <Button color="inherit" href="/matching">
+            Trouver un bien
+          </Button>
+
           <Button color="inherit" href="/search">
             Rechercher
           </Button>
@@ -223,6 +228,9 @@ function ProtectedLayout() {
         {userRole === 'vendeur' && (
           <Route path="/dashboard" element={<VendeurDashboard />} />
         )}
+
+        {/* Page de matching */}
+        <Route path="/matching" element={<MatchingPage />} />
 
         {/* Recherche publique */}
         <Route path="/search" element={<RechercheBiens />} />
