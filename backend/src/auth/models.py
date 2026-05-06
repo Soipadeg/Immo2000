@@ -31,8 +31,12 @@ class User(db.Model):
         updated_at (datetime): Dernière modification du profil.
         google_id (str, optional): ID unique Google OAuth.
         facebook_id (str, optional): ID unique Facebook OAuth.
+        apple_id (str, optional): ID unique Apple OAuth.
         photo_url (str, optional): URL de la photo de profil.
-        auth_method (str): Méthode d'authentification ('email', 'google', 'facebook').
+        auth_method (str): Méthode d'authentification ('email', 'google', 'facebook', 'apple').
+        email_verified (bool): Indique si l'email a été confirmé (RGPD).
+        verification_token (str, optional): Token unique de vérification d'email.
+        verification_token_expires (datetime, optional): Expiration du token de vérification.
     """
 
     __tablename__ = "utilisateurs"
@@ -56,6 +60,11 @@ class User(db.Model):
     apple_id = db.Column(db.String(255), nullable=True, unique=True, index=True)
     photo_url = db.Column(db.String(500), nullable=True)
     auth_method = db.Column(db.String(50), default="email")  # "email", "google", "facebook", "apple"
+
+    # Colonnes vérification email (RGPD)
+    email_verified = db.Column(db.Boolean, default=False, index=True)
+    verification_token = db.Column(db.String(255), nullable=True, unique=True, index=True)
+    verification_token_expires = db.Column(db.DateTime(timezone=True), nullable=True)
 
     def __repr__(self) -> str:
         """Représentation lisible de l'utilisateur."""

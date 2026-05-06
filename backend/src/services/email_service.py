@@ -384,3 +384,150 @@ class EmailService:
 </html>
 """
         return html
+
+    @staticmethod
+    def generer_email_verification(prenom: str, verification_url: str) -> str:
+        """
+        Génère l'HTML d'un email de vérification d'email (RGPD compliance).
+
+        Args:
+            prenom (str): Prénom de l'utilisateur.
+            verification_url (str): URL complète du lien de vérification.
+
+        Returns:
+            str: HTML formaté de l'email.
+        """
+        html = f"""
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vérifiez votre adresse email - Immo2000</title>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }}
+        .container {{
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }}
+        .header {{
+            background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }}
+        .logo {{
+            font-size: 24px;
+            font-weight: bold;
+        }}
+        .content {{
+            padding: 30px 20px;
+            color: #333;
+            line-height: 1.6;
+        }}
+        .verification-button {{
+            display: inline-block;
+            background-color: #0066cc;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 20px 0;
+            font-weight: bold;
+        }}
+        .verification-button:hover {{
+            background-color: #0052a3;
+        }}
+        .footer {{
+            background-color: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            border-top: 1px solid #ddd;
+        }}
+        .alert {{
+            background-color: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 12px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }}
+        .link {{
+            color: #0066cc;
+            text-decoration: none;
+        }}
+        .link:hover {{
+            text-decoration: underline;
+        }}
+        .code {{
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            word-break: break-all;
+            margin: 10px 0;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🏠 Immo2000</div>
+        </div>
+
+        <div class="content">
+            <h2>Vérifiez votre adresse email</h2>
+
+            <p>Bonjour {prenom},</p>
+
+            <p>Bienvenue sur Immo2000 ! Pour finaliser la création de votre compte et activer tous nos services,
+            veuillez vérifier votre adresse email en cliquant sur le bouton ci-dessous.</p>
+
+            <div class="alert">
+                <strong>⏱️ Important :</strong> Ce lien est valable pendant 24 heures.
+            </div>
+
+            <p style="text-align: center;">
+                <a href="{verification_url}" class="verification-button">✓ Vérifier mon email</a>
+            </p>
+
+            <p>Ou copiez ce lien dans votre navigateur :</p>
+            <div class="code">{verification_url}</div>
+
+            <p>Si vous n'avez pas créé de compte Immo2000, ignorez cet email.</p>
+
+            <p><strong>Pourquoi vérifier votre email ?</strong></p>
+            <ul>
+                <li>Conformité RGPD (protection de vos données)</li>
+                <li>Sécurité de votre compte</li>
+                <li>Réception des notifications importantes</li>
+            </ul>
+
+            <p>Cordialement,<br><strong>L'équipe Immo2000</strong></p>
+        </div>
+
+        <div class="footer">
+            <p>© 2026 Immo2000. Tous droits réservés.</p>
+            <p><a href="https://immo2000.fr" class="link">immo2000.fr</a> |
+            <a href="https://immo2000.fr/legal/cgu.html" class="link">CGU</a> |
+            <a href="https://immo2000.fr/legal/politique-confidentialite.html" class="link">Politique de confidentialité</a></p>
+            <p><small>Vous recevez cet email car vous avez créé un compte sur Immo2000.</small></p>
+        </div>
+    </div>
+</body>
+</html>
+"""
+        return html
