@@ -19,12 +19,30 @@ async function initializeOffresCarousel() {
         if (offres && offres.length > 0) {
             populateCarousel(offres);
             showCarouselControls(true);
+
+            // Optimiser les images avec WebP/lazy loading
+            optimizeCarouselImages();
         } else {
             showEmptyState();
         }
     } catch (error) {
         console.error('Erreur chargement offres:', error);
         showEmptyState();
+    }
+}
+
+/**
+ * Optimise les images du carousel pour WebP et lazy loading.
+ */
+function optimizeCarouselImages() {
+    // Charger WebP si support existe
+    if (typeof WebPLoader !== 'undefined') {
+        WebPLoader.enhanceImages();
+    }
+
+    // Initier le lazy loading
+    if (typeof observeLazyImages !== 'undefined') {
+        observeLazyImages(document.getElementById('offresCarousel'));
     }
 }
 
@@ -39,7 +57,7 @@ async function loadOffres() {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        return data.offres || data.data || [];
+        return data.items || data.offres || data.data || data.annonces || [];
     } catch (error) {
         console.warn('Impossible de charger les offres:', error);
         return [];
@@ -88,10 +106,10 @@ function populateCarousel(offres) {
  * @returns {string} HTML de la carte
  */
 function createOffreCard(offre) {
-    const imageUrl = offre.image_principale || '/static/images/placeholder.jpg';
+    const imageUrl = (offre.photos && offre.photos.length > 0) ? offre.photos[0] : '/static/images/placeholder.jpg';
     const prix = formatPrix(offre.prix || 0);
     const surface = offre.surface || 'N/A';
-    const chambres = offre.chambres || 'N/A';
+    const pieces = offre.nombre_pieces || 'N/A';
     const ville = offre.ville || 'Localisation inconnue';
     const description = offre.description || 'Pas de description disponible';
 
@@ -99,7 +117,7 @@ function createOffreCard(offre) {
         <div class="d-flex justify-content-center py-4">
             <div class="offre-card" style="max-width: 600px; width: 100%;">
                 <div class="offre-image">
-                    <img src="${imageUrl}" alt="${offre.titre || 'Offre immobilière'}" onerror="this.src='/static/images/placeholder.jpg'">
+                    <img src="/static/images/default-house.jpg" data-src="${imageUrl}" alt="${offre.titre || 'Offre immobilière'}" class="lazy" onerror="this.src='/static/images/placeholder.jpg'">
                 </div>
                 <div class="offre-content">
                     <div class="offre-price">${prix}</div>
@@ -120,8 +138,8 @@ function createOffreCard(offre) {
                             <div class="offre-detail-icon">
                                 <i class="fas fa-door-open"></i>
                             </div>
-                            <div class="offre-detail-value">${chambres}</div>
-                            <div class="offre-detail-label">Chambre(s)</div>
+                            <div class="offre-detail-value">${pieces}</div>
+                            <div class="offre-detail-label">Pièce(s)</div>
                         </div>
                         <div class="offre-detail">
                             <div class="offre-detail-icon">
@@ -135,10 +153,10 @@ function createOffreCard(offre) {
                     <p class="offre-description">${description.substring(0, 150)}...</p>
 
                     <div class="offre-footer">
-                        <button class="btn btn-outline-secondary btn-sm" onclick="viewOffre(${offre.id})">
+                        <button class="btn btn-outline-secondary btn-sm" onclick="viewOffre(${offre.annonce_id})">
                             <i class="fas fa-eye"></i> Voir plus
                         </button>
-                        <button class="btn btn-primary btn-sm" onclick="viewOffre(${offre.id})">
+                        <button class="btn btn-primary btn-sm" onclick="viewOffre(${offre.annonce_id})">
                             <i class="fas fa-arrow-right"></i> Détails
                         </button>
                     </div>
@@ -206,16 +224,7 @@ function formatPrix(prix) {
     }).format(prix);
 }
 
-/**
- * Formate une date
- * @param {string|Date} date - Date à formater
- * @returns {string} Date formatée
- */
-function formatDate(date) {
-    if (!date) return 'N/A';
-    const d = new Date(date);
-    return d.toLocaleDateString('fr-FR', { year: 'numeric', month: 'short', day: 'numeric' });
-}
+// formatDate is already defined in app.js
 
 /**
  * Affiche les détails d'une offre

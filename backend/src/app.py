@@ -31,6 +31,7 @@ from src.routes.simulateur_pret import simulateur_bp
 from src.routes.visites import visites_bp, feedbacks_bp
 from src.routes.chatbot import chatbot_bp
 from src.routes.faq import faq_bp
+from src.routes.images import images_bp
 from src.services.scheduler import SchedulerService
 from src.services.chatbot import init_chatbot
 from src.config import get_config
@@ -180,6 +181,9 @@ def create_app(config_name: str = None) -> Flask:
 
     # Blueprints - FAQ
     app.register_blueprint(faq_bp)
+
+    # Blueprints - Images
+    app.register_blueprint(images_bp)
 
     @app.errorhandler(404)
     def not_found(error):
