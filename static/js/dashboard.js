@@ -42,70 +42,64 @@ async function loadBuyerData() {
         return;
     }
 
-    showLoadingSpinner();
-
     try {
-        // Charger les annonces matchées
-        const response = await axios.post('/matching', {
-            acheteur_id: currentUser.id
-        });
+        // Charger les annonces disponibles
+        const token = localStorage.getItem('token');
+        const config = token ? { headers: { 'Authorization': `Bearer ${token}` } } : {};
 
-        displayMatchingResults(response.data.annonces || []);
-        hideLoadingSpinner();
+        const response = await axios.get('/annonces', config);
+
+        const annonces = response.data.items || response.data.annonces || response.data.data || [];
+        displayAnnoncesAcheteur(annonces);
     } catch (error) {
-        hideLoadingSpinner();
-        console.error('Erreur lors du chargement des annonces matchées:', error);
-        showErrorMessage('Impossible de charger les annonces matchées');
+        console.error('Erreur lors du chargement des annonces:', error);
+        showErrorMessage('Impossible de charger les annonces');
     }
 }
 
 /**
- * Affiche les résultats du matching
+ * Affiche les annonces pour les acheteurs
  */
-function displayMatchingResults(annonces) {
-    const matchingList = document.getElementById('matchingListBuyer');
+function displayAnnoncesAcheteur(annonces) {
+    const container = document.getElementById('annoncesContainer');
 
-    if (!matchingList) return;
+    if (!container) return;
 
     if (annonces.length === 0) {
-        matchingList.innerHTML = `
-            <div class="col-12">
-                <div class="no-results">
-                    <i class="fas fa-inbox"></i>
-                    <p class="mt-2">Aucune annonce matchée pour le moment.</p>
-                    <a href="matching.html" class="btn btn-primary btn-sm">
-                        <i class="fas fa-search"></i> Lancer une recherche
-                    </a>
-                </div>
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-inbox" style="font-size: 48px; color: #ccc;"></i>
+                <p class="mt-2">Aucune annonce disponible pour le moment</p>
             </div>
         `;
+        // Update stats
+        const statsValue = document.querySelector('[data-stat="annonces"]');
+        if (statsValue) statsValue.textContent = '0';
         return;
     }
 
-    matchingList.innerHTML = annonces.map(annonce => `
-        <div class="col-md-6 col-lg-4 mb-3">
-            <div class="card h-100">
-                <img src="${annonce.image || '/static/images/default-house.jpg'}"
-                     class="card-img-top" alt="${annonce.titre}" style="height: 200px; object-fit: cover;">
-                <div class="card-body">
-                    <h5 class="card-title">${annonce.titre}</h5>
-                    <p class="card-text text-muted">${annonce.adresse}</p>
-                    <div class="mb-3">
-                        <p class="mb-1"><strong>${formatCurrency(annonce.prix)}</strong></p>
-                        <small class="text-muted">${annonce.surface}m² • ${annonce.pieces} pièce(s)</small>
-                    </div>
-                    <div class="d-grid gap-2">
-                        <a href="matching.html?annonce_id=${annonce.id}" class="btn btn-primary btn-sm">
-                            <i class="fas fa-eye"></i> Voir l'annonce
-                        </a>
-                        <button class="btn btn-outline-secondary btn-sm" data-feature="Prise de RDV">
-                            <i class="fas fa-calendar"></i> Prendre RDV
-                        </button>
-                    </div>
+    container.innerHTML = annonces.map(annonce => `
+        <div class="annonce-card">
+            <div class="annonce-title">${annonce.titre}</div>
+            <div class="row">
+                <div class="col-md-8">
+                    <p class="mb-1"><small class="text-muted"><i class="fas fa-map-marker-alt"></i> ${annonce.adresse}</small></p>
+                    <p class="mb-2"><strong>${formatCurrency(annonce.prix)}</strong> • ${annonce.surface}m² • ${annonce.nombre_pieces} pièce(s)</p>
+                    <p class="mb-0" style="font-size: 0.9rem; color: #666;">${annonce.description ? annonce.description.substring(0, 100) + '...' : ''}</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button class="btn btn-primary btn-sm" onclick="viewAnnonce(${annonce.annonce_id})">
+                        <i class="fas fa-eye"></i> Voir l'annonce
+                    </button>
                 </div>
             </div>
         </div>
     `).join('');
+
+    // Update stats
+    const statsValue = document.querySelector('[data-stat="annonces"]');
+    if (statsValue) statsValue.textContent = annonces.length;
+}
 }
 
 /**
