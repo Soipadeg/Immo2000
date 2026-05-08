@@ -91,12 +91,12 @@ class SimulateurOutput(BaseModel):
 
 # ===== ENDPOINT =====
 
-@simulateur_bp.route("", methods=["POST"])
-@token_required
-def simuler_pret(current_user):
+@simulateur_bp.route("", methods=["POST"], strict_slashes=False)
+def simuler_pret():
     """
     POST /api/v1/simulateur-pret
     Simule un prêt immobilier et retourne la capacité d'emprunt, mensualité et tableau d'amortissement.
+    ⚠️ ENDPOINT PUBLIC - Pas d'authentification requise
 
     Request body:
     {
@@ -117,7 +117,6 @@ def simuler_pret(current_user):
 
     Erreurs possibles:
     - 400: Bad Request (données invalides)
-    - 401: Unauthorized (pas authentifié)
     - 422: Unprocessable Entity (validation Pydantic)
     - 500: Internal Server Error
     """
