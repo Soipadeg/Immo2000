@@ -104,15 +104,6 @@ const ProfilePage = () => {
     );
   }
 
-  const getRoleLabel = (role) => {
-    const labels = {
-      'vendeur': 'Vendeur',
-      'acheteur': 'Acheteur',
-      'agent': 'Agent',
-    };
-    return labels[role] || role;
-  };
-
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
       <Typography variant="h4" gutterBottom sx={{ mb: 3 }}>
@@ -144,14 +135,6 @@ const ProfilePage = () => {
               <Typography color="text.secondary" variant="body2">
                 {user.email}
               </Typography>
-              {user.role_actif && (
-                <Chip
-                  label={getRoleLabel(user.role_actif)}
-                  color="primary"
-                  size="small"
-                  sx={{ mt: 1 }}
-                />
-              )}
             </Box>
             {!isEditing && (
               <Button
@@ -300,16 +283,6 @@ const ProfilePage = () => {
               color={user.email_verified ? 'success' : 'error'}
               variant="outlined"
             />
-          </Box>
-
-          <Box sx={{ mb: 3 }}>
-            <Typography variant="subtitle2" gutterBottom>
-              Rôles
-            </Typography>
-            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-              {user.est_vendeur && <Chip label="Vendeur" color="primary" variant="outlined" />}
-              {user.est_acheteur && <Chip label="Acheteur" color="primary" variant="outlined" />}
-            </Box>
           </Box>
 
           <Button variant="outlined" color="primary" sx={{ mr: 1 }}>

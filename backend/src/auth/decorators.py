@@ -27,7 +27,7 @@ def token_required(f):
     {
         "user_id": 123,
         "email": "user@example.com",
-        "role": "vendeur",
+        "role": "user" ou "admin",
         "exp": 1717500000
     }
 
@@ -88,7 +88,7 @@ def role_required(roles: List[str]):
 
     Args:
         roles (List[str]): Liste des rôles autorisés.
-            Valeurs valides : ["vendeur", "acheteur", "agent"]
+            Valeurs valides : ["user", "admin"]
 
     Retourne :
     - 403 Forbidden si l'utilisateur n'a pas le bon rôle.
@@ -96,14 +96,14 @@ def role_required(roles: List[str]):
     Example:
         >>> @app.route("/admin/stats", methods=["GET"])
         ... @token_required
-        ... @role_required(roles=["agent"])
+        ... @role_required(roles=["admin"])
         ... def get_stats(current_user):
         ...     return {"stats": {"total_users": 1000}}
 
-        >>> # Ou plusieurs rôles autorisés
+        >>> # Pour les utilisateurs standards
         >>> @app.route("/dashboard", methods=["GET"])
         ... @token_required
-        ... @role_required(roles=["vendeur", "agent"])
+        ... @role_required(roles=["user"])
         ... def get_dashboard(current_user):
         ...     return {"dashboard": {...}}
     """
@@ -134,10 +134,10 @@ def admin_required(f):
 
     À utiliser **après** @token_required pour que current_user soit disponible.
 
-    Vérifie que l'utilisateur a le rôle "agent" (administrateur).
+    Vérifie que l'utilisateur a le rôle "admin".
 
     Retourne :
-    - 403 Forbidden si l'utilisateur n'a pas le rôle "agent".
+    - 403 Forbidden si l'utilisateur n'a pas le rôle "admin".
 
     Example:
         >>> @app.route("/api/v1/utilisateurs", methods=["GET"])
@@ -149,7 +149,7 @@ def admin_required(f):
 
     @wraps(f)
     def decorated(current_user, *args, **kwargs):
-        if current_user["role"] != "agent":
+        if current_user["role"] != "admin":
             return (
                 jsonify(
                     {

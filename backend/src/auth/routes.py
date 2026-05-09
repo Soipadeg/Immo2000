@@ -94,7 +94,6 @@ def register():
             "mot_de_passe": "MonMDP123!",
             "nom": "Dupont",
             "prenom": "Jean",
-            "role": "vendeur" | "acheteur" | "agent",
             "telephone": "+33612345678" (optionnel),
             "adresse_contact": "123 Rue de Paris" (optionnel)
         }
@@ -103,7 +102,6 @@ def register():
         - email : Format valide et unique en base.
         - mot_de_passe : Min 8 chars, 1 majuscule, 1 minuscule, 1 chiffre, 1 spécial.
         - nom, prenom : Non vides.
-        - role : Doit être 'vendeur', 'acheteur' ou 'agent'.
 
     Response:
         201 Created : {
@@ -123,8 +121,7 @@ def register():
         ...     "email": "user@example.com",
         ...     "mot_de_passe": "MonMDP123!",
         ...     "nom": "Dupont",
-        ...     "prenom": "Jean",
-        ...     "role": "vendeur"
+        ...     "prenom": "Jean"
         ...   }'
         {
             "message": "User created successfully",
@@ -143,7 +140,6 @@ def register():
         password = data.get("mot_de_passe", "")
         nom = data.get("nom", "").strip()
         prenom = data.get("prenom", "").strip()
-        role = data.get("role", "").strip().lower()
         telephone = data.get("telephone", "").strip() or None
         adresse_contact = data.get("adresse_contact", "").strip() or None
 
@@ -173,23 +169,15 @@ def register():
         if not prenom or len(prenom) == 0:
             return jsonify({"error": "prenom is required"}), 400
 
-        # Validation rôle
-        valid_roles = ["vendeur", "acheteur", "agent"]
-        if role not in valid_roles:
-            return jsonify({"error": f"role must be one of {valid_roles}"}), 400
-
-        # Créer l'utilisateur avec rôles multiples
+        # Créer l'utilisateur (par défaut role='user')
+        # Un utilisateur peut naturellement vendre ET acheter
         user = User(
             email=email,
             nom=nom,
             prenom=prenom,
-            role=role,
+            role="user",  # Tous les utilisateurs ont le rôle 'user' par défaut
             telephone=telephone,
-            adresse_contact=adresse_contact,
-            # Système de rôles multiples
-            est_acheteur=True,  # Tous les utilisateurs sont acheteurs par défaut
-            est_vendeur=False,  # Option pour devenir vendeur plus tard
-            role_actif='acheteur'  # Le rôle actif par défaut
+            adresse_contact=adresse_contact
         )
         user.set_password(password)
 
@@ -570,184 +558,6 @@ def get_current_user(current_user):
         ),
         200,
     )
-
-
-@auth_bp.route("/profile/roles", methods=["GET"])
-@token_required
-def get_user_roles(current_user):
-    """
-    Retourne les rôles disponibles et actifs de l'utilisateur.
-
-    Requires:
-        Header Authorization avec un JWT valide.
-
-    Response:
-        200 OK : {
-            "utilisateur_id": 123,
-            "est_acheteur": true,
-            "est_vendeur": false,
-            "role_actif": "acheteur",
-            "roles_disponibles": ["acheteur"],
-            "peut_devenir_vendeur": true
-        }
-    """
-    user = User.find_by_id(current_user["user_id"])
-
-    if not user:
-        return jsonify({"error": "User not found"}), 404
-
-    roles_disponibles = []
-    if user.est_acheteur:
-        roles_disponibles.append("acheteur")
-    if user.est_vendeur:
-        roles_disponibles.append("vendeur")
-
-    return (
-        jsonify(
-            {
-                "utilisateur_id": user.utilisateur_id,
-                "est_acheteur": user.est_acheteur,
-                "est_vendeur": user.est_vendeur,
-                "role_actif": user.role_actif,
-                "roles_disponibles": roles_disponibles,
-                "peut_devenir_vendeur": not user.est_vendeur,
-            }
-        ),
-        200,
-    )
-
-
-@auth_bp.route("/profile/switch-role", methods=["POST"])
-@token_required
-def switch_role(current_user):
-    """
-    Switche le rôle actif de l'utilisateur.
-
-    Requires:
-        Header Authorization avec un JWT valide.
-
-    Request JSON:
-        {
-            "role": "vendeur"  // "acheteur" ou "vendeur"
-        }
-
-    Response:
-        200 OK : {
-            "message": "Role switched successfully",
-            "role_actif": "vendeur",
-            "access_token": "new_token"
-        }
-
-        400 Bad Request : {
-            "error": "Invalid role or user cannot switch to this role"
-        }
-    """
-    try:
-        data = request.get_json()
-
-        if not data:
-            return jsonify({"error": "Request body must be JSON"}), 400
-
-        new_role = data.get("role", "").strip().lower()
-
-        if new_role not in ["acheteur", "vendeur"]:
-            return jsonify({"error": "Invalid role. Must be 'acheteur' or 'vendeur'"}), 400
-
-        user = User.find_by_id(current_user["user_id"])
-
-        if not user:
-            return jsonify({"error": "User not found"}), 404
-
-        # Vérifier que l'utilisateur peut accéder ce rôle
-        if new_role == "acheteur" and not user.est_acheteur:
-            return jsonify({"error": "User cannot act as buyer"}), 403
-
-        if new_role == "vendeur" and not user.est_vendeur:
-            return jsonify({"error": "User must enable vendor role first"}), 403
-
-        # Switcher le rôle
-        if user.switch_role(new_role):
-            db.session.commit()
-            current_app.logger.info(f"Role switched for user {user.email}: {user.role_actif}")
-
-            # Générer un nouveau token avec le nouveau rôle
-            access_token = generate_access_token(user.utilisateur_id, user.email, user.role_actif)
-
-            return (
-                jsonify(
-                    {
-                        "message": "Role switched successfully",
-                        "role_actif": user.role_actif,
-                        "access_token": access_token,
-                        "token_type": "Bearer",
-                    }
-                ),
-                200,
-            )
-        else:
-            return jsonify({"error": "Could not switch role"}), 400
-
-    except Exception as e:
-        db.session.rollback()
-        current_app.logger.error(f"Role switch error: {str(e)}")
-        return jsonify({"error": "Internal server error"}), 500
-
-
-@auth_bp.route("/profile/roles/enable-vendor", methods=["PUT"])
-@token_required
-def enable_vendor_role(current_user):
-    """
-    Active le rôle vendeur pour l'utilisateur.
-
-    Requires:
-        Header Authorization avec un JWT valide.
-
-    Response:
-        200 OK : {
-            "message": "Vendor role enabled successfully",
-            "est_vendeur": true,
-            "roles_disponibles": ["acheteur", "vendeur"]
-        }
-
-        400 Bad Request : {
-            "error": "User is already a vendor"
-        }
-    """
-    try:
-        user = User.find_by_id(current_user["user_id"])
-
-        if not user:
-            return jsonify({"error": "User not found"}), 404
-
-        if user.est_vendeur:
-            return jsonify({"error": "User is already a vendor"}), 400
-
-        # Activer le rôle vendeur
-        user.enable_vendor_role()
-        db.session.commit()
-
-        current_app.logger.info(f"Vendor role enabled for user {user.email}")
-
-        roles_disponibles = ["acheteur", "vendeur"] if user.est_acheteur else ["vendeur"]
-
-        return (
-            jsonify(
-                {
-                    "message": "Vendor role enabled successfully",
-                    "est_vendeur": user.est_vendeur,
-                    "est_acheteur": user.est_acheteur,
-                    "role_actif": user.role_actif,
-                    "roles_disponibles": roles_disponibles,
-                }
-            ),
-            200,
-        )
-
-    except Exception as e:
-        db.session.rollback()
-        current_app.logger.error(f"Enable vendor role error: {str(e)}")
-        return jsonify({"error": "Internal server error"}), 500
-
 
 
 __all__ = ["auth_bp"]
