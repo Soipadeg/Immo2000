@@ -47,6 +47,12 @@ env/
 
 # macOS
 .DS_Store
+*.Zone.Identifier
+
+# Images et médias (dossier root seulement - trop gros pour git, utiliser un CDN)
+# Ne pas ignorer les images du frontend/public si elles existent
+/images/
+/uploads/
 
 # Temporary files
 *.tmp
