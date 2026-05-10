@@ -25,6 +25,10 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import MatchingPage from './pages/MatchingPage';
 import SimulateurPret from './pages/SimulateurPret';
+import CreateAnnoncePage from './pages/CreateAnnoncePage';
+import AdminPage from './pages/AdminPage';
+import AlertesPage from './pages/AlertesPage';
+import AnnoncePage from './pages/AnnoncePage';
 
 // Importer les services
 import { authApi } from './services/api';
@@ -107,31 +111,9 @@ const UserMenu = ({ user, onLogout }) => {
  * Composant principal de l'application
  */
 function App() {
-  return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
-        <Routes>
-          {/* Routes publiques */}
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-
-          {/* Routes protégées */}
-          <Route path="/*" element={<ProtectedLayout />} />
-        </Routes>
-      </Router>
-    </ThemeProvider>
-  );
-}
-
-/**
- * Layout protégé pour les routes authentifiées
- */
-function ProtectedLayout() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState(null);
   const [user, setUser] = useState(null);
-  const [chatbotOpen, setChatbotOpen] = useState(false);
 
   // Vérifier l'authentification au montage
   useEffect(() => {
@@ -157,100 +139,186 @@ function ProtectedLayout() {
     setUser(null);
   };
 
-  // Si pas authentifié, rediriger vers login
-  if (!isAuthenticated) {
-    return (
-      <Box sx={{ textAlign: 'center', py: 8 }}>
-        <Typography variant="h4" gutterBottom>
-          🏠 Immo2000
-        </Typography>
-        <Typography variant="body1" gutterBottom>
-          Veuillez vous connecter pour accéder à l'application
-        </Typography>
-        <Box sx={{ mt: 2 }}>
-          <Button
-            variant="contained"
-            color="primary"
-            href="/login"
-            sx={{ mr: 1 }}
-          >
-            Se connecter
-          </Button>
-          <Button
-            variant="outlined"
-            color="primary"
-            href="/register"
-          >
-            S'inscrire
-          </Button>
-        </Box>
-      </Box>
-    );
-  }
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Router>
+        <Routes>
+          {/* Routes publiques */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+
+          {/* Routes protégées et publiques */}
+          <Route
+            path="/*"
+            element={
+              <Layout
+                isAuthenticated={isAuthenticated}
+                userRole={userRole}
+                user={user}
+                onLogout={handleLogout}
+              />
+            }
+          />
+        </Routes>
+      </Router>
+    </ThemeProvider>
+  );
+}
+
+/**
+ * Layout principal avec AppBar et routes
+ */
+function Layout({ isAuthenticated, userRole, user, onLogout }) {
+  const [chatbotOpen, setChatbotOpen] = useState(false);
 
   return (
     <>
       {/* En-tête */}
-      <AppBar position="sticky">
-        <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            🏠 Immo2000
-          </Typography>
+      {(isAuthenticated || window.location.pathname === '/search' || window.location.pathname === '/simulateur-pret') && (
+        <AppBar position="sticky">
+          <Toolbar>
+            <Typography variant="h6" sx={{ flexGrow: 1 }}>
+              🏠 Immo2000
+            </Typography>
 
-          {/* Navigation */}
-          {userRole === 'vendeur' && (
-            <Button color="inherit" href="/dashboard">
-              Mon tableau de bord
+            {/* Navigation */}
+            <Button color="inherit" href="/search">
+              Rechercher
             </Button>
-          )}
 
-          <Button color="inherit" href="/matching">
-            Trouver un bien
-          </Button>
-
-          <Button color="inherit" href="/simulateur-pret">
-            Simulateur de prêt
-          </Button>
-
-          <Button color="inherit" href="/search">
-            Rechercher
-          </Button>
-
-          {userRole === 'agent' && (
-            <Button color="inherit" href="/admin">
-              Admin
+            <Button color="inherit" href="/simulateur-pret">
+              Simulateur de prêt
             </Button>
-          )}
 
-          {/* Menu utilisateur */}
-          {user && <UserMenu user={user} onLogout={handleLogout} />}
-        </Toolbar>
-      </AppBar>
+            {isAuthenticated && userRole === 'user' && (
+              <Button color="inherit" href="/dashboard">
+                Mon tableau de bord
+              </Button>
+            )}
 
-      {/* Routes protégées */}
+            {isAuthenticated && (
+              <Button color="inherit" href="/matching">
+                Trouver un bien
+              </Button>
+            )}
+
+            {isAuthenticated && (
+              <Button color="inherit" href="/alertes">
+                🔔 Alertes
+              </Button>
+            )}
+
+            {isAuthenticated && userRole === 'admin' && (
+              <Button color="inherit" href="/admin">
+                Admin
+              </Button>
+            )}
+
+            {/* Menu utilisateur ou boutons login */}
+            {isAuthenticated && user ? (
+              <UserMenu user={user} onLogout={onLogout} />
+            ) : (
+              <>
+                <Button color="inherit" href="/login">
+                  Se connecter
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  href="/register"
+                  sx={{ ml: 1 }}
+                >
+                  S'inscrire
+                </Button>
+              </>
+            )}
+          </Toolbar>
+        </AppBar>
+      )}
+
+      {/* Routes */}
       <Routes>
-        {/* Tableau de bord vendeur */}
-        {userRole === 'vendeur' && (
-          <Route path="/dashboard" element={<VendeurDashboard />} />
-        )}
-
-        {/* Page de matching */}
-        <Route path="/matching" element={<MatchingPage />} />
-
-        {/* Simulateur de prêt */}
-        <Route path="/simulateur-pret" element={<SimulateurPret />} />
-
-        {/* Recherche publique */}
-        <Route path="/search" element={<RechercheBiens />} />
-
-        {/* Redirection par défaut */}
+        {/* Page d'accueil pour non-authentifiés */}
         <Route
           path="/"
           element={
-            <Navigate
-              to={userRole === 'vendeur' ? '/dashboard' : '/search'}
-              replace
-            />
+            !isAuthenticated ? (
+              <Box sx={{ textAlign: 'center', py: 8 }}>
+                <Typography variant="h4" gutterBottom>
+                  🏠 Immo2000
+                </Typography>
+                <Typography variant="body1" gutterBottom sx={{ mb: 3 }}>
+                  Votre plateforme immobilière
+                </Typography>
+                <Box sx={{ mt: 2, display: 'flex', gap: 2, justifyContent: 'center' }}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    href="/search"
+                    size="large"
+                  >
+                    Consulter les annonces
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    href="/login"
+                    size="large"
+                  >
+                    Se connecter
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    href="/register"
+                    size="large"
+                  >
+                    S'inscrire
+                  </Button>
+                </Box>
+              </Box>
+            ) : (
+              <Navigate to={userRole === 'admin' ? '/admin' : '/dashboard'} replace />
+            )
+          }
+        />
+
+        {/* Routes publiques */}
+        <Route path="/search" element={<RechercheBiens />} />
+        <Route path="/annonce/:id" element={<AnnoncePage />} />
+        <Route path="/simulateur-pret" element={<SimulateurPret />} />
+
+        {/* Routes protégées - Utilisateurs connectés */}
+        {isAuthenticated && (
+          <>
+            <Route path="/matching" element={<MatchingPage />} />
+            <Route path="/alertes" element={<AlertesPage />} />
+
+            {/* Routes pour les utilisateurs (vendeurs/acheteurs) */}
+            {userRole === 'user' && (
+              <>
+                <Route path="/dashboard" element={<VendeurDashboard />} />
+                <Route path="/annonces/create" element={<CreateAnnoncePage />} />
+              </>
+            )}
+
+            {/* Routes pour les admins */}
+            {userRole === 'admin' && (
+              <Route path="/admin" element={<AdminPage />} />
+            )}
+          </>
+        )}
+
+        {/* Redirection par défaut */}
+        <Route
+          path="*"
+          element={
+            isAuthenticated ? (
+              <Navigate to={userRole === 'admin' ? '/admin' : '/dashboard'} replace />
+            ) : (
+              <Navigate to="/" replace />
+            )
           }
         />
       </Routes>

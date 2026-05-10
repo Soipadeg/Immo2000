@@ -296,13 +296,24 @@ export const VendeurDashboard = () => {
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       {/* En-tête */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          📊 Tableau de bord vendeur
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Gérez vos annonces immobilières
-        </Typography>
+      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box>
+          <Typography variant="h4" component="h1" gutterBottom>
+            📊 Tableau de bord vendeur
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Gérez vos annonces immobilières
+          </Typography>
+        </Box>
+        <Button
+          variant="contained"
+          color="success"
+          size="large"
+          href="/annonces/create"
+          sx={{ whiteSpace: 'nowrap' }}
+        >
+          ➕ Créer une annonce
+        </Button>
       </Box>
 
       {/* Messages */}
