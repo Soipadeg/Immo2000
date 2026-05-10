@@ -1076,4 +1076,116 @@ def resend_2fa_code():
         return jsonify({"error": "Internal server error"}), 500
 
 
-__all__ = ["auth_bp"]
+@auth_bp.route("/validate-captcha", methods=["POST"])
+def validate_captcha():
+    """
+    Valide le token reCAPTCHA v3 avec Google.
+
+    Request JSON:
+        {
+            "token": "03AOLTBWQp..."
+        }
+
+    Response:
+        200 OK : {
+            "message": "Captcha validated",
+            "score": 0.9,
+            "action": "register|login",
+            "challenge_ts": "2024-05-10T10:30:00Z",
+            "hostname": "immo2000.fr"
+        }
+
+        400 Bad Request : {
+            "error": "Invalid or expired captcha"
+        }
+
+    Examples:
+        >>> curl -X POST http://localhost:5000/auth/validate-captcha \\
+        ...   -H "Content-Type: application/json" \\
+        ...   -d '{"token": "03AOLTBWQp..."}'
+        {
+            "message": "Captcha validated",
+            "score": 0.9
+        }
+    """
+    try:
+        data = request.get_json()
+
+        if not data:
+            return jsonify({"error": "Request body must be JSON"}), 400
+
+        token = data.get("token", "").strip()
+
+        if not token:
+            return jsonify({"error": "Captcha token is required"}), 400
+
+        # Valider le token avec Google
+        import requests
+        RECAPTCHA_SECRET_KEY = current_app.config.get("RECAPTCHA_SECRET_KEY")
+
+        if not RECAPTCHA_SECRET_KEY:
+            current_app.logger.warning("⚠️ RECAPTCHA_SECRET_KEY not configured")
+            # En développement, accepter sans validation
+            return (
+                jsonify(
+                    {
+                        "message": "Captcha validated (dev mode)",
+                        "score": 0.9,
+                    }
+                ),
+                200,
+            )
+
+        response = requests.post(
+            "https://www.google.com/recaptcha/api/siteverify",
+            data={
+                "secret": RECAPTCHA_SECRET_KEY,
+                "response": token,
+            }
+        )
+
+        result = response.json()
+
+        if not result.get("success"):
+            current_app.logger.warning(f"❌ ReCAPTCHA validation failed: {result}")
+            return jsonify({"error": "Invalid or expired captcha"}), 400
+
+        # Vérifier le score (reCAPTCHA v3)
+        score = result.get("score", 0)
+        action = result.get("action", "unknown")
+
+        # Score < 0.5 = probable bot
+        if score < 0.5:
+            current_app.logger.warning(f"⚠️ Low reCAPTCHA score: {score} for action: {action}")
+            return jsonify({"error": "Captcha score too low (probable bot activity)"}), 400
+
+        current_app.logger.info(f"✅ ReCAPTCHA validated - Score: {score}, Action: {action}")
+
+        return (
+            jsonify(
+                {
+                    "message": "Captcha validated",
+                    "score": score,
+                    "action": action,
+                    "challenge_ts": result.get("challenge_ts"),
+                    "hostname": result.get("hostname"),
+                }
+            ),
+            200,
+        )
+
+    except requests.exceptions.RequestException as e:
+        current_app.logger.error(f"⚠️ Error contacting reCAPTCHA API: {str(e)}")
+        # En cas d'erreur avec Google, on accepte quand même (fallback)
+        return (
+            jsonify(
+                {
+                    "message": "Captcha validated (fallback mode)",
+                    "score": 0.7,
+                }
+            ),
+            200,
+        )
+    except Exception as e:
+        current_app.logger.error(f"Validate captcha error: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500

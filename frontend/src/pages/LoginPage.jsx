@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Container,
   Paper,
@@ -15,6 +15,7 @@ import {
   CardContent,
 } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
+import ReCAPTCHA from 'react-google-recaptcha';
 import { login as apiLogin } from '../services/api';
 
 const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes
@@ -25,7 +26,9 @@ const LOCKOUT_TIME_KEY = 'lockout_time';
 export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const recaptchaRef = useRef();
   const [loading, setLoading] = useState(false);
+  const [captchaLoading, setCaptchaLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [isLockedOut, setIsLockedOut] = useState(false);
@@ -125,7 +128,21 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await apiLogin(formData);
+      // Récupérer le token ReCAPTCHA
+      setCaptchaLoading(true);
+      const captchaToken = await recaptchaRef.current.executeAsync();
+      setCaptchaLoading(false);
+
+      if (!captchaToken) {
+        setError('Erreur de vérification de sécurité. Veuillez réessayer.');
+        setLoading(false);
+        return;
+      }
+
+      const response = await apiLogin({
+        ...formData,
+        captchaToken,
+      });
 
       // Réinitialiser les tentatives
       resetLoginAttempts();
@@ -250,16 +267,25 @@ export default function LoginPage() {
               </Link>
             </Box>
 
+            {/* ReCAPTCHA v3 (invisible) */}
+            <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                size="invisible"
+                sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+              />
+            </Box>
+
             <Button
               fullWidth
               variant="contained"
               color="primary"
               size="large"
               sx={{ mt: 3 }}
-              disabled={loading || isLockedOut}
+              disabled={loading || isLockedOut || captchaLoading}
               type="submit"
             >
-              {loading ? 'Connexion en cours...' : 'Se connecter'}
+              {captchaLoading ? 'Vérification de sécurité...' : loading ? 'Connexion en cours...' : 'Se connecter'}
             </Button>
 
             <Divider sx={{ my: 2 }} />

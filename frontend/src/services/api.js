@@ -182,6 +182,12 @@ export const authApi = {
     apiClient.post('/auth/resend-2fa', data),
 
   /**
+   * Valider le captcha reCAPTCHA v3
+   */
+  validateCaptcha: (token) =>
+    apiClient.post('/auth/validate-captcha', { token }),
+
+  /**
    * Se déconnecter
    */
   logout: () => {

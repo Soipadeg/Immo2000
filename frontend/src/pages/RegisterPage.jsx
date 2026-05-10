@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Container,
   Paper,
@@ -15,14 +15,18 @@ import {
   FormControlLabel,
   Checkbox,
   Stack,
+  CircularProgress,
 } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
+import ReCAPTCHA from 'react-google-recaptcha';
 import { register as apiRegister } from '../services/api';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const recaptchaRef = useRef();
   const [loading, setLoading] = useState(false);
+  const [captchaLoading, setCaptchaLoading] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     email: '',
@@ -88,7 +92,21 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const response = await apiRegister(formData);
+      // Récupérer le token ReCAPTCHA
+      setCaptchaLoading(true);
+      const captchaToken = await recaptchaRef.current.executeAsync();
+      setCaptchaLoading(false);
+
+      if (!captchaToken) {
+        setError('Erreur de vérification de sécurité. Veuillez réessayer.');
+        setLoading(false);
+        return;
+      }
+
+      const response = await apiRegister({
+        ...formData,
+        captchaToken,
+      });
 
       // Redirection automatique vers login
       navigate('/login', {
@@ -98,6 +116,7 @@ export default function RegisterPage() {
       setError(err.response?.data?.error || 'Erreur lors de l\'inscription');
     } finally {
       setLoading(false);
+      setCaptchaLoading(false);
     }
   };
 
@@ -216,16 +235,25 @@ export default function RegisterPage() {
               />
             </Stack>
 
+            {/* ReCAPTCHA v3 (invisible) */}
+            <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                size="invisible"
+                sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+              />
+            </Box>
+
             <Button
               fullWidth
               variant="contained"
               color="primary"
               size="large"
               sx={{ mt: 3 }}
-              disabled={loading}
+              disabled={loading || captchaLoading}
               type="submit"
             >
-              {loading ? 'Inscription en cours...' : 'S\'inscrire'}
+              {captchaLoading ? 'Vérification de sécurité...' : loading ? 'Inscription en cours...' : 'S\'inscrire'}
             </Button>
 
             <Box sx={{ mt: 2, textAlign: 'center' }}>
