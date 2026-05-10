@@ -4,6 +4,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Container,
@@ -22,23 +23,52 @@ import {
   CircularProgress,
   Pagination,
   InputAdornment,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  FormControlLabel,
+  Checkbox,
+  Slider,
 } from '@mui/material';
 import {
   Search as SearchIcon,
   Favorite as FavoriteIcon,
   FavoriteBorder as FavoriteBorderIcon,
   Share as ShareIcon,
+  ExpandMore as ExpandMoreIcon,
 } from '@mui/icons-material';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { annoncesApi } from '../services/api';
+import CreateAlerteQuickModal from './CreateAlerteQuickModal';
 
 /**
  * Composant Carte annonce pour acheteurs
  */
-const AnnonceBienCard = ({ annonce, isFavorite, onToggleFavorite, onContactVendeur }) => {
+const AnnonceBienCard = ({ annonce, isFavorite, onToggleFavorite, navigate }) => {
+  const handleCardClick = (e) => {
+    // Ne pas naviguer si on clique sur un bouton
+    if (e.target.closest('button')) {
+      return;
+    }
+    navigate(`/annonce/${annonce.annonce_id}`);
+  };
+
   return (
-    <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Card
+      sx={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        cursor: 'pointer',
+        transition: 'all 0.3s ease',
+        '&:hover': {
+          transform: 'translateY(-4px)',
+          boxShadow: 4,
+        },
+      }}
+      onClick={handleCardClick}
+    >
       {/* Image principale */}
       {annonce.photos && annonce.photos.length > 0 && (
         <CardMedia
@@ -135,7 +165,10 @@ const AnnonceBienCard = ({ annonce, isFavorite, onToggleFavorite, onContactVende
         <Button
           size="small"
           startIcon={isFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-          onClick={onToggleFavorite}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleFavorite();
+          }}
           color={isFavorite ? 'error' : 'inherit'}
         >
           {isFavorite ? 'Favoris' : 'Ajouter'}
@@ -143,7 +176,8 @@ const AnnonceBienCard = ({ annonce, isFavorite, onToggleFavorite, onContactVende
         <Button
           size="small"
           startIcon={<ShareIcon />}
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             if (navigator.share) {
               navigator.share({
                 title: annonce.titre,
@@ -159,10 +193,13 @@ const AnnonceBienCard = ({ annonce, isFavorite, onToggleFavorite, onContactVende
           size="small"
           variant="contained"
           color="primary"
-          onClick={() => onContactVendeur(annonce.utilisateur_id)}
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/annonce/${annonce.annonce_id}`);
+          }}
           sx={{ ml: 'auto' }}
         >
-          Contacter
+          Voir
         </Button>
       </CardActions>
     </Card>
@@ -173,12 +210,14 @@ const AnnonceBienCard = ({ annonce, isFavorite, onToggleFavorite, onContactVende
  * Composant principal de recherche
  */
 export const RechercheBiens = () => {
+  const navigate = useNavigate();
   const [annonces, setAnnonces] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [page, setPage] = useState(1);
   const [limit] = useState(12);
+  const [openAlerteModal, setOpenAlerteModal] = useState(false);
   const [favorites, setFavorites] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem('favorites') || '[]');
@@ -196,7 +235,19 @@ export const RechercheBiens = () => {
     prix_max: '',
     surface_min: '',
     surface_max: '',
+    nombre_pieces_min: '',
+    nombre_pieces_max: '',
+    dpe: '',
     search: '',
+  });
+
+  const [equipements, setEquipements] = useState({
+    ascenseur: false,
+    balcon: false,
+    terrasse: false,
+    jardin: false,
+    piscine: false,
+    parking: false,
   });
 
   // Charger les annonces
@@ -207,6 +258,9 @@ export const RechercheBiens = () => {
       const response = await annoncesApi.listAll((page - 1) * limit, limit, {
         statut: 'publiée', // Seulement les annonces publiées
         ...Object.fromEntries(Object.entries(filters).filter(([, v]) => v)),
+        ...Object.fromEntries(
+          Object.entries(equipements).filter(([, v]) => v === true)
+        ),
       });
       setAnnonces(response.data.items);
       setTotal(response.data.total);
@@ -231,6 +285,14 @@ export const RechercheBiens = () => {
     setPage(1);
   };
 
+  const handleEquipementChange = (equipement) => (event) => {
+    setEquipements((prev) => ({
+      ...prev,
+      [equipement]: event.target.checked,
+    }));
+    setPage(1);
+  };
+
   const handleResetFilters = () => {
     setFilters({
       ville: '',
@@ -240,7 +302,18 @@ export const RechercheBiens = () => {
       prix_max: '',
       surface_min: '',
       surface_max: '',
+      nombre_pieces_min: '',
+      nombre_pieces_max: '',
+      dpe: '',
       search: '',
+    });
+    setEquipements({
+      ascenseur: false,
+      balcon: false,
+      terrasse: false,
+      jardin: false,
+      piscine: false,
+      parking: false,
     });
     setPage(1);
   };
@@ -285,10 +358,10 @@ export const RechercheBiens = () => {
       {/* Formulaire de recherche */}
       <Paper sx={{ p: 3, mb: 4 }}>
         <Typography variant="h6" gutterBottom>
-          Critères de recherche
+          🔎 Recherche
         </Typography>
-        <Grid container spacing={2}>
-          {/* Recherche texte */}
+        <Grid container spacing={2} sx={{ mb: 2 }}>
+          {/* Recherche texte principale */}
           <Grid item xs={12}>
             <TextField
               fullWidth
@@ -305,7 +378,7 @@ export const RechercheBiens = () => {
             />
           </Grid>
 
-          {/* Localisation */}
+          {/* Localisation de base */}
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
@@ -328,88 +401,232 @@ export const RechercheBiens = () => {
             />
           </Grid>
 
-          {/* Type */}
-          <Grid item xs={12} sm={6}>
-            <TextField
+          {/* Bouton rechercher */}
+          <Grid item xs={12} sm={4}>
+            <Button
               fullWidth
-              select
-              label="Type de bien"
-              value={filters.type_bien}
-              onChange={handleFilterChange('type_bien')}
-              size="small"
+              variant="contained"
+              color="primary"
+              onClick={loadAnnonces}
+              disabled={loading}
             >
-              <MenuItem value="">Tous types</MenuItem>
-              <MenuItem value="maison">Maison</MenuItem>
-              <MenuItem value="appartement">Appartement</MenuItem>
-              <MenuItem value="terrain">Terrain</MenuItem>
-              <MenuItem value="local commercial">Local commercial</MenuItem>
-            </TextField>
+              Rechercher
+            </Button>
           </Grid>
 
-          {/* Prix */}
-          <Grid item xs={12} sm={6}>
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <TextField
-                fullWidth
-                type="number"
-                label="Prix min (€)"
-                value={filters.prix_min}
-                onChange={handleFilterChange('prix_min')}
-                size="small"
-              />
-              <TextField
-                fullWidth
-                type="number"
-                label="Prix max (€)"
-                value={filters.prix_max}
-                onChange={handleFilterChange('prix_max')}
-                size="small"
-              />
-            </Box>
+          <Grid item xs={12} sm={4}>
+            <Button
+              fullWidth
+              variant="outlined"
+              onClick={() => setOpenAlerteModal(true)}
+            >
+              🔔 Créer une alerte
+            </Button>
           </Grid>
 
-          {/* Surface */}
-          <Grid item xs={12} sm={6}>
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <TextField
-                fullWidth
-                type="number"
-                label="Surface min (m²)"
-                value={filters.surface_min}
-                onChange={handleFilterChange('surface_min')}
-                size="small"
-              />
-              <TextField
-                fullWidth
-                type="number"
-                label="Surface max (m²)"
-                value={filters.surface_max}
-                onChange={handleFilterChange('surface_max')}
-                size="small"
-              />
-            </Box>
-          </Grid>
-
-          {/* Boutons */}
-          <Grid item xs={12}>
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={loadAnnonces}
-                disabled={loading}
-              >
-                Rechercher
-              </Button>
-              <Button
-                variant="outlined"
-                onClick={handleResetFilters}
-              >
-                Réinitialiser
-              </Button>
-            </Box>
+          <Grid item xs={12} sm={4}>
+            <Button
+              fullWidth
+              variant="outlined"
+              onClick={handleResetFilters}
+            >
+              Réinitialiser
+            </Button>
           </Grid>
         </Grid>
+
+        {/* Filtres avancés */}
+        <Accordion>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="subtitle2">
+              ⚙️ Filtres avancés
+            </Typography>
+          </AccordionSummary>
+
+          <AccordionDetails>
+            <Grid container spacing={2}>
+              {/* Type de bien */}
+              <Grid item xs={12} sm={6} md={4}>
+                <TextField
+                  fullWidth
+                  select
+                  label="Type de bien"
+                  value={filters.type_bien}
+                  onChange={handleFilterChange('type_bien')}
+                  size="small"
+                >
+                  <MenuItem value="">Tous types</MenuItem>
+                  <MenuItem value="maison">Maison</MenuItem>
+                  <MenuItem value="appartement">Appartement</MenuItem>
+                  <MenuItem value="terrain">Terrain</MenuItem>
+                  <MenuItem value="local commercial">Local commercial</MenuItem>
+                </TextField>
+              </Grid>
+
+              {/* DPE */}
+              <Grid item xs={12} sm={6} md={4}>
+                <TextField
+                  fullWidth
+                  select
+                  label="DPE (Efficacité énergétique)"
+                  value={filters.dpe}
+                  onChange={handleFilterChange('dpe')}
+                  size="small"
+                >
+                  <MenuItem value="">Tous les DPE</MenuItem>
+                  <MenuItem value="A">A (Excellent)</MenuItem>
+                  <MenuItem value="B">B (Très bon)</MenuItem>
+                  <MenuItem value="C">C (Bon)</MenuItem>
+                  <MenuItem value="D">D (Moyen)</MenuItem>
+                  <MenuItem value="E">E (Médiocre)</MenuItem>
+                  <MenuItem value="F">F (Très médiocre)</MenuItem>
+                  <MenuItem value="G">G (Très mauvais)</MenuItem>
+                </TextField>
+              </Grid>
+
+              {/* Nombre de pièces */}
+              <Grid item xs={12} sm={6} md={4}>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  <TextField
+                    fullWidth
+                    type="number"
+                    label="Pièces min"
+                    value={filters.nombre_pieces_min}
+                    onChange={handleFilterChange('nombre_pieces_min')}
+                    size="small"
+                    inputProps={{ min: 1 }}
+                  />
+                  <TextField
+                    fullWidth
+                    type="number"
+                    label="Pièces max"
+                    value={filters.nombre_pieces_max}
+                    onChange={handleFilterChange('nombre_pieces_max')}
+                    size="small"
+                    inputProps={{ min: 1 }}
+                  />
+                </Box>
+              </Grid>
+
+              {/* Prix */}
+              <Grid item xs={12} sm={6} md={6}>
+                <Typography variant="caption" gutterBottom sx={{ display: 'block' }}>
+                  Prix (€)
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  <TextField
+                    fullWidth
+                    type="number"
+                    label="Prix min"
+                    value={filters.prix_min}
+                    onChange={handleFilterChange('prix_min')}
+                    size="small"
+                    placeholder="50000"
+                  />
+                  <TextField
+                    fullWidth
+                    type="number"
+                    label="Prix max"
+                    value={filters.prix_max}
+                    onChange={handleFilterChange('prix_max')}
+                    size="small"
+                    placeholder="1000000"
+                  />
+                </Box>
+              </Grid>
+
+              {/* Surface */}
+              <Grid item xs={12} sm={6} md={6}>
+                <Typography variant="caption" gutterBottom sx={{ display: 'block' }}>
+                  Surface (m²)
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  <TextField
+                    fullWidth
+                    type="number"
+                    label="Surface min"
+                    value={filters.surface_min}
+                    onChange={handleFilterChange('surface_min')}
+                    size="small"
+                    placeholder="50"
+                  />
+                  <TextField
+                    fullWidth
+                    type="number"
+                    label="Surface max"
+                    value={filters.surface_max}
+                    onChange={handleFilterChange('surface_max')}
+                    size="small"
+                    placeholder="500"
+                  />
+                </Box>
+              </Grid>
+
+              {/* Équipements */}
+              <Grid item xs={12}>
+                <Typography variant="subtitle2" gutterBottom sx={{ mb: 1 }}>
+                  ✨ Équipements
+                </Typography>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={equipements.ascenseur}
+                        onChange={handleEquipementChange('ascenseur')}
+                      />
+                    }
+                    label="Ascenseur"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={equipements.balcon}
+                        onChange={handleEquipementChange('balcon')}
+                      />
+                    }
+                    label="Balcon"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={equipements.terrasse}
+                        onChange={handleEquipementChange('terrasse')}
+                      />
+                    }
+                    label="Terrasse"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={equipements.jardin}
+                        onChange={handleEquipementChange('jardin')}
+                      />
+                    }
+                    label="Jardin"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={equipements.piscine}
+                        onChange={handleEquipementChange('piscine')}
+                      />
+                    }
+                    label="Piscine"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={equipements.parking}
+                        onChange={handleEquipementChange('parking')}
+                      />
+                    }
+                    label="Parking"
+                  />
+                </Box>
+              </Grid>
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
       </Paper>
 
       {/* Chargement */}
@@ -445,7 +662,7 @@ export const RechercheBiens = () => {
                   annonce={annonce}
                   isFavorite={favorites.includes(annonce.annonce_id)}
                   onToggleFavorite={() => toggleFavorite(annonce.annonce_id)}
-                  onContactVendeur={handleContactVendeur}
+                  navigate={navigate}
                 />
               </Grid>
             ))}
@@ -464,6 +681,13 @@ export const RechercheBiens = () => {
           )}
         </>
       )}
+
+      {/* Modal de création d'alerte */}
+      <CreateAlerteQuickModal
+        open={openAlerteModal}
+        onClose={() => setOpenAlerteModal(false)}
+        initialFilters={filters}
+      />
     </Container>
   );
 };
