@@ -531,3 +531,276 @@ class EmailService:
 </html>
 """
         return html
+
+    @staticmethod
+    def generer_email_reset_password(prenom: str, reset_code: str) -> str:
+        """
+        Génère l'HTML d'un email de réinitialisation de mot de passe.
+
+        Args:
+            prenom (str): Prénom de l'utilisateur.
+            reset_code (str): Code de réinitialisation à 6 chiffres.
+
+        Returns:
+            str: HTML formaté de l'email.
+        """
+        html = f"""
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réinitialiser votre mot de passe - Immo2000</title>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }}
+        .container {{
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }}
+        .header {{
+            background: linear-gradient(135deg, #ff6b6b 0%, #cc0000 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }}
+        .logo {{
+            font-size: 24px;
+            font-weight: bold;
+        }}
+        .content {{
+            padding: 30px 20px;
+            color: #333;
+            line-height: 1.6;
+        }}
+        .code-box {{
+            background-color: #f5f5f5;
+            border: 2px solid #ff6b6b;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+        }}
+        .code-box .code {{
+            font-size: 32px;
+            font-weight: bold;
+            color: #ff6b6b;
+            letter-spacing: 4px;
+            font-family: monospace;
+        }}
+        .alert {{
+            background-color: #ffe0e0;
+            border: 1px solid #ff6b6b;
+            color: #cc0000;
+            padding: 12px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }}
+        .footer {{
+            background-color: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            border-top: 1px solid #ddd;
+        }}
+        .link {{
+            color: #ff6b6b;
+            text-decoration: none;
+        }}
+        .link:hover {{
+            text-decoration: underline;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🏠 Immo2000</div>
+        </div>
+
+        <div class="content">
+            <h2>Réinitialiser votre mot de passe</h2>
+
+            <p>Bonjour {prenom},</p>
+
+            <p>Vous avez demandé la réinitialisation de votre mot de passe. Voici votre code de sécurité :</p>
+
+            <div class="code-box">
+                <div class="code">{reset_code}</div>
+            </div>
+
+            <p>Entrez ce code dans l'application pour créer un nouveau mot de passe sécurisé.</p>
+
+            <div class="alert">
+                <strong>⏱️ Important :</strong> Ce code est valable pendant 10 minutes seulement.
+            </div>
+
+            <p><strong>Vous ne l'avez pas demandé ?</strong><br>
+            Si vous n'avez pas demandé cette réinitialisation, ignorez simplement cet email.
+            Votre mot de passe reste inchangé et sécurisé.</p>
+
+            <p>Besoin d'aide ? Contactez-nous :</p>
+            <ul>
+                <li>📧 Email : <a href="mailto:support@immo2000.fr" class="link">support@immo2000.fr</a></li>
+                <li>🌐 Site : <a href="https://immo2000.fr" class="link">immo2000.fr</a></li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 Immo2000. Tous droits réservés.</p>
+            <p><a href="https://immo2000.fr" class="link">immo2000.fr</a></p>
+        </div>
+    </div>
+</body>
+</html>
+"""
+        return html
+
+    @staticmethod
+    def generer_email_2fa(prenom: str, two_fa_code: str) -> str:
+        """
+        Génère l'HTML d'un email avec le code 2FA.
+
+        Args:
+            prenom (str): Prénom de l'utilisateur.
+            two_fa_code (str): Code 2FA à 6 chiffres.
+
+        Returns:
+            str: HTML formaté de l'email.
+        """
+        html = f"""
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votre code de sécurité - Immo2000</title>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }}
+        .container {{
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }}
+        .header {{
+            background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }}
+        .logo {{
+            font-size: 24px;
+            font-weight: bold;
+        }}
+        .content {{
+            padding: 30px 20px;
+            color: #333;
+            line-height: 1.6;
+        }}
+        .code-box {{
+            background-color: #f5f5f5;
+            border: 2px solid #4caf50;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+        }}
+        .code-box .code {{
+            font-size: 36px;
+            font-weight: bold;
+            color: #4caf50;
+            letter-spacing: 6px;
+            font-family: monospace;
+        }}
+        .alert {{
+            background-color: #e8f5e9;
+            border: 1px solid #4caf50;
+            color: #2e7d32;
+            padding: 12px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }}
+        .footer {{
+            background-color: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            border-top: 1px solid #ddd;
+        }}
+        .link {{
+            color: #4caf50;
+            text-decoration: none;
+        }}
+        .link:hover {{
+            text-decoration: underline;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🔐 Immo2000 - Authentification</div>
+        </div>
+
+        <div class="content">
+            <h2>Code de sécurité 2FA</h2>
+
+            <p>Bonjour {prenom},</p>
+
+            <p>Vous avez initié une connexion à votre compte Immo2000. Pour sécuriser votre accès, voici votre code de vérification :</p>
+
+            <div class="code-box">
+                <div class="code">{two_fa_code}</div>
+            </div>
+
+            <p>Entrez ce code pour terminer votre connexion.</p>
+
+            <div class="alert">
+                <strong>⏱️ Important :</strong> Ce code est valable pendant 5 minutes seulement.
+            </div>
+
+            <p><strong>Vous ne vous connectiez pas ?</strong><br>
+            Si vous ne vous connectiez pas à votre compte, ignorez simplement cet email.
+            Votre compte reste sécurisé.</p>
+
+            <p><strong>🔒 Conseils de sécurité :</strong></p>
+            <ul>
+                <li>Ne partagez jamais ce code avec quiconque</li>
+                <li>Immo2000 ne demandera jamais votre code par email ou téléphone</li>
+                <li>Signalez tout accès suspect</li>
+            </ul>
+
+            <p>Besoin d'aide ? Contactez-nous :</p>
+            <ul>
+                <li>📧 Email : <a href="mailto:support@immo2000.fr" class="link">support@immo2000.fr</a></li>
+                <li>🌐 Site : <a href="https://immo2000.fr" class="link">immo2000.fr</a></li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 Immo2000. Tous droits réservés.</p>
+            <p><a href="https://immo2000.fr" class="link">immo2000.fr</a></p>
+        </div>
+    </div>
+</body>
+</html>
+"""
+        return html

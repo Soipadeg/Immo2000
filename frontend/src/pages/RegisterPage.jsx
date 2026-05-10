@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Container,
   Paper,
@@ -12,14 +12,21 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  FormControlLabel,
+  Checkbox,
+  Stack,
+  CircularProgress,
 } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
+import ReCAPTCHA from 'react-google-recaptcha';
 import { register as apiRegister } from '../services/api';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const recaptchaRef = useRef();
   const [loading, setLoading] = useState(false);
+  const [captchaLoading, setCaptchaLoading] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     email: '',
@@ -27,7 +34,9 @@ export default function RegisterPage() {
     passwordConfirm: '',
     prenom: '',
     nom: '',
+    telephone: '',
     role: 'acheteur',
+    acceptCGU: false,
   });
 
   const handleChange = (e) => {
@@ -39,13 +48,27 @@ export default function RegisterPage() {
     setError('');
   };
 
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: checked,
+    }));
+    setError('');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
     // Validation
-    if (!formData.email || !formData.password || !formData.nom || !formData.prenom) {
+    if (!formData.email || !formData.password || !formData.nom || !formData.prenom || !formData.telephone) {
       setError('Tous les champs sont requis');
+      return;
+    }
+
+    if (!formData.acceptCGU) {
+      setError('Vous devez accepter les Conditions Générales d\'Utilisation et la Politique de Confidentialité');
       return;
     }
 
@@ -59,10 +82,31 @@ export default function RegisterPage() {
       return;
     }
 
+    // Validation du téléphone (format basique)
+    const phoneRegex = /^[+]?[0-9\s\-()]{9,}$/;
+    if (!phoneRegex.test(formData.telephone.replace(/\s/g, ''))) {
+      setError('Numéro de téléphone invalide');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const response = await apiRegister(formData);
+      // Récupérer le token ReCAPTCHA
+      setCaptchaLoading(true);
+      const captchaToken = await recaptchaRef.current.executeAsync();
+      setCaptchaLoading(false);
+
+      if (!captchaToken) {
+        setError('Erreur de vérification de sécurité. Veuillez réessayer.');
+        setLoading(false);
+        return;
+      }
+
+      const response = await apiRegister({
+        ...formData,
+        captchaToken,
+      });
 
       // Redirection automatique vers login
       navigate('/login', {
@@ -72,6 +116,7 @@ export default function RegisterPage() {
       setError(err.response?.data?.error || 'Erreur lors de l\'inscription');
     } finally {
       setLoading(false);
+      setCaptchaLoading(false);
     }
   };
 
@@ -117,6 +162,18 @@ export default function RegisterPage() {
               required
             />
 
+            <TextField
+              fullWidth
+              label="Téléphone"
+              name="telephone"
+              type="tel"
+              value={formData.telephone}
+              onChange={handleChange}
+              margin="normal"
+              placeholder="+33 6 12 34 56 78"
+              required
+            />
+
             <FormControl fullWidth sx={{ mt: 2, mb: 1 }}>
               <InputLabel>Rôle</InputLabel>
               <Select
@@ -152,16 +209,51 @@ export default function RegisterPage() {
               required
             />
 
+            {/* Acceptation CGU/RGPD */}
+            <Stack sx={{ mt: 3, mb: 2 }}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="acceptCGU"
+                    checked={formData.acceptCGU}
+                    onChange={handleCheckboxChange}
+                    color="primary"
+                  />
+                }
+                label={
+                  <Typography variant="body2">
+                    J'accepte les{' '}
+                    <Link href="/cgu" target="_blank" underline="hover">
+                      Conditions Générales d'Utilisation
+                    </Link>
+                    {' '}et la{' '}
+                    <Link href="/politique-confidentialite" target="_blank" underline="hover">
+                      Politique de Confidentialité (RGPD)
+                    </Link>
+                  </Typography>
+                }
+              />
+            </Stack>
+
+            {/* ReCAPTCHA v3 (invisible) */}
+            <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                size="invisible"
+                sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+              />
+            </Box>
+
             <Button
               fullWidth
               variant="contained"
               color="primary"
               size="large"
               sx={{ mt: 3 }}
-              disabled={loading}
+              disabled={loading || captchaLoading}
               type="submit"
             >
-              {loading ? 'Inscription en cours...' : 'S\'inscrire'}
+              {captchaLoading ? 'Vérification de sécurité...' : loading ? 'Inscription en cours...' : 'S\'inscrire'}
             </Button>
 
             <Box sx={{ mt: 2, textAlign: 'center' }}>

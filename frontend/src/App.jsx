@@ -23,12 +23,18 @@ import RechercheBiens from './components/RechercheBiens';
 import Chatbot from './components/Chatbot';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
+import VerifyEmailPage from './pages/VerifyEmailPage';
+import Verify2FAPage from './pages/Verify2FAPage';
 import MatchingPage from './pages/MatchingPage';
 import SimulateurPret from './pages/SimulateurPret';
 import CreateAnnoncePage from './pages/CreateAnnoncePage';
 import AdminPage from './pages/AdminPage';
 import AlertesPage from './pages/AlertesPage';
 import AnnoncePage from './pages/AnnoncePage';
+import CGUPage from './pages/CGUPage';
+import PolitiqueConfidentialitePage from './pages/PolitiqueConfidentialitePage';
 
 // Importer les services
 import { authApi } from './services/api';
@@ -288,6 +294,12 @@ function Layout({ isAuthenticated, userRole, user, onLogout }) {
         <Route path="/search" element={<RechercheBiens />} />
         <Route path="/annonce/:id" element={<AnnoncePage />} />
         <Route path="/simulateur-pret" element={<SimulateurPret />} />
+        <Route path="/cgu" element={<CGUPage />} />
+        <Route path="/politique-confidentialite" element={<PolitiqueConfidentialitePage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
+        <Route path="/verify-2fa" element={<Verify2FAPage />} />
 
         {/* Routes protégées - Utilisateurs connectés */}
         {isAuthenticated && (

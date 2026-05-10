@@ -137,7 +137,8 @@ def register():
 
         # Validation des champs requis
         email = data.get("email", "").strip()
-        password = data.get("mot_de_passe", "")
+        # Accept both "password" and "mot_de_passe" for compatibility
+        password = data.get("password", "") or data.get("mot_de_passe", "")
         nom = data.get("nom", "").strip()
         prenom = data.get("prenom", "").strip()
         telephone = data.get("telephone", "").strip() or None
@@ -359,7 +360,9 @@ def verify_email():
         if not data:
             return jsonify({"error": "Request body must be JSON"}), 400
 
-        token = data.get("token", "").strip()
+        # Accepter "token" ou "verificationToken" pour compatibilité
+        token = data.get("token") or data.get("verificationToken")
+        token = token.strip() if token else ""
 
         if not token:
             return jsonify({"error": "Verification token is required"}), 400
@@ -560,4 +563,629 @@ def get_current_user(current_user):
     )
 
 
-__all__ = ["auth_bp"]
+@auth_bp.route("/forgot-password", methods=["POST"])
+def forgot_password():
+    """
+    Demande une réinitialisation de mot de passe.
+    Envoie un code de réinitialisation par email.
+
+    Request JSON:
+        {
+            "email": "user@example.com"
+        }
+
+    Response:
+        200 OK : {
+            "message": "Password reset code sent to your email"
+        }
+
+        400 Bad Request : {
+            "error": "Email is required"
+        }
+
+        404 Not Found : {
+            "error": "User not found"
+        }
+
+    Examples:
+        >>> curl -X POST http://localhost:5000/auth/forgot-password \\
+        ...   -H "Content-Type: application/json" \\
+        ...   -d '{"email": "user@example.com"}'
+        {
+            "message": "Password reset code sent to your email"
+        }
+    """
+    try:
+        data = request.get_json()
+
+        if not data:
+            return jsonify({"error": "Request body must be JSON"}), 400
+
+        email = data.get("email", "").strip()
+
+        if not email:
+            return jsonify({"error": "Email is required"}), 400
+
+        # Chercher l'utilisateur
+        user = User.find_by_email(email)
+
+        if not user:
+            # Pour la sécurité, on retourne toujours 200 même si l'email n'existe pas
+            return (
+                jsonify(
+                    {
+                        "message": "If an account exists with this email, a password reset link has been sent"
+                    }
+                ),
+                200,
+            )
+
+        # Générer un code de réinitialisation (6 chiffres)
+        import secrets
+        reset_code = "".join([str(secrets.randbelow(10)) for _ in range(6)])
+
+        # Générer un token pour valider le code
+        from .utils import generate_reset_token
+        reset_token = generate_reset_token(user.utilisateur_id, email, reset_code)
+
+        # Stocker le code et l'expiration en base
+        from datetime import timedelta
+        user.reset_token = reset_code
+        user.reset_token_expires = datetime.utcnow() + timedelta(minutes=10)
+        db.session.commit()
+
+        # Envoyer l'email
+        try:
+            from src.services.email_service import EmailService
+            email_html = EmailService.generer_email_reset_password(user.prenom, reset_code)
+            EmailService.envoyer_email(
+                destinataire=email,
+                sujet="Réinitialiser votre mot de passe - Immo2000",
+                corps_html=email_html
+            )
+            current_app.logger.info(f"✅ Email de réinitialisation envoyé à {email}")
+        except Exception as e:
+            current_app.logger.error(f"⚠️ Erreur envoi email réinitialisation: {str(e)}")
+
+        return (
+            jsonify(
+                {
+                    "message": "If an account exists with this email, a password reset link has been sent"
+                }
+            ),
+            200,
+        )
+
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Forgot password error: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500
+
+
+@auth_bp.route("/verify-reset-code", methods=["POST"])
+def verify_reset_code():
+    """
+    Vérifie le code de réinitialisation envoyé par email.
+
+    Request JSON:
+        {
+            "email": "user@example.com",
+            "resetCode": "123456"
+        }
+
+    Response:
+        200 OK : {
+            "message": "Code verified",
+            "resetToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        }
+
+        400 Bad Request : {
+            "error": "Code invalid or expired"
+        }
+
+    Examples:
+        >>> curl -X POST http://localhost:5000/auth/verify-reset-code \\
+        ...   -H "Content-Type: application/json" \\
+        ...   -d '{"email": "user@example.com", "resetCode": "123456"}'
+        {
+            "message": "Code verified",
+            "resetToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        }
+    """
+    try:
+        data = request.get_json()
+
+        if not data:
+            return jsonify({"error": "Request body must be JSON"}), 400
+
+        email = data.get("email", "").strip()
+        reset_code = data.get("resetCode", "").strip()
+
+        if not email or not reset_code:
+            return jsonify({"error": "Email and resetCode are required"}), 400
+
+        # Chercher l'utilisateur
+        user = User.find_by_email(email)
+
+        if not user:
+            return jsonify({"error": "Invalid email or code"}), 400
+
+        # Vérifier le code
+        if user.reset_token != reset_code:
+            return jsonify({"error": "Code invalid or expired"}), 400
+
+        # Vérifier l'expiration
+        if not user.reset_token_expires or user.reset_token_expires < datetime.utcnow():
+            user.reset_token = None
+            user.reset_token_expires = None
+            db.session.commit()
+            return jsonify({"error": "Code invalid or expired"}), 400
+
+        # Générer un token de réinitialisation
+        from .utils import generate_reset_token
+        reset_token = generate_reset_token(user.utilisateur_id, email, reset_code)
+
+        return (
+            jsonify(
+                {
+                    "message": "Code verified",
+                    "resetToken": reset_token,
+                }
+            ),
+            200,
+        )
+
+    except Exception as e:
+        current_app.logger.error(f"Verify reset code error: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500
+
+
+@auth_bp.route("/reset-password", methods=["POST"])
+def reset_password():
+    """
+    Réinitialise le mot de passe avec un token valide.
+
+    Request JSON:
+        {
+            "email": "user@example.com",
+            "resetToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            "newPassword": "NewMDP123!"
+        }
+
+    Response:
+        200 OK : {
+            "message": "Password reset successfully"
+        }
+
+        400 Bad Request : {
+            "error": "Invalid password" | "Invalid token"
+        }
+
+    Examples:
+        >>> curl -X POST http://localhost:5000/auth/reset-password \\
+        ...   -H "Content-Type: application/json" \\
+        ...   -d '{"email": "user@example.com", "resetToken": "...", "newPassword": "NewMDP123!"}'
+        {
+            "message": "Password reset successfully"
+        }
+    """
+    try:
+        data = request.get_json()
+
+        if not data:
+            return jsonify({"error": "Request body must be JSON"}), 400
+
+        email = data.get("email", "").strip()
+        reset_token = data.get("resetToken", "").strip()
+        new_password = data.get("newPassword", "")
+
+        if not email or not reset_token or not new_password:
+            return jsonify({"error": "All fields are required"}), 400
+
+        # Vérifier le token de réinitialisation
+        from .utils import verify_reset_token
+        payload = verify_reset_token(reset_token)
+
+        if not payload:
+            return jsonify({"error": "Invalid or expired token"}), 400
+
+        # Chercher l'utilisateur
+        user = User.find_by_email(email)
+
+        if not user or user.utilisateur_id != payload.get("user_id"):
+            return jsonify({"error": "Invalid token"}), 400
+
+        # Valider le nouveau mot de passe
+        password_valid, password_error = validate_password(new_password)
+        if not password_valid:
+            return jsonify({"error": password_error}), 400
+
+        # Mettre à jour le mot de passe
+        user.set_password(new_password)
+        user.reset_token = None
+        user.reset_token_expires = None
+        db.session.commit()
+
+        current_app.logger.info(f"✅ Mot de passe réinitialisé pour {email}")
+
+        return (
+            jsonify(
+                {
+                    "message": "Password reset successfully"
+                }
+            ),
+            200,
+        )
+
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Reset password error: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500
+
+
+@auth_bp.route("/resend-verification", methods=["POST"])
+def resend_verification_email():
+    """
+    Renvoie l'email de vérification d'email.
+
+    Request JSON:
+        {
+            "email": "user@example.com"
+        }
+
+    Response:
+        200 OK : {
+            "message": "Verification email sent"
+        }
+
+    Examples:
+        >>> curl -X POST http://localhost:5000/auth/resend-verification \\
+        ...   -H "Content-Type: application/json" \\
+        ...   -d '{"email": "user@example.com"}'
+        {
+            "message": "Verification email sent"
+        }
+    """
+    try:
+        data = request.get_json()
+
+        if not data:
+            return jsonify({"error": "Request body must be JSON"}), 400
+
+        email = data.get("email", "").strip()
+
+        if not email:
+            return jsonify({"error": "Email is required"}), 400
+
+        user = User.find_by_email(email)
+
+        if not user:
+            return (
+                jsonify(
+                    {
+                        "message": "If an account exists with this email, a verification link has been sent"
+                    }
+                ),
+                200,
+            )
+
+        # Générer un nouveau token de vérification
+        from .utils import generate_email_verification_token
+        from datetime import timedelta
+        verification_token = generate_email_verification_token(user.utilisateur_id, email)
+        user.verification_token = verification_token
+        user.verification_token_expires = datetime.utcnow() + timedelta(hours=24)
+        db.session.commit()
+
+        # Envoyer l'email
+        try:
+            from src.services.email_service import EmailService
+            verification_url = f"{current_app.config.get('FRONTEND_URL', 'http://localhost:3000')}/verify-email?token={verification_token}"
+            email_html = EmailService.generer_email_verification(user.prenom, verification_url)
+            EmailService.envoyer_email(
+                destinataire=email,
+                sujet="Vérifiez votre adresse email - Immo2000",
+                corps_html=email_html
+            )
+        except Exception as e:
+            current_app.logger.error(f"⚠️ Erreur envoi email: {str(e)}")
+
+        return (
+            jsonify(
+                {
+                    "message": "If an account exists with this email, a verification link has been sent"
+                }
+            ),
+            200,
+        )
+
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Resend verification error: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500
+
+
+@auth_bp.route("/verify-2fa", methods=["POST"])
+def verify_2fa():
+    """
+    Vérifie le code 2FA.
+
+    Request JSON:
+        {
+            "userId": 123,
+            "code": "123456"
+        }
+
+    Response:
+        200 OK : {
+            "message": "2FA verified successfully",
+            "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            "token_type": "Bearer",
+            "expires_in": 86400
+        }
+
+        400 Bad Request : {
+            "error": "Code invalid or expired"
+        }
+
+    Examples:
+        >>> curl -X POST http://localhost:5000/auth/verify-2fa \\
+        ...   -H "Content-Type: application/json" \\
+        ...   -d '{"userId": 123, "code": "123456"}'
+        {
+            "message": "2FA verified successfully",
+            "access_token": "...",
+            ...
+        }
+    """
+    try:
+        data = request.get_json()
+
+        if not data:
+            return jsonify({"error": "Request body must be JSON"}), 400
+
+        user_id = data.get("userId")
+        code = data.get("code", "").strip()
+
+        if not user_id or not code:
+            return jsonify({"error": "userId and code are required"}), 400
+
+        # Chercher l'utilisateur
+        user = User.find_by_id(user_id)
+
+        if not user:
+            return jsonify({"error": "User not found"}), 400
+
+        # Vérifier le code 2FA
+        if user.two_fa_code != code:
+            return jsonify({"error": "Code invalid"}), 400
+
+        # Vérifier l'expiration
+        if not user.two_fa_code_expires or user.two_fa_code_expires < datetime.utcnow():
+            user.two_fa_code = None
+            user.two_fa_code_expires = None
+            db.session.commit()
+            return jsonify({"error": "Code invalid or expired"}), 400
+
+        # Générer les tokens
+        user.two_fa_code = None
+        user.two_fa_code_expires = None
+        db.session.commit()
+
+        access_token = generate_access_token(user.utilisateur_id, user.email, user.role)
+        refresh_token = generate_refresh_token(user.utilisateur_id)
+        access_expires_in = current_app.config.get("JWT_ACCESS_TOKEN_EXPIRES_IN", 86400)
+
+        return (
+            jsonify(
+                {
+                    "message": "2FA verified successfully",
+                    "access_token": access_token,
+                    "refresh_token": refresh_token,
+                    "token_type": "Bearer",
+                    "expires_in": access_expires_in,
+                    "user_id": user.utilisateur_id,
+                    "email": user.email,
+                    "role": user.role,
+                }
+            ),
+            200,
+        )
+
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Verify 2FA error: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500
+
+
+@auth_bp.route("/resend-2fa", methods=["POST"])
+def resend_2fa_code():
+    """
+    Renvoie le code 2FA par email.
+
+    Request JSON:
+        {
+            "userId": 123
+        }
+
+    Response:
+        200 OK : {
+            "message": "2FA code sent to your email"
+        }
+
+    Examples:
+        >>> curl -X POST http://localhost:5000/auth/resend-2fa \\
+        ...   -H "Content-Type: application/json" \\
+        ...   -d '{"userId": 123}'
+        {
+            "message": "2FA code sent to your email"
+        }
+    """
+    try:
+        data = request.get_json()
+
+        if not data:
+            return jsonify({"error": "Request body must be JSON"}), 400
+
+        user_id = data.get("userId")
+
+        if not user_id:
+            return jsonify({"error": "userId is required"}), 400
+
+        user = User.find_by_id(user_id)
+
+        if not user:
+            return jsonify({"error": "User not found"}), 400
+
+        # Générer un nouveau code 2FA (6 chiffres)
+        import secrets
+        two_fa_code = "".join([str(secrets.randbelow(10)) for _ in range(6)])
+
+        # Stocker le code et l'expiration
+        from datetime import timedelta
+        user.two_fa_code = two_fa_code
+        user.two_fa_code_expires = datetime.utcnow() + timedelta(minutes=5)
+        db.session.commit()
+
+        # Envoyer l'email
+        try:
+            from src.services.email_service import EmailService
+            email_html = EmailService.generer_email_2fa(user.prenom, two_fa_code)
+            EmailService.envoyer_email(
+                destinataire=user.email,
+                sujet="Votre code de sécurité - Immo2000",
+                corps_html=email_html
+            )
+            current_app.logger.info(f"✅ Code 2FA envoyé à {user.email}")
+        except Exception as e:
+            current_app.logger.error(f"⚠️ Erreur envoi code 2FA: {str(e)}")
+
+        return (
+            jsonify(
+                {
+                    "message": "2FA code sent to your email"
+                }
+            ),
+            200,
+        )
+
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Resend 2FA error: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500
+
+
+@auth_bp.route("/validate-captcha", methods=["POST"])
+def validate_captcha():
+    """
+    Valide le token reCAPTCHA v3 avec Google.
+
+    Request JSON:
+        {
+            "token": "03AOLTBWQp..."
+        }
+
+    Response:
+        200 OK : {
+            "message": "Captcha validated",
+            "score": 0.9,
+            "action": "register|login",
+            "challenge_ts": "2024-05-10T10:30:00Z",
+            "hostname": "immo2000.fr"
+        }
+
+        400 Bad Request : {
+            "error": "Invalid or expired captcha"
+        }
+
+    Examples:
+        >>> curl -X POST http://localhost:5000/auth/validate-captcha \\
+        ...   -H "Content-Type: application/json" \\
+        ...   -d '{"token": "03AOLTBWQp..."}'
+        {
+            "message": "Captcha validated",
+            "score": 0.9
+        }
+    """
+    try:
+        data = request.get_json()
+
+        if not data:
+            return jsonify({"error": "Request body must be JSON"}), 400
+
+        token = data.get("token", "").strip()
+
+        if not token:
+            return jsonify({"error": "Captcha token is required"}), 400
+
+        # Valider le token avec Google
+        import requests
+        RECAPTCHA_SECRET_KEY = current_app.config.get("RECAPTCHA_SECRET_KEY")
+
+        if not RECAPTCHA_SECRET_KEY:
+            current_app.logger.warning("⚠️ RECAPTCHA_SECRET_KEY not configured")
+            # En développement, accepter sans validation
+            return (
+                jsonify(
+                    {
+                        "message": "Captcha validated (dev mode)",
+                        "score": 0.9,
+                    }
+                ),
+                200,
+            )
+
+        response = requests.post(
+            "https://www.google.com/recaptcha/api/siteverify",
+            data={
+                "secret": RECAPTCHA_SECRET_KEY,
+                "response": token,
+            }
+        )
+
+        result = response.json()
+
+        if not result.get("success"):
+            current_app.logger.warning(f"❌ ReCAPTCHA validation failed: {result}")
+            return jsonify({"error": "Invalid or expired captcha"}), 400
+
+        # Vérifier le score (reCAPTCHA v3)
+        score = result.get("score", 0)
+        action = result.get("action", "unknown")
+
+        # Score < 0.5 = probable bot
+        if score < 0.5:
+            current_app.logger.warning(f"⚠️ Low reCAPTCHA score: {score} for action: {action}")
+            return jsonify({"error": "Captcha score too low (probable bot activity)"}), 400
+
+        current_app.logger.info(f"✅ ReCAPTCHA validated - Score: {score}, Action: {action}")
+
+        return (
+            jsonify(
+                {
+                    "message": "Captcha validated",
+                    "score": score,
+                    "action": action,
+                    "challenge_ts": result.get("challenge_ts"),
+                    "hostname": result.get("hostname"),
+                }
+            ),
+            200,
+        )
+
+    except requests.exceptions.RequestException as e:
+        current_app.logger.error(f"⚠️ Error contacting reCAPTCHA API: {str(e)}")
+        # En cas d'erreur avec Google, on accepte quand même (fallback)
+        return (
+            jsonify(
+                {
+                    "message": "Captcha validated (fallback mode)",
+                    "score": 0.7,
+                }
+            ),
+            200,
+        )
+    except Exception as e:
+        current_app.logger.error(f"Validate captcha error: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500

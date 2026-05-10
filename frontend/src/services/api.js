@@ -136,6 +136,70 @@ export const register = (userData) =>
   apiClient.post('/auth/register', userData);
 
 /**
+ * Service authentification (Auth API)
+ */
+export const authApi = {
+  /**
+   * Demander réinitialisation de mot de passe
+   */
+  requestPasswordReset: (data) =>
+    apiClient.post('/auth/forgot-password', data),
+
+  /**
+   * Vérifier le code de réinitialisation
+   */
+  verifyResetCode: (data) =>
+    apiClient.post('/auth/verify-reset-code', data),
+
+  /**
+   * Réinitialiser le mot de passe
+   */
+  resetPassword: (data) =>
+    apiClient.post('/auth/reset-password', data),
+
+  /**
+   * Vérifier l'email
+   */
+  verifyEmail: (data) =>
+    apiClient.post('/auth/verify-email', data),
+
+  /**
+   * Renvoyer l'email de vérification
+   */
+  resendVerificationEmail: (data) =>
+    apiClient.post('/auth/resend-verification', data),
+
+  /**
+   * Vérifier le code 2FA
+   */
+  verify2FA: (data) =>
+    apiClient.post('/auth/verify-2fa', data),
+
+  /**
+   * Renvoyer le code 2FA
+   */
+  resend2FACode: (data) =>
+    apiClient.post('/auth/resend-2fa', data),
+
+  /**
+   * Valider le captcha reCAPTCHA v3
+   */
+  validateCaptcha: (token) =>
+    apiClient.post('/auth/validate-captcha', { token }),
+
+  /**
+   * Se déconnecter
+   */
+  logout: () => {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('user_id');
+    localStorage.removeItem('user_email');
+    localStorage.removeItem('user_role');
+    window.location.href = '/login';
+  },
+};
+
+/**
  * Service administrateur
  */
 export const adminApi = {
