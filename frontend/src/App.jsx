@@ -29,6 +29,8 @@ import CreateAnnoncePage from './pages/CreateAnnoncePage';
 import AdminPage from './pages/AdminPage';
 import AlertesPage from './pages/AlertesPage';
 import AnnoncePage from './pages/AnnoncePage';
+import CGUPage from './pages/CGUPage';
+import PolitiqueConfidentialitePage from './pages/PolitiqueConfidentialitePage';
 
 // Importer les services
 import { authApi } from './services/api';
@@ -288,6 +290,8 @@ function Layout({ isAuthenticated, userRole, user, onLogout }) {
         <Route path="/search" element={<RechercheBiens />} />
         <Route path="/annonce/:id" element={<AnnoncePage />} />
         <Route path="/simulateur-pret" element={<SimulateurPret />} />
+        <Route path="/cgu" element={<CGUPage />} />
+        <Route path="/politique-confidentialite" element={<PolitiqueConfidentialitePage />} />
 
         {/* Routes protégées - Utilisateurs connectés */}
         {isAuthenticated && (

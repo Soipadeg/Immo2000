@@ -137,7 +137,8 @@ def register():
 
         # Validation des champs requis
         email = data.get("email", "").strip()
-        password = data.get("mot_de_passe", "")
+        # Accept both "password" and "mot_de_passe" for compatibility
+        password = data.get("password", "") or data.get("mot_de_passe", "")
         nom = data.get("nom", "").strip()
         prenom = data.get("prenom", "").strip()
         telephone = data.get("telephone", "").strip() or None

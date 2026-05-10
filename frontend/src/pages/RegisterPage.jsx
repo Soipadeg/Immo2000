@@ -12,6 +12,9 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  FormControlLabel,
+  Checkbox,
+  Stack,
 } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { register as apiRegister } from '../services/api';
@@ -27,7 +30,9 @@ export default function RegisterPage() {
     passwordConfirm: '',
     prenom: '',
     nom: '',
+    telephone: '',
     role: 'acheteur',
+    acceptCGU: false,
   });
 
   const handleChange = (e) => {
@@ -39,13 +44,27 @@ export default function RegisterPage() {
     setError('');
   };
 
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: checked,
+    }));
+    setError('');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
     // Validation
-    if (!formData.email || !formData.password || !formData.nom || !formData.prenom) {
+    if (!formData.email || !formData.password || !formData.nom || !formData.prenom || !formData.telephone) {
       setError('Tous les champs sont requis');
+      return;
+    }
+
+    if (!formData.acceptCGU) {
+      setError('Vous devez accepter les Conditions Générales d\'Utilisation et la Politique de Confidentialité');
       return;
     }
 
@@ -56,6 +75,13 @@ export default function RegisterPage() {
 
     if (formData.password.length < 8) {
       setError('Le mot de passe doit contenir au moins 8 caractères');
+      return;
+    }
+
+    // Validation du téléphone (format basique)
+    const phoneRegex = /^[+]?[0-9\s\-()]{9,}$/;
+    if (!phoneRegex.test(formData.telephone.replace(/\s/g, ''))) {
+      setError('Numéro de téléphone invalide');
       return;
     }
 
@@ -117,6 +143,18 @@ export default function RegisterPage() {
               required
             />
 
+            <TextField
+              fullWidth
+              label="Téléphone"
+              name="telephone"
+              type="tel"
+              value={formData.telephone}
+              onChange={handleChange}
+              margin="normal"
+              placeholder="+33 6 12 34 56 78"
+              required
+            />
+
             <FormControl fullWidth sx={{ mt: 2, mb: 1 }}>
               <InputLabel>Rôle</InputLabel>
               <Select
@@ -151,6 +189,32 @@ export default function RegisterPage() {
               margin="normal"
               required
             />
+
+            {/* Acceptation CGU/RGPD */}
+            <Stack sx={{ mt: 3, mb: 2 }}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="acceptCGU"
+                    checked={formData.acceptCGU}
+                    onChange={handleCheckboxChange}
+                    color="primary"
+                  />
+                }
+                label={
+                  <Typography variant="body2">
+                    J'accepte les{' '}
+                    <Link href="/cgu" target="_blank" underline="hover">
+                      Conditions Générales d'Utilisation
+                    </Link>
+                    {' '}et la{' '}
+                    <Link href="/politique-confidentialite" target="_blank" underline="hover">
+                      Politique de Confidentialité (RGPD)
+                    </Link>
+                  </Typography>
+                }
+              />
+            </Stack>
 
             <Button
               fullWidth
