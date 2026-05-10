@@ -280,6 +280,76 @@ def verify_email_token(token: str) -> Optional[Dict[str, Any]]:
         return None
 
 
+def generate_reset_token(user_id: int, email: str, reset_code: str, expires_in: int = 600) -> str:
+    """
+    Génère un token de réinitialisation de mot de passe.
+
+    Args:
+        user_id (int): ID de l'utilisateur.
+        email (str): Email de l'utilisateur.
+        reset_code (str): Code de réinitialisation (6 chiffres).
+        expires_in (int): Durée de vie en secondes (défaut: 10 minutes).
+
+    Returns:
+        str: Token JWT encodé pour réinitialisation.
+
+    Example:
+        >>> token = generate_reset_token(1, "user@example.com", "123456")
+        >>> len(token) > 50
+        True
+    """
+    secret_key = current_app.config.get("JWT_SECRET_KEY")
+    if not secret_key:
+        raise RuntimeError("JWT_SECRET_KEY not configured")
+
+    expiration = datetime.utcnow() + timedelta(seconds=expires_in)
+
+    payload = {
+        "user_id": user_id,
+        "email": email,
+        "reset_code": reset_code,
+        "type": "password_reset",
+        "iat": datetime.utcnow(),
+        "exp": expiration
+    }
+
+    token = jwt.encode(payload, secret_key, algorithm="HS256")
+    return token
+
+
+def verify_reset_token(token: str) -> Optional[Dict[str, Any]]:
+    """
+    Vérifie un token de réinitialisation de mot de passe.
+
+    Args:
+        token (str): Token JWT de réinitialisation à vérifier.
+
+    Returns:
+        dict: Payload contenant user_id et reset_code si valide, None sinon.
+
+    Example:
+        >>> payload = verify_reset_token("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+        >>> if payload and payload['type'] == 'password_reset':
+        ...     print(f"Reset for user: {payload['user_id']}")
+    """
+    secret_key = current_app.config.get("JWT_SECRET_KEY")
+    if not secret_key:
+        return None
+
+    try:
+        payload = jwt.decode(token, secret_key, algorithms=["HS256"])
+
+        # Vérifier que c'est un token de réinitialisation
+        if payload.get("type") != "password_reset":
+            return None
+
+        return payload
+    except jwt.ExpiredSignatureError:
+        return None
+    except jwt.InvalidTokenError:
+        return None
+
+
 __all__ = [
     "generate_access_token",
     "generate_refresh_token",
@@ -289,4 +359,6 @@ __all__ = [
     "extract_token_from_header",
     "generate_email_verification_token",
     "verify_email_token",
+    "generate_reset_token",
+    "verify_reset_token",
 ]

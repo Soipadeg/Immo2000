@@ -67,6 +67,15 @@ class User(db.Model):
     verification_token = db.Column(db.String(255), nullable=True, unique=True, index=True)
     verification_token_expires = db.Column(db.DateTime(timezone=True), nullable=True)
 
+    # Colonnes réinitialisation mot de passe
+    reset_token = db.Column(db.String(6), nullable=True)  # Code 6 chiffres
+    reset_token_expires = db.Column(db.DateTime(timezone=True), nullable=True)
+
+    # Colonnes 2FA
+    requires_2fa = db.Column(db.Boolean, default=False)
+    two_fa_code = db.Column(db.String(6), nullable=True)  # Code 6 chiffres
+    two_fa_code_expires = db.Column(db.DateTime(timezone=True), nullable=True)
+
     def __repr__(self) -> str:
         """Représentation lisible de l'utilisateur."""
         return f"<User {self.email} ({self.role})>"
