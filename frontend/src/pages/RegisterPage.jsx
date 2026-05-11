@@ -8,14 +8,9 @@ import {
   Typography,
   Alert,
   Link,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   FormControlLabel,
   Checkbox,
   Stack,
-  CircularProgress,
 } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ReCAPTCHA from 'react-google-recaptcha';
@@ -35,7 +30,6 @@ export default function RegisterPage() {
     prenom: '',
     nom: '',
     telephone: '',
-    role: 'acheteur',
     acceptCGU: false,
   });
 
@@ -173,19 +167,6 @@ export default function RegisterPage() {
               placeholder="+33 6 12 34 56 78"
               required
             />
-
-            <FormControl fullWidth sx={{ mt: 2, mb: 1 }}>
-              <InputLabel>Rôle</InputLabel>
-              <Select
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                label="Rôle"
-              >
-                <MenuItem value="acheteur">Acheteur</MenuItem>
-                <MenuItem value="vendeur">Vendeur</MenuItem>
-              </Select>
-            </FormControl>
 
             <TextField
               fullWidth
