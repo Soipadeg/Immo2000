@@ -217,6 +217,31 @@ export const adminApi = {
  */
 export const notificationsApi = {
   /**
+   * Lister les notifications de l'utilisateur
+   */
+  list: (skip = 0, limit = 20) =>
+    apiClient.get('/notifications', {
+      params: { skip, limit },
+    }),
+
+  /**
+   * Compter les notifications non lues
+   */
+  getUnreadCount: () => apiClient.get('/notifications/unread'),
+
+  /**
+   * Marquer une notification comme lue
+   */
+  markAsRead: (notificationId) =>
+    apiClient.patch(`/notifications/${notificationId}/mark-as-read`),
+
+  /**
+   * Supprimer une notification
+   */
+  delete: (notificationId) =>
+    apiClient.delete(`/notifications/${notificationId}`),
+
+  /**
    * Tester l'email SMTP
    */
   testEmail: (email, name) =>

@@ -12,6 +12,7 @@ from .acheteurs import Acheteur
 from .alertes import AlerteAnnonce
 from .visites import Visite
 from .feedbacks import Feedback
+from .notifications import Notification, NotificationType
 from .notaires import (
     Notaire,
     NotaireSpecialisation,
@@ -34,6 +35,8 @@ __all__ = [
     "AlerteAnnonce",
     "Visite",
     "Feedback",
+    "Notification",
+    "NotificationType",
     "Notaire",
     "NotaireSpecialisation",
     "TransactionNotaire",
