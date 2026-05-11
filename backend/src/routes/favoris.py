@@ -4,8 +4,7 @@ API routes for favorites
 
 from flask import Blueprint, request, jsonify
 from src.auth.decorators import token_required
-from src.auth.models import User
-from src import db
+from src.auth.models import User, db
 from src.crud import favoris as crud_favoris
 from src.schemas.favoris import (
     FavoriCreate, FavoriResponse, FavoriListResponse,

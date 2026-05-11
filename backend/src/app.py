@@ -25,6 +25,7 @@ from src.routes.annonces import annonces_bp
 from src.routes.matching import matching_bp
 from src.routes.notifications import notifications_bp
 from src.routes.admin import admin_bp
+from src.routes.alertes import alertes_bp
 from src.routes.biens import biens_bp
 from src.routes.estimations import estimations_bp
 from src.routes.simulateur_pret import simulateur_bp
@@ -166,6 +167,9 @@ def create_app(config_name: str = None) -> Flask:
 
     # Blueprints - Admin
     app.register_blueprint(admin_bp)
+
+    # Blueprints - Alertes
+    app.register_blueprint(alertes_bp)
 
     # Blueprints - Biens immobiliers
     app.register_blueprint(biens_bp)

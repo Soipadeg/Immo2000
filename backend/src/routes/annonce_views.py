@@ -4,8 +4,7 @@ API routes for annonce views and analytics
 
 from flask import Blueprint, request, jsonify
 from src.auth.decorators import token_required
-from src.auth.models import User
-from src import db
+from src.auth.models import User, db
 from src.crud import annonce_views as crud_views
 from src.schemas.annonce_views import (
     AnnonceViewCreate, AnnonceViewResponse, ViewStatsResponse,

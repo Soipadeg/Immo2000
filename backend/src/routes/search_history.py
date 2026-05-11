@@ -4,8 +4,7 @@ API routes for search history
 
 from flask import Blueprint, request, jsonify
 from src.auth.decorators import token_required
-from src.auth.models import User
-from src import db
+from src.auth.models import User, db
 from src.crud import search_history as crud_search
 from src.schemas.search_history import (
     SearchHistoryCreate, SearchHistoryResponse, SearchPreferencesResponse,

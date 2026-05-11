@@ -4,8 +4,7 @@ API routes for purchase offers
 
 from flask import Blueprint, request, jsonify
 from src.auth.decorators import token_required
-from src.auth.models import User
-from src import db
+from src.auth.models import User, db
 from src.models.annonces import Annonce
 from src.crud import offres as crud_offres
 from src.schemas.offres import (

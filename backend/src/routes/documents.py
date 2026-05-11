@@ -4,9 +4,8 @@ API routes for document management
 
 from flask import Blueprint, request, jsonify
 from src.auth.decorators import token_required
-from src.auth.models import User
+from src.auth.models import User, db
 from src.models.annonces import Annonce
-from src import db
 from src.crud import documents as crud_documents
 from src.schemas.documents import (
     DocumentCreate, DocumentResponse, DocumentListResponse,
