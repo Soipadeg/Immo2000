@@ -28,8 +28,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
 
-# Copier le code source (backend uniquement)
+# Copier le code source (backend + static files)
 COPY backend/ /app/backend/
+COPY static/ /app/static/
 
 # Ajouter le répertoire local aux chemins Python
 ENV PATH=/usr/local/bin:$PATH \

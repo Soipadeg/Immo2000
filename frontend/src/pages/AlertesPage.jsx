@@ -32,7 +32,7 @@ import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
-  Close as CloseIcon,
+  Cancel as CloseIcon,
   Check as CheckIcon,
   NotificationsActive as NotificationsActiveIcon,
   NotificationsOff as NotificationsOffIcon,

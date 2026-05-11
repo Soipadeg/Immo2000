@@ -114,32 +114,6 @@ export const authApi = {
   me: () => apiClient.get('/auth/me'),
 
   /**
-   * Se déconnecter
-   */
-  logout: () => {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_id');
-    localStorage.removeItem('user_email');
-  },
-};
-
-/**
- * Fonction de connexion (pour LoginPage)
- */
-export const login = (credentials) =>
-  apiClient.post('/auth/login', credentials);
-
-/**
- * Fonction d'inscription (pour RegisterPage)
- */
-export const register = (userData) =>
-  apiClient.post('/auth/register', userData);
-
-/**
- * Service authentification (Auth API)
- */
-export const authApi = {
-  /**
    * Demander réinitialisation de mot de passe
    */
   requestPasswordReset: (data) =>
@@ -198,6 +172,18 @@ export const authApi = {
     window.location.href = '/login';
   },
 };
+
+/**
+ * Fonction de connexion (pour LoginPage)
+ */
+export const login = (credentials) =>
+  apiClient.post('/auth/login', credentials);
+
+/**
+ * Fonction d'inscription (pour RegisterPage)
+ */
+export const register = (userData) =>
+  apiClient.post('/auth/register', userData);
 
 /**
  * Service administrateur

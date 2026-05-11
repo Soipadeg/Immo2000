@@ -31,7 +31,7 @@ import {
 import {
   Bell as BellIcon,
   Check as CheckIcon,
-  Close as CloseIcon,
+  Cancel as CloseIcon,
   Mail as MailIcon,
   Settings as SettingsIcon,
 } from '@mui/icons-material';

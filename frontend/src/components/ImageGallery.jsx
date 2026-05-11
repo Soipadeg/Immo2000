@@ -16,7 +16,7 @@ import {
   Typography,
 } from '@mui/material';
 import {
-  Close as CloseIcon,
+  Cancel as CloseIcon,
   Delete as DeleteIcon,
   ZoomIn as ZoomInIcon,
 } from '@mui/icons-material';

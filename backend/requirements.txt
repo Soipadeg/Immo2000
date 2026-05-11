@@ -19,6 +19,7 @@ alembic==1.12.1
 
 # Validation
 pydantic==2.5.0
+email-validator==2.1.0
 marshmallow==3.20.1
 
 # Image Processing

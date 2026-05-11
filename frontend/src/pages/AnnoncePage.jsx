@@ -33,11 +33,11 @@ import {
   Share as ShareIcon,
   Phone as PhoneIcon,
   Email as EmailIcon,
-  MapPin as MapPinIcon,
+  LocationOn as MapPinIcon,
   Home as HomeIcon,
-  Ruler as RulerIcon,
+  Straighten as RulerIcon,
   DoorSliding as DoorSlidingIcon,
-  Zap as ZapIcon,
+  Bolt as ZapIcon,
   ArrowBack as ArrowBackIcon,
 } from '@mui/icons-material';
 import { format } from 'date-fns';

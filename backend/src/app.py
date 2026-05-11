@@ -228,7 +228,8 @@ def create_app(config_name: str = None) -> Flask:
 
     # Context pour créer les tables
     with app.app_context():
-        db.create_all()
+        # db.create_all()  # Commented: tables already created via migrations
+        # Avoids "relation already exists" errors with PostgreSQL
 
         # Initialiser le chatbot avec le dataset JSON
         init_chatbot()

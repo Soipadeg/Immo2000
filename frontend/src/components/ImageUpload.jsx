@@ -11,11 +11,11 @@ import {
   CardContent,
   Typography,
   LinearProgress,
-  Close as CloseIcon,
   Grid,
   IconButton,
   Alert,
 } from '@mui/material';
+import { Cancel as CloseIcon } from '@mui/icons-material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import ImageIcon from '@mui/icons-material/Image';
 import './ImageUpload.css';
