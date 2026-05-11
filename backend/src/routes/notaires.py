@@ -23,7 +23,7 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 import logging
 
-from src.auth.decorators import token_required
+from src.auth.decorators import token_required, admin_required
 from src.auth.models import db, User
 from src.schemas.notaires import (
     NotaireCreate, NotaireUpdate, NotaireResponse,
@@ -70,6 +70,7 @@ def notaire_required(f):
 
 @notaires_bp.route('', methods=['POST'])
 @token_required
+@admin_required
 def create_notaire(utilisateur_id, **kwargs):
     """Créer profil notaire partenaire (admin seulement)."""
 
@@ -476,19 +477,19 @@ def get_user_notifications(current_user):
     """Récupérer les notifications notaires de l'utilisateur."""
     try:
         from src.services.notaire_notifications import NotaireNotificationService
-        
+
         notaire_events_only = request.args.get('notaire_only', 'true').lower() == 'true'
-        
+
         notifications = NotaireNotificationService.get_user_notifications(
             user_id=current_user['user_id'],
             notaire_events_only=notaire_events_only
         )
-        
+
         return jsonify({
             'notifications': notifications,
             'total': len(notifications)
         }), 200
-    
+
     except Exception as e:
         logger.error(f"Erreur récupération notifications: {str(e)}")
         return jsonify({'erreur': 'Erreur serveur'}), 500
@@ -500,14 +501,14 @@ def mark_notification_read(current_user, notification_id):
     """Marquer une notification comme lue."""
     try:
         from src.services.notaire_notifications import NotaireNotificationService
-        
+
         NotaireNotificationService.mark_notification_as_read(notification_id)
-        
+
         return jsonify({
             'message': 'Notification marquée comme lue',
             'notification_id': notification_id
         }), 200
-    
+
     except Exception as e:
         logger.error(f"Erreur marquage notification: {str(e)}")
         return jsonify({'erreur': 'Erreur serveur'}), 500
@@ -520,30 +521,30 @@ def get_transaction_notifications(current_user, transaction_id):
     try:
         from src.services.notaire_notifications import NotaireNotificationService
         from src.models.notifications import Notification
-        
+
         # Vérifier que la transaction existe
         transaction = db.session.query(TransactionNotaire).filter_by(
             transaction_notaire_id=transaction_id
         ).first()
-        
+
         if not transaction:
             return jsonify({'erreur': 'Transaction non trouvée'}), 404
-        
+
         # Vérifier permissions
         is_authorized = (
             transaction.vendeur_id == current_user['user_id'] or
             transaction.acheteur_id == current_user['user_id'] or
             (transaction.notaire and transaction.notaire.utilisateur_id == current_user['user_id'])
         )
-        
+
         if not is_authorized:
             return jsonify({'erreur': 'Non autorisé'}), 403
-        
+
         # Récupérer notifications pour cette transaction
         notifications = db.session.query(Notification).filter(
             Notification.donnees['related_id'].astext.cast(db.Integer) == transaction_id
         ).order_by(Notification.date_creation.desc()).all()
-        
+
         return jsonify({
             'notifications': [
                 {
@@ -557,7 +558,7 @@ def get_transaction_notifications(current_user, transaction_id):
             ],
             'total': len(notifications)
         }), 200
-    
+
     except Exception as e:
         logger.error(f"Erreur notifications transaction: {str(e)}")
         return jsonify({'erreur': 'Erreur serveur'}), 500

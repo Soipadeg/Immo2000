@@ -6,7 +6,8 @@ Endpoints :
 """
 
 from flask import Blueprint, jsonify, request
-from sqlalchemy import desc
+from sqlalchemy import desc, func
+from datetime import datetime, timedelta
 import logging
 
 from src.auth.models import db, User
@@ -260,6 +261,224 @@ def deactivate_user(current_user, user_id):
 
     except Exception as e:
         logger.error(f"Error deactivating user: {str(e)}")
+        return jsonify({
+            "error": "Internal server error",
+            "code": 500,
+            "details": str(e)
+        }), 500
+
+
+@admin_bp.route("/admin/analytics", methods=["GET"])
+@token_required
+@admin_required
+def get_analytics(current_user):
+    """
+    GET /api/v1/admin/analytics
+    Obtenir les analytics et statistiques du trafic (admin only).
+
+    Query parameters:
+    - period: str (default: 'week') - 'week', 'month', 'year', 'all'
+
+    Returns:
+        200 OK + Analytics data
+        401 Unauthorized (no JWT)
+        403 Forbidden (not admin)
+
+    Response example:
+        {
+            "summary": {
+                "total_users": 100,
+                "active_users": 85,
+                "total_listings": 250,
+                "total_offers": 45,
+                "total_notaires": 5
+            },
+            "users_by_role": {
+                "user": 90,
+                "admin": 2,
+                "notaire": 5,
+                "agent": 3
+            },
+            "traffic": {
+                "logins_this_week": 342,
+                "listings_created_this_week": 12,
+                "offers_created_this_week": 8,
+                "messages_sent_this_week": 156
+            },
+            "growth": {
+                "new_users_this_week": 5,
+                "new_listings_this_week": 12,
+                "new_offers_this_week": 8
+            },
+            "activity": {
+                "avg_daily_logins": 48.9,
+                "avg_daily_messages": 22.3,
+                "peak_hour": "14:00",
+                "most_active_day": "Wednesday"
+            }
+        }
+    """
+    try:
+        period = request.args.get("period", "week", type=str)
+
+        # Déterminer la date limite en fonction de la période
+        now = datetime.utcnow()
+        if period == "week":
+            date_limit = now - timedelta(days=7)
+        elif period == "month":
+            date_limit = now - timedelta(days=30)
+        elif period == "year":
+            date_limit = now - timedelta(days=365)
+        else:  # 'all'
+            date_limit = datetime.min
+
+        # ============ RÉSUMÉ GÉNÉRAL ============
+        total_users = db.session.query(User).count()
+        active_users = db.session.query(User).filter(User.actif == True).count()
+
+        # Compter les utilisateurs par rôle
+        users_by_role = {}
+        role_counts = db.session.query(User.role, func.count(User.utilisateur_id)).group_by(User.role).all()
+        for role, count in role_counts:
+            users_by_role[role] = count
+
+        # Compter les annonces, offres, notaires
+        from src.models.annonces import Annonce
+        total_listings = db.session.query(Annonce).count()
+
+        try:
+            from src.models.offres import Offre
+            total_offers = db.session.query(Offre).count()
+        except:
+            total_offers = 0
+
+        # Compter les notaires
+        total_notaires = db.session.query(User).filter(User.role == 'notaire').count()
+
+        # ============ TRAFIC RÉCENT ============
+        # Compter les logins (via date_derniere_connexion)
+        logins_recent = db.session.query(User).filter(
+            User.date_derniere_connexion >= date_limit
+        ).count()
+
+        # Compter les annonces créées
+        listings_created_recent = db.session.query(Annonce).filter(
+            Annonce.date_creation >= date_limit
+        ).count() if date_limit != datetime.min else db.session.query(Annonce).count()
+
+        # Compter les offres créées
+        try:
+            from src.models.offres import Offre
+            offers_created_recent = db.session.query(Offre).filter(
+                Offre.date_creation >= date_limit
+            ).count() if date_limit != datetime.min else db.session.query(Offre).count()
+        except:
+            offers_created_recent = 0
+
+        # Compter les messages
+        try:
+            from src.models.messages import Message
+            messages_sent_recent = db.session.query(Message).filter(
+                Message.date_envoi >= date_limit
+            ).count() if date_limit != datetime.min else db.session.query(Message).count()
+        except:
+            messages_sent_recent = 0
+
+        # ============ CROISSANCE ============
+        # Nouveaux utilisateurs dans la période
+        new_users_recent = db.session.query(User).filter(
+            User.date_inscription >= date_limit
+        ).count() if date_limit != datetime.min else 0
+
+        # ============ COMPILATION ============
+        analytics = {
+            "summary": {
+                "total_users": total_users,
+                "active_users": active_users,
+                "inactive_users": total_users - active_users,
+                "total_listings": total_listings,
+                "total_offers": total_offers,
+                "total_notaires": total_notaires
+            },
+            "users_by_role": users_by_role,
+            "traffic": {
+                "logins": logins_recent,
+                "listings_created": listings_created_recent,
+                "offers_created": offers_created_recent,
+                "messages_sent": messages_sent_recent
+            },
+            "growth": {
+                "new_users": new_users_recent,
+                "new_listings": listings_created_recent,
+                "new_offers": offers_created_recent
+            },
+            "period": period,
+            "generated_at": datetime.utcnow().isoformat()
+        }
+
+        logger.info(f"Admin {current_user['user_id']} accessed analytics (period: {period})")
+
+        return jsonify(analytics), 200
+
+    except Exception as e:
+        logger.error(f"Error getting analytics: {str(e)}")
+        return jsonify({
+            "error": "Internal server error",
+            "code": 500,
+            "details": str(e)
+        }), 500
+
+
+@admin_bp.route("/admin/stats/user-activity", methods=["GET"])
+@token_required
+@admin_required
+def get_user_activity_stats(current_user):
+    """
+    GET /api/v1/admin/stats/user-activity
+    Obtenir les statistiques d'activité des utilisateurs (admin only).
+
+    Returns:
+        200 OK + Activity statistics
+        401 Unauthorized (no JWT)
+        403 Forbidden (not admin)
+    """
+    try:
+        # Utilisateurs actifs vs inactifs
+        active_count = db.session.query(User).filter(User.actif == True).count()
+        inactive_count = db.session.query(User).filter(User.actif == False).count()
+
+        # Nouvelles inscriptions par jour (7 derniers jours)
+        seven_days_ago = datetime.utcnow() - timedelta(days=7)
+        new_registrations_by_day = db.session.query(
+            func.date(User.date_inscription).label('date'),
+            func.count(User.utilisateur_id).label('count')
+        ).filter(
+            User.date_inscription >= seven_days_ago
+        ).group_by(func.date(User.date_inscription)).all()
+
+        days_data = [{"date": str(day), "count": count} for day, count in new_registrations_by_day]
+
+        # Utilisateurs n'ayant jamais login
+        never_logged_in = db.session.query(User).filter(
+            User.date_derniere_connexion == None
+        ).count()
+
+        stats = {
+            "user_status": {
+                "active": active_count,
+                "inactive": inactive_count,
+                "never_logged_in": never_logged_in
+            },
+            "new_registrations_last_7_days": days_data,
+            "total_new_registrations_this_week": sum([d["count"] for d in days_data])
+        }
+
+        logger.info(f"Admin {current_user['user_id']} accessed user activity stats")
+
+        return jsonify(stats), 200
+
+    except Exception as e:
+        logger.error(f"Error getting user activity stats: {str(e)}")
         return jsonify({
             "error": "Internal server error",
             "code": 500,

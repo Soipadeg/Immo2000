@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Immo2000</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --light: #ecf0f1;
+            --dark: #34495e;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            overflow-y: auto;
+        }
+
+        .sidebar h1 {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 15px;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-nav li {
+            margin: 10px 0;
+        }
+
+        .sidebar-nav a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background-color: var(--secondary);
+            padding-left: 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .header h1 {
+            color: var(--primary);
+            margin: 0;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-info p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        /* Cards */
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .stat-card h6 {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .stat-card.primary .value { color: var(--secondary); }
+        .stat-card.success .value { color: var(--success); }
+        .stat-card.danger .value { color: var(--danger); }
+        .stat-card.warning .value { color: var(--warning); }
+
+        /* Charts */
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-container h5 {
+            margin-bottom: 20px;
+            color: var(--primary);
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 10px;
+        }
+
+        /* Tables */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-container h5 {
+            margin-bottom: 20px;
+            color: var(--primary);
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 10px;
+        }
+
+        .table {
+            margin: 0;
+        }
+
+        .table thead {
+            background-color: #f8f9fa;
+        }
+
+        .table th {
+            color: var(--primary);
+            font-weight: 600;
+            border-top: none;
+        }
+
+        /* Tabs */
+        .nav-tabs {
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .nav-tabs .nav-link {
+            color: var(--primary);
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-weight: 500;
+        }
+
+        .nav-tabs .nav-link:hover {
+            border-bottom-color: var(--secondary);
+        }
+
+        .nav-tabs .nav-link.active {
+            color: white;
+            background-color: var(--secondary);
+            border: none;
+            border-bottom: 3px solid var(--secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+                padding: 15px;
+            }
+
+            .main-content {
+                margin-left: 200px;
+                padding: 15px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .user-info {
+                text-align: left;
+                margin-top: 10px;
+            }
+
+            .stat-card {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .sidebar {
+                width: 100%;
+                min-height: auto;
+                position: relative;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 10px;
+            }
+
+            .stat-card-icon {
+                font-size: 1.5rem;
+            }
+
+            .stat-card .value {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Loading Animation */
+        .spinner-border {
+            color: var(--secondary);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        /* Alert Styles */
+        .alert {
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        .badge {
+            padding: 5px 10px;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h1>
+            <i class="fas fa-chart-line"></i> Admin
+        </h1>
+        <ul class="sidebar-nav">
+            <li><a href="#" class="nav-link active" onclick="showTab('overview')"><i class="fas fa-home"></i> Aperçu</a></li>
+            <li><a href="#" class="nav-link" onclick="showTab('traffic')"><i class="fas fa-traffic-light"></i> Trafic</a></li>
+            <li><a href="#" class="nav-link" onclick="showTab('users')"><i class="fas fa-users"></i> Utilisateurs</a></li>
+            <li><a href="#" class="nav-link" onclick="showTab('notaires')"><i class="fas fa-briefcase"></i> Notaires</a></li>
+            <li><a href="#" class="nav-link" onclick="showTab('activity')"><i class="fas fa-bell"></i> Activité</a></li>
+            <li style="border-top: 1px solid rgba(255,255,255,0.2); margin-top: 20px; padding-top: 20px;">
+                <a href="/static/login.html" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <h1>Tableau de Bord Administrateur</h1>
+            <div class="user-info">
+                <p id="userEmail">Connecté</p>
+                <p id="lastUpdate" style="font-size: 0.8rem; color: #6c757d;"></p>
+            </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="loadingIndicator" class="loading" style="display: none;">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Chargement...</span>
+            </div>
+            <p>Chargement des données...</p>
+        </div>
+
+        <!-- Tab Content -->
+        <div id="tabContent">
+            <!-- Overview Tab -->
+            <div id="overview-tab" class="tab-pane active">
+                <!-- Statistics Cards -->
+                <div class="row">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="stat-card primary">
+                            <div class="stat-card-icon"><i class="fas fa-users"></i></div>
+                            <h6>Total Utilisateurs</h6>
+                            <div class="value" id="totalUsers">-</div>
+                            <small class="text-muted" id="activeUsers">-</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="stat-card success">
+                            <div class="stat-card-icon"><i class="fas fa-home"></i></div>
+                            <h6>Annonces</h6>
+                            <div class="value" id="totalListings">-</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="stat-card warning">
+                            <div class="stat-card-icon"><i class="fas fa-handshake"></i></div>
+                            <h6>Offres</h6>
+                            <div class="value" id="totalOffers">-</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="stat-card danger">
+                            <div class="stat-card-icon"><i class="fas fa-briefcase"></i></div>
+                            <h6>Notaires Partenaires</h6>
+                            <div class="value" id="totalNotaires">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users by Role Chart -->
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="chart-container">
+                            <h5>Distribution des Rôles</h5>
+                            <canvas id="roleChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="chart-container">
+                            <h5>Croissance Utilisateurs (7 jours)</h5>
+                            <canvas id="growthChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Traffic Tab -->
+            <div id="traffic-tab" class="tab-pane" style="display: none;">
+                <div class="row">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="stat-card">
+                            <div class="stat-card-icon"><i class="fas fa-sign-in-alt"></i></div>
+                            <h6>Connexions</h6>
+                            <div class="value" id="logins">-</div>
+                            <small class="text-muted">Cette semaine</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="stat-card">
+                            <div class="stat-card-icon"><i class="fas fa-home"></i></div>
+                            <h6>Annonces Créées</h6>
+                            <div class="value" id="listingsCreated">-</div>
+                            <small class="text-muted">Cette semaine</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="stat-card">
+                            <div class="stat-card-icon"><i class="fas fa-comment"></i></div>
+                            <h6>Messages</h6>
+                            <div class="value" id="messagesSent">-</div>
+                            <small class="text-muted">Cette semaine</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="stat-card">
+                            <div class="stat-card-icon"><i class="fas fa-arrow-trend-up"></i></div>
+                            <h6>Nouveaux Utilisateurs</h6>
+                            <div class="value" id="newUsers">-</div>
+                            <small class="text-muted">Cette semaine</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="chart-container">
+                            <h5>Trafic Hebdomadaire</h5>
+                            <canvas id="trafficChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Tab -->
+            <div id="users-tab" class="tab-pane" style="display: none;">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <h6>Actifs</h6>
+                            <div class="value" id="userActive" style="color: var(--success);">-</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <h6>Inactifs</h6>
+                            <div class="value" id="userInactive" style="color: var(--danger);">-</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <h6>Jamais Connectés</h6>
+                            <div class="value" id="neverLoggedIn" style="color: var(--warning);">-</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <h6>Inscrits cette Semaine</h6>
+                            <div class="value" id="weeklyNewUsers" style="color: var(--secondary);">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <h5>Derniers Utilisateurs Inscrits</h5>
+                    <div id="usersTableContainer">
+                        <p class="text-muted">Chargement...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notaires Tab -->
+            <div id="notaires-tab" class="tab-pane" style="display: none;">
+                <div class="table-container">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5>Gestion des Notaires Partenaires</h5>
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createNotaireModal">
+                            <i class="fas fa-plus"></i> Créer un Notaire
+                        </button>
+                    </div>
+                    <div id="notairesTableContainer">
+                        <p class="text-muted">Chargement...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Tab -->
+            <div id="activity-tab" class="tab-pane" style="display: none;">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="chart-container">
+                            <h5>Activité des Utilisateurs (7 derniers jours)</h5>
+                            <canvas id="activityChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <h5>Journal d'Activité Récente</h5>
+                    <div id="activityLogContainer">
+                        <p class="text-muted">Chargement...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Notaire Modal -->
+    <div class="modal fade" id="createNotaireModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Créer un Profil Notaire</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createNotaireForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="notaireEmail" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="notaireEmail" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="notaireNom" class="form-label">Nom</label>
+                                <input type="text" class="form-control" id="notaireNom" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="notaireEtude" class="form-label">Étude Notariale</label>
+                                <input type="text" class="form-control" id="notaireEtude" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="notaireRPPS" class="form-label">Numéro RPPS</label>
+                                <input type="text" class="form-control" id="notaireRPPS" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="notaireVille" class="form-label">Ville</label>
+                            <input type="text" class="form-control" id="notaireVille" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-primary">Créer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Chart instances
+        let roleChart = null;
+        let growthChart = null;
+        let trafficChart = null;
+        let activityChart = null;
+
+        // Get token from localStorage
+        function getAuthToken() {
+            return localStorage.getItem('authToken');
+        }
+
+        // Check auth
+        function checkAuth() {
+            const token = getAuthToken();
+            if (!token) {
+                window.location.href = '/static/login.html';
+            }
+        }
+
+        // Fetch with auth
+        async function fetchWithAuth(url, options = {}) {
+            const token = getAuthToken();
+            const headers = {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                ...options.headers
+            };
+
+            return fetch(url, { ...options, headers });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            loadData();
+
+            // Set user email
+            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+            document.getElementById('userEmail').textContent = userData.email || 'Admin';
+        });
+
+        // Show loading
+        function showLoading() {
+            document.getElementById('loadingIndicator').style.display = 'block';
+        }
+
+        // Hide loading
+        function hideLoading() {
+            document.getElementById('loadingIndicator').style.display = 'none';
+        }
+
+        // Show tab
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('[id$="-tab"]').forEach(tab => {
+                tab.style.display = 'none';
+            });
+
+            // Remove active from nav
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName + '-tab').style.display = 'block';
+
+            // Add active to clicked nav
+            event.target.classList.add('active');
+        }
+
+        // Load all data
+        async function loadData() {
+            showLoading();
+            try {
+                const response = await fetchWithAuth('/api/v1/admin/analytics?period=week');
+
+                if (!response.ok) {
+                    if (response.status === 401 || response.status === 403) {
+                        window.location.href = '/static/login.html';
+                    }
+                    throw new Error('Failed to load analytics');
+                }
+
+                const data = await response.json();
+
+                // Update summary
+                document.getElementById('totalUsers').textContent = data.summary.total_users;
+                document.getElementById('activeUsers').textContent = `${data.summary.active_users} actif(s)`;
+                document.getElementById('totalListings').textContent = data.summary.total_listings;
+                document.getElementById('totalOffers').textContent = data.summary.total_offers;
+                document.getElementById('totalNotaires').textContent = data.summary.total_notaires;
+
+                // Update traffic
+                document.getElementById('logins').textContent = data.traffic.logins;
+                document.getElementById('listingsCreated').textContent = data.traffic.listings_created;
+                document.getElementById('messagesSent').textContent = data.traffic.messages_sent;
+                document.getElementById('newUsers').textContent = data.growth.new_users;
+
+                // Load activity stats
+                const activityResponse = await fetchWithAuth('/api/v1/admin/stats/user-activity');
+                const activityData = await activityResponse.json();
+
+                document.getElementById('userActive').textContent = activityData.user_status.active;
+                document.getElementById('userInactive').textContent = activityData.user_status.inactive;
+                document.getElementById('neverLoggedIn').textContent = activityData.user_status.never_logged_in;
+                document.getElementById('weeklyNewUsers').textContent = activityData.total_new_registrations_this_week;
+
+                // Update charts
+                updateCharts(data, activityData);
+
+                // Update timestamp
+                const now = new Date();
+                document.getElementById('lastUpdate').textContent = `Mis à jour: ${now.toLocaleTimeString('fr-FR')}`;
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+                alert('Erreur lors du chargement des données');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Update charts
+        function updateCharts(analyticsData, activityData) {
+            // Role distribution chart
+            const roleCtx = document.getElementById('roleChart').getContext('2d');
+            if (roleChart) roleChart.destroy();
+
+            const roleLabels = Object.keys(analyticsData.users_by_role);
+            const roleData = Object.values(analyticsData.users_by_role);
+
+            roleChart = new Chart(roleCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: roleLabels.map(r => r.charAt(0).toUpperCase() + r.slice(1)),
+                    datasets: [{
+                        data: roleData,
+                        backgroundColor: [
+                            '#3498db',
+                            '#e74c3c',
+                            '#27ae60',
+                            '#f39c12'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Growth chart
+            const growthCtx = document.getElementById('growthChart').getContext('2d');
+            if (growthChart) growthChart.destroy();
+
+            const growthLabels = activityData.new_registrations_last_7_days.map(d => d.date);
+            const growthValues = activityData.new_registrations_last_7_days.map(d => d.count);
+
+            growthChart = new Chart(growthCtx, {
+                type: 'line',
+                data: {
+                    labels: growthLabels,
+                    datasets: [{
+                        label: 'Nouveaux utilisateurs',
+                        data: growthValues,
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: true
+                        }
+                    }
+                }
+            });
+
+            // Traffic chart
+            const trafficCtx = document.getElementById('trafficChart').getContext('2d');
+            if (trafficChart) trafficChart.destroy();
+
+            trafficChart = new Chart(trafficCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Connexions', 'Annonces', 'Offres', 'Messages'],
+                    datasets: [{
+                        label: 'Trafic cette semaine',
+                        data: [
+                            analyticsData.traffic.logins,
+                            analyticsData.traffic.listings_created,
+                            analyticsData.traffic.offers_created,
+                            analyticsData.traffic.messages_sent
+                        ],
+                        backgroundColor: ['#3498db', '#27ae60', '#f39c12', '#e74c3c']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    indexAxis: 'y'
+                }
+            });
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userData');
+        }
+
+        // Refresh data every 5 minutes
+        setInterval(loadData, 5 * 60 * 1000);
+    </script>
+</body>
+</html>
