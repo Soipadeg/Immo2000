@@ -282,4 +282,76 @@ export const matchingApi = {
     apiClient.get(`/matching/${acheteur_id}/${annonce_id}`),
 };
 
+/**
+ * Service des alertes
+ */
+export const alertesApi = {
+  /**
+   * Lister les alertes de l'utilisateur
+   */
+  list: (skip = 0, limit = 20) =>
+    apiClient.get('/alertes', {
+      params: { skip, limit },
+    }),
+
+  /**
+   * Créer une nouvelle alerte
+   */
+  create: (data) => apiClient.post('/alertes', data),
+
+  /**
+   * Mettre à jour une alerte
+   */
+  update: (id, data) => apiClient.put(`/alertes/${id}`, data),
+
+  /**
+   * Supprimer une alerte
+   */
+  delete: (id) => apiClient.delete(`/alertes/${id}`),
+
+  /**
+   * Basculer l'état d'une alerte (active/inactive)
+   */
+  toggle: (id) => apiClient.patch(`/alertes/${id}/toggle`),
+};
+
+/**
+ * Service des favoris
+ */
+export const favorisApi = {
+  /**
+   * Lister les favoris de l'utilisateur
+   */
+  list: (skip = 0, limit = 20) =>
+    apiClient.get('/favoris', {
+      params: { skip, limit },
+    }),
+
+  /**
+   * Ajouter un favori
+   */
+  add: (annonceId, data = {}) =>
+    apiClient.post('/favoris', {
+      annonce_id: annonceId,
+      ...data,
+    }),
+
+  /**
+   * Supprimer un favori
+   */
+  remove: (favoriteId) =>
+    apiClient.delete(`/favoris/${favoriteId}`),
+
+  /**
+   * Mettre à jour un favori
+   */
+  update: (id, data) => apiClient.put(`/favoris/${id}`, data),
+
+  /**
+   * Vérifier si une annonce est favorite
+   */
+  isFavorite: (annonceId) =>
+    apiClient.get(`/favoris/check/${annonceId}`),
+};
+
 export default apiClient;

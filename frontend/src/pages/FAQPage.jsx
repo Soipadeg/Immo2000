@@ -124,137 +124,137 @@ const FAQPage = () => {
 
       {/* Onglet 1: Parcourir les FAQs */}
       {tabValue === 0 && (
-      <Paper sx={{ p: 2, mb: 3 }}>
-        <TextField
-          fullWidth
-          placeholder="Rechercher dans les FAQs..."
-          value={searchTerm}
-          onChange={(e) => handleSearch(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
-      </Paper>
-
-      {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
-          <CircularProgress />
-        </Box>
-      ) : filteredFaqs.length === 0 ? (
-        <Paper sx={{ p: 3, textAlign: 'center' }}>
-          <Typography color="text.secondary">
-            {searchTerm
-              ? 'Aucune FAQ ne correspond à votre recherche'
-              : 'Aucune FAQ disponible'}
-          </Typography>
-        </Paper>
-      ) : (
         <>
-          {/* Filtres de catégories */}
-          {categories.length > 1 && (
-            <Box sx={{ mb: 3, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-              <Typography variant="body2" sx={{ alignSelf: 'center', mr: 1 }}>
-                <strong>Catégories:</strong>
-              </Typography>
-              <Box
-                onClick={() => handleCategoryFilter('')}
-                sx={{
-                  px: 2,
-                  py: 1,
-                  borderRadius: 2,
-                  cursor: 'pointer',
-                  backgroundColor: !selectedCategory ? '#1976d2' : '#f0f0f0',
-                  color: !selectedCategory ? 'white' : 'black',
-                  fontSize: '0.875rem',
-                  fontWeight: '500',
-                  transition: 'all 0.2s',
-                  '&:hover': { opacity: 0.8 },
-                }}
-              >
-                Toutes
-              </Box>
-              {categories.map((category) => (
-                <Box
-                  key={category}
-                  onClick={() => handleCategoryFilter(category)}
-                  sx={{
-                    px: 2,
-                    py: 1,
-                    borderRadius: 2,
-                    cursor: 'pointer',
-                    backgroundColor: selectedCategory === category ? '#1976d2' : '#f0f0f0',
-                    color: selectedCategory === category ? 'white' : 'black',
-                    fontSize: '0.875rem',
-                    fontWeight: '500',
-                    transition: 'all 0.2s',
-                    '&:hover': { opacity: 0.8 },
-                  }}
-                >
-                  {category}
-                </Box>
-              ))}
-            </Box>
-          )}
+          <Paper sx={{ p: 2, mb: 3 }}>
+            <TextField
+              fullWidth
+              placeholder="Rechercher dans les FAQs..."
+              value={searchTerm}
+              onChange={(e) => handleSearch(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Paper>
 
-          {/* Liste des FAQs */}
-          <Box sx={{ mb: 3 }}>
-            {filteredFaqs.map((faq, index) => (
-              <Accordion key={faq.faq_id || index} sx={{ mb: 1 }}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography
+          {loading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
+              <CircularProgress />
+            </Box>
+          ) : filteredFaqs.length === 0 ? (
+            <Paper sx={{ p: 3, textAlign: 'center' }}>
+              <Typography color="text.secondary">
+                {searchTerm
+                  ? 'Aucune FAQ ne correspond à votre recherche'
+                  : 'Aucune FAQ disponible'}
+              </Typography>
+            </Paper>
+          ) : (
+            <>
+              {/* Filtres de catégories */}
+              {categories.length > 1 && (
+                <Box sx={{ mb: 3, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                  <Typography variant="body2" sx={{ alignSelf: 'center', mr: 1 }}>
+                    <strong>Catégories:</strong>
+                  </Typography>
+                  <Box
+                    onClick={() => handleCategoryFilter('')}
                     sx={{
-                      fontWeight: 500,
-                      fontSize: '1.05rem',
-                      flex: 1,
+                      px: 2,
+                      py: 1,
+                      borderRadius: 2,
+                      cursor: 'pointer',
+                      backgroundColor: !selectedCategory ? '#1976d2' : '#f0f0f0',
+                      color: !selectedCategory ? 'white' : 'black',
+                      fontSize: '0.875rem',
+                      fontWeight: '500',
+                      transition: 'all 0.2s',
+                      '&:hover': { opacity: 0.8 },
                     }}
                   >
-                    {faq.question}
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Typography color="text.secondary" sx={{ whiteSpace: 'pre-wrap' }}>
-                    {faq.reponse}
-                  </Typography>
-                  {faq.categorie && (
-                    <Typography
-                      variant="caption"
+                    Toutes
+                  </Box>
+                  {categories.map((category) => (
+                    <Box
+                      key={category}
+                      onClick={() => handleCategoryFilter(category)}
                       sx={{
-                        display: 'block',
-                        mt: 2,
-                        color: '#1976d2',
-                        fontWeight: 600,
+                        px: 2,
+                        py: 1,
+                        borderRadius: 2,
+                        cursor: 'pointer',
+                        backgroundColor: selectedCategory === category ? '#1976d2' : '#f0f0f0',
+                        color: selectedCategory === category ? 'white' : 'black',
+                        fontSize: '0.875rem',
+                        fontWeight: '500',
+                        transition: 'all 0.2s',
+                        '&:hover': { opacity: 0.8 },
                       }}
                     >
-                      📂 {faq.categorie}
-                    </Typography>
-                  )}
-                </AccordionDetails>
-              </Accordion>
-            ))}
-          </Box>
+                      {category}
+                    </Box>
+                  ))}
+                </Box>
+              )}
 
-          {/* Résumé */}
-          <Paper
-            sx={{
-              p: 2,
-              backgroundColor: '#f5f5f5',
-              textAlign: 'center',
-              borderRadius: 2,
-            }}
-          >
-            <Typography variant="body2" color="text.secondary">
-              Affichage de {filteredFaqs.length} FAQ{selectedCategory && ` - Catégorie: ${selectedCategory}`}
-            </Typography>
-          </Paper>
+              {/* Liste des FAQs */}
+              <Box sx={{ mb: 3 }}>
+                {filteredFaqs.map((faq, index) => (
+                  <Accordion key={faq.faq_id || index} sx={{ mb: 1 }}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                      <Typography
+                        sx={{
+                          fontWeight: 500,
+                          fontSize: '1.05rem',
+                          flex: 1,
+                        }}
+                      >
+                        {faq.question}
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Typography color="text.secondary" sx={{ whiteSpace: 'pre-wrap' }}>
+                        {faq.reponse}
+                      </Typography>
+                      {faq.categorie && (
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            display: 'block',
+                            mt: 2,
+                            color: '#1976d2',
+                            fontWeight: 600,
+                          }}
+                        >
+                          📂 {faq.categorie}
+                        </Typography>
+                      )}
+                    </AccordionDetails>
+                  </Accordion>
+                ))}
+              </Box>
+
+              {/* Résumé */}
+              <Paper
+                sx={{
+                  p: 2,
+                  backgroundColor: '#f5f5f5',
+                  textAlign: 'center',
+                  borderRadius: 2,
+                }}
+              >
+                <Typography variant="body2" color="text.secondary">
+                  Affichage de {filteredFaqs.length} FAQ{selectedCategory && ` - Catégorie: ${selectedCategory}`}
+                </Typography>
+              </Paper>
+            </>
+          )}
         </>
       )}
-      )}
-
-      {/* Onglet 2: Statistiques */}
       {tabValue === 1 && (
         <Box>
           {statsLoading ? (
