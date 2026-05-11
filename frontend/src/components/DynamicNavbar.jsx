@@ -37,10 +37,6 @@ import SpeakerNotesIcon from '@mui/icons-material/SpeakerNotes';
 import FeedIcon from '@mui/icons-material/Feed';
 import PersonIcon from '@mui/icons-material/Person';
 import TimelineIcon from '@mui/icons-material/Timeline';
-import TimelineIcon from '@mui/icons-material/Timeline';
-import PersonIcon from '@mui/icons-material/Person';
-import SpeakerNotesIcon from '@mui/icons-material/SpeakerNotes';
-import FeedIcon from '@mui/icons-material/Feed';
 
 /**
  * Composant Navbar dynamique

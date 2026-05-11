@@ -21,6 +21,7 @@ import { useAuth } from './hooks/useAuth';
 import DynamicNavbar from './components/DynamicNavbar';
 import ProtectedRoute from './components/ProtectedRoute';
 import Chatbot from './components/Chatbot';
+import DashboardRouter from './components/DashboardRouter';
 
 // Pages
 import VendeurDashboard from './components/VendeurDashboard';
@@ -191,17 +192,7 @@ function App() {
             {/* Routes pour Utilisateur (user) */}
             <Route
               path="/dashboard"
-              element={
-                <ProtectedRoute
-                  element={
-                    user?.role === 'admin' ? <AdminDashboardPage /> : <UserDashboardPage />
-                  }
-                  isAuthenticated={isAuthenticated}
-                  userRole={user?.role}
-                  requiredRoles={['user', 'admin']}
-                  loading={loading}
-                />
-              }
+              element={<DashboardRouter />}
             />
 
             <Route
