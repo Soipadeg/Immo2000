@@ -33,6 +33,10 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BuildIcon from '@mui/icons-material/Build';
+import SpeakerNotesIcon from '@mui/icons-material/SpeakerNotes';
+import FeedIcon from '@mui/icons-material/Feed';
+import PersonIcon from '@mui/icons-material/Person';
+import TimelineIcon from '@mui/icons-material/Timeline';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import PersonIcon from '@mui/icons-material/Person';
 import SpeakerNotesIcon from '@mui/icons-material/SpeakerNotes';
@@ -84,22 +88,24 @@ export const DynamicNavbar = ({
     // Items pour utilisateurs connectés
     items.push({ label: 'Matching', path: '/matching', icon: <BookmarkIcon /> });
     items.push({ label: 'Alertes', path: '/alertes', icon: <NotificationsIcon /> });
+    items.push({ label: 'Guides', path: '/guides', icon: <SpeakerNotesIcon /> });
+    items.push({ label: 'Modèles', path: '/modeles', icon: <FeedIcon /> });
 
     if (userRole === 'user') {
       items.push({ label: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> });
-      items.push({ label: 'Guides', path: '/guides', icon: <SpeakerNotesIcon /> });
-      items.push({ label: 'Modèles', path: '/modeles', icon: <FeedIcon /> });
+      items.push({ label: 'Favoris', path: '/favoris', icon: <BookmarkIcon /> });
+      items.push({ label: 'Historique', path: '/historique', icon: <FeedIcon /> });
     }
 
     if (userRole === 'admin') {
       items.push({ label: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> });
       items.push({ label: 'Admin', path: '/admin', icon: <AdminPanelSettingsIcon /> });
-      items.push({ label: 'Guides', path: '/guides', icon: <SpeakerNotesIcon /> });
-      items.push({ label: 'Modèles', path: '/modeles', icon: <FeedIcon /> });
+      items.push({ label: 'Utilisateurs', path: '/admin/users', icon: <PersonIcon /> });
+      items.push({ label: 'Modération', path: '/admin/moderation', icon: <SpeakerNotesIcon /> });
     }
 
     if (userRole === 'notaire') {
-      items.push({ label: 'Dashboard Notaire', path: '/notaire/dashboard', icon: <BuildIcon /> });
+      items.push({ label: 'Dashboard', path: '/notaire/dashboard', icon: <BuildIcon /> });
     }
 
     return items;

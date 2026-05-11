@@ -39,6 +39,16 @@ import AlertesPage from './pages/AlertesPage';
 import AnnoncePage from './pages/AnnoncePage';
 import CGUPage from './pages/CGUPage';
 import PolitiqueConfidentialitePage from './pages/PolitiqueConfidentialitePage';
+import GuidesPage from './pages/GuidesPage';
+import ModelesPage from './pages/ModelesPage';
+import ProfilePage from './pages/ProfilePage';
+import FavoritesPage from './pages/FavoritesPage';
+import HistoryPage from './pages/HistoryPage';
+import AdminUsersPage from './pages/AdminUsersPage';
+import ModerationPage from './pages/ModerationPage';
+import NotaireDashboardPage from './pages/NotaireDashboardPage';
+import UserDashboardPage from './pages/UserDashboardPage';
+import AdminDashboardPage from './pages/AdminDashboardPage';
 
 
 /**
@@ -183,7 +193,9 @@ function App() {
               path="/dashboard"
               element={
                 <ProtectedRoute
-                  element={<VendeurDashboard />}
+                  element={
+                    user?.role === 'admin' ? <AdminDashboardPage /> : <UserDashboardPage />
+                  }
                   isAuthenticated={isAuthenticated}
                   userRole={user?.role}
                   requiredRoles={['user', 'admin']}
@@ -214,6 +226,90 @@ function App() {
                   isAuthenticated={isAuthenticated}
                   userRole={user?.role}
                   requiredRoles={['admin']}
+                  loading={loading}
+                />
+              }
+            />
+
+            <Route
+              path="/admin/users"
+              element={
+                <ProtectedRoute
+                  element={<AdminUsersPage />}
+                  isAuthenticated={isAuthenticated}
+                  userRole={user?.role}
+                  requiredRoles={['admin']}
+                  loading={loading}
+                />
+              }
+            />
+
+            <Route
+              path="/admin/moderation"
+              element={
+                <ProtectedRoute
+                  element={<ModerationPage />}
+                  isAuthenticated={isAuthenticated}
+                  userRole={user?.role}
+                  requiredRoles={['admin']}
+                  loading={loading}
+                />
+              }
+            />
+
+            {/* Routes pour Utilisateurs connectés - Pages publiques du contenu */}
+            <Route path="/guides" element={<GuidesPage />} />
+            <Route path="/modeles" element={<ModelesPage />} />
+
+            {/* Routes pour Utilisateurs authentifiés */}
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute
+                  element={<ProfilePage />}
+                  isAuthenticated={isAuthenticated}
+                  userRole={user?.role}
+                  requiredRoles={['user', 'admin', 'notaire']}
+                  loading={loading}
+                />
+              }
+            />
+
+            <Route
+              path="/favoris"
+              element={
+                <ProtectedRoute
+                  element={<FavoritesPage />}
+                  isAuthenticated={isAuthenticated}
+                  userRole={user?.role}
+                  requiredRoles={['user', 'admin']}
+                  loading={loading}
+                />
+              }
+            />
+
+            <Route
+              path="/historique"
+              element={
+                <ProtectedRoute
+                  element={<HistoryPage />}
+                  isAuthenticated={isAuthenticated}
+                  userRole={user?.role}
+                  requiredRoles={['user', 'admin']}
+                  loading={loading}
+                />
+              }
+            />
+
+            {/* Routes pour Notaires uniquement */}
+            <Route
+              path="/notaire/dashboard"
+              element={
+                <ProtectedRoute
+                  element={<NotaireDashboardPage />}
+                  isAuthenticated={isAuthenticated}
+                  userRole={user?.role}
+                  requiredRoles={['notaire']}
                   loading={loading}
                 />
               }
