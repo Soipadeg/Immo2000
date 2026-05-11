@@ -49,6 +49,7 @@ import ModerationPage from './pages/ModerationPage';
 import NotaireDashboardPage from './pages/NotaireDashboardPage';
 import UserDashboardPage from './pages/UserDashboardPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
+import NotificationsPage from './pages/NotificationsPage';
 
 
 /**
@@ -192,10 +193,13 @@ function App() {
             <Route
               path="/dashboard"
               element={
-                <Box sx={{ p: 3 }}>
-                  <Typography variant="h4">Dashboard</Typography>
-                  <Typography>Vous êtes connecté</Typography>
-                </Box>
+                <ProtectedRoute
+                  element={<UserDashboardPage />}
+                  isAuthenticated={isAuthenticated}
+                  userRole={user?.role}
+                  requiredRoles={['user', 'admin', 'notaire']}
+                  loading={loading}
+                />
               }
             />
 
@@ -291,6 +295,19 @@ function App() {
                   isAuthenticated={isAuthenticated}
                   userRole={user?.role}
                   requiredRoles={['user', 'admin']}
+                  loading={loading}
+                />
+              }
+            />
+
+            <Route
+              path="/notifications"
+              element={
+                <ProtectedRoute
+                  element={<NotificationsPage />}
+                  isAuthenticated={isAuthenticated}
+                  userRole={user?.role}
+                  requiredRoles={['user', 'admin', 'notaire']}
                   loading={loading}
                 />
               }
