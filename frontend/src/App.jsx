@@ -2,25 +2,29 @@
  * Composant racine de l'application
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import {
   ThemeProvider,
   createTheme,
   CssBaseline,
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
   Box,
-  Menu,
-  MenuItem,
-  Avatar,
+  Button,
+  Typography,
 } from '@mui/material';
 import { fr } from 'date-fns/locale';
+
+// Hooks personnalisés
+import { useAuth } from './hooks/useAuth';
+
+// Composants
+import DynamicNavbar from './components/DynamicNavbar';
+import ProtectedRoute from './components/ProtectedRoute';
+import Chatbot from './components/Chatbot';
+
+// Pages
 import VendeurDashboard from './components/VendeurDashboard';
 import RechercheBiens from './components/RechercheBiens';
-import Chatbot from './components/Chatbot';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
@@ -35,9 +39,17 @@ import AlertesPage from './pages/AlertesPage';
 import AnnoncePage from './pages/AnnoncePage';
 import CGUPage from './pages/CGUPage';
 import PolitiqueConfidentialitePage from './pages/PolitiqueConfidentialitePage';
+import GuidesPage from './pages/GuidesPage';
+import ModelesPage from './pages/ModelesPage';
+import ProfilePage from './pages/ProfilePage';
+import FavoritesPage from './pages/FavoritesPage';
+import HistoryPage from './pages/HistoryPage';
+import AdminUsersPage from './pages/AdminUsersPage';
+import ModerationPage from './pages/ModerationPage';
+import NotaireDashboardPage from './pages/NotaireDashboardPage';
+import UserDashboardPage from './pages/UserDashboardPage';
+import AdminDashboardPage from './pages/AdminDashboardPage';
 
-// Importer les services
-import { authApi } from './services/api';
 
 /**
  * Thème Material-UI personnalisé
@@ -72,305 +84,274 @@ const theme = createTheme({
 });
 
 /**
- * Composant de menu utilisateur
+ * Page d'accueil pour visiteurs
  */
-const UserMenu = ({ user, onLogout }) => {
-  const [anchorEl, setAnchorEl] = useState(null);
-
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleLogout = () => {
-    authApi.logout();
-    onLogout();
-    handleMenuClose();
-  };
-
-  return (
-    <>
+const HomePage = () => (
+  <Box sx={{ textAlign: 'center', py: 8 }}>
+    <Typography variant="h4" gutterBottom>
+      🏠 Immo2000
+    </Typography>
+    <Typography variant="body1" gutterBottom sx={{ mb: 3 }}>
+      Votre plateforme immobilière
+    </Typography>
+    <Box sx={{ mt: 2, display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
       <Button
-        onClick={handleMenuOpen}
-        startIcon={<Avatar sx={{ width: 32, height: 32 }}>{user?.prenom?.[0]}</Avatar>}
-        sx={{ color: 'white' }}
+        variant="contained"
+        color="primary"
+        href="/search"
+        size="large"
       >
-        {user?.prenom} {user?.nom}
+        Consulter les annonces
       </Button>
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
+      <Button
+        variant="outlined"
+        color="primary"
+        href="/login"
+        size="large"
       >
-        <MenuItem onClick={handleMenuClose}>Mon profil</MenuItem>
-        <MenuItem onClick={handleMenuClose}>Paramètres</MenuItem>
-        <MenuItem onClick={handleLogout}>Déconnexion</MenuItem>
-      </Menu>
-    </>
-  );
-};
+        Se connecter
+      </Button>
+      <Button
+        variant="outlined"
+        color="primary"
+        href="/register"
+        size="large"
+      >
+        S'inscrire
+      </Button>
+    </Box>
+  </Box>
+);
 
 /**
  * Composant principal de l'application
  */
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userRole, setUserRole] = useState(null);
-  const [user, setUser] = useState(null);
-
-  // Vérifier l'authentification au montage
-  useEffect(() => {
-    const token = localStorage.getItem('auth_token');
-    const userId = localStorage.getItem('user_id');
-    const userEmail = localStorage.getItem('user_email');
-    const userRole = localStorage.getItem('user_role');
-
-    if (token && userId) {
-      setIsAuthenticated(true);
-      setUserRole(userRole);
-      setUser({
-        user_id: userId,
-        email: userEmail,
-        role: userRole,
-      });
-    }
-  }, []);
-
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    setUserRole(null);
-    setUser(null);
-  };
+  const { isAuthenticated, user, loading, logout } = useAuth();
+  const [chatbotOpen, setChatbotOpen] = useState(false);
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
-        <Routes>
-          {/* Routes publiques */}
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-
-          {/* Routes protégées et publiques */}
-          <Route
-            path="/*"
-            element={
-              <Layout
-                isAuthenticated={isAuthenticated}
-                userRole={userRole}
-                user={user}
-                onLogout={handleLogout}
-              />
-            }
-          />
-        </Routes>
-      </Router>
-    </ThemeProvider>
-  );
-}
-
-/**
- * Layout principal avec AppBar et routes
- */
-function Layout({ isAuthenticated, userRole, user, onLogout }) {
-  const [chatbotOpen, setChatbotOpen] = useState(false);
-
-  return (
-    <>
-      {/* En-tête */}
-      {(isAuthenticated || window.location.pathname === '/search' || window.location.pathname === '/simulateur-pret') && (
-        <AppBar position="sticky">
-          <Toolbar>
-            <Typography variant="h6" sx={{ flexGrow: 1 }}>
-              🏠 Immo2000
-            </Typography>
-
-            {/* Navigation */}
-            <Button color="inherit" href="/search">
-              Rechercher
-            </Button>
-
-            <Button color="inherit" href="/simulateur-pret">
-              Simulateur de prêt
-            </Button>
-
-            {isAuthenticated && userRole === 'user' && (
-              <Button color="inherit" href="/dashboard">
-                Mon tableau de bord
-              </Button>
-            )}
-
-            {isAuthenticated && (
-              <Button color="inherit" href="/matching">
-                Trouver un bien
-              </Button>
-            )}
-
-            {isAuthenticated && (
-              <Button color="inherit" href="/alertes">
-                🔔 Alertes
-              </Button>
-            )}
-
-            {isAuthenticated && userRole === 'admin' && (
-              <Button color="inherit" href="/admin">
-                Admin
-              </Button>
-            )}
-
-            {/* Menu utilisateur ou boutons login */}
-            {isAuthenticated && user ? (
-              <UserMenu user={user} onLogout={onLogout} />
-            ) : (
-              <>
-                <Button color="inherit" href="/login">
-                  Se connecter
-                </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  href="/register"
-                  sx={{ ml: 1 }}
-                >
-                  S'inscrire
-                </Button>
-              </>
-            )}
-          </Toolbar>
-        </AppBar>
-      )}
-
-      {/* Routes */}
-      <Routes>
-        {/* Page d'accueil pour non-authentifiés */}
-        <Route
-          path="/"
-          element={
-            !isAuthenticated ? (
-              <Box sx={{ textAlign: 'center', py: 8 }}>
-                <Typography variant="h4" gutterBottom>
-                  🏠 Immo2000
-                </Typography>
-                <Typography variant="body1" gutterBottom sx={{ mb: 3 }}>
-                  Votre plateforme immobilière
-                </Typography>
-                <Box sx={{ mt: 2, display: 'flex', gap: 2, justifyContent: 'center' }}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    href="/search"
-                    size="large"
-                  >
-                    Consulter les annonces
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    href="/login"
-                    size="large"
-                  >
-                    Se connecter
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    href="/register"
-                    size="large"
-                  >
-                    S'inscrire
-                  </Button>
-                </Box>
-              </Box>
-            ) : (
-              <Navigate to={userRole === 'admin' ? '/admin' : '/dashboard'} replace />
-            )
-          }
+        {/* Navbar dynamique */}
+        <DynamicNavbar
+          isAuthenticated={isAuthenticated}
+          userRole={user?.role}
+          user={user}
+          onLogout={logout}
         />
 
-        {/* Routes publiques */}
-        <Route path="/search" element={<RechercheBiens />} />
-        <Route path="/annonce/:id" element={<AnnoncePage />} />
-        <Route path="/simulateur-pret" element={<SimulateurPret />} />
-        <Route path="/cgu" element={<CGUPage />} />
-        <Route path="/politique-confidentialite" element={<PolitiqueConfidentialitePage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route path="/verify-email" element={<VerifyEmailPage />} />
-        <Route path="/verify-2fa" element={<Verify2FAPage />} />
+        {/* Contenu principal */}
+        <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+          <Routes>
+            {/* Routes publiques - Pas de protection */}
+            <Route path="/" element={!isAuthenticated ? <HomePage /> : <Navigate to="/dashboard" replace />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/verify-email" element={<VerifyEmailPage />} />
+            <Route path="/verify-2fa" element={<Verify2FAPage />} />
+            <Route path="/cgu" element={<CGUPage />} />
+            <Route path="/politique-confidentialite" element={<PolitiqueConfidentialitePage />} />
 
-        {/* Routes protégées - Utilisateurs connectés */}
-        {isAuthenticated && (
-          <>
-            <Route path="/matching" element={<MatchingPage />} />
-            <Route path="/alertes" element={<AlertesPage />} />
+            {/* Routes accessibles à tous (connecté ou pas) */}
+            <Route path="/search" element={<RechercheBiens />} />
+            <Route path="/annonce/:id" element={<AnnoncePage />} />
+            <Route path="/simulateur-pret" element={<SimulateurPret />} />
 
-            {/* Routes pour les utilisateurs (vendeurs/acheteurs) */}
-            {userRole === 'user' && (
-              <>
-                <Route path="/dashboard" element={<VendeurDashboard />} />
-                <Route path="/annonces/create" element={<CreateAnnoncePage />} />
-              </>
-            )}
+            {/* Routes protégées - Utilisateur connecté uniquement */}
+            <Route
+              path="/matching"
+              element={
+                <ProtectedRoute
+                  element={<MatchingPage />}
+                  isAuthenticated={isAuthenticated}
+                  userRole={user?.role}
+                  requiredRoles={['user', 'admin', 'notaire']}
+                  loading={loading}
+                />
+              }
+            />
 
-            {/* Routes pour les admins */}
-            {userRole === 'admin' && (
-              <Route path="/admin" element={<AdminPage />} />
-            )}
-          </>
+            <Route
+              path="/alertes"
+              element={
+                <ProtectedRoute
+                  element={<AlertesPage />}
+                  isAuthenticated={isAuthenticated}
+                  userRole={user?.role}
+                  requiredRoles={['user', 'admin']}
+                  loading={loading}
+                />
+              }
+            />
+
+            {/* Routes pour Utilisateur (user) */}
+            <Route
+              path="/dashboard"
+              element={
+                <Box sx={{ p: 3 }}>
+                  <Typography variant="h4">Dashboard</Typography>
+                  <Typography>Vous êtes connecté</Typography>
+                </Box>
+              }
+            />
+
+            <Route
+              path="/annonces/create"
+              element={
+                <ProtectedRoute
+                  element={<CreateAnnoncePage />}
+                  isAuthenticated={isAuthenticated}
+                  userRole={user?.role}
+                  requiredRoles={['user', 'admin']}
+                  loading={loading}
+                />
+              }
+            />
+
+            {/* Routes pour Admin uniquement */}
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute
+                  element={<AdminPage />}
+                  isAuthenticated={isAuthenticated}
+                  userRole={user?.role}
+                  requiredRoles={['admin']}
+                  loading={loading}
+                />
+              }
+            />
+
+            <Route
+              path="/admin/users"
+              element={
+                <ProtectedRoute
+                  element={<AdminUsersPage />}
+                  isAuthenticated={isAuthenticated}
+                  userRole={user?.role}
+                  requiredRoles={['admin']}
+                  loading={loading}
+                />
+              }
+            />
+
+            <Route
+              path="/admin/moderation"
+              element={
+                <ProtectedRoute
+                  element={<ModerationPage />}
+                  isAuthenticated={isAuthenticated}
+                  userRole={user?.role}
+                  requiredRoles={['admin']}
+                  loading={loading}
+                />
+              }
+            />
+
+            {/* Routes pour Utilisateurs connectés - Pages publiques du contenu */}
+            <Route path="/guides" element={<GuidesPage />} />
+            <Route path="/modeles" element={<ModelesPage />} />
+
+            {/* Routes pour Utilisateurs authentifiés */}
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute
+                  element={<ProfilePage />}
+                  isAuthenticated={isAuthenticated}
+                  userRole={user?.role}
+                  requiredRoles={['user', 'admin', 'notaire']}
+                  loading={loading}
+                />
+              }
+            />
+
+            <Route
+              path="/favoris"
+              element={
+                <ProtectedRoute
+                  element={<FavoritesPage />}
+                  isAuthenticated={isAuthenticated}
+                  userRole={user?.role}
+                  requiredRoles={['user', 'admin']}
+                  loading={loading}
+                />
+              }
+            />
+
+            <Route
+              path="/historique"
+              element={
+                <ProtectedRoute
+                  element={<HistoryPage />}
+                  isAuthenticated={isAuthenticated}
+                  userRole={user?.role}
+                  requiredRoles={['user', 'admin']}
+                  loading={loading}
+                />
+              }
+            />
+
+            {/* Routes pour Notaires uniquement */}
+            <Route
+              path="/notaire/dashboard"
+              element={
+                <ProtectedRoute
+                  element={<NotaireDashboardPage />}
+                  isAuthenticated={isAuthenticated}
+                  userRole={user?.role}
+                  requiredRoles={['notaire']}
+                  loading={loading}
+                />
+              }
+            />
+
+            {/* Redirection par défaut */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Box>
+
+        {/* Bouton du chatbot - widget flottant */}
+        {!chatbotOpen && (
+          <Box
+            sx={{
+              position: 'fixed',
+              bottom: 20,
+              right: 20,
+              zIndex: 9998,
+              cursor: 'pointer',
+            }}
+            onClick={() => setChatbotOpen(true)}
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{
+                borderRadius: '50%',
+                width: 60,
+                height: 60,
+                minWidth: 60,
+                fontSize: 24,
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                '&:hover': {
+                  transform: 'scale(1.1)',
+                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.2)',
+                },
+              }}
+            >
+              💬
+            </Button>
+          </Box>
         )}
 
-        {/* Redirection par défaut */}
-        <Route
-          path="*"
-          element={
-            isAuthenticated ? (
-              <Navigate to={userRole === 'admin' ? '/admin' : '/dashboard'} replace />
-            ) : (
-              <Navigate to="/" replace />
-            )
-          }
-        />
-      </Routes>
-
-      {/* Bouton du chatbot - widget flottant */}
-      {!chatbotOpen && (
-        <Box
-          sx={{
-            position: 'fixed',
-            bottom: 20,
-            right: 20,
-            zIndex: 9998,
-            cursor: 'pointer',
-          }}
-          onClick={() => setChatbotOpen(true)}
-        >
-          <Button
-            variant="contained"
-            color="primary"
-            sx={{
-              borderRadius: '50%',
-              width: 60,
-              height: 60,
-              minWidth: 60,
-              fontSize: 24,
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-              '&:hover': {
-                transform: 'scale(1.1)',
-                boxShadow: '0 6px 16px rgba(0, 0, 0, 0.2)',
-              },
-            }}
-          >
-            💬
-          </Button>
-        </Box>
-      )}
-
-      {/* Composant Chatbot */}
-      <Chatbot isOpen={chatbotOpen} onClose={() => setChatbotOpen(false)} />
-    </>
+        {/* Composant Chatbot */}
+        <Chatbot isOpen={chatbotOpen} onClose={() => setChatbotOpen(false)} />
+      </Router>
+    </ThemeProvider>
   );
 }
 
