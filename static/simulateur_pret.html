@@ -10,40 +10,8 @@
     <link href="/static/css/chatbot.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="index.html">
-                <i class="fas fa-home"></i> Immo2000
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="matching.html">Matching</a>
-                    </li>
-                    <li class="nav-item" id="authLinks">
-                        <a class="nav-link" href="login.html">Connexion</a>
-                    </li>
-                    <li class="nav-item" id="authLinks">
-                        <a class="nav-link" href="register.html">Inscription</a>
-                    </li>
-                    <li class="nav-item dropdown" id="userMenu" style="display: none;">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user"></i> <span id="userName"></span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="dashboard.html">Tableau de bord</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#" id="logoutBtn">Déconnexion</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <!-- Unified Navbar Injection -->
+    <script src="/static/js/navbar-unified.js"></script>
 
     <main>
         <div class="container mt-4">
