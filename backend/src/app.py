@@ -29,9 +29,15 @@ from src.routes.biens import biens_bp
 from src.routes.estimations import estimations_bp
 from src.routes.simulateur_pret import simulateur_bp
 from src.routes.visites import visites_bp, feedbacks_bp
+from src.routes.messages import messages_bp
 from src.routes.chatbot import chatbot_bp
 from src.routes.faq import faq_bp
 from src.routes.images import images_bp
+from src.routes.documents import documents_bp
+from src.routes.annonce_views import views_bp
+from src.routes.search_history import search_bp
+from src.routes.favoris import favoris_bp
+from src.routes.offres import offres_bp
 from src.services.scheduler import SchedulerService
 from src.services.chatbot import init_chatbot
 from src.config import get_config
@@ -176,6 +182,9 @@ def create_app(config_name: str = None) -> Flask:
     # Blueprints - Feedbacks (Avis post-visite)
     app.register_blueprint(feedbacks_bp)
 
+    # Blueprints - Messages (Messagerie P2P)
+    app.register_blueprint(messages_bp)
+
     # Blueprints - Chatbot
     app.register_blueprint(chatbot_bp)
 
@@ -184,6 +193,21 @@ def create_app(config_name: str = None) -> Flask:
 
     # Blueprints - Images
     app.register_blueprint(images_bp)
+
+    # Blueprints - Documents (Phase 2)
+    app.register_blueprint(documents_bp)
+
+    # Blueprints - Annonce Views Analytics (Phase 2)
+    app.register_blueprint(views_bp)
+
+    # Blueprints - Search History (Phase 2)
+    app.register_blueprint(search_bp)
+
+    # Blueprints - Favoris (Phase 2)
+    app.register_blueprint(favoris_bp)
+
+    # Blueprints - Offres (Phase 2)
+    app.register_blueprint(offres_bp)
 
     @app.errorhandler(404)
     def not_found(error):

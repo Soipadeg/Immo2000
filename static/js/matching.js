@@ -144,8 +144,8 @@ function displayResults(annonces) {
                         <a href="matching.html?annonce_id=${annonce.id}" class="btn btn-primary btn-sm">
                             <i class="fas fa-eye"></i> Voir l'annonce
                         </a>
-                        <button class="btn btn-outline-secondary btn-sm" data-feature="Prise de RDV">
-                            <i class="fas fa-calendar-check"></i> Prendre RDV
+                        <button class="btn btn-outline-secondary btn-sm contact-btn" data-annonce-id="${annonce.id}" data-annonce-titre="${annonce.titre}" data-seller-id="${annonce.utilisateur_id}">
+                            <i class="fas fa-envelope"></i> Prise de contact
                         </button>
                     </div>
                 </div>
@@ -153,25 +153,21 @@ function displayResults(annonces) {
         </div>
     `).join('');
 
-    // Déclencher les événements des boutons "À faire"
-    initializeFeatureButtons();
+    // Déclencher les événements des boutons de contact
+    initializeContactButtons();
 }
 
 /**
- * Initialise les boutons "À faire"
+ * Initialise les boutons de prise de contact
  */
-function initializeFeatureButtons() {
-    const featureButtons = document.querySelectorAll('[data-feature]');
-    featureButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const featureName = btn.dataset.feature;
-            showComingSoon(featureName);
-        });
-    });
-}
-
-/**
- * Charge les détails d'une annonce si passée en paramètre
+function initializeContactButtons() {
+    const contactButtons = document.querySelectorAll('.contact-btn');
+    contactButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const annonceId = btn.dataset.annonceId;
+            const annonceTitre = btn.dataset.annonceTitre;
+            const sellerId = btn.dataset.sellerId;
  */
 document.addEventListener('DOMContentLoaded', () => {
     const annonceId = getQueryParam('annonce_id');
@@ -186,10 +182,10 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 async function loadAnnonceDetails(annonceId) {
     try {
-        const response = await axios.get(`/annonces/${annonceId}`);
+        const response = await axios.get(`/api/v1/annonces/${annonceId}`);
 
         // Affiche une modale avec les détails
-        const annonce = response.data.annonce;
+        const annonce = response.data;
         const detailsHTML = `
             <div style="text-align: center;">
                 <img src="${annonce.image || '/static/images/default-house.jpg'}"
@@ -211,14 +207,121 @@ async function loadAnnonceDetails(annonceId) {
             <p><strong>Description :</strong></p>
             <p>${annonce.description}</p>
 
-            <button class="btn btn-primary w-100" data-feature="Prise de RDV">
-                <i class="fas fa-calendar-check"></i> Prendre RDV
+            <button class="btn btn-primary w-100 contact-btn" data-annonce-id="${annonce.annonce_id}" data-annonce-titre="${annonce.titre}" data-seller-id="${annonce.utilisateur_id}">
+                <i class="fas fa-envelope"></i> Prise de contact
             </button>
         `;
 
         showModal(annonce.titre, detailsHTML);
-        initializeFeatureButtons();
+        initializeContactButtons();
     } catch (error) {
         console.error('Erreur lors du chargement des détails de l\'annonce:', error);
+    }
+}
+
+/**
+ * Ouvre la modale de prise de contact
+ */
+function openContactModal(annonceId, annonceTitre, sellerId) {
+    // Vérifier si l'utilisateur est connecté
+    if (!isLoggedIn()) {
+        // Rediriger vers la page de connexion
+        window.location.href = 'login.html?redirect=matching.html';
+        return;
+    }
+
+    // Obtenir l'utilisateur actuel
+    const currentUser = getCurrentUser();
+
+    // Vérifier que l'utilisateur n'envoie pas un message à lui-même
+    if (currentUser && currentUser.utilisateur_id === parseInt(sellerId)) {
+        showErrorMessage("Vous ne pouvez pas envoyer un message à vous-même");
+        return;
+    }
+
+    // Créer la modale de contact
+    const contactHTML = `
+        <div>
+            <h5>${annonceTitre}</h5>
+            <div id="contactErrorMessage"></div>
+
+            <form id="contactForm">
+                <div class="form-group mb-3">
+                    <label for="contactMessage" class="form-label">Votre message</label>
+                    <textarea class="form-control" id="contactMessage" name="message" rows="5" placeholder="Décrivez votre intérêt pour ce bien..." required></textarea>
+                    <small class="form-text text-muted">Max 2000 caractères</small>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Envoyer le message
+                    </button>
+                </div>
+            </form>
+        </div>
+    `;
+
+    showModal("Prise de contact", contactHTML);
+
+    // Ajouter l'événement submit du formulaire
+    setTimeout(() => {
+        const form = document.getElementById('contactForm');
+        if (form) {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const message = document.getElementById('contactMessage').value.trim();
+
+                if (!message) {
+                    showErrorMessage("Le message ne peut pas être vide", 'contactErrorMessage');
+                    return;
+                }
+
+                // Envoyer le message
+                await sendContactMessage(annonceId, sellerId, message);
+            });
+        }
+    }, 100);
+}
+
+/**
+ * Envoie le message de contact à l'API
+ */
+async function sendContactMessage(annonceId, sellerId, message) {
+    try {
+        const token = getAuthToken();
+        const currentUser = getCurrentUser();
+
+        const response = await axios.post('/api/v1/messages', {
+            receiver_id: parseInt(sellerId),
+            annonce_id: parseInt(annonceId),
+            contenu: message
+        }, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        // Afficher un message de succès
+        showModal("Succès", `
+            <div class="text-center">
+                <i class="fas fa-check-circle text-success" style="font-size: 48px; margin-bottom: 1rem;"></i>
+                <h5>Message envoyé avec succès !</h5>
+                <p class="text-muted">Le propriétaire de l'annonce recevra votre message et vous répondra bientôt.</p>
+                <a href="dashboard.html" class="btn btn-primary">
+                    <i class="fas fa-envelope"></i> Voir mes messages
+                </a>
+            </div>
+        `);
+    } catch (error) {
+        console.error('Erreur lors de l\'envoi du message:', error);
+
+        let errorMessage = 'Erreur lors de l\'envoi du message';
+        if (error.response && error.response.data && error.response.data.error) {
+            errorMessage = error.response.data.error;
+        }
+
+        showErrorMessage(errorMessage, 'contactErrorMessage');
     }
 }
