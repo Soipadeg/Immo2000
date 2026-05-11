@@ -311,7 +311,7 @@ export const DynamicNavbar = ({
             <Box sx={{ display: 'flex', gap: 1 }}>
               <Button
                 color="inherit"
-                onClick={() => handleNavigate('/login')}
+                onClick={() => window.location.href = 'http://localhost:5000/login.html'}
                 sx={{
                   fontSize: '14px',
                   fontWeight: 500,
@@ -326,7 +326,7 @@ export const DynamicNavbar = ({
               <Button
                 variant="contained"
                 color="secondary"
-                onClick={() => handleNavigate('/register')}
+                onClick={() => window.location.href = 'http://localhost:5000/register.html'}
                 sx={{
                   fontSize: '14px',
                   fontWeight: 700,

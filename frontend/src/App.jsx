@@ -25,8 +25,6 @@ import Chatbot from './components/Chatbot';
 // Pages
 import VendeurDashboard from './components/VendeurDashboard';
 import RechercheBiens from './components/RechercheBiens';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
@@ -107,7 +105,7 @@ const HomePage = () => (
       <Button
         variant="outlined"
         color="primary"
-        href="/login"
+        href="http://localhost:5000/login.html"
         size="large"
       >
         Se connecter
@@ -115,7 +113,7 @@ const HomePage = () => (
       <Button
         variant="outlined"
         color="primary"
-        href="/register"
+        href="http://localhost:5000/register.html"
         size="large"
       >
         S'inscrire
@@ -123,6 +121,26 @@ const HomePage = () => (
     </Box>
   </Box>
 );
+
+/**
+ * Redirection pour le login (vers port 5000)
+ */
+const LoginRedirect = () => {
+  React.useEffect(() => {
+    window.location.href = 'http://localhost:5000/login.html';
+  }, []);
+  return null;
+};
+
+/**
+ * Redirection pour le register (vers port 5000)
+ */
+const RegisterRedirect = () => {
+  React.useEffect(() => {
+    window.location.href = 'http://localhost:5000/register.html';
+  }, []);
+  return null;
+};
 
 /**
  * Composant principal de l'application
@@ -148,8 +166,8 @@ function App() {
           <Routes>
             {/* Routes publiques - Pas de protection */}
             <Route path="/" element={!isAuthenticated ? <HomePage /> : <Navigate to="/dashboard" replace />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/login" element={<LoginRedirect />} />
+            <Route path="/register" element={<RegisterRedirect />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/verify-email" element={<VerifyEmailPage />} />
