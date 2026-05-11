@@ -25,13 +25,16 @@ const DashboardRouter = () => {
   }
 
   // Route to appropriate dashboard based on role
-  if (user?.role === 'admin') {
-    return <AdminDashboardPage />;
-  } else if (user?.role === 'user') {
-    return <UserDashboardPage />;
-  } else if (user?.role === 'notaire') {
-    return <Navigate to="/notaire/dashboard" replace />;
-  } else {
+  try {
+    if (user?.role === 'admin') {
+      return <AdminDashboardPage />;
+    } else if (user?.role === 'notaire') {
+      return <Navigate to="/notaire/dashboard" replace />;
+    } else {
+      return <UserDashboardPage />;
+    }
+  } catch (error) {
+    console.error('Error in DashboardRouter:', error);
     return <Navigate to="/login" replace />;
   }
 };
