@@ -29,7 +29,7 @@ import {
   Chip,
 } from '@mui/material';
 import {
-  Bell as BellIcon,
+  Notifications as BellIcon,
   Check as CheckIcon,
   Cancel as CloseIcon,
   Mail as MailIcon,
