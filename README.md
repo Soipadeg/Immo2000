@@ -81,9 +81,19 @@ npm run dev
 
 ## 📁 Structure du Projet
 
+### 🏠 Racine (Essentiel uniquement)
 ```
 Immo2000/
 ├── README.md                      ← Vous êtes ici
+├── vercel.json                    ← Config Vercel
+├── docker-compose.yml             ← Orchestration
+├── Dockerfile                     ← Image backend
+├── Dockerfile.frontend            ← Image frontend
+├── .env                           ← Variables locales
+├── .env.docker                    ← Variables Docker
+├── .dockerignore                  ← Exclusions Docker
+├── .gitignore                     ← Exclusions Git
+│
 ├── docs/                          ← 📚 DOCUMENTATION COMPLÈTE
 │   ├── README.md                  ← Point de départ
 │   ├── start/                     ← Guides d'onboarding
@@ -92,21 +102,59 @@ Immo2000/
 │   ├── core/                      ← Features principales
 │   ├── advanced/                  ← Features avancées
 │   └── ...
-├── backend/                       ← API Flask
-├── frontend/                      ← App React
-├── database/                      ← Schémas SQL
-├── devops/                        ← Config Docker/Nginx
-└── docker-compose.yml
+├── backend/                       ← API Flask (models, routes, services)
+├── frontend/                      ← App React/Vite
+├── database/                      ← Schémas SQL & migrations
+├── devops/                        ← Config Nginx/Docker
+├── static/                        ← Assets & templates HTML
+├── scripts/                       ← Scripts d'initialisation
+├── examples/                      ← Fichiers d'exemple (biens, data)
+├── logs/                          ← Logs applicatifs
+├── .venv/                         ← Virtual environment Python
+│
+├── _archived_docs/                ← 📦 Docs anciennes (legacy)
+│   ├── CODE_REVIEW_MAIN.md
+│   ├── FEATURES_COMPLETE.md
+│   ├── GITHUB_SETUP.md
+│   ├── PRESENTATION.md
+│   └── STRUCTURE.md
+└── .git/                          ← Repository Git
 ```
+
+---
+
+## 🗂️ Guides Rapides par Besoin
+
+| Besoin | Aller à | Fichier |
+|--------|---------|---------|
+| **Démarrer** | `docs/start/` | [QUICKSTART.md](docs/start/QUICKSTART.md) |
+| **Architecture** | `docs/core/` | [Architecture.md](docs/core/) |
+| **API Reference** | `docs/reference/` | [API.md](docs/reference/) |
+| **Authentification** | `docs/auth/` | [JWT_REFERENCE.md](docs/auth/) |
+| **Tests** | `docs/tests/` | [TEST_REPORT.md](docs/tests/) |
+| **Exemples** | `examples/` | [biens_exemple.json](examples/) |
+| **Initialisation** | `scripts/` | [setup.sh](scripts/) |
+| **Notaire System** | `docs/` | [NOTAIRE_SYSTEM.md](docs/NOTAIRE_SYSTEM.md) |
+
+---
+
+## 🔄 Organisation Actuelle
+
+**Nettoyage mai 2026:**
+- ✅ Racine: seulement fichiers essentiels (configs, README, Docker)
+- ✅ Scripts: tous les fichiers `.py` d'initialisation en `scripts/`
+- ✅ Exemples: données de test en `examples/`
+- ✅ Archives: anciennes docs en `_archived_docs/`
+- ✅ Pas de doublons ni redondances
 
 ---
 
 ## 🤝 Contribution
 
 1. Clonez le repo
-2. Consultez [docs/start/NAVIGATION.md](docs/start/NAVIGATION.md)
-3. Suivez [docs/guides/DEVELOPMENT_ROADMAP.md](docs/guides/DEVELOPMENT_ROADMAP.md)
-4. Lancez les tests avant de committer
+2. Consultez [docs/start/](docs/start/)
+3. Lancez les tests avant de committer
+4. Créez une PR vers `main`
 
 ---
 
@@ -118,26 +166,7 @@ Immo2000/
 
 ---
 
-**Dernière mise à jour:** Mai 2026 | **Status**: Production Ready (MVP 2.0+)
-
-La documentation a été réorganisée pour une meilleure maintenabilité :
-
-**Avant** : 9 fichiers `.md` à la racine (trop de désordre)
-**Après** : Tous les guides dans `docs/auth/` avec navigation claire
-
-Les fichiers suivants ont été déplacés :
-- `QUICKSTART_AUTH.md` → `docs/auth/QUICKSTART_AUTH.md`
-- `AUTHENTICATION.md` → `docs/auth/JWT_REFERENCE.md`
-- `AUTHENTICATION_DIAGRAMS.md` → `docs/auth/DIAGRAMS.md`
-- `AUTH_SUMMARY.md` → `docs/auth/SUMMARY.md`
-- `INTEGRATION_CHECKLIST_AUTH.md` → `docs/auth/INTEGRATION.md`
-- `INTEGRATION_APP_FACTORY.md` → `docs/auth/APP_CONFIGURATION.md`
-- `RATE_LIMITING_GUIDE.md` → `docs/auth/RATE_LIMITING_GUIDE.md`
-- `FINAL_INTEGRATION_SUMMARY.md` → `docs/auth/FINAL_SUMMARY.md`
-- `VERIFICATION_COMPLETE.sh` → `docs/auth/VERIFICATION_COMPLETE.sh`
-- `FULL_INTEGRATION_TEST.sh` → `docs/setup/FULL_INTEGRATION_TEST.sh`
-
-Les anciens fichiers à la racine peuvent être supprimés (voir MIGRATION_NOTES.md)
+**Dernière mise à jour:** Mai 2026 | **Status**: Production Ready (MVP 5.0)
 
 ---
 
