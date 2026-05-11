@@ -39,6 +39,7 @@ from src.routes.annonce_views import views_bp
 from src.routes.search_history import search_bp
 from src.routes.favoris import favoris_bp
 from src.routes.offres import offres_bp
+from src.routes.notaires import notaires_bp
 from src.services.scheduler import SchedulerService
 from src.services.chatbot import init_chatbot
 from src.config import get_config
@@ -212,6 +213,9 @@ def create_app(config_name: str = None) -> Flask:
 
     # Blueprints - Offres (Phase 2)
     app.register_blueprint(offres_bp)
+
+    # Blueprints - Notaires Partenaires (Phase 3)
+    app.register_blueprint(notaires_bp)
 
     @app.errorhandler(404)
     def not_found(error):

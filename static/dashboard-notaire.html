@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord Notaire - Immo2000</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+        }
+
+        body {
+            background-color: #f5f6fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .sidebar {
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            padding: 20px 0;
+            min-height: calc(100vh - 60px);
+        }
+
+        .sidebar-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            color: #555;
+        }
+
+        .sidebar-item:hover {
+            background-color: #f5f5f5;
+            border-left-color: var(--secondary-color);
+            color: var(--secondary-color);
+        }
+
+        .sidebar-item.active {
+            background-color: #e3f2fd;
+            border-left-color: var(--secondary-color);
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        .dashboard-header {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .stats-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--secondary-color);
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .stats-card.pending {
+            border-left-color: var(--warning-color);
+        }
+
+        .stats-card.completed {
+            border-left-color: var(--success-color);
+        }
+
+        .stats-card.average {
+            border-left-color: var(--primary-color);
+        }
+
+        .stats-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .stats-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .cases-table {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
+
+        .cases-table table {
+            margin-bottom: 0;
+        }
+
+        .cases-table thead {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .cases-table th {
+            padding: 15px;
+            font-weight: 600;
+            border: none;
+        }
+
+        .cases-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .cases-table tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-validation {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-modifications {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-approved {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-rejected {
+            background-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-sm-action {
+            padding: 4px 10px;
+            font-size: 0.8rem;
+        }
+
+        .documents-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .document-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            transition: background-color 0.3s ease;
+        }
+
+        .document-item:hover {
+            background-color: #f9f9f9;
+        }
+
+        .document-info {
+            flex: 1;
+        }
+
+        .document-name {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .document-type {
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        .document-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .timeline-dot {
+            width: 15px;
+            height: 15px;
+            background-color: var(--secondary-color);
+            border-radius: 50%;
+            position: absolute;
+            left: -25px;
+            top: 5px;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px var(--secondary-color);
+        }
+
+        .timeline-content {
+            margin-left: 20px;
+            flex: 1;
+        }
+
+        .timeline-date {
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        .timeline-action {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .timeline-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+        }
+
+        .modal-header .btn-close {
+            filter: brightness(0) invert(1);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-top: 15px;
+            margin-bottom: 8px;
+        }
+
+        .textarea-comments {
+            min-height: 120px;
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .alert-custom {
+            padding: 12px 16px;
+            border-radius: 6px;
+            border-left: 4px solid;
+        }
+
+        .alert-success-custom {
+            background-color: #d4edda;
+            border-left-color: #28a745;
+            color: #155724;
+        }
+
+        .alert-error-custom {
+            background-color: #f8d7da;
+            border-left-color: #dc3545;
+            color: #721c24;
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .stats-card {
+                margin-bottom: 10px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn-sm-action {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-home"></i> Immo2000
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <span class="nav-link" id="userGreeting">Chargement...</span>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light btn-sm" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i> Déconnexion
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar">
+                <div class="sidebar-item active" onclick="switchTab('dashboard')">
+                    <i class="fas fa-chart-line"></i> Tableau de Bord
+                </div>
+                <div class="sidebar-item" onclick="switchTab('pending')">
+                    <i class="fas fa-hourglass-half"></i> Cas en Attente
+                </div>
+                <div class="sidebar-item" onclick="switchTab('documents')">
+                    <i class="fas fa-file-alt"></i> Documents
+                </div>
+                <div class="sidebar-item" onclick="switchTab('history')">
+                    <i class="fas fa-history"></i> Historique
+                </div>
+                <div class="sidebar-item" onclick="switchTab('profile')">
+                    <i class="fas fa-user-circle"></i> Mon Profil
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10">
+                <!-- Dashboard Tab -->
+                <div id="dashboard-tab" class="tab-content">
+                    <div class="dashboard-header">
+                        <h1><i class="fas fa-briefcase"></i> Tableau de Bord Notaire</h1>
+                        <p class="text-muted">Vue d'ensemble de vos dossiers</p>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="stats-card pending">
+                                <div class="stats-number" id="stat-pending">-</div>
+                                <div class="stats-label">Dossiers en Attente</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stats-card completed">
+                                <div class="stats-number" id="stat-completed">-</div>
+                                <div class="stats-label">Dossiers Complétés</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stats-card average">
+                                <div class="stats-number" id="stat-average">-</div>
+                                <div class="stats-label">Délai Moyen (jours)</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stats-card">
+                                <div class="stats-number" id="stat-rating">-</div>
+                                <div class="stats-label">Note Moyenne</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info mt-4" id="alert-box" style="display: none;"></div>
+                </div>
+
+                <!-- Pending Cases Tab -->
+                <div id="pending-tab" class="tab-content" style="display: none;">
+                    <div class="dashboard-header">
+                        <h2><i class="fas fa-hourglass-half"></i> Cas en Attente de Validation</h2>
+                    </div>
+
+                    <div class="cases-table">
+                        <table class="table" id="pending-cases-table">
+                            <thead>
+                                <tr>
+                                    <th>N° Dossier</th>
+                                    <th>Bien</th>
+                                    <th>Prix</th>
+                                    <th>Statut</th>
+                                    <th>Assigné le</th>
+                                    <th>Délai</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pending-cases-body">
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted py-4">
+                                        <div class="loading-spinner" id="loading-pending">
+                                            <div class="spinner-border" role="status"></div>
+                                        </div>
+                                        <div id="empty-pending" style="display: none;">
+                                            <div class="empty-state">
+                                                <div class="empty-state-icon"><i class="fas fa-inbox"></i></div>
+                                                <p>Aucun cas en attente</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Documents Tab -->
+                <div id="documents-tab" class="tab-content" style="display: none;">
+                    <div class="dashboard-header">
+                        <h2><i class="fas fa-file-alt"></i> Documents à Valider</h2>
+                    </div>
+
+                    <div id="documents-container">
+                        <div class="text-center text-muted py-4">
+                            <div class="loading-spinner" id="loading-documents">
+                                <div class="spinner-border" role="status"></div>
+                            </div>
+                            <div id="empty-documents" style="display: none;">
+                                <div class="empty-state">
+                                    <div class="empty-state-icon"><i class="fas fa-file"></i></div>
+                                    <p>Aucun document à valider</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History Tab -->
+                <div id="history-tab" class="tab-content" style="display: none;">
+                    <div class="dashboard-header">
+                        <h2><i class="fas fa-history"></i> Historique de Vos Actions</h2>
+                    </div>
+
+                    <div class="documents-section">
+                        <div class="timeline" id="history-timeline">
+                            <div class="text-center text-muted py-4">
+                                <div class="loading-spinner" id="loading-history">
+                                    <div class="spinner-border" role="status"></div>
+                                </div>
+                                <div id="empty-history" style="display: none;">
+                                    <div class="empty-state">
+                                        <div class="empty-state-icon"><i class="fas fa-clock"></i></div>
+                                        <p>Aucun historique</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Tab -->
+                <div id="profile-tab" class="tab-content" style="display: none;">
+                    <div class="dashboard-header">
+                        <h2><i class="fas fa-user-circle"></i> Mon Profil Notaire</h2>
+                    </div>
+
+                    <div class="documents-section">
+                        <div id="profile-content">
+                            <div class="text-center text-muted py-4">
+                                <div class="spinner-border" role="status"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Validate Compromis -->
+    <div class="modal fade" id="validateModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-check-circle"></i> Valider le Compromis</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Commentaires (optionnel)</label>
+                        <textarea class="textarea-comments" id="validate-comments" placeholder="Ajoutez vos commentaires..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-success" onclick="submitValidation()">
+                        <i class="fas fa-check"></i> Valider
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Request Modifications -->
+    <div class="modal fade" id="modificationsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-pencil-alt"></i> Demander des Modifications</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Modifications Demandées *</label>
+                        <textarea class="textarea-comments" id="modifications-text" placeholder="Décrivez les modifications requises..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Délai (jours)</label>
+                        <input type="number" class="form-control" id="modifications-delay" value="5" min="1" max="30">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-warning" onclick="submitModifications()">
+                        <i class="fas fa-pencil-alt"></i> Envoyer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Reject Compromis -->
+    <div class="modal fade" id="rejectModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-times-circle"></i> Rejeter le Compromis</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle"></i> Cette action ne peut pas être annulée.
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Raison du Rejet *</label>
+                        <textarea class="textarea-comments" id="reject-reason" placeholder="Expliquez pourquoi vous rejetez ce compromis..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger" onclick="submitRejection()">
+                        <i class="fas fa-times-circle"></i> Rejeter
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Global variables
+        let currentNotaireId = null;
+        let currentTransactionId = null;
+        let authToken = localStorage.getItem('token');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!authToken) {
+                window.location.href = '/login';
+                return;
+            }
+            loadUserProfile();
+            loadDashboardStats();
+            loadPendingCases();
+        });
+
+        // Tab switching
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.style.display = 'none';
+            });
+
+            // Remove active class from sidebar items
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName + '-tab').style.display = 'block';
+
+            // Add active class to clicked sidebar item
+            event.target.closest('.sidebar-item').classList.add('active');
+
+            // Load data for selected tab
+            if (tabName === 'pending') {
+                loadPendingCases();
+            } else if (tabName === 'documents') {
+                loadDocuments();
+            } else if (tabName === 'history') {
+                loadHistory();
+            } else if (tabName === 'profile') {
+                loadProfile();
+            }
+        }
+
+        // API calls
+        function loadUserProfile() {
+            fetch('/auth/me', {
+                headers: { 'Authorization': 'Bearer ' + authToken }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.utilisateur_id) {
+                    document.getElementById('userGreeting').innerText =
+                        `Bienvenue, ${data.prenom} ${data.nom}`;
+
+                    // Get notaire profile
+                    return fetch(`/api/v1/notaires?skip=0&limit=1`, {
+                        headers: { 'Authorization': 'Bearer ' + authToken }
+                    });
+                }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.notaires && data.notaires.length > 0) {
+                    currentNotaireId = data.notaires[0].notaire_id;
+                }
+            })
+            .catch(err => console.error('Erreur chargement profil:', err));
+        }
+
+        function loadDashboardStats() {
+            if (!currentNotaireId) return;
+
+            fetch(`/api/v1/notaires/${currentNotaireId}/stats`, {
+                headers: { 'Authorization': 'Bearer ' + authToken }
+            })
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('stat-pending').innerText = data.dossiers_en_cours || 0;
+                document.getElementById('stat-completed').innerText = data.dossiers_ce_mois || 0;
+                document.getElementById('stat-average').innerText =
+                    (data.delai_moyen_jours || 0).toFixed(1);
+                document.getElementById('stat-rating').innerText =
+                    (data.note_moyenne || 0).toFixed(1) + '/5';
+            })
+            .catch(err => console.error('Erreur chargement stats:', err));
+        }
+
+        function loadPendingCases() {
+            if (!currentNotaireId) return;
+
+            const tbody = document.getElementById('pending-cases-body');
+            const loading = document.getElementById('loading-pending');
+            const empty = document.getElementById('empty-pending');
+
+            loading.style.display = 'block';
+            empty.style.display = 'none';
+            tbody.innerHTML = '<tr><td colspan="7"></td></tr>';
+
+            fetch(`/api/v1/notaires/${currentNotaireId}/dashboard/pending?skip=0&limit=50`, {
+                headers: { 'Authorization': 'Bearer ' + authToken }
+            })
+            .then(r => r.json())
+            .then(data => {
+                loading.style.display = 'none';
+
+                if (!data.transactions || data.transactions.length === 0) {
+                    empty.style.display = 'block';
+                    tbody.innerHTML = '';
+                    return;
+                }
+
+                tbody.innerHTML = data.transactions.map(t => `
+                    <tr>
+                        <td><strong>#${t.transaction_notaire_id}</strong></td>
+                        <td>Prix: ${(t.prix_compromis / 1000).toFixed(0)}k€</td>
+                        <td>${formatPrice(t.prix_compromis)}</td>
+                        <td><span class="status-badge status-${t.statut}">${formatStatus(t.statut)}</span></td>
+                        <td>${formatDate(t.date_assignation_notaire)}</td>
+                        <td>${getDelaiText(t.delai_validation)}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-success btn-sm-action" onclick="openValidateModal(${t.transaction_notaire_id})">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn btn-warning btn-sm-action" onclick="openModificationsModal(${t.transaction_notaire_id})">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                                <button class="btn btn-danger btn-sm-action" onclick="openRejectModal(${t.transaction_notaire_id})">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            })
+            .catch(err => {
+                loading.style.display = 'none';
+                console.error('Erreur chargement cas:', err);
+                showAlert('Erreur lors du chargement des cas', 'danger');
+            });
+        }
+
+        function loadDocuments() {
+            if (!currentNotaireId) return;
+
+            const container = document.getElementById('documents-container');
+            container.innerHTML = '<div class="text-center text-muted py-4"><div class="spinner-border"></div></div>';
+
+            // Fetch pending cases to get documents
+            fetch(`/api/v1/notaires/${currentNotaireId}/dashboard/pending?skip=0&limit=10`, {
+                headers: { 'Authorization': 'Bearer ' + authToken }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.transactions || data.transactions.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon"><i class="fas fa-file"></i></div>
+                            <p>Aucun document à valider</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // For each transaction, fetch documents
+                const docPromises = data.transactions.map(t =>
+                    fetch(`/api/v1/notaires/transactions/${t.transaction_notaire_id}/documents`, {
+                        headers: { 'Authorization': 'Bearer ' + authToken }
+                    }).then(r => r.json()).catch(() => ({ documents: [] }))
+                );
+
+                return Promise.all(docPromises).then(results => {
+                    const allDocs = results.flatMap(r => r.documents || []);
+                    if (allDocs.length === 0) {
+                        container.innerHTML = `
+                            <div class="empty-state">
+                                <div class="empty-state-icon"><i class="fas fa-file"></i></div>
+                                <p>Aucun document disponible</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    container.innerHTML = '<div class="documents-section">' +
+                        allDocs.map(doc => `
+                            <div class="document-item">
+                                <div class="document-info">
+                                    <div class="document-name"><i class="fas fa-file"></i> ${doc.nom_original}</div>
+                                    <div class="document-type">${doc.type_document} • ${(doc.taille_bytes / 1024).toFixed(0)}KB</div>
+                                </div>
+                                <div class="document-actions">
+                                    <a href="${doc.url_fichier}" target="_blank" class="btn btn-sm btn-secondary">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                    <button class="btn btn-sm btn-success" onclick="validateDocument(${doc.document_notaire_id})">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('') +
+                        '</div>';
+                });
+            })
+            .catch(err => {
+                console.error('Erreur chargement documents:', err);
+                container.innerHTML = '<div class="alert alert-danger">Erreur lors du chargement</div>';
+            });
+        }
+
+        function loadHistory() {
+            if (!currentNotaireId) return;
+
+            const timeline = document.getElementById('history-timeline');
+            const loading = document.getElementById('loading-history');
+            const empty = document.getElementById('empty-history');
+
+            loading.style.display = 'block';
+            timeline.innerHTML = '';
+
+            // Fetch a recent transaction to show history
+            fetch(`/api/v1/notaires/${currentNotaireId}/dashboard/pending?skip=0&limit=5`, {
+                headers: { 'Authorization': 'Bearer ' + authToken }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.transactions || data.transactions.length === 0) {
+                    loading.style.display = 'none';
+                    empty.style.display = 'block';
+                    return;
+                }
+
+                // Fetch history for first transaction
+                return fetch(`/api/v1/notaires/transactions/${data.transactions[0].transaction_notaire_id}/history`, {
+                    headers: { 'Authorization': 'Bearer ' + authToken }
+                }).then(r => r.json());
+            })
+            .then(data => {
+                loading.style.display = 'none';
+
+                if (!data.historique || data.historique.length === 0) {
+                    empty.style.display = 'block';
+                    return;
+                }
+
+                timeline.innerHTML = data.historique.map(h => `
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">${formatDate(h.date_action)}</div>
+                            <div class="timeline-action">${h.type_action}</div>
+                            <div class="timeline-description">${h.description}</div>
+                            ${h.ancien_statut ? `<small class="text-muted">${h.ancien_statut} → ${h.nouveau_statut}</small>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            })
+            .catch(err => {
+                loading.style.display = 'none';
+                console.error('Erreur historique:', err);
+            });
+        }
+
+        function loadProfile() {
+            if (!currentNotaireId) return;
+
+            const content = document.getElementById('profile-content');
+
+            fetch(`/api/v1/notaires/${currentNotaireId}`, {
+                headers: { 'Authorization': 'Bearer ' + authToken }
+            })
+            .then(r => r.json())
+            .then(data => {
+                content.innerHTML = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Étude Notariale:</strong> ${data.etude_notariale}</p>
+                            <p><strong>RPPS:</strong> ${data.numero_rpps}</p>
+                            <p><strong>Email:</strong> ${data.email_professionnel}</p>
+                            <p><strong>Téléphone:</strong> ${data.telephone}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Adresse:</strong> ${data.adresse_etude}</p>
+                            <p><strong>Code Postal:</strong> ${data.code_postal_etude}</p>
+                            <p><strong>Ville:</strong> ${data.ville_etude}</p>
+                            <p><strong>Capacité:</strong> ${data.max_dossiers_simultanees} dossiers simultanés</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <h5>Zone Géographique de Couverture</h5>
+                    <p>${JSON.stringify(data.zone_geographique).replace(/[{}"\[\]]/g, '').replace(/,/g, ', ')}</p>
+                `;
+            })
+            .catch(err => {
+                console.error('Erreur profil:', err);
+                content.innerHTML = '<div class="alert alert-danger">Erreur lors du chargement du profil</div>';
+            });
+        }
+
+        // Modal handlers
+        function openValidateModal(transactionId) {
+            currentTransactionId = transactionId;
+            document.getElementById('validate-comments').value = '';
+            new bootstrap.Modal(document.getElementById('validateModal')).show();
+        }
+
+        function openModificationsModal(transactionId) {
+            currentTransactionId = transactionId;
+            document.getElementById('modifications-text').value = '';
+            document.getElementById('modifications-delay').value = '5';
+            new bootstrap.Modal(document.getElementById('modificationsModal')).show();
+        }
+
+        function openRejectModal(transactionId) {
+            currentTransactionId = transactionId;
+            document.getElementById('reject-reason').value = '';
+            new bootstrap.Modal(document.getElementById('rejectModal')).show();
+        }
+
+        // Submit actions
+        function submitValidation() {
+            const comments = document.getElementById('validate-comments').value;
+
+            fetch(`/api/v1/notaires/transactions/${currentTransactionId}/validate`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + authToken,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ commentaires: comments })
+            })
+            .then(r => r.json())
+            .then(data => {
+                bootstrap.Modal.getInstance(document.getElementById('validateModal')).hide();
+                showAlert('Compromis validé avec succès!', 'success');
+                loadPendingCases();
+                loadDashboardStats();
+            })
+            .catch(err => {
+                console.error('Erreur validation:', err);
+                showAlert('Erreur lors de la validation', 'danger');
+            });
+        }
+
+        function submitModifications() {
+            const text = document.getElementById('modifications-text').value;
+            const delay = parseInt(document.getElementById('modifications-delay').value);
+
+            if (!text.trim()) {
+                showAlert('Veuillez décrire les modifications demandées', 'danger');
+                return;
+            }
+
+            fetch(`/api/v1/notaires/transactions/${currentTransactionId}/request-modifications`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + authToken,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    modifications_demandees: text,
+                    delai_jours: delay
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                bootstrap.Modal.getInstance(document.getElementById('modificationsModal')).hide();
+                showAlert('Modifications demandées avec succès!', 'success');
+                loadPendingCases();
+                loadDashboardStats();
+            })
+            .catch(err => {
+                console.error('Erreur modifications:', err);
+                showAlert('Erreur lors de la demande', 'danger');
+            });
+        }
+
+        function submitRejection() {
+            const reason = document.getElementById('reject-reason').value;
+
+            if (!reason.trim()) {
+                showAlert('Veuillez spécifier une raison', 'danger');
+                return;
+            }
+
+            fetch(`/api/v1/notaires/transactions/${currentTransactionId}/reject`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + authToken,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ raison_refus: reason })
+            })
+            .then(r => r.json())
+            .then(data => {
+                bootstrap.Modal.getInstance(document.getElementById('rejectModal')).hide();
+                showAlert('Compromis rejeté', 'success');
+                loadPendingCases();
+                loadDashboardStats();
+            })
+            .catch(err => {
+                console.error('Erreur rejet:', err);
+                showAlert('Erreur lors du rejet', 'danger');
+            });
+        }
+
+        function validateDocument(docId) {
+            // TODO: Implement document validation endpoint
+            showAlert('Fonctionnalité en développement', 'info');
+        }
+
+        // Utility functions
+        function formatPrice(price) {
+            return new Intl.NumberFormat('fr-FR', {
+                style: 'currency',
+                currency: 'EUR'
+            }).format(price);
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            return new Date(dateString).toLocaleDateString('fr-FR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        function formatStatus(status) {
+            const statusMap = {
+                'en_attente_selection': 'En attente',
+                'en_attente_validation': 'À valider',
+                'modifications_demandees': 'Modifications demandées',
+                'validee': 'Validé',
+                'refusee': 'Rejeté'
+            };
+            return statusMap[status] || status;
+        }
+
+        function getDelaiText(deadline) {
+            if (!deadline) return '-';
+            const now = new Date();
+            const dueDate = new Date(deadline);
+            const daysLeft = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
+
+            if (daysLeft < 0) return '⚠️ Dépassé';
+            if (daysLeft === 0) return '🔴 Aujourd\'hui';
+            if (daysLeft === 1) return '🟡 Demain';
+            return `${daysLeft} jours`;
+        }
+
+        function showAlert(message, type) {
+            const alertBox = document.getElementById('alert-box');
+            alertBox.className = `alert alert-${type}`;
+            alertBox.innerText = message;
+            alertBox.style.display = 'block';
+            setTimeout(() => { alertBox.style.display = 'none'; }, 5000);
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+    </script>
+</body>
+</html>
