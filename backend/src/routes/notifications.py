@@ -1,13 +1,21 @@
 """
-Routes Flask pour les notifications et tests d'email.
+Routes Flask pour les notifications utilisateur.
 
 Endpoints:
+- GET /api/v1/notifications → Lister les notifications (pagination)
+- GET /api/v1/notifications/unread → Compter les notifications non lues
+- PATCH /api/v1/notifications/{id}/mark-as-read → Marquer comme lue
+- DELETE /api/v1/notifications/{id} → Supprimer une notification
 - POST /api/v1/notifications/test → Tester la configuration SMTP
 """
 
 from flask import Blueprint, request, jsonify
+from datetime import datetime
 import logging
 
+from src.auth.models import db
+from src.models import Notification
+from src.auth.decorators import token_required
 from src.services.email import get_email_service, EmailError
 
 logger = logging.getLogger(__name__)
@@ -16,7 +24,195 @@ logger = logging.getLogger(__name__)
 notifications_bp = Blueprint("notifications", __name__, url_prefix="/api/v1/notifications")
 
 
-@notifications_bp.route("/test", methods=["POST"])
+@notifications_bp.route("", methods=["GET"])
+@token_required
+def list_notifications(current_user):
+    """
+    GET /api/v1/notifications
+    Lister les notifications de l'utilisateur avec pagination.
+
+    Query parameters:
+        skip (int, default=0): Nombre de notifications à sauter
+        limit (int, default=20): Nombre de notifications à retourner
+
+    Returns:
+        200 OK: {
+            "success": true,
+            "data": [
+                {
+                    "notification_id": 1,
+                    "type": "message_received",
+                    "title": "Nouveau message",
+                    "message": "Vous avez reçu un nouveau message",
+                    "is_read": false,
+                    "created_at": "2024-01-15T10:30:00",
+                    "read_at": null,
+                    ...
+                }
+            ],
+            "pagination": {
+                "skip": 0,
+                "limit": 20,
+                "total": 42
+            }
+        }
+    """
+    try:
+        skip = max(0, int(request.args.get("skip", 0)))
+        limit = min(100, int(request.args.get("limit", 20)))
+
+        # Récupérer les notifications de l'utilisateur
+        total = Notification.query.filter_by(user_id=current_user.utilisateur_id).count()
+
+        notifications = Notification.query.filter_by(
+            user_id=current_user.utilisateur_id
+        ).order_by(
+            Notification.created_at.desc()
+        ).offset(skip).limit(limit).all()
+
+        return jsonify({
+            "success": True,
+            "data": [n.to_dict() for n in notifications],
+            "pagination": {
+                "skip": skip,
+                "limit": limit,
+                "total": total
+            }
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Erreur lors de la récupération des notifications: {str(e)}")
+        return jsonify({
+            "error": "Erreur serveur",
+            "code": 500,
+            "details": str(e)
+        }), 500
+
+
+@notifications_bp.route("/unread", methods=["GET"])
+@token_required
+def get_unread_count(current_user):
+    """
+    GET /api/v1/notifications/unread
+    Compter le nombre de notifications non lues.
+
+    Returns:
+        200 OK: {
+            "success": true,
+            "unread_count": 5,
+            "has_unread": true
+        }
+    """
+    try:
+        unread_count = Notification.query.filter_by(
+            user_id=current_user.utilisateur_id,
+            is_read=False
+        ).count()
+
+        return jsonify({
+            "success": True,
+            "unread_count": unread_count,
+            "has_unread": unread_count > 0
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Erreur lors du comptage des notifications: {str(e)}")
+        return jsonify({
+            "error": "Erreur serveur",
+            "code": 500,
+            "details": str(e)
+        }), 500
+
+
+@notifications_bp.route("/<int:notification_id>/mark-as-read", methods=["PATCH"])
+@token_required
+def mark_as_read(current_user, notification_id):
+    """
+    PATCH /api/v1/notifications/{notification_id}/mark-as-read
+    Marquer une notification comme lue.
+
+    Returns:
+        200 OK: Notification mise à jour
+        404 Not Found: Notification introuvable
+    """
+    try:
+        notification = Notification.query.filter_by(
+            notification_id=notification_id,
+            user_id=current_user.utilisateur_id
+        ).first()
+
+        if not notification:
+            return jsonify({
+                "error": "Notification introuvable",
+                "code": 404
+            }), 404
+
+        notification.is_read = True
+        notification.read_at = datetime.utcnow()
+        db.session.commit()
+
+        logger.info(f"Notification {notification_id} marquée comme lue par user {current_user.utilisateur_id}")
+
+        return jsonify({
+            "success": True,
+            "message": "Notification marquée comme lue",
+            "data": notification.to_dict()
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Erreur lors du marquage de la notification: {str(e)}")
+        return jsonify({
+            "error": "Erreur serveur",
+            "code": 500,
+            "details": str(e)
+        }), 500
+
+
+@notifications_bp.route("/<int:notification_id>", methods=["DELETE"])
+@token_required
+def delete_notification(current_user, notification_id):
+    """
+    DELETE /api/v1/notifications/{notification_id}
+    Supprimer une notification.
+
+    Returns:
+        200 OK: Notification supprimée
+        404 Not Found: Notification introuvable
+    """
+    try:
+        notification = Notification.query.filter_by(
+            notification_id=notification_id,
+            user_id=current_user.utilisateur_id
+        ).first()
+
+        if not notification:
+            return jsonify({
+                "error": "Notification introuvable",
+                "code": 404
+            }), 404
+
+        db.session.delete(notification)
+        db.session.commit()
+
+        logger.info(f"Notification {notification_id} supprimée par user {current_user.utilisateur_id}")
+
+        return jsonify({
+            "success": True,
+            "message": "Notification supprimée"
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Erreur lors de la suppression de la notification: {str(e)}")
+        return jsonify({
+            "error": "Erreur serveur",
+            "code": 500,
+            "details": str(e)
+        }), 500
+
+
+
 def test_email_endpoint():
     """
     POST /api/v1/notifications/test
