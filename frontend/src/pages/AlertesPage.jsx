@@ -37,9 +37,7 @@ import {
   NotificationsActive as NotificationsActiveIcon,
   NotificationsOff as NotificationsOffIcon,
 } from '@mui/icons-material';
-import axios from 'axios';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
+import { alertesApi } from '../services/api';
 
 const AlertesAnnonces = () => {
   const [alertes, setAlertes] = useState([]);
@@ -77,12 +75,10 @@ const AlertesAnnonces = () => {
     setLoading(true);
     setError('');
     try {
-      const token = localStorage.getItem('auth_token');
-      const response = await axios.get(`${API_BASE_URL}/alertes`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setAlertes(response.data.items);
+      const response = await alertesApi.list(0, 100);
+      setAlertes(response.data.data || []);
     } catch (err) {
+      console.error('Erreur:', err);
       setError(err.response?.data?.error || 'Erreur lors du chargement des alertes');
     } finally {
       setLoading(false);
@@ -167,19 +163,14 @@ const AlertesAnnonces = () => {
   const handleSaveAlerte = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('auth_token');
 
       if (editingAlerte) {
         // Mise à jour
-        await axios.put(`${API_BASE_URL}/alertes/${editingAlerte.alerte_id}`, formData, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await alertesApi.update(editingAlerte.alerte_id, formData);
         setSuccessMessage('Alerte mise à jour avec succès!');
       } else {
         // Création
-        await axios.post(`${API_BASE_URL}/alertes`, formData, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await alertesApi.create(formData);
         setSuccessMessage('Alerte créée avec succès!');
       }
 
@@ -199,10 +190,7 @@ const AlertesAnnonces = () => {
 
     try {
       setLoading(true);
-      const token = localStorage.getItem('auth_token');
-      await axios.delete(`${API_BASE_URL}/alertes/${alerteId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await alertesApi.delete(alerteId);
       setSuccessMessage('Alerte supprimée avec succès!');
       loadAlertes();
       setTimeout(() => setSuccessMessage(''), 3000);
@@ -216,10 +204,7 @@ const AlertesAnnonces = () => {
   // Basculer actif/inactif
   const handleToggleAlerte = async (alerteId) => {
     try {
-      const token = localStorage.getItem('auth_token');
-      await axios.post(`${API_BASE_URL}/alertes/${alerteId}/toggle`, {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await alertesApi.toggle(alerteId);
       loadAlertes();
     } catch (err) {
       setError(err.response?.data?.error || 'Erreur lors du basculement');

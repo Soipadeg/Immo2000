@@ -2,48 +2,47 @@
  * Page Favoris - Biens sauvegardés
  */
 
-import React, { useState } from 'react';
-import { Box, Container, Grid, Card, CardContent, CardActions, CardMedia, Typography, Button, IconButton, Empty, CircularProgress, Chip } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Container, Grid, Card, CardContent, CardActions, CardMedia, Typography, Button, IconButton, CircularProgress, Chip, Alert } from '@mui/material';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import { favorisApi } from '../services/api';
 
 const FavoritesPage = () => {
-  const { user, loading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const [favorites, setFavorites] = useState([
-    {
-      id: 1,
-      titre: 'Magnifique maison avec jardin',
-      prix: 450000,
-      ville: 'Paris 15ème',
-      codePostal: '75015',
-      surface: 120,
-      pieces: 4,
-      type: 'Maison',
-      image: 'https://via.placeholder.com/400x250?text=Maison+1',
-      isFavorite: true,
-      dateAjout: '2026-05-10',
-    },
-    {
-      id: 2,
-      titre: 'Appartement moderne en centre-ville',
-      prix: 350000,
-      ville: 'Lyon',
-      codePostal: '69000',
-      surface: 85,
-      pieces: 3,
-      type: 'Appartement',
-      image: 'https://via.placeholder.com/400x250?text=Appart+1',
-      isFavorite: true,
-      dateAjout: '2026-05-09',
-    },
-  ]);
+  const [favorites, setFavorites] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  if (loading) {
+  // Charger les favoris au montage
+  useEffect(() => {
+    if (user) {
+      loadFavorites();
+    }
+  }, [user]);
+
+  const loadFavorites = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const response = await favorisApi.list(0, 100);
+      if (response.data && response.data.data) {
+        setFavorites(response.data.data);
+      }
+    } catch (err) {
+      console.error('Erreur:', err);
+      setError('Impossible de charger les favoris');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (authLoading || loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <CircularProgress />
@@ -56,8 +55,14 @@ const FavoritesPage = () => {
     return null;
   }
 
-  const handleRemoveFavorite = (id) => {
-    setFavorites(favorites.filter((fav) => fav.id !== id));
+  const handleRemoveFavorite = async (favoriteId) => {
+    try {
+      await favorisApi.remove(favoriteId);
+      setFavorites(favorites.filter((fav) => fav.favori_id !== favoriteId));
+    } catch (err) {
+      console.error('Erreur:', err);
+      setError('Erreur lors de la suppression du favori');
+    }
   };
 
   return (
@@ -70,6 +75,8 @@ const FavoritesPage = () => {
           {favorites.length} bien{favorites.length !== 1 ? 's' : ''} sauvegardé{favorites.length !== 1 ? 's' : ''}
         </Typography>
       </Box>
+
+      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
       {favorites.length === 0 ? (
         <Card sx={{ textAlign: 'center', py: 8 }}>
@@ -86,8 +93,8 @@ const FavoritesPage = () => {
         </Card>
       ) : (
         <Grid container spacing={3}>
-          {favorites.map((bien) => (
-            <Grid item xs={12} sm={6} lg={4} key={bien.id}>
+          {favorites.map((fav) => (
+            <Grid item xs={12} sm={6} lg={4} key={fav.favori_id}>
               <Card
                 sx={{
                   height: '100%',
@@ -103,52 +110,48 @@ const FavoritesPage = () => {
                 <CardMedia
                   component="img"
                   height="200"
-                  image={bien.image}
-                  alt={bien.titre}
+                  image={'https://via.placeholder.com/400x250?text=Bien+' + fav.annonce_id}
+                  alt={'Annonce ' + fav.annonce_id}
                   sx={{ objectFit: 'cover' }}
                 />
 
                 <CardContent sx={{ flexGrow: 1 }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', mb: 1 }}>
-                    <Chip label={bien.type} size="small" color="primary" variant="outlined" />
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-                      {bien.prix.toLocaleString()}€
-                    </Typography>
+                    <Chip label="Favori" size="small" color="primary" variant="outlined" />
+                    <Box>
+                      {fav.note && (
+                        <Typography variant="caption" sx={{ display: 'block', mb: 0.5 }}>
+                          ⭐ {fav.note}/5
+                        </Typography>
+                      )}
+                    </Box>
                   </Box>
 
                   <Typography variant="h6" gutterBottom sx={{ mb: 1 }}>
-                    {bien.titre}
+                    Annonce #{fav.annonce_id}
                   </Typography>
 
-                  <Box sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary', mb: 2 }}>
-                    <LocationOnIcon fontSize="small" sx={{ mr: 0.5 }} />
-                    <Typography variant="body2">
-                      {bien.ville} ({bien.codePostal})
+                  {fav.commentaire && (
+                    <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
+                      {fav.commentaire}
                     </Typography>
-                  </Box>
-
-                  <Typography variant="body2" color="textSecondary">
-                    📏 {bien.surface}m² • 🚪 {bien.pieces} pièce{bien.pieces > 1 ? 's' : ''}
-                  </Typography>
+                  )}
 
                   <Typography variant="caption" color="textSecondary" display="block" sx={{ mt: 1 }}>
-                    Ajouté le {new Date(bien.dateAjout).toLocaleDateString('fr-FR')}
+                    Ajouté le {new Date(fav.date_ajout).toLocaleDateString('fr-FR')}
                   </Typography>
                 </CardContent>
 
                 <CardActions>
-                  <Button size="small" color="primary" href={`/annonce/${bien.id}`}>
-                    Voir détails
+                  <Button size="small" color="primary" href={`/annonce/${fav.annonce_id}`}>
+                    Voir l'annonce
                   </Button>
                   <IconButton
                     size="small"
-                    onClick={() => handleRemoveFavorite(bien.id)}
+                    onClick={() => handleRemoveFavorite(fav.favori_id)}
                     color="error"
                   >
                     <FavoriteIcon fontSize="small" />
-                  </IconButton>
-                  <IconButton size="small">
-                    <ShareIcon fontSize="small" />
                   </IconButton>
                 </CardActions>
               </Card>

@@ -68,15 +68,23 @@ const NotificationsPage = () => {
   const loadNotifications = async () => {
     setLoading(true);
     try {
-      // Simulation: obtenir les notifications
-      // const response = await notificationsApi.listAll();
-      // setNotifications(response.data.notifications || []);
+      const response = await notificationsApi.list(0, 50);
+      if (response.data && response.data.success) {
+        setNotifications(response.data.data || []);
+      }
 
-      // Pour l'instant, on affiche une liste vide
-      setNotifications([]);
-      setUnreadCount(0);
+      // Charger le count de non-lues
+      try {
+        const unreadResponse = await notificationsApi.getUnreadCount();
+        if (unreadResponse.data) {
+          setUnreadCount(unreadResponse.data.unread_count || 0);
+        }
+      } catch (err) {
+        console.error('Erreur unread count:', err);
+      }
     } catch (err) {
       console.error('Erreur lors du chargement:', err);
+      setError('Impossible de charger les notifications');
     } finally {
       setLoading(false);
     }
@@ -132,19 +140,29 @@ const NotificationsPage = () => {
     }
   };
 
-  const handleMarkAsRead = (notificationId) => {
-    setNotifications((prev) =>
-      prev.map((notif) =>
-        notif.id === notificationId ? { ...notif, read: true } : notif
-      )
-    );
-    setUnreadCount(Math.max(0, unreadCount - 1));
+  const handleMarkAsRead = async (notificationId) => {
+    try {
+      await notificationsApi.markAsRead(notificationId);
+      setNotifications((prev) =>
+        prev.map((notif) =>
+          notif.notification_id === notificationId ? { ...notif, is_read: true } : notif
+        )
+      );
+      setUnreadCount(Math.max(0, unreadCount - 1));
+    } catch (err) {
+      console.error('Erreur:', err);
+    }
   };
 
-  const handleDeleteNotification = (notificationId) => {
-    setNotifications((prev) =>
-      prev.filter((notif) => notif.id !== notificationId)
-    );
+  const handleDeleteNotification = async (notificationId) => {
+    try {
+      await notificationsApi.delete(notificationId);
+      setNotifications((prev) =>
+        prev.filter((notif) => notif.notification_id !== notificationId)
+      );
+    } catch (err) {
+      console.error('Erreur:', err);
+    }
   };
 
   const handleClearAll = () => {
