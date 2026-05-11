@@ -2,7 +2,7 @@
  * Barre de navigation dynamique selon les rôles
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   AppBar,
@@ -22,6 +22,7 @@ import {
   IconButton,
   useMediaQuery,
   useTheme,
+  Badge,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
@@ -37,6 +38,7 @@ import SpeakerNotesIcon from '@mui/icons-material/SpeakerNotes';
 import FeedIcon from '@mui/icons-material/Feed';
 import PersonIcon from '@mui/icons-material/Person';
 import TimelineIcon from '@mui/icons-material/Timeline';
+import { notificationsApi } from '../services/api';
 
 /**
  * Composant Navbar dynamique
@@ -60,6 +62,28 @@ export const DynamicNavbar = ({
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
+
+  // Charger le count des notifications non-lues
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadUnreadCount();
+      // Actualiser toutes les 30 secondes
+      const interval = setInterval(loadUnreadCount, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [isAuthenticated]);
+
+  const loadUnreadCount = async () => {
+    try {
+      const response = await notificationsApi.getUnreadCount();
+      if (response.data) {
+        setUnreadNotifications(response.data.unread_count || 0);
+      }
+    } catch (err) {
+      console.error('Erreur:', err);
+    }
+  };
 
   // Ne pas afficher la navbar sur certaines pages
   if (!showAppBar || location.pathname === '/login' || location.pathname === '/register') {
@@ -91,6 +115,7 @@ export const DynamicNavbar = ({
       items.push({ label: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> });
       items.push({ label: 'Favoris', path: '/favoris', icon: <BookmarkIcon /> });
       items.push({ label: 'Historique', path: '/historique', icon: <FeedIcon /> });
+      items.push({ label: 'Notifications', path: '/notifications', icon: <NotificationsIcon />, badge: unreadNotifications });
     }
 
     if (userRole === 'admin') {
@@ -165,7 +190,15 @@ export const DynamicNavbar = ({
                 key={item.path}
                 color="inherit"
                 onClick={() => handleNavigate(item.path)}
-                startIcon={item.icon}
+                startIcon={
+                  item.badge !== undefined && item.badge > 0 ? (
+                    <Badge badgeContent={item.badge} color="error">
+                      {item.icon}
+                    </Badge>
+                  ) : (
+                    item.icon
+                  )
+                }
                 sx={{
                   opacity: location.pathname === item.path ? 1 : 0.7,
                   borderBottom: location.pathname === item.path ? '2px solid white' : 'none',
@@ -291,7 +324,15 @@ export const DynamicNavbar = ({
                   mb: 1,
                 }}
               >
-                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemIcon>
+                  {item.badge !== undefined && item.badge > 0 ? (
+                    <Badge badgeContent={item.badge} color="error">
+                      {item.icon}
+                    </Badge>
+                  ) : (
+                    item.icon
+                  )}
+                </ListItemIcon>
                 <ListItemText primary={item.label} />
               </ListItem>
             ))}
