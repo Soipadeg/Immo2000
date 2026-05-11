@@ -167,24 +167,38 @@ export const DynamicNavbar = ({
 
   return (
     <AppBar position="sticky">
-      <Toolbar>
-        {/* Logo */}
+      <Toolbar
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '8px 16px',
+          minHeight: '64px',
+          maxWidth: '1400px',
+          margin: '0 auto',
+          width: '100%',
+        }}
+      >
+        {/* Logo - left aligned */}
         <Typography
           variant="h6"
           sx={{
-            flexGrow: 1,
-            fontWeight: 'bold',
+            fontWeight: 700,
             cursor: 'pointer',
             '&:hover': { opacity: 0.8 },
+            fontSize: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
           }}
           onClick={() => handleNavigate('/')}
         >
           🏠 Immo2000
         </Typography>
 
-        {/* Navigation desktop */}
+        {/* Navigation desktop - center */}
         {!isMobile && (
-          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
             {navItems.map((item) => (
               <Button
                 key={item.path}
@@ -201,7 +215,12 @@ export const DynamicNavbar = ({
                 }
                 sx={{
                   opacity: location.pathname === item.path ? 1 : 0.7,
-                  borderBottom: location.pathname === item.path ? '2px solid white' : 'none',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  padding: '6px 12px',
+                  textTransform: 'uppercase',
+                  textDecoration: 'none',
+                  '&:hover': { opacity: 1 },
                 }}
               >
                 {item.label}
@@ -222,7 +241,13 @@ export const DynamicNavbar = ({
                     {user?.prenom?.[0]?.toUpperCase()}
                   </Avatar>
                 }
-                sx={{ color: 'white', ml: 2 }}
+                sx={{
+                  color: 'white',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  padding: '6px 12px',
+                  textTransform: 'uppercase',
+                }}
               >
                 {user?.prenom}
               </Button>
@@ -270,10 +295,18 @@ export const DynamicNavbar = ({
         ) : (
           /* Buttons pour non-authentifiés */
           !isMobile && (
-            <Box sx={{ display: 'flex', gap: 1, ml: 2 }}>
+            <Box sx={{ display: 'flex', gap: 1 }}>
               <Button
                 color="inherit"
                 onClick={() => handleNavigate('/login')}
+                sx={{
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  padding: '6px 12px',
+                  textTransform: 'uppercase',
+                  opacity: 0.7,
+                  '&:hover': { opacity: 1 },
+                }}
               >
                 Se connecter
               </Button>
@@ -281,6 +314,13 @@ export const DynamicNavbar = ({
                 variant="contained"
                 color="secondary"
                 onClick={() => handleNavigate('/register')}
+                sx={{
+                  fontSize: '14px',
+                  fontWeight: 700,
+                  padding: '6px 24px',
+                  textTransform: 'uppercase',
+                  borderRadius: '4px',
+                }}
               >
                 S'inscrire
               </Button>
