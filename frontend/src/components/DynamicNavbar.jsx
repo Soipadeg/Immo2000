@@ -196,38 +196,52 @@ export const DynamicNavbar = ({
           🏠 Immo2000
         </Typography>
 
-        {/* Navigation desktop - center */}
+        {/* Navigation and Buttons container - kept together */}
         {!isMobile && (
-          <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
-            {navItems.map((item) => (
-              <Button
-                key={item.path}
-                color="inherit"
-                onClick={() => handleNavigate(item.path)}
-                startIcon={
-                  item.badge !== undefined && item.badge > 0 ? (
-                    <Badge badgeContent={item.badge} color="error">
-                      {item.icon}
-                    </Badge>
-                  ) : (
-                    item.icon
-                  )
-                }
-                sx={{
-                  opacity: location.pathname === item.path ? 1 : 0.7,
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  padding: '6px 12px',
-                  textTransform: 'uppercase',
-                  textDecoration: 'none',
-                  '&:hover': { opacity: 1 },
-                }}
-              >
-                {item.label}
-              </Button>
-            ))}
+          <Box
+            sx={{
+              display: 'flex',
+              gap: 0,
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              flex: '0 1 auto',
+            }}
+          >
+            {/* Navigation items */}
+            <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
+              {navItems.map((item) => (
+                <Button
+                  key={item.path}
+                  color="inherit"
+                  onClick={() => handleNavigate(item.path)}
+                  startIcon={
+                    item.badge !== undefined && item.badge > 0 ? (
+                      <Badge badgeContent={item.badge} color="error">
+                        {item.icon}
+                      </Badge>
+                    ) : (
+                      item.icon
+                    )
+                  }
+                  sx={{
+                    opacity: location.pathname === item.path ? 1 : 0.7,
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    padding: '6px 12px',
+                    textTransform: 'uppercase',
+                    textDecoration: 'none',
+                    '&:hover': { opacity: 1 },
+                  }}
+                >
+                  {item.label}
+                </Button>
+              ))}
+            </Box>
           </Box>
         )}
+
+        {/* Spacer to push buttons to the right */}
+        <Box sx={{ flex: 1 }} />
 
         {/* Menu utilisateur ou boutons login */}
         {isAuthenticated && user ? (
