@@ -1,8 +1,8 @@
 /**
- * Dashboard Administrateur
+ * TÂCHE 1: Dashboard Admin - Tableau de bord administrateur
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -30,31 +30,70 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import WarningIcon from '@mui/icons-material/Warning';
 import SecurityIcon from '@mui/icons-material/Security';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
+import { dashboardApi, analyticsApi } from '../services/adminApi';
 
 const AdminDashboardPage = () => {
-  const { user, loading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [tabValue, setTabValue] = useState(0);
+  const [data, setData] = useState(null);
+  const [analytics, setAnalytics] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [suspiciousAccounts, setSuspiciousAccounts] = useState([]);
 
-  const stats = [
-    { label: 'Utilisateurs totaux', value: 1245, icon: <PeopleIcon sx={{ fontSize: 40 }} /> },
-    { label: 'Annonces actives', value: 3420, icon: <HomeIcon sx={{ fontSize: 40 }} /> },
-    { label: 'Revenus ce mois', value: '€42,500', icon: <TrendingUpIcon sx={{ fontSize: 40 }} /> },
-    { label: 'Signalements en attente', value: 12, icon: <WarningIcon sx={{ fontSize: 40 }} /> },
-  ];
 
-  const recentUsers = [
-    { id: 1, email: 'new@example.com', nom: 'Nouveau', prenom: 'Utilisateur', date: '2026-05-20' },
-    { id: 2, email: 'test2@example.com', nom: 'Test', prenom: 'User', date: '2026-05-19' },
-    { id: 3, email: 'recent@example.com', nom: 'Recent', prenom: 'Client', date: '2026-05-18' },
-  ];
+  useEffect(() => {
+    if (!authLoading && (!user || user.role !== 'admin')) {
+      navigate('/');
+    }
+  }, [user, authLoading, navigate]);
 
-  const suspiciousAccounts = [
-    { id: 1, email: 'spam@example.com', raison: 'Trop de connexions échouées', severity: 'high' },
-    { id: 2, email: 'bot@example.com', raison: 'Comportement anormal détecté', severity: 'medium' },
-  ];
+  useEffect(() => {
+    // Ne charger les données que si l'utilisateur est authentifié et admin
+    if (!authLoading && user && user.role === 'admin') {
+      loadData();
+    }
+  }, [user, authLoading]);
 
-  if (loading) {
+  const loadData = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      // Skip API calls in dev mode
+      const devMode = localStorage.getItem('dev_mode') === 'true';
+      if (devMode) {
+        // Use mock data in dev mode
+        setData({
+          utilisateurs: { total: 250 },
+          annonces: { total: 1200 },
+          offres: { total: 45 },
+          revenus: { valeur_totale_offres: 2750000 },
+        });
+        setAnalytics({
+          utilisateurs_nouveaux: 15,
+          annonces_creees: 23,
+          offres_creees: 8,
+        });
+        setLoading(false);
+        return;
+      }
+
+      const [dashRes, anaRes] = await Promise.all([
+        dashboardApi.getSummary(),
+        analyticsApi.getSummary(),
+      ]);
+      setData(dashRes.data?.data);
+      setAnalytics(anaRes.data?.data);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Erreur lors du chargement');
+      console.error('Error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (authLoading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <CircularProgress />
@@ -63,13 +102,19 @@ const AdminDashboardPage = () => {
   }
 
   if (!user || user.role !== 'admin') {
-    navigate('/');
     return null;
   }
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
+
+  const stats = [
+    { label: '👥 Utilisateurs', value: data?.utilisateurs?.total || 0 },
+    { label: '🏠 Annonces', value: data?.annonces?.total || 0 },
+    { label: '💰 Offres', value: data?.offres?.total || 0 },
+    { label: '💵 Revenus', value: `€${(data?.revenus?.valeur_totale_offres || 0).toLocaleString()}` },
+  ];
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>

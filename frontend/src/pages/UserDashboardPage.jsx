@@ -1,8 +1,8 @@
 /**
- * Dashboard Utilisateur (Vendeur)
+ * Dashboard Utilisateur (Vendeur/Acheteur)
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -21,6 +21,11 @@ import {
   ListItemText,
   Divider,
   Alert,
+  LinearProgress,
+  Avatar,
+  AvatarGroup,
+  IconButton,
+  Tooltip,
 } from '@mui/material';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -31,58 +36,118 @@ import EyeIcon from '@mui/icons-material/Visibility';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import SearchIcon from '@mui/icons-material/Search';
 import AlertIcon from '@mui/icons-material/Notifications';
+import DownloadIcon from '@mui/icons-material/Download';
+import SettingsIcon from '@mui/icons-material/Settings';
+import BookIcon from '@mui/icons-material/Book';
+import FolderIcon from '@mui/icons-material/Folder';
 
 const UserDashboardPage = () => {
-  const { user, loading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [tabValue, setTabValue] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!authLoading && (!user || !['user', 'admin'].includes(user.role))) {
+      navigate('/');
+    }
+  }, [user, authLoading, navigate]);
 
   const stats = [
-    { label: 'Annonces actives', value: 3, icon: '📋' },
-    { label: 'Vues totales', value: 145, icon: '👁️' },
-    { label: 'Messages reçus', value: 8, icon: '💬' },
-    { label: 'Alertes', value: 2, icon: '🔔' },
+    {
+      label: 'Annonces actives',
+      value: 12,
+      icon: '📋',
+      trend: '+2 ce mois',
+      trendUp: true
+    },
+    {
+      label: 'Vues totales',
+      value: 1245,
+      icon: '👁️',
+      trend: '+340 cette semaine',
+      trendUp: true
+    },
+    {
+      label: 'Messages reçus',
+      value: 47,
+      icon: '💬',
+      trend: '8 non lus',
+      trendUp: false
+    },
+    {
+      label: 'Alertes',
+      value: 5,
+      icon: '🔔',
+      trend: '2 nouvelles',
+      trendUp: false
+    },
   ];
 
   const annonces = [
     {
       id: 1,
-      titre: 'Appartement 3 pièces Paris',
+      titre: 'Appartement 3 pièces Paris 15ème',
       prix: 450000,
       ville: 'Paris',
       statut: 'Actif',
-      vues: 45,
-      messages: 3,
-      dateCreation: '2026-01-15',
+      vues: 145,
+      messages: 8,
+      dateCreation: '2026-03-15',
+      progression: 85,
     },
     {
       id: 2,
-      titre: 'Maison 4 pièces Lyon',
+      titre: 'Maison 4 pièces Lyon Fourvière',
       prix: 380000,
       ville: 'Lyon',
       statut: 'Actif',
-      vues: 78,
-      messages: 5,
+      vues: 289,
+      messages: 15,
       dateCreation: '2026-02-01',
+      progression: 92,
     },
     {
       id: 3,
-      titre: 'Studio Paris 20ème',
+      titre: 'Studio Marseille Vieux-Port',
       prix: 320000,
-      ville: 'Paris',
+      ville: 'Marseille',
       statut: 'Brouillon',
       vues: 0,
       messages: 0,
-      dateCreation: '2026-02-20',
+      dateCreation: '2026-04-20',
+      progression: 40,
     },
   ];
 
   const alertes = [
-    { id: 1, titre: 'Alerte prix', description: 'Propriétés similaires trouvées à prix inférieur' },
-    { id: 2, titre: 'Alerte localité', description: 'Nouvelles annonces dans votre région préférée' },
+    {
+      id: 1,
+      titre: 'Alerte prix',
+      description: 'Propriétés similaires trouvées 15% moins chères',
+      type: 'warning'
+    },
+    {
+      id: 2,
+      titre: 'Alerte localité',
+      description: 'Nouvelles annonces dans Paris 15ème',
+      type: 'info'
+    },
+    {
+      id: 3,
+      titre: 'Offre reçue',
+      description: 'Une nouvelle offre pour votre appartement',
+      type: 'success'
+    },
   ];
 
-  if (loading) {
+  const operations = [
+    { label: 'Consulter les guides', icon: <BookIcon />, color: 'primary' },
+    { label: 'Télécharger les modèles', icon: <FolderIcon />, color: 'secondary' },
+    { label: 'Utiliser le simulateur', icon: <TrendingUpIcon />, color: 'success' },
+  ];
+
+  if (authLoading || loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <CircularProgress />
@@ -91,7 +156,6 @@ const UserDashboardPage = () => {
   }
 
   if (!user || !['user', 'admin'].includes(user.role)) {
-    navigate('/');
     return null;
   }
 
@@ -100,159 +164,254 @@ const UserDashboardPage = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <Container maxWidth="xl" sx={{ py: 4 }}>
+      {/* En-tête */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Box>
           <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
             📊 Dashboard
           </Typography>
           <Typography color="textSecondary">
-            Bienvenue, {user.prenom} {user.nom}
+            Bienvenue, <strong>{user.prenom} {user.nom}</strong> 👋
           </Typography>
         </Box>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={() => navigate('/annonces/create')}>
-          Créer une annonce
+        <Button
+          variant="contained"
+          color="success"
+          size="large"
+          startIcon={<AddIcon />}
+          onClick={() => navigate('/annonces/create')}
+          sx={{ fontWeight: 'bold' }}
+        >
+          + Créer une annonce
         </Button>
       </Box>
 
-      {/* Statistiques */}
-      <Grid container spacing={2} sx={{ mb: 4 }}>
+      {/* Statistiques principales */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
         {stats.map((stat, index) => (
           <Grid item xs={12} sm={6} lg={3} key={index}>
-            <Card sx={{ textAlign: 'center', py: 2 }}>
-              <Box sx={{ fontSize: 32, mb: 1 }}>{stat.icon}</Box>
-              <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-                {stat.value}
-              </Typography>
-              <Typography variant="caption" color="textSecondary">
-                {stat.label}
-              </Typography>
+            <Card
+              sx={{
+                height: '100%',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                color: 'white',
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              <CardContent>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <Box>
+                    <Typography variant="caption" sx={{ opacity: 0.9 }}>
+                      {stat.label}
+                    </Typography>
+                    <Typography variant="h4" sx={{ fontWeight: 'bold', my: 1 }}>
+                      {stat.value}
+                    </Typography>
+                    <Chip
+                      label={stat.trend}
+                      size="small"
+                      color={stat.trendUp ? 'success' : 'default'}
+                      icon={<TrendingUpIcon />}
+                      sx={{
+                        backgroundColor: stat.trendUp ? 'rgba(76, 175, 80, 0.3)' : 'rgba(0, 0, 0, 0.2)',
+                        color: 'white'
+                      }}
+                    />
+                  </Box>
+                  <Typography sx={{ fontSize: 40 }}>{stat.icon}</Typography>
+                </Box>
+              </CardContent>
             </Card>
           </Grid>
         ))}
       </Grid>
 
-      {/* Onglets Annonces et Alertes */}
+      {/* Contenu principal - Onglets */}
       <Card sx={{ mb: 4 }}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs value={tabValue} onChange={handleTabChange}>
-            <Tab icon={<SearchIcon />} label="Mes annonces" />
-            <Tab icon={<AlertIcon />} label="Mes alertes" />
+        <Box sx={{ borderBottom: 1, borderColor: 'divider', bgcolor: 'background.paper' }}>
+          <Tabs
+            value={tabValue}
+            onChange={handleTabChange}
+            variant="scrollable"
+
+          >
+            <Tab icon={<SearchIcon />} label="Mes annonces" iconPosition="start" />
+            <Tab icon={<AlertIcon />} label="Mes alertes" iconPosition="start" />
           </Tabs>
         </Box>
 
         {/* Onglet Annonces */}
         {tabValue === 0 && (
-          <CardContent>
-            <Grid container spacing={2}>
-              {annonces.map((annonce) => (
-                <Grid item xs={12} md={6} key={annonce.id}>
-                  <Card variant="outlined" sx={{ p: 2 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', mb: 1 }}>
-                      <Box>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                          {annonce.titre}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary">
-                          📍 {annonce.ville}
-                        </Typography>
+          <CardContent sx={{ pt: 3 }}>
+            {annonces.length === 0 ? (
+              <Alert severity="info">
+                Aucune annonce. <Button color="primary">Créer votre première annonce</Button>
+              </Alert>
+            ) : (
+              <Grid container spacing={3}>
+                {annonces.map((annonce) => (
+                  <Grid item xs={12} key={annonce.id}>
+                    <Card
+                      variant="outlined"
+                      sx={{
+                        p: 2.5,
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          boxShadow: 4,
+                          transform: 'translateY(-4px)',
+                        }
+                      }}
+                    >
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', mb: 2 }}>
+                        <Box sx={{ flex: 1 }}>
+                          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                            {annonce.titre}
+                          </Typography>
+                          <Typography variant="body2" color="textSecondary">
+                            📍 {annonce.ville} • Créée le {new Date(annonce.dateCreation).toLocaleDateString('fr-FR')}
+                          </Typography>
+                        </Box>
+                        <Chip
+                          label={annonce.statut}
+                          color={annonce.statut === 'Actif' ? 'success' : 'default'}
+                          size="small"
+                          sx={{ fontWeight: 'bold' }}
+                        />
                       </Box>
-                      <Chip
-                        label={annonce.statut}
-                        color={annonce.statut === 'Actif' ? 'success' : 'default'}
-                        size="small"
-                      />
-                    </Box>
 
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 1 }}>
-                      {annonce.prix.toLocaleString()}€
-                    </Typography>
+                      <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 1.5 }}>
+                        {annonce.prix.toLocaleString()} €
+                      </Typography>
 
-                    <Box sx={{ display: 'flex', gap: 2, mb: 2, fontSize: '0.875rem', color: 'textSecondary' }}>
-                      <Box>👁️ {annonce.vues} vues</Box>
-                      <Box>💬 {annonce.messages} messages</Box>
-                      <Box>📅 {new Date(annonce.dateCreation).toLocaleDateString('fr-FR')}</Box>
-                    </Box>
+                      <Box sx={{ mb: 2 }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                          <Typography variant="caption" color="textSecondary">
+                            Progression du profil
+                          </Typography>
+                          <Typography variant="caption" sx={{ fontWeight: 'bold' }}>
+                            {annonce.progression}%
+                          </Typography>
+                        </Box>
+                        <LinearProgress
+                          variant="determinate"
+                          value={annonce.progression}
+                          sx={{ height: 8, borderRadius: 1 }}
+                        />
+                      </Box>
 
-                    <Box sx={{ display: 'flex', gap: 1 }}>
-                      <Button size="small" variant="outlined" startIcon={<EyeIcon />}>
-                        Voir
-                      </Button>
-                      <Button size="small" variant="outlined" startIcon={<EditIcon />}>
-                        Éditer
-                      </Button>
-                      <Button size="small" variant="outlined" color="error" startIcon={<DeleteIcon />}>
-                        Supprimer
-                      </Button>
-                    </Box>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
+                      <Box sx={{ display: 'flex', gap: 3, mb: 2, fontSize: '0.875rem' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                          👁️ <Typography variant="body2">{annonce.vues} vues</Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                          💬 <Typography variant="body2">{annonce.messages} messages</Typography>
+                        </Box>
+                      </Box>
+
+                      <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Tooltip title="Voir l'annonce">
+                          <Button size="small" variant="contained" startIcon={<EyeIcon />}>
+                            Voir
+                          </Button>
+                        </Tooltip>
+                        <Tooltip title="Éditer l'annonce">
+                          <Button size="small" variant="outlined" startIcon={<EditIcon />}>
+                            Éditer
+                          </Button>
+                        </Tooltip>
+                        <Tooltip title="Supprimer l'annonce">
+                          <Button size="small" variant="outlined" color="error" startIcon={<DeleteIcon />}>
+                            Supprimer
+                          </Button>
+                        </Tooltip>
+                      </Box>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+            )}
           </CardContent>
         )}
 
         {/* Onglet Alertes */}
         {tabValue === 1 && (
-          <CardContent>
-            <List>
-              {alertes.length === 0 ? (
-                <Alert severity="info">Aucune alerte pour le moment</Alert>
-              ) : (
-                alertes.map((alerte) => (
-                  <Box key={alerte.id}>
-                    <ListItem>
-                      <ListItemText primary={alerte.titre} secondary={alerte.description} />
-                    </ListItem>
-                    <Divider />
-                  </Box>
-                ))
-              )}
-            </List>
+          <CardContent sx={{ pt: 3 }}>
+            {alertes.length === 0 ? (
+              <Alert severity="info">Aucune alerte pour le moment</Alert>
+            ) : (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                {alertes.map((alerte) => (
+                  <Alert
+                    key={alerte.id}
+                    severity={alerte.type}
+                    sx={{ py: 1.5 }}
+                  >
+                    <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+                      {alerte.titre}
+                    </Typography>
+                    <Typography variant="body2">
+                      {alerte.description}
+                    </Typography>
+                  </Alert>
+                ))}
+              </Box>
+            )}
           </CardContent>
         )}
       </Card>
 
       {/* Sections rapides */}
       <Grid container spacing={3}>
-        <Grid item xs={12} lg={6}>
+        <Grid item xs={12} lg={8}>
           <Card>
             <CardContent>
-              <Typography variant="h6" gutterBottom>
-                📚 Ressources
+              <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
+                📚 Ressources utiles
               </Typography>
               <Divider sx={{ my: 2 }} />
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                <Button variant="outlined" color="primary" fullWidth>
-                  Consulter les guides
-                </Button>
-                <Button variant="outlined" color="primary" fullWidth>
-                  Télécharger les modèles
-                </Button>
-                <Button variant="outlined" color="primary" fullWidth>
-                  Utiliser le simulateur
-                </Button>
-              </Box>
+              <Grid container spacing={2}>
+                {operations.map((op, idx) => (
+                  <Grid item xs={12} sm={6} md={4} key={idx}>
+                    <Button
+                      variant="outlined"
+                      fullWidth
+                      color={op.color}
+                      startIcon={op.icon}
+                      sx={{ py: 1.5 }}
+                    >
+                      {op.label}
+                    </Button>
+                  </Grid>
+                ))}
+              </Grid>
             </CardContent>
           </Card>
         </Grid>
 
-        <Grid item xs={12} lg={6}>
+        <Grid item xs={12} lg={4}>
           <Card>
             <CardContent>
-              <Typography variant="h6" gutterBottom>
-                ⚙️ Compte
+              <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
+                ⚙️ Paramètres
               </Typography>
               <Divider sx={{ my: 2 }} />
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                <Button variant="outlined" color="primary" fullWidth>
-                  Modifier le profil
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  startIcon={<SettingsIcon />}
+                  onClick={() => navigate('/profile')}
+                >
+                  Profil
                 </Button>
-                <Button variant="outlined" color="primary" fullWidth>
-                  Paramètres de notifications
-                </Button>
-                <Button variant="outlined" color="primary" fullWidth>
-                  Changer le mot de passe
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  startIcon={<DownloadIcon />}
+                >
+                  Télécharger données
                 </Button>
               </Box>
             </CardContent>

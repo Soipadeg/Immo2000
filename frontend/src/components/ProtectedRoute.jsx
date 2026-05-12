@@ -1,30 +1,29 @@
 /**
  * Composant ProtectedRoute pour contrôler l'accès aux routes selon les rôles
+ * Utilise le hook useAuth pour vérifier l'authentification et les rôles
  */
 
 import React from 'react';
 import { Navigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import { Box, CircularProgress, Typography } from '@mui/material';
 
 /**
  * Composant pour protéger les routes selon les rôles
+ * Utilise automatiquement le hook useAuth pour vérifier l'authentification
  *
  * @param {Object} props
  * @param {React.ReactNode} props.element - Composant à rendre
- * @param {boolean} props.isAuthenticated - Est-ce que l'utilisateur est connecté?
- * @param {string} props.userRole - Rôle actuel de l'utilisateur
- * @param {Array<string>} props.requiredRoles - Rôles autorisés
- * @param {boolean} props.loading - En cours de chargement?
+ * @param {Array<string>} props.requiredRoles - Rôles autorisés (optionnel)
  * @param {string} props.fallbackPath - Chemin de redirection par défaut
  */
 export const ProtectedRoute = ({
   element,
-  isAuthenticated,
-  userRole,
   requiredRoles = [],
-  loading = false,
-  fallbackPath = '/',
+  fallbackPath = '/login',
 }) => {
+  const { isAuthenticated, user, loading } = useAuth();
+
   // Afficher un chargement pendant la vérification
   if (loading) {
     return (
@@ -44,56 +43,36 @@ export const ProtectedRoute = ({
     );
   }
 
-  // Si pas d'authentification requise, afficher le composant
-  if (requiredRoles.length === 0) {
-    return element;
-  }
-
   // Si non authentifié, rediriger vers login
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to={fallbackPath} replace />;
   }
 
-  // Si authentifié mais rôle non autorisé
-  if (!requiredRoles.includes(userRole)) {
-    return (
-      <Box sx={{ textAlign: 'center', py: 8 }}>
-        <Typography variant="h4" color="error" gutterBottom>
-          ❌ Accès refusé
-        </Typography>
-        <Typography variant="body1" gutterBottom>
-          Vous n'avez pas les droits d'accès à cette page.
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Votre rôle: <strong>{userRole}</strong>
-        </Typography>
-      </Box>
-    );
+  // Si authentifié et rôles requis spécifiés
+  if (requiredRoles.length > 0) {
+    // Vérifier si le rôle de l'utilisateur est autorisé
+    if (!requiredRoles.includes(user?.role)) {
+      return (
+        <Box sx={{ textAlign: 'center', py: 8 }}>
+          <Typography variant="h4" color="error" gutterBottom>
+            ❌ Accès refusé
+          </Typography>
+          <Typography variant="body1" gutterBottom>
+            Vous n'avez pas les droits d'accès à cette page.
+          </Typography>
+          <Typography variant="body2" color="textSecondary">
+            Votre rôle: <strong>{user?.role}</strong>
+          </Typography>
+          <Typography variant="body2" color="textSecondary">
+            Rôles autorisés: <strong>{requiredRoles.join(', ')}</strong>
+          </Typography>
+        </Box>
+      );
+    }
   }
 
   // Tout est bon, afficher le composant
   return element;
-};
-
-/**
- * Variante avec hook
- */
-export const ProtectedRouteWithHook = ({
-  element,
-  requiredRoles = [],
-  useAuthHook,
-}) => {
-  const { isAuthenticated, user, loading } = useAuthHook();
-
-  return (
-    <ProtectedRoute
-      element={element}
-      isAuthenticated={isAuthenticated}
-      userRole={user?.role}
-      requiredRoles={requiredRoles}
-      loading={loading}
-    />
-  );
 };
 
 export default ProtectedRoute;

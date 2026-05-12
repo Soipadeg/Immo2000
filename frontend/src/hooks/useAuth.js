@@ -1,5 +1,6 @@
 /**
  * Hook personnalisé pour gérer l'authentification et les rôles
+ * Utilise JWT pour la vérification d'authentification avec le backend
  */
 
 import { useState, useEffect, useCallback } from 'react';
@@ -18,16 +19,28 @@ export const useAuth = () => {
   // Initialiser l'authentification au montage
   useEffect(() => {
     checkAuth();
+
+    // Écouter les changements de localStorage (pour les logouts depuis d'autres onglets)
+    const handleStorageChange = (e) => {
+      if (e.key === 'auth_token' && !e.newValue) {
+        // Token supprimé - l'utilisateur s'est déconnecté
+        setIsAuthenticated(false);
+        setUser(null);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   /**
-   * Vérifier l'état de l'authentification
+   * Vérifier l'état de l'authentification en appelant le backend
    */
   const checkAuth = useCallback(async () => {
-    setLoading(true);
     const token = localStorage.getItem('auth_token');
 
     if (!token) {
+      // Pas de token - non authentifié
       setIsAuthenticated(false);
       setUser(null);
       setLoading(false);
@@ -35,78 +48,69 @@ export const useAuth = () => {
     }
 
     try {
-      // Récupérer les infos utilisateur depuis le backend
+      // Appeler /auth/me pour récupérer les infos de l'utilisateur
       const response = await authApi.me();
 
-      if (response.data && response.data.data) {
-        const userData = response.data.data;
-
-        // Mettre à jour localStorage avec les données fraîches
-        localStorage.setItem('user_id', userData.utilisateur_id || userData.id);
-        localStorage.setItem('user_email', userData.email);
-        localStorage.setItem('user_role', userData.role);
-        localStorage.setItem('user_nom', userData.nom || '');
-        localStorage.setItem('user_prenom', userData.prenom || '');
-
+      if (response.data && response.data.utilisateur) {
+        const userData = response.data.utilisateur;
         setUser({
-          id: userData.utilisateur_id || userData.id,
+          id: userData.utilisateur_id,
           email: userData.email,
           nom: userData.nom,
           prenom: userData.prenom,
           role: userData.role,
-          telephone: userData.telephone,
-          adresse: userData.adresse_contact,
         });
-
         setIsAuthenticated(true);
+        setError(null);
       }
     } catch (err) {
-      console.error('Erreur lors de la vérification de l\'authentification:', err);
+      // Token invalide ou expiré
+      console.error('Auth check failed:', err);
       localStorage.removeItem('auth_token');
-      localStorage.removeItem('user_id');
-      localStorage.removeItem('user_email');
-      localStorage.removeItem('user_role');
       setIsAuthenticated(false);
       setUser(null);
-      setError(err.message);
+      setError(err.response?.data?.error || 'Authentication failed');
     } finally {
       setLoading(false);
     }
   }, []);
 
   /**
-   * Connecter l'utilisateur
+   * Connecter l'utilisateur avec JWT token
    */
-  const login = useCallback((userData, token) => {
-    localStorage.setItem('auth_token', token);
-    localStorage.setItem('user_id', userData.utilisateur_id || userData.id);
-    localStorage.setItem('user_email', userData.email);
-    localStorage.setItem('user_role', userData.role);
-    localStorage.setItem('user_nom', userData.nom || '');
-    localStorage.setItem('user_prenom', userData.prenom || '');
-
-    setUser({
-      id: userData.utilisateur_id || userData.id,
-      email: userData.email,
-      nom: userData.nom,
-      prenom: userData.prenom,
-      role: userData.role,
-      telephone: userData.telephone,
-      adresse: userData.adresse_contact,
-    });
-
-    setIsAuthenticated(true);
+  const login = useCallback(async (email, password) => {
+    setLoading(true);
     setError(null);
-  }, []);
+
+    try {
+      const response = await authApi.login({ email, password });
+
+      if (response.data && response.data.access_token) {
+        // Stocker le token
+        localStorage.setItem('auth_token', response.data.access_token);
+
+        // Récupérer les infos de l'utilisateur
+        await checkAuth();
+        return response.data;
+      }
+    } catch (err) {
+      const errorMsg = err.response?.data?.error || 'Login failed';
+      setError(errorMsg);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [checkAuth]);
 
   /**
    * Déconnecter l'utilisateur
    */
   const logout = useCallback(() => {
-    authApi.logout();
+    localStorage.removeItem('auth_token');
     setIsAuthenticated(false);
     setUser(null);
     setError(null);
+    window.location.href = '/';
   }, []);
 
   /**
@@ -120,7 +124,7 @@ export const useAuth = () => {
    * Vérifier si l'utilisateur a l'un des rôles spécifiés
    */
   const hasAnyRole = useCallback((roles) => {
-    return roles.includes(user?.role);
+    return Array.isArray(roles) && roles.includes(user?.role);
   }, [user]);
 
   /**

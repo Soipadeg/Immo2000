@@ -140,7 +140,8 @@ export default function LoginPage() {
       }
 
       const response = await apiLogin({
-        ...formData,
+        email: formData.email,
+        mot_de_passe: formData.password,
         captchaToken,
       });
 
