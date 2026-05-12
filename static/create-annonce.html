@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créer une annonce - Immo2000</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1976d2;
+            --secondary-color: #424242;
+            --success-color: #4caf50;
+            --danger-color: #f44336;
+            --light-bg: #f5f5f5;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px 0;
+        }
+
+        .navbar-container {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            color: var(--secondary-color);
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .breadcrumb-nav {
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb-nav a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb-nav a:hover {
+            text-decoration: underline;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .stepper {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .stepper-item {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .stepper-item::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            width: 100%;
+            height: 2px;
+            background-color: #ddd;
+            z-index: -1;
+        }
+
+        .stepper-item:last-child::after {
+            display: none;
+        }
+
+        .stepper-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #ddd;
+            color: var(--secondary-color);
+            font-weight: bold;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .stepper-item.active .stepper-number {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .stepper-item.completed .stepper-number {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .stepper-label {
+            font-size: 0.85rem;
+            color: var(--secondary-color);
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            color: var(--secondary-color);
+            margin-bottom: 8px;
+        }
+
+        .form-group label .required {
+            color: var(--danger-color);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group .error {
+            color: var(--danger-color);
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .form-group.has-error input,
+        .form-group.has-error textarea,
+        .form-group.has-error select {
+            border-color: var(--danger-color);
+        }
+
+        .form-group.has-error .error {
+            display: block;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-item input {
+            width: auto;
+            margin-right: 8px;
+            cursor: pointer;
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .photo-upload {
+            border: 2px dashed var(--primary-color);
+            border-radius: 4px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: rgba(25, 118, 210, 0.05);
+        }
+
+        .photo-upload:hover {
+            background-color: rgba(25, 118, 210, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        .photo-upload input {
+            display: none;
+        }
+
+        .photo-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .photo-preview-item {
+            position: relative;
+            border-radius: 4px;
+            overflow: hidden;
+            background-color: #f0f0f0;
+        }
+
+        .photo-preview-item img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        .photo-preview-item .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+
+        .btn-secondary {
+            background-color: #ddd;
+            color: var(--secondary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #bbb;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1565c0;
+        }
+
+        .btn-primary:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .success-message {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .success-message .icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .success-message h2 {
+            color: var(--success-color);
+            margin-bottom: 10px;
+        }
+
+        .success-message p {
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar-container" id="navbar"></div>
+
+    <div class="container">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb-nav">
+            <a href="dashboard.html">← Retour au dashboard</a>
+        </div>
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>📝 Créer une annonce</h1>
+        </div>
+
+        <!-- Form Container -->
+        <div class="form-container">
+            <!-- Alerts -->
+            <div class="alert alert-success" id="successAlert"></div>
+            <div class="alert alert-error" id="errorAlert"></div>
+
+            <!-- Success Message -->
+            <div id="successSection" style="display: none;">
+                <div class="success-message">
+                    <div class="icon">✅</div>
+                    <h2>Annonce créée avec succès!</h2>
+                    <p>Votre annonce a été publiée et est maintenant visible par les acheteurs.</p>
+                    <button class="btn btn-primary" onclick="window.location.href='dashboard.html'" style="max-width: 200px;">Retour au dashboard</button>
+                </div>
+            </div>
+
+            <!-- Form Section -->
+            <div id="formSection">
+                <!-- Stepper -->
+                <div class="stepper">
+                    <div class="stepper-item active" id="step0">
+                        <div class="stepper-number">1</div>
+                        <div class="stepper-label">Informations</div>
+                    </div>
+                    <div class="stepper-item" id="step1">
+                        <div class="stepper-number">2</div>
+                        <div class="stepper-label">Localisation</div>
+                    </div>
+                    <div class="stepper-item" id="step2">
+                        <div class="stepper-number">3</div>
+                        <div class="stepper-label">Caractéristiques</div>
+                    </div>
+                    <div class="stepper-item" id="step3">
+                        <div class="stepper-number">4</div>
+                        <div class="stepper-label">Photos</div>
+                    </div>
+                </div>
+
+                <!-- Step 1: Informations -->
+                <div class="form-section active" id="section0">
+                    <h4 style="margin-bottom: 20px; color: var(--secondary-color);">Informations de base</h4>
+
+                    <div class="form-group">
+                        <label>Titre <span class="required">*</span></label>
+                        <input type="text" name="titre" placeholder="ex: Maison 4 pièces à Paris" maxlength="100">
+                        <div class="error">Le titre est obligatoire</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description <span class="required">*</span></label>
+                        <textarea name="description" placeholder="Décrivez votre bien en détail..."></textarea>
+                        <div class="error">La description est obligatoire</div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Prix (€) <span class="required">*</span></label>
+                            <input type="number" name="prix" placeholder="500000" min="1" step="1">
+                            <div class="error">Le prix est obligatoire et doit être positif</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Surface (m²) <span class="required">*</span></label>
+                            <input type="number" name="surface" placeholder="120.5" min="0.1" step="0.1">
+                            <div class="error">La surface est obligatoire et doit être positive</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Localisation -->
+                <div class="form-section" id="section1">
+                    <h4 style="margin-bottom: 20px; color: var(--secondary-color);">Localisation</h4>
+
+                    <div class="form-group">
+                        <label>Adresse <span class="required">*</span></label>
+                        <input type="text" name="adresse" placeholder="ex: 12 rue de la Paix" maxlength="255">
+                        <div class="error">L'adresse est obligatoire</div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Code postal <span class="required">*</span></label>
+                            <input type="text" name="code_postal" placeholder="75002" maxlength="5" pattern="\d{5}">
+                            <div class="error">Le code postal doit avoir 5 chiffres</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Ville <span class="required">*</span></label>
+                            <input type="text" name="ville" placeholder="Paris" maxlength="100">
+                            <div class="error">La ville est obligatoire</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Caractéristiques -->
+                <div class="form-section" id="section2">
+                    <h4 style="margin-bottom: 20px; color: var(--secondary-color);">Caractéristiques du bien</h4>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Type de bien <span class="required">*</span></label>
+                            <select name="type_bien">
+                                <option value="">-- Sélectionner --</option>
+                                <option value="maison">Maison</option>
+                                <option value="appartement">Appartement</option>
+                                <option value="terrain">Terrain</option>
+                                <option value="local commercial">Local commercial</option>
+                            </select>
+                            <div class="error">Le type de bien est obligatoire</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Nombre de pièces <span class="required">*</span></label>
+                            <input type="number" name="nombre_pieces" placeholder="4" min="1" step="1">
+                            <div class="error">Au minimum 1 pièce</div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Étage (optionnel)</label>
+                            <input type="number" name="etage" placeholder="2" step="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Année de construction (optionnel)</label>
+                            <input type="number" name="annee_construction" placeholder="2010" min="1800" max="2100" step="1">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Classe énergétique DPE (optionnel)</label>
+                        <select name="dpe">
+                            <option value="">-- Non spécifié --</option>
+                            <option value="A">A (Très efficace)</option>
+                            <option value="B">B (Efficace)</option>
+                            <option value="C">C (Moyen)</option>
+                            <option value="D">D (Faible)</option>
+                            <option value="E">E (Très faible)</option>
+                            <option value="F">F (Extrêmement faible)</option>
+                            <option value="G">G (Non classé)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Équipements et aménagements</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="ascenseur" id="ascenseur">
+                                <label for="ascenseur">Ascenseur</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="balcon" id="balcon">
+                                <label for="balcon">Balcon</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="terrasse" id="terrasse">
+                                <label for="terrasse">Terrasse</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="jardin" id="jardin">
+                                <label for="jardin">Jardin</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="piscine" id="piscine">
+                                <label for="piscine">Piscine</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="parking" id="parking">
+                                <label for="parking">Parking</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Photos -->
+                <div class="form-section" id="section3">
+                    <h4 style="margin-bottom: 20px; color: var(--secondary-color);">Photos (optionnel)</h4>
+                    <p style="color: #666; margin-bottom: 20px;">Ajoutez jusqu'à 10 photos pour améliorer votre annonce</p>
+
+                    <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
+                        <div style="font-size: 24px; margin-bottom: 10px;">📸</div>
+                        <input type="file" id="photoInput" multiple accept="image/*" onchange="handlePhotoSelect(event)">
+                        <p style="margin: 0; color: var(--secondary-color);">Cliquez pour ajouter des photos</p>
+                        <p style="margin: 5px 0 0 0; color: #999; font-size: 0.9rem;">ou glissez-déposez vos images</p>
+                    </div>
+
+                    <div class="photo-preview" id="photoPreview"></div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="button-group">
+                    <button class="btn btn-secondary" id="prevBtn" onclick="previousStep()" style="display: none;">← Précédent</button>
+                    <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">Suivant →</button>
+                    <button class="btn btn-primary" id="submitBtn" onclick="submitForm()" style="display: none;">✓ Créer l'annonce</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="js/navbar-component-loader.js"></script>
+    <script>
+        // State
+        let currentStep = 0;
+        const totalSteps = 4;
+        const formData = {};
+        const selectedPhotos = [];
+
+        // Form validation rules
+        const validationRules = {
+            0: ['titre', 'description', 'prix', 'surface'],
+            1: ['adresse', 'code_postal', 'ville'],
+            2: ['type_bien', 'nombre_pieces']
+        };
+
+        // Get form inputs
+        const getFormInputs = () => document.querySelectorAll('.form-section.active input, .form-section.active textarea, .form-section.active select');
+
+        // Validate step
+        const validateStep = (step) => {
+            const inputs = document.querySelectorAll(`#section${step} input, #section${step} textarea, #section${step} select`);
+            let isValid = true;
+            const errors = {};
+
+            inputs.forEach(input => {
+                const formGroup = input.closest('.form-group');
+                if (!formGroup) return;
+
+                let fieldValid = true;
+
+                if (validationRules[step] && validationRules[step].includes(input.name)) {
+                    // Required field validation
+                    if (!input.value.trim()) {
+                        fieldValid = false;
+                    }
+
+                    // Type-specific validation
+                    if (input.type === 'number' && input.value && parseFloat(input.value) <= 0) {
+                        fieldValid = false;
+                    }
+
+                    if (input.name === 'code_postal' && input.value && !/^\d{5}$/.test(input.value)) {
+                        fieldValid = false;
+                    }
+                }
+
+                if (!fieldValid) {
+                    formGroup.classList.add('has-error');
+                    isValid = false;
+                } else {
+                    formGroup.classList.remove('has-error');
+                }
+            });
+
+            return isValid;
+        };
+
+        // Save form data
+        const saveFormData = () => {
+            const inputs = document.querySelectorAll('.form-section input, .form-section textarea, .form-section select');
+            inputs.forEach(input => {
+                if (input.type === 'checkbox') {
+                    formData[input.name] = input.checked;
+                } else {
+                    formData[input.name] = input.value;
+                }
+            });
+        };
+
+        // Show error
+        const showError = (message) => {
+            const errorAlert = document.getElementById('errorAlert');
+            errorAlert.textContent = message;
+            errorAlert.classList.add('show');
+            setTimeout(() => errorAlert.classList.remove('show'), 5000);
+        };
+
+        // Show success
+        const showSuccess = (message) => {
+            const successAlert = document.getElementById('successAlert');
+            successAlert.textContent = message;
+            successAlert.classList.add('show');
+            setTimeout(() => successAlert.classList.remove('show'), 5000);
+        };
+
+        // Next step
+        const nextStep = () => {
+            if (!validateStep(currentStep)) return;
+
+            saveFormData();
+
+            if (currentStep < totalSteps - 1) {
+                currentStep++;
+                updateUI();
+            }
+        };
+
+        // Previous step
+        const previousStep = () => {
+            if (currentStep > 0) {
+                saveFormData();
+                currentStep--;
+                updateUI();
+            }
+        };
+
+        // Update UI
+        const updateUI = () => {
+            // Hide all sections
+            document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.stepper-item').forEach(s => {
+                s.classList.remove('active', 'completed');
+                const num = parseInt(s.id[4]);
+                if (num < currentStep) s.classList.add('completed');
+                if (num === currentStep) s.classList.add('active');
+            });
+
+            // Show current section
+            document.getElementById(`section${currentStep}`).classList.add('active');
+
+            // Update buttons
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+
+            prevBtn.style.display = currentStep > 0 ? 'block' : 'none';
+            nextBtn.style.display = currentStep < totalSteps - 1 ? 'block' : 'none';
+            submitBtn.style.display = currentStep === totalSteps - 1 ? 'block' : 'none';
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        // Handle photo selection
+        const handlePhotoSelect = (event) => {
+            const files = Array.from(event.target.files);
+            const maxPhotos = 10;
+
+            if (selectedPhotos.length + files.length > maxPhotos) {
+                showError(`Vous pouvez ajouter maximum ${maxPhotos} photos`);
+                return;
+            }
+
+            files.forEach(file => {
+                if (!file.type.startsWith('image/')) {
+                    showError('Veuillez sélectionner uniquement des fichiers image');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    selectedPhotos.push({
+                        file: file,
+                        preview: e.target.result
+                    });
+                    updatePhotoPreview();
+                };
+                reader.readAsDataURL(file);
+            });
+
+            event.target.value = '';
+        };
+
+        // Update photo preview
+        const updatePhotoPreview = () => {
+            const preview = document.getElementById('photoPreview');
+            preview.innerHTML = selectedPhotos.map((photo, index) => `
+                <div class="photo-preview-item">
+                    <img src="${photo.preview}" alt="Photo">
+                    <button type="button" class="remove-btn" onclick="removePhoto(${index})">×</button>
+                </div>
+            `).join('');
+        };
+
+        // Remove photo
+        const removePhoto = (index) => {
+            selectedPhotos.splice(index, 1);
+            updatePhotoPreview();
+        };
+
+        // Submit form
+        const submitForm = async () => {
+            if (!validateStep(currentStep)) return;
+
+            saveFormData();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading-spinner"></span> Création en cours...';
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                if (!token) {
+                    showError('Vous devez être connecté');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // Prepare payload
+                const payload = {
+                    titre: formData.titre,
+                    description: formData.description,
+                    prix: parseFloat(formData.prix),
+                    surface: parseFloat(formData.surface),
+                    adresse: formData.adresse,
+                    code_postal: formData.code_postal,
+                    ville: formData.ville,
+                    type_bien: formData.type_bien,
+                    nombre_pieces: parseInt(formData.nombre_pieces),
+                };
+
+                // Optional fields
+                if (formData.etage) payload.etage = parseInt(formData.etage);
+                if (formData.annee_construction) payload.annee_construction = parseInt(formData.annee_construction);
+                if (formData.dpe) payload.dpe = formData.dpe;
+                if (formData.ascenseur) payload.ascenseur = true;
+                if (formData.balcon) payload.balcon = true;
+                if (formData.terrasse) payload.terrasse = true;
+                if (formData.jardin) payload.jardin = true;
+                if (formData.piscine) payload.piscine = true;
+                if (formData.parking) payload.parking = true;
+
+                // Create annonce
+                const response = await axios.post('http://localhost:5000/api/v1/annonces', payload, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                if (response.data.success || response.status === 201) {
+                    // Show success message
+                    document.getElementById('formSection').style.display = 'none';
+                    document.getElementById('successSection').style.display = 'block';
+                } else {
+                    showError('Erreur lors de la création de l\'annonce');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                const message = error.response?.data?.message || error.message || 'Erreur lors de la création';
+                showError(message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        };
+
+        // Initialize
+        updateUI();
+    </script>
+</body>
+</html>
