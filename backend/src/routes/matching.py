@@ -9,9 +9,8 @@ et retourne les meilleures propositions classées par score décroissant.
 """
 
 from flask import Blueprint, request, jsonify
-from src.auth.models import db
+from src.auth.models import db, User
 from src.auth.decorators import token_required
-from src.models.acheteurs import Acheteur
 from src.models.annonces import Annonce
 from src.services.matching import MatchingCalculator
 from src.decorators.error_handling import handle_errors, ValidationError, NotFoundError
@@ -63,32 +62,36 @@ def get_matching_annonces(current_user):
     - 500: Internal Server Error
     """
 
-    # 1️⃣ Récupérer et valider l'acheteur_id
+    # 1️⃣ Récupérer et valider l'utilisateur_id
     data = request.get_json() or {}
-    acheteur_id = data.get("acheteur_id")
+    utilisateur_id = data.get("utilisateur_id")
 
-    if not acheteur_id:
-        # Si pas d'acheteur_id fourni, utiliser le profil acheteur de l'utilisateur courant
-        acheteur_id = current_user.user_id
+    if not utilisateur_id:
+        # Si pas d'utilisateur_id fourni, utiliser l'utilisateur courant
+        utilisateur_id = current_user.utilisateur_id
 
-    # 2️⃣ Récupérer l'acheteur depuis la BD
-    acheteur = Acheteur.query.filter_by(acheteur_id=acheteur_id).first()
+    # 2️⃣ Récupérer l'utilisateur depuis la BD
+    acheteur = User.query.filter_by(utilisateur_id=utilisateur_id).first()
 
     if not acheteur:
-        raise NotFoundError(f"Acheteur {acheteur_id} non trouvé")
+        raise NotFoundError(f"Utilisateur {utilisateur_id} non trouvé")
 
-    # 3️⃣ Convertir l'acheteur en dictionnaire pour le scoring
+    # 3️⃣ Vérifier qu'il a défini au moins les critères minimaux
+    if not acheteur.budget_max or not acheteur.ville_recherchee:
+        raise ValidationError("Veuillez définir un budget et une ville de recherche dans votre profil")
+
+    # 4️⃣ Convertir l'utilisateur en dictionnaire pour le scoring
     acheteur_dict = {
-        "acheteur_id": acheteur.acheteur_id,
-        "budget_max": float(acheteur.budget_max),
+        "utilisateur_id": acheteur.utilisateur_id,
+        "budget_max": float(acheteur.budget_max) if acheteur.budget_max else 0,
         "ville_recherchee": acheteur.ville_recherchee,
-        "surface_min": acheteur.surface_min,
-        "type_bien_recherche": acheteur.type_bien_recherche,
+        "surface_min": acheteur.surface_min or 0,
+        "type_bien_recherche": acheteur.type_bien_recherche or "appartement",
         "nombre_pieces_min": acheteur.nombre_pieces_min,
         "dpe_ideale": acheteur.dpe_ideale,
     }
 
-    # 4️⃣ Récupérer TOUTES les annonces publiées
+    # 5️⃣ Récupérer TOUTES les annonces publiées
     annonces = Annonce.query.filter_by(statut="publiée").all()
 
     if not annonces:
@@ -148,9 +151,11 @@ def get_matching_annonces(current_user):
         "annonces": top_annonces,
         "total": len(top_annonces),
         "message": f"{len(top_annonces)} annonce(s) trouvée(s) (sur {len(annonces_avec_scores)} avec score >= {MIN_SCORE_THRESHOLD})",
-        "acheteur": {
-            "acheteur_id": acheteur.acheteur_id,
-            "budget_max": float(acheteur.budget_max),
+        "utilisateur": {
+            "utilisateur_id": acheteur.utilisateur_id,
+            "nom": acheteur.nom,
+            "prenom": acheteur.prenom,
+            "budget_max": float(acheteur.budget_max) if acheteur.budget_max else None,
             "ville": acheteur.ville_recherchee,
             "surface_min": acheteur.surface_min,
             "type_bien": acheteur.type_bien_recherche,
@@ -164,26 +169,29 @@ def get_matching_annonces(current_user):
 def get_matching_stats(current_user):
     """
     GET /api/v1/matching/stats
-    Retourne des statistiques sur les annonces et acheteurs.
+    Retourne des statistiques sur les annonces et utilisateurs avec critères acheteur.
 
     Response:
     {
         "status": "success",
         "total_annonces": 150,
         "annonces_publiees": 120,
-        "total_acheteurs": 45,
-        "acheteurs_actifs": 40
+        "total_utilisateurs": 45,
+        "utilisateurs_avec_criteres": 40
     }
     """
     total_annonces = Annonce.query.count()
     annonces_publiees = Annonce.query.filter_by(statut="publiée").count()
-    total_acheteurs = Acheteur.query.count()
-    acheteurs_actifs = Acheteur.query.filter_by(actif=True).count()
+    total_utilisateurs = User.query.filter_by(role="user").count()
+    utilisateurs_avec_criteres = User.query.filter_by(role="user", actif=True).filter(
+        User.budget_max.isnot(None),
+        User.ville_recherchee.isnot(None)
+    ).count()
 
     return {
         "status": "success",
         "total_annonces": total_annonces,
         "annonces_publiees": annonces_publiees,
-        "total_acheteurs": total_acheteurs,
-        "acheteurs_actifs": acheteurs_actifs,
+        "total_utilisateurs": total_utilisateurs,
+        "utilisateurs_avec_criteres": utilisateurs_avec_criteres,
     }, 200

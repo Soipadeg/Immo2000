@@ -20,7 +20,6 @@ from src.app import create_app
 from src.auth.models import User, db
 from src.models.visites import Visite
 from src.models.annonces import Annonce
-from src.models.acheteurs import Acheteur
 from src.auth.utils import generate_access_token
 
 
@@ -56,27 +55,21 @@ def mock_email_service():
 def authenticated_user(app, client):
     """Crée un utilisateur acheteur authentifié."""
     with app.app_context():
-        # Créer un utilisateur acheteur
+        # Créer un utilisateur avec les critères acheteur fusionnés
         user = User(
             email="acheteur@example.com",
             nom="Dupont",
             prenom="Jean",
             role="acheteur",
-            actif=True
-        )
-        user.set_password("password123")
-        db.session.add(user)
-        db.session.commit()
-
-        # Créer un profil acheteur
-        acheteur = Acheteur(
-            utilisateur_id=user.utilisateur_id,
+            actif=True,
+            # Critères acheteur (fusionnés dans User)
             budget_max=250000,
-            code_postal_recherche="75001",
+            ville_recherchee="Paris",
             type_bien_recherche="appartement",
             surface_min=50
         )
-        db.session.add(acheteur)
+        user.set_password("password123")
+        db.session.add(user)
         db.session.commit()
 
         # Générer token
@@ -88,7 +81,6 @@ def authenticated_user(app, client):
 
         return {
             "user": user,
-            "acheteur": acheteur,
             "token": token,
             "email": user.email,
             "password": "password123"
@@ -146,7 +138,7 @@ class TestCreerVisite:
             response = client.post(
                 "/api/v1/visites",
                 data=json.dumps({
-                    "acheteur_id": authenticated_user["acheteur"].id,
+                    "acheteur_id": authenticated_user["user"].utilisateur_id,
                     "annonce_id": annonce_valide.annonce_id,
                     "date_heure": date_visite
                 }),
@@ -172,7 +164,7 @@ class TestCreerVisite:
             response1 = client.post(
                 "/api/v1/visites",
                 data=json.dumps({
-                    "acheteur_id": authenticated_user["acheteur"].id,
+                    "acheteur_id": authenticated_user["user"].utilisateur_id,
                     "annonce_id": annonce_valide.annonce_id,
                     "date_heure": date_visite
                 }),
@@ -188,7 +180,7 @@ class TestCreerVisite:
             response2 = client.post(
                 "/api/v1/visites",
                 data=json.dumps({
-                    "acheteur_id": authenticated_user["acheteur"].id,
+                    "acheteur_id": authenticated_user["user"].utilisateur_id,
                     "annonce_id": annonce_valide.annonce_id,
                     "date_heure": date_visite
                 }),
@@ -212,7 +204,7 @@ class TestCreerVisite:
             response = client.post(
                 "/api/v1/visites",
                 data=json.dumps({
-                    "acheteur_id": authenticated_user["acheteur"].id,
+                    "acheteur_id": authenticated_user["user"].utilisateur_id,
                     "annonce_id": annonce_valide.annonce_id,
                     "date_heure": date_visite
                 }),
@@ -241,15 +233,20 @@ class TestCreerVisite:
             db.session.add(user)
             db.session.commit()
 
-            # Acheteur avec budget trop bas et surface trop petite
-            acheteur = Acheteur(
-                utilisateur_id=user.utilisateur_id,
+            user = User(
+                email="low-budget@example.com",
+                nom="Dupont",
+                prenom="Jean",
+                role="acheteur",
+                actif=True,
+                # Critères acheteur avec mauvais score
                 budget_max=50000,  # Trop bas
-                code_postal_recherche="75002",  # Mauvais code postal
+                ville_recherchee="Marseille",  # Mauvaise ville
                 type_bien_recherche="maison",  # Mauvais type
                 surface_min=100  # Surface trop grande
             )
-            db.session.add(acheteur)
+            user.set_password("password123")
+            db.session.add(user)
             db.session.commit()
 
             # Token
@@ -265,7 +262,7 @@ class TestCreerVisite:
             response = client.post(
                 "/api/v1/visites",
                 data=json.dumps({
-                    "acheteur_id": acheteur.id,
+                    "acheteur_id": user.utilisateur_id,
                     "annonce_id": annonce_valide.annonce_id,
                     "date_heure": date_visite
                 }),
@@ -287,7 +284,7 @@ class TestCreerVisite:
             response = client.post(
                 "/api/v1/visites",
                 data=json.dumps({
-                    "acheteur_id": authenticated_user["acheteur"].id,
+                    "acheteur_id": authenticated_user["user"].utilisateur_id,
                     "annonce_id": 9999,  # ID inexistant
                     "date_heure": date_visite
                 }),
@@ -336,7 +333,7 @@ class TestAnnulerVisite:
             response_create = client.post(
                 "/api/v1/visites",
                 data=json.dumps({
-                    "acheteur_id": authenticated_user["acheteur"].id,
+                    "acheteur_id": authenticated_user["user"].utilisateur_id,
                     "annonce_id": annonce_valide.annonce_id,
                     "date_heure": date_visite
                 }),
@@ -384,7 +381,7 @@ class TestListerVisites:
                 client.post(
                     "/api/v1/visites",
                     data=json.dumps({
-                        "acheteur_id": authenticated_user["acheteur"].id,
+                        "acheteur_id": authenticated_user["user"].utilisateur_id,
                         "annonce_id": annonce_valide.annonce_id,
                         "date_heure": date_visite
                     }),
@@ -414,7 +411,7 @@ class TestListerVisites:
             client.post(
                 "/api/v1/visites",
                 data=json.dumps({
-                    "acheteur_id": authenticated_user["acheteur"].id,
+                    "acheteur_id": authenticated_user["user"].utilisateur_id,
                     "annonce_id": annonce_valide.annonce_id,
                     "date_heure": date_visite
                 }),
@@ -455,7 +452,7 @@ class TestDownloadICS:
             response_create = client.post(
                 "/api/v1/visites",
                 data=json.dumps({
-                    "acheteur_id": authenticated_user["acheteur"].id,
+                    "acheteur_id": authenticated_user["user"].utilisateur_id,
                     "annonce_id": annonce_valide.annonce_id,
                     "date_heure": date_visite
                 }),
@@ -488,7 +485,7 @@ class TestDownloadICS:
             client.post(
                 "/api/v1/visites",
                 data=json.dumps({
-                    "acheteur_id": authenticated_user["acheteur"].id,
+                    "acheteur_id": authenticated_user["user"].utilisateur_id,
                     "annonce_id": annonce_valide.annonce_id,
                     "date_heure": date_visite
                 }),
@@ -499,7 +496,7 @@ class TestDownloadICS:
             )
 
             # Récupérer l'ID de la visite
-            visite = Visite.query.filter_by(acheteur_id=authenticated_user["acheteur"].id).first()
+            visite = Visite.query.filter_by(acheteur_id=authenticated_user["user"].utilisateur_id).first()
             visite_id = visite.id
 
             # Token vendeur
@@ -528,7 +525,7 @@ class TestDownloadICS:
             response_create = client.post(
                 "/api/v1/visites",
                 data=json.dumps({
-                    "acheteur_id": authenticated_user["acheteur"].id,
+                    "acheteur_id": authenticated_user["user"].utilisateur_id,
                     "annonce_id": annonce_valide.annonce_id,
                     "date_heure": date_visite
                 }),
@@ -588,7 +585,7 @@ class TestDownloadICS:
             response_create = client.post(
                 "/api/v1/visites",
                 data=json.dumps({
-                    "acheteur_id": authenticated_user["acheteur"].id,
+                    "acheteur_id": authenticated_user["user"].utilisateur_id,
                     "annonce_id": annonce_valide.annonce_id,
                     "date_heure": date_visite
                 }),
@@ -635,7 +632,7 @@ class TestModifierVisite:
             response_create = client.post(
                 "/api/v1/visites",
                 data=json.dumps({
-                    "acheteur_id": authenticated_user["acheteur"].id,
+                    "acheteur_id": authenticated_user["user"].utilisateur_id,
                     "annonce_id": annonce_valide.annonce_id,
                     "date_heure": date_visite
                 }),
@@ -673,7 +670,7 @@ class TestModifierVisite:
             client.post(
                 "/api/v1/visites",
                 data=json.dumps({
-                    "acheteur_id": authenticated_user["acheteur"].id,
+                    "acheteur_id": authenticated_user["user"].utilisateur_id,
                     "annonce_id": annonce_valide.annonce_id,
                     "date_heure": date_visite
                 }),
@@ -684,7 +681,7 @@ class TestModifierVisite:
             )
 
             # Récupérer l'ID de la visite
-            visite = Visite.query.filter_by(acheteur_id=authenticated_user["acheteur"].id).first()
+            visite = Visite.query.filter_by(acheteur_id=authenticated_user["user"].utilisateur_id).first()
             visite_id = visite.id
 
             # Token vendeur
@@ -717,7 +714,7 @@ class TestModifierVisite:
             response_create = client.post(
                 "/api/v1/visites",
                 data=json.dumps({
-                    "acheteur_id": authenticated_user["acheteur"].id,
+                    "acheteur_id": authenticated_user["user"].utilisateur_id,
                     "annonce_id": annonce_valide.annonce_id,
                     "date_heure": date_visite
                 }),
@@ -770,7 +767,7 @@ class TestModifierVisite:
             date_passee = (datetime.utcnow() - timedelta(days=5)).strftime("%Y-%m-%dT14:00:00")
 
             visite = Visite(
-                acheteur_id=authenticated_user["acheteur"].id,
+                acheteur_id=authenticated_user["user"].utilisateur_id,
                 annonce_id=annonce_valide.annonce_id,
                 date_heure=datetime.fromisoformat(date_passee.replace('Z', '+00:00')),
                 statut="confirmee"
@@ -807,7 +804,7 @@ class TestFeedback:
             date_passee = (datetime.utcnow() - timedelta(hours=1)).strftime("%Y-%m-%dT14:00:00")
 
             visite = Visite(
-                acheteur_id=authenticated_user["acheteur"].id,
+                acheteur_id=authenticated_user["user"].utilisateur_id,
                 annonce_id=annonce_valide.annonce_id,
                 date_heure=datetime.fromisoformat(date_passee.replace('Z', '+00:00')),
                 statut="terminee"
@@ -844,7 +841,7 @@ class TestFeedback:
             date_future = (datetime.utcnow() + timedelta(hours=1)).strftime("%Y-%m-%dT14:00:00")
 
             visite = Visite(
-                acheteur_id=authenticated_user["acheteur"].id,
+                acheteur_id=authenticated_user["user"].utilisateur_id,
                 annonce_id=annonce_valide.annonce_id,
                 date_heure=datetime.fromisoformat(date_future.replace('Z', '+00:00')),
                 statut="confirmee"
@@ -881,7 +878,7 @@ class TestFeedback:
             date_passee = (datetime.utcnow() - timedelta(hours=1)).strftime("%Y-%m-%dT14:00:00")
 
             visite = Visite(
-                acheteur_id=authenticated_user["acheteur"].id,
+                acheteur_id=authenticated_user["user"].utilisateur_id,
                 annonce_id=annonce_valide.annonce_id,
                 date_heure=datetime.fromisoformat(date_passee.replace('Z', '+00:00')),
                 statut="terminee"
@@ -934,7 +931,7 @@ class TestFeedback:
             date_passee = (datetime.utcnow() - timedelta(hours=1)).strftime("%Y-%m-%dT14:00:00")
 
             visite = Visite(
-                acheteur_id=authenticated_user["acheteur"].id,
+                acheteur_id=authenticated_user["user"].utilisateur_id,
                 annonce_id=annonce_valide.annonce_id,
                 date_heure=datetime.fromisoformat(date_passee.replace('Z', '+00:00')),
                 statut="terminee"
@@ -944,7 +941,7 @@ class TestFeedback:
 
             feedback = Feedback(
                 visite_id=visite.id,
-                acheteur_id=authenticated_user["acheteur"].id,
+                acheteur_id=authenticated_user["user"].utilisateur_id,
                 note=4,
                 commentaire="Belle visite"
             )
@@ -972,7 +969,7 @@ class TestFeedback:
             date_passee = (datetime.utcnow() - timedelta(hours=1)).strftime("%Y-%m-%dT14:00:00")
 
             visite = Visite(
-                acheteur_id=authenticated_user["acheteur"].id,
+                acheteur_id=authenticated_user["user"].utilisateur_id,
                 annonce_id=annonce_valide.annonce_id,
                 date_heure=datetime.fromisoformat(date_passee.replace('Z', '+00:00')),
                 statut="terminee"
@@ -982,7 +979,7 @@ class TestFeedback:
 
             feedback = Feedback(
                 visite_id=visite.id,
-                acheteur_id=authenticated_user["acheteur"].id,
+                acheteur_id=authenticated_user["user"].utilisateur_id,
                 note=4,
                 commentaire="Belle visite"
             )

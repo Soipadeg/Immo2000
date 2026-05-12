@@ -15,9 +15,9 @@ from io import BytesIO
 from src.services.visites import VisitesService, VisitesError
 from src.schemas.visites import VisiteInput, VisiteOutput
 from src.auth.decorators import token_required
+from src.auth.models import User
 from src.models.visites import Visite
 from src.models.annonces import Annonce
-from src.models.acheteurs import Acheteur
 from src.decorators.error_handling import handle_errors, ValidationError, NotFoundError, ForbiddenError
 
 # Blueprint
@@ -81,12 +81,11 @@ def creer_visite(current_user):
 @handle_errors()
 def lister_visites(current_user):
     """
-    Lister les visites de l'utilisateur connecté.
+    Lister les visites de l'utilisateur connecté (comme acheteur ou vendeur).
 
     Authentification: JWT token requis
 
     Query Parameters:
-    - role: 'vendeur' ou 'acheteur' (auto-détecté par le rôle de l'utilisateur)
     - statut: Optionnel ('confirmee', 'annulee', 'terminee')
 
     Output JSON (200):
@@ -110,19 +109,14 @@ def lister_visites(current_user):
     - 500: Erreur serveur
     """
     statut = request.args.get("statut", None)
-    role = current_user.get("role")
+    utilisateur_id = current_user.utilisateur_id
 
-    if role == "vendeur":
-        vendeur_id = current_user.get("utilisateur_id")
-        visites = VisitesService.lister_visites_vendeur(vendeur_id, statut=statut)
-    elif role == "acheteur":
-        from src.models.acheteurs import Acheteur
-        acheteur = Acheteur.query.filter_by(utilisateur_id=current_user.get("utilisateur_id")).first()
-        if not acheteur:
-            raise NotFoundError("Acheteur non trouvé pour cet utilisateur.")
-        visites = VisitesService.lister_visites_acheteur(acheteur.id, statut=statut)
-    else:
-        raise ValidationError(f"Rôle invalide: {role}. Doit être 'acheteur' ou 'vendeur'.")
+    # Récupérer les visites pour cet utilisateur (les deux: acheteur et vendeur)
+    visites_acheteur = VisitesService.lister_visites_acheteur(utilisateur_id, statut=statut)
+    visites_vendeur = VisitesService.lister_visites_vendeur(utilisateur_id, statut=statut)
+
+    # Fusionner les deux listes
+    visites = visites_acheteur + visites_vendeur
 
     return {"status": "success", "data": visites, "count": len(visites)}
 
@@ -327,18 +321,15 @@ def soumettre_feedback(current_user):
     - 422: Données invalides
     - 500: Erreur serveur
     """
-    from src.models.acheteurs import Acheteur
     from src.schemas.feedbacks import FeedbackInput
 
-    acheteur = Acheteur.query.filter_by(utilisateur_id=current_user.get("utilisateur_id")).first()
-    if not acheteur:
-        raise ForbiddenError("Vous devez être un acheteur pour laisser un feedback.")
+    utilisateur_id = current_user.utilisateur_id
 
     data = request.get_json()
     feedback_input = FeedbackInput(**data)
 
     result = VisitesService.soumettre_feedback(
-        acheteur_id=acheteur.id,
+        acheteur_id=utilisateur_id,
         visite_id=feedback_input.visite_id,
         note=feedback_input.note,
         commentaire=feedback_input.commentaire

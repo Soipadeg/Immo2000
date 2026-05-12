@@ -35,11 +35,33 @@ erDiagram
         string prenom "VARCHAR(100)"
         string telephone
         string adresse_contact
-        enum role "vendeur|acheteur|agent"
+        enum role "user"
         bool actif
         timestamp date_inscription
         timestamp date_derniere_connexion
         timestamp updated_at
+        "--- Buyer Criteria Fields (nullable) ---"
+        decimal budget_max "€ max budget"
+        string ville_recherchee "Preferred city"
+        int surface_min "m² minimum"
+        string type_bien_recherche "Property type"
+        int nombre_pieces_min "Min rooms"
+        string dpe_ideale "Ideal DPE rating"
+        "--- OAuth & Auth Fields ---"
+        string google_id "nullable"
+        string facebook_id "nullable"
+        string apple_id "nullable"
+        string photo_url "Profile picture URL"
+        enum auth_method "email|google|facebook|apple"
+        bool email_verified
+        string verification_token
+        timestamp verification_token_expires
+        "--- 2FA & Recovery ---"
+        string reset_token
+        timestamp reset_token_expires
+        bool requires_2fa
+        string two_fa_code
+        timestamp two_fa_code_expires
     }
 
     BIENS {

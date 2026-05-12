@@ -16,7 +16,7 @@ class Feedback(db.Model):
     Attributes:
         id (int): Identifiant unique (PK, SERIAL).
         visite_id (int): FK vers visites.id.
-        acheteur_id (int): FK vers acheteurs.id.
+        acheteur_id (int): FK vers utilisateurs.utilisateur_id.
         note (int): Note de 1 à 5 étoiles.
         commentaire (str): Avis textuel de l'acheteur.
         reponse_vendeur (str): Réponse optionnelle du vendeur.
@@ -26,7 +26,7 @@ class Feedback(db.Model):
     Constraints:
         - CHECK (note BETWEEN 1 AND 5): Note entre 1 et 5.
         - UNIQUE (visite_id, acheteur_id): 1 feedback max par visite/acheteur.
-        - ForeignKey avec visites et acheteurs (CASCADE delete).
+        - ForeignKey avec visites et utilisateurs (CASCADE delete).
     """
 
     __tablename__ = "feedbacks"
@@ -44,7 +44,7 @@ class Feedback(db.Model):
 
     acheteur_id = db.Column(
         db.Integer,
-        ForeignKey("acheteurs.acheteur_id", ondelete="CASCADE"),
+        ForeignKey("utilisateurs.utilisateur_id", ondelete="CASCADE"),
         nullable=False,
         index=True
     )

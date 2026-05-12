@@ -19,7 +19,6 @@ except ImportError:
 from src.auth.models import db, User
 from src.models.visites import Visite
 from src.models.annonces import Annonce
-from src.models.acheteurs import Acheteur
 from src.services.email_service import EmailService
 
 logger = logging.getLogger(__name__)
@@ -78,67 +77,67 @@ class VisitesService:
         return True, None, annonce
 
     @staticmethod
-    def verifier_acheteur_existe(acheteur_id: int) -> Tuple[bool, Optional[str], Optional[Acheteur]]:
+    def verifier_user_existe(user_id: int) -> Tuple[bool, Optional[str], Optional[User]]:
         """
-        Vérifier qu'un acheteur existe.
+        Vérifier qu'un utilisateur existe.
 
         Args:
-            acheteur_id: ID de l'acheteur
+            user_id: ID de l'utilisateur
 
         Returns:
-            Tuple (exists, error_message, acheteur)
+            Tuple (exists, error_message, user)
         """
-        acheteur = Acheteur.query.filter_by(id=acheteur_id).first()
+        user = User.query.filter_by(utilisateur_id=user_id).first()
 
-        if not acheteur:
-            return False, f"L'acheteur #{acheteur_id} n'existe pas.", None
+        if not user:
+            return False, f"L'utilisateur #{user_id} n'existe pas.", None
 
-        return True, None, acheteur
+        return True, None, user
 
     @staticmethod
-    def verifier_score_matching(acheteur_id: int, annonce_id: int) -> Tuple[bool, Optional[str], int]:
+    def verifier_score_matching(user_id: int, annonce_id: int) -> Tuple[bool, Optional[str], int]:
         """
-        Vérifier que l'acheteur a un score de matching >= 5 pour cette annonce.
+        Vérifier que l'utilisateur a un score de matching >= 5 pour cette annonce.
 
         Note: Pour le MVP, on utilise la logique du matching simple (4 critères).
         En production, on appelerait un endpoint ou une fonction de scoring.
 
         Args:
-            acheteur_id: ID de l'acheteur
+            user_id: ID de l'utilisateur
             annonce_id: ID de l'annonce
 
         Returns:
             Tuple (has_min_score, error_message, score)
         """
-        acheteur = Acheteur.query.filter_by(id=acheteur_id).first()
+        user = User.query.filter_by(utilisateur_id=user_id).first()
         annonce = Annonce.query.filter_by(annonce_id=annonce_id).first()
 
-        if not acheteur or not annonce:
-            return False, "Acheteur ou annonce introuvable.", 0
+        if not user or not annonce:
+            return False, "Utilisateur ou annonce introuvable.", 0
 
         # Calcul simple du score de matching (4 critères)
         score = 0
 
         # 1. Budget (budget_max >= prix)
-        if acheteur.budget_max and acheteur.budget_max >= annonce.prix:
+        if user.budget_max and user.budget_max >= annonce.prix:
             score += 1
 
-        # 2. Localisation (code postal)
-        if acheteur.code_postal_recherche and acheteur.code_postal_recherche == annonce.code_postal:
+        # 2. Localisation (ville recherchée)
+        if user.ville_recherchee and user.ville_recherchee.lower() == annonce.ville.lower():
             score += 2
 
         # 3. Type de bien
-        if acheteur.type_bien_recherche and acheteur.type_bien_recherche == annonce.type_bien:
+        if user.type_bien_recherche and user.type_bien_recherche.lower() == annonce.type_bien.lower():
             score += 1
 
         # 4. Surface (surface_min <= surface annonce)
-        if acheteur.surface_min and acheteur.surface_min <= annonce.surface:
+        if user.surface_min and user.surface_min <= annonce.surface:
             score += 1
 
         # Vérifier que le score est >= 5
         MIN_SCORE_THRESHOLD = 5
         if score < MIN_SCORE_THRESHOLD:
-            return False, f"L'acheteur n'a pas un score de matching suffisant (score: {score}/5).", score
+            return False, f"L'utilisateur n'a pas un score de matching suffisant (score: {score}/5).", score
 
         return True, None, score
 
@@ -166,13 +165,13 @@ class VisitesService:
         return True, None
 
     @staticmethod
-    def envoyer_notification_vendeur(annonce: Annonce, acheteur: Acheteur, date_heure: datetime, visite_id: int) -> None:
+    def envoyer_notification_vendeur(annonce: Annonce, acheteur: User, date_heure: datetime, visite_id: int) -> None:
         """
         Envoyer une notification email au vendeur pour la nouvelle visite.
 
         Args:
             annonce: Objet Annonce
-            acheteur: Objet Acheteur
+            acheteur: Objet User (l'utilisateur acheteur)
             date_heure: Date/heure de la visite
             visite_id: ID de la visite créée
 
@@ -216,7 +215,7 @@ class VisitesService:
             <p><strong>Annonce:</strong> {annonce.titre}</p>
             <p><strong>Adresse:</strong> {annonce.adresse} ({annonce.code_postal} {annonce.ville})</p>
             <p><strong>Date et heure:</strong> {date_heure.strftime('%d/%m/%Y à %H:%M')}</p>
-            <p><strong>Acheteur:</strong> {acheteur.utilisateur.prenom} {acheteur.utilisateur.nom}</p>
+            <p><strong>Acheteur:</strong> {acheteur.prenom} {acheteur.nom}</p>
         </div>
 
         <p>Un acheteur souhaite visiter votre bien. Pour ajouter ce RDV à votre calendrier :</p>
@@ -252,7 +251,7 @@ class VisitesService:
 
     @staticmethod
     def creer_visite(
-        acheteur_id: int,
+        user_id: int,
         annonce_id: int,
         date_heure_str: str,
         statut: str = "confirmee"
@@ -263,7 +262,7 @@ class VisitesService:
         Logique:
         1. Valider format date/heure
         2. Vérifier que l'annonce existe et est publiée
-        3. Vérifier que l'acheteur existe
+        3. Vérifier que l'utilisateur existe
         4. Vérifier score de matching >= 5
         5. Vérifier pas de double réservation
         6. Créer la visite en DB
@@ -271,13 +270,13 @@ class VisitesService:
         8. Retourner les détails de la visite
 
         Args:
-            acheteur_id: ID de l'acheteur
+            user_id: ID de l'utilisateur acheteur
             annonce_id: ID de l'annonce
             date_heure_str: Date/heure au format ISO 8601
             statut: Statut initial de la visite (default: "confirmee")
 
         Returns:
-            Dict avec {id, acheteur_id, annonce_id, date_heure, statut, message}
+            Dict avec {id, user_id, annonce_id, date_heure, statut, message}
 
         Raises:
             VisitesError: En cas d'erreur de validation
@@ -292,13 +291,13 @@ class VisitesService:
         if not exists:
             raise VisitesError(error)
 
-        # 3. Vérifier acheteur existe
-        exists, error, acheteur = VisitesService.verifier_acheteur_existe(acheteur_id)
+        # 3. Vérifier utilisateur existe
+        exists, error, acheteur = VisitesService.verifier_user_existe(user_id)
         if not exists:
             raise VisitesError(error)
 
         # 4. Vérifier score de matching >= 5
-        has_score, error, score = VisitesService.verifier_score_matching(acheteur_id, annonce_id)
+        has_score, error, score = VisitesService.verifier_score_matching(user_id, annonce_id)
         if not has_score:
             raise VisitesError(error)
 
@@ -310,7 +309,7 @@ class VisitesService:
         # 6. Créer la visite en DB
         try:
             visite = Visite(
-                acheteur_id=acheteur_id,
+                acheteur_id=user_id,
                 annonce_id=annonce_id,
                 date_heure=date_heure,
                 statut=statut
@@ -415,18 +414,18 @@ class VisitesService:
         return [visite.to_dict() for visite in visites]
 
     @staticmethod
-    def lister_visites_acheteur(acheteur_id: int, statut: Optional[str] = None) -> list:
+    def lister_visites_acheteur(user_id: int, statut: Optional[str] = None) -> list:
         """
-        Lister toutes les visites réservées par un acheteur.
+        Lister toutes les visites réservées par un utilisateur en tant qu'acheteur.
 
         Args:
-            acheteur_id: ID de l'acheteur
+            user_id: ID de l'utilisateur
             statut: Optionnel, filtrer par statut
 
         Returns:
             Liste des visites formatées en dict
         """
-        query = Visite.query.filter_by(acheteur_id=acheteur_id)
+        query = Visite.query.filter_by(acheteur_id=user_id)
 
         if statut:
             query = query.filter_by(statut=statut)
@@ -461,7 +460,7 @@ class VisitesService:
 
         # Récupérer annonce et utilisateurs
         annonce = Annonce.query.filter_by(annonce_id=visite.annonce_id).first()
-        acheteur = Acheteur.query.filter_by(id=visite.acheteur_id).first()
+        acheteur = User.query.filter_by(utilisateur_id=visite.acheteur_id).first()
         vendeur = User.query.filter_by(utilisateur_id=annonce.utilisateur_id).first()
 
         if not annonce or not acheteur or not vendeur:
@@ -494,14 +493,14 @@ class VisitesService:
             f"Surface: {annonce.surface} m²\n"
             f"Pièces: {annonce.nombre_pieces}\n"
             f"Prix: {annonce.prix:.0f}€\n\n"
-            f"Acheteur: {acheteur.utilisateur.prenom} {acheteur.utilisateur.nom}"
+            f"Acheteur: {acheteur.prenom} {acheteur.nom}"
         )
 
         event.add('location', f"{annonce.adresse}, {annonce.code_postal} {annonce.ville}")
 
         # Organisateur et participants
         event.add('organizer', f"mailto:{vendeur.email}")
-        event.add('attendee', f"mailto:{acheteur.utilisateur.email}")
+        event.add('attendee', f"mailto:{acheteur.email}")
 
         # Paramètres de notification
         event.add('status', 'CONFIRMED')
@@ -516,7 +515,7 @@ class VisitesService:
     @staticmethod
     def generer_lien_google_calendar(
         annonce: Annonce,
-        acheteur: Acheteur,
+        acheteur: User,
         date_heure: datetime,
         timezone: str = "Europe/Paris"
     ) -> str:
@@ -525,7 +524,7 @@ class VisitesService:
 
         Args:
             annonce: Objet Annonce
-            acheteur: Objet Acheteur
+            acheteur: Objet User (l'utilisateur acheteur)
             date_heure: Date/heure de la visite
             timezone: Timezone (default: Europe/Paris)
 
@@ -547,7 +546,7 @@ class VisitesService:
             'details': (
                 f"Rendez-vous pour visiter le bien situé à "
                 f"{annonce.adresse}, {annonce.code_postal} {annonce.ville}\n\n"
-                f"Acheteur: {acheteur.utilisateur.prenom} {acheteur.utilisateur.nom}"
+                f"Acheteur: {acheteur.prenom} {acheteur.nom}"
             ),
             'location': f"{annonce.adresse}, {annonce.code_postal}",
             'dates': f"{start}/{end}",
@@ -594,7 +593,7 @@ class VisitesService:
 
         # Récupérer annonce et acheteur
         annonce = Annonce.query.filter_by(annonce_id=visite.annonce_id).first()
-        acheteur = Acheteur.query.filter_by(id=visite.acheteur_id).first()
+        acheteur = User.query.filter_by(utilisateur_id=visite.acheteur_id).first()
 
         if not annonce or not acheteur:
             raise VisitesError("Données manquantes pour cette visite.")
@@ -821,7 +820,7 @@ class VisitesService:
 
         # 2. Vérifier permissions
         annonce = Annonce.query.filter_by(annonce_id=visite.annonce_id).first()
-        acheteur = Acheteur.query.filter_by(id=visite.acheteur_id).first()
+        acheteur = User.query.filter_by(utilisateur_id=visite.acheteur_id).first()
 
         is_vendeur = (annonce and annonce.utilisateur_id == utilisateur_id)
         is_acheteur = (acheteur and acheteur.utilisateur_id == utilisateur_id)
