@@ -17,6 +17,9 @@ class User(db.Model):
     """
     Modèle utilisateur mappé à la table 'utilisateurs' de PostgreSQL.
 
+    Un utilisateur peut naturellement vendre (créer annonces) et acheter (rechercher, contacter).
+    Les critères d'acheteur sont OPTIONNELS et définis directement dans ce modèle (pas de table séparée).
+
     Attributes:
         utilisateur_id (int): Identifiant unique (PK).
         email (str): Email unique, utilisé pour la connexion.
@@ -38,6 +41,14 @@ class User(db.Model):
         email_verified (bool): Indique si l'email a été confirmé (RGPD).
         verification_token (str, optional): Token unique de vérification d'email.
         verification_token_expires (datetime, optional): Expiration du token de vérification.
+
+        === CRITÈRES ACHETEUR (OPTIONNELS) ===
+        budget_max (float, optional): Budget maximal en euros pour l'achat.
+        ville_recherchee (str, optional): Ville principale recherchée.
+        surface_min (int, optional): Surface minimale requise en m².
+        type_bien_recherche (str, optional): Type de bien recherché (appartement, maison, terrain, etc.).
+        nombre_pieces_min (int, optional): Nombre minimum de pièces.
+        dpe_ideale (str, optional): Classe énergétique idéale (A-G).
     """
 
     __tablename__ = "utilisateurs"
@@ -75,6 +86,15 @@ class User(db.Model):
     requires_2fa = db.Column(db.Boolean, default=False)
     two_fa_code = db.Column(db.String(6), nullable=True)  # Code 6 chiffres
     two_fa_code_expires = db.Column(db.DateTime(timezone=True), nullable=True)
+
+    # === CRITÈRES ACHETEUR (FUSIONNÉ - pas de table séparée) ===
+    # Un utilisateur peut optionnellement définir ses critères de recherche acheteur
+    budget_max = db.Column(db.Numeric(12, 2), nullable=True)  # Budget max en euros (optionnel)
+    ville_recherchee = db.Column(db.String(100), nullable=True, index=True)  # Ville de recherche (optionnel)
+    surface_min = db.Column(db.Integer, nullable=True)  # Surface min en m² (optionnel)
+    type_bien_recherche = db.Column(db.String(50), nullable=True, index=True)  # Type bien recherché (optionnel)
+    nombre_pieces_min = db.Column(db.Integer, nullable=True)  # Nb pièces min (optionnel)
+    dpe_ideale = db.Column(db.String(1), nullable=True)  # Classe énergétique idéale A-G (optionnel)
 
     def __repr__(self) -> str:
         """Représentation lisible de l'utilisateur."""
@@ -128,7 +148,10 @@ class User(db.Model):
                 "nom": "Dupont",
                 "prenom": "Jean",
                 "role": "user",
-                "actif": True
+                "actif": True,
+                "budget_max": None,
+                "ville_recherchee": None,
+                ...
             }
         """
         data = {
@@ -138,6 +161,13 @@ class User(db.Model):
             "role": self.role,
             "actif": self.actif,
             "date_inscription": self.date_inscription.isoformat() if self.date_inscription else None,
+            # Critères acheteur (optionnels)
+            "budget_max": float(self.budget_max) if self.budget_max else None,
+            "ville_recherchee": self.ville_recherchee,
+            "surface_min": self.surface_min,
+            "type_bien_recherche": self.type_bien_recherche,
+            "nombre_pieces_min": self.nombre_pieces_min,
+            "dpe_ideale": self.dpe_ideale,
         }
 
         if include_email:
