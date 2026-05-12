@@ -10,12 +10,14 @@ du chatbot avec les actions suggérées (liens vers les fonctionnalités princip
 
 from flask import Blueprint, request, jsonify
 from src.services.chatbot import get_chatbot_service
+from src.decorators.error_handling import handle_errors, ValidationError
 
 # Blueprint
 chatbot_bp = Blueprint("chatbot", __name__, url_prefix="/api/v1/chat")
 
 
 @chatbot_bp.route("", methods=["POST"])
+@handle_errors()
 def chat():
     """
     POST /api/v1/chat
@@ -43,53 +45,29 @@ def chat():
         }
     }
     """
-    try:
-        # Récupérer les données
-        data = request.get_json() or {}
-        message = data.get("message", "").strip()
-        session_id = data.get("session_id")
-        user_id = data.get("user_id")
+    # Récupérer les données
+    data = request.get_json() or {}
+    message = data.get("message", "").strip()
+    session_id = data.get("session_id")
+    user_id = data.get("user_id")
 
-        if not message:
-            return (
-                jsonify(
-                    {
-                        "status": "error",
-                        "error": "Le champ 'message' est requis.",
-                    }
-                ),
-                400,
-            )
+    if not message:
+        raise ValidationError("Le champ 'message' est requis.")
 
-        # Générer la réponse du chatbot
-        chatbot = get_chatbot_service()
-        response = chatbot.generate_response(
-            user_message=message, session_id=session_id, user_id=user_id
-        )
+    # Générer la réponse du chatbot
+    chatbot = get_chatbot_service()
+    response = chatbot.generate_response(
+        user_message=message, session_id=session_id, user_id=user_id
+    )
 
-        return (
-            jsonify(
-                {
-                    "status": "success",
-                    "data": response,
-                }
-            ),
-            200,
-        )
-
-    except Exception as e:
-        return (
-            jsonify(
-                {
-                    "status": "error",
-                    "error": f"Erreur interne: {str(e)}",
-                }
-            ),
-            500,
-        )
+    return {
+        "status": "success",
+        "data": response,
+    }, 200
 
 
 @chatbot_bp.route("/health", methods=["GET"])
+@handle_errors()
 def health():
     """
     GET /api/v1/chat/health
@@ -102,25 +80,9 @@ def health():
         "intents_loaded": 5
     }
     """
-    try:
-        chatbot = get_chatbot_service()
-        return (
-            jsonify(
-                {
-                    "status": "ok",
-                    "message": "Chatbot is running",
-                    "intents_loaded": len(chatbot.intents),
-                }
-            ),
-            200,
-        )
-    except Exception as e:
-        return (
-            jsonify(
-                {
-                    "status": "error",
-                    "message": f"Chatbot health check failed: {str(e)}",
-                }
-            ),
-            500,
-        )
+    chatbot = get_chatbot_service()
+    return {
+        "status": "ok",
+        "message": "Chatbot is running",
+        "intents_loaded": len(chatbot.intents),
+    }, 200

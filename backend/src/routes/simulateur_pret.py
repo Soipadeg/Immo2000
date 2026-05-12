@@ -15,6 +15,7 @@ from flask import Blueprint, request, jsonify
 from pydantic import BaseModel, Field, validator
 from src.services.simulateur_pret import CalculatricePret, SimulateurPretError
 from src.auth.decorators import token_required
+from src.decorators.error_handling import handle_errors, ValidationError
 
 # Blueprint
 simulateur_bp = Blueprint("simulateur", __name__, url_prefix="/api/v1/simulateur-pret")
@@ -92,6 +93,7 @@ class SimulateurOutput(BaseModel):
 # ===== ENDPOINT =====
 
 @simulateur_bp.route("", methods=["POST"], strict_slashes=False)
+@handle_errors()
 def simuler_pret():
     """
     POST /api/v1/simulateur-pret
@@ -121,32 +123,20 @@ def simuler_pret():
     - 500: Internal Server Error
     """
 
+    # 1️⃣ Récupérer et valider l'input avec Pydantic
+    data = request.get_json()
+
+    if not data:
+        raise ValidationError("Body JSON requis")
+
+    # Valider avec Pydantic
     try:
-        # 1️⃣ Récupérer et valider l'input avec Pydantic
-        data = request.get_json()
+        input_data = SimulateurInput(**data)
+    except ValueError as e:
+        raise ValidationError(f"Validation échouée: {str(e)}")
 
-        if not data:
-            return jsonify(
-                {
-                    "status": "error",
-                    "message": "Body JSON requis",
-                    "code": "EMPTY_BODY",
-                }
-            ), 400
-
-        # Valider avec Pydantic
-        try:
-            input_data = SimulateurInput(**data)
-        except ValueError as e:
-            return jsonify(
-                {
-                    "status": "error",
-                    "message": f"Validation échouée: {str(e)}",
-                    "code": "VALIDATION_ERROR",
-                }
-            ), 422
-
-        # 2️⃣ Calculer le prêt
+    # 2️⃣ Calculer le prêt
+    try:
         result = CalculatricePret.calculer_pret(
             revenu_mensuel_net=input_data.revenu_mensuel_net,
             apport=input_data.apport,
@@ -154,51 +144,32 @@ def simuler_pret():
             duree_ans=input_data.duree_ans,
             taux_assurance=input_data.taux_assurance,
         )
-
-        # 3️⃣ Convertir le tableau d'amortissement en objets Pydantic
-        tableau_amortissement = [
-            TableauAmortissementLigne(**ligne)
-            for ligne in result["tableau_amortissement"]
-        ]
-
-        # 4️⃣ Créer la réponse
-        output = SimulateurOutput(
-            capacite_emprunt=result["capacite_emprunt"],
-            mensualite=result["mensualite"],
-            cout_total_credit=result["cout_total_credit"],
-            tableau_amortissement=tableau_amortissement,
-        )
-
-        return jsonify(
-            {
-                "status": "success",
-                "data": output.dict(),
-                "message": "Simulation effectuée avec succès",
-            }
-        ), 200
-
     except SimulateurPretError as e:
-        # Erreur métier (revenu négatif, durée invalide, etc.)
-        return jsonify(
-            {
-                "status": "error",
-                "message": str(e),
-                "code": "INVALID_PARAMETERS",
-            }
-        ), 400
+        raise ValidationError(str(e))
 
-    except Exception as e:
-        # Erreur serveur
-        return jsonify(
-            {
-                "status": "error",
-                "message": f"Erreur serveur: {str(e)}",
-                "code": "SERVER_ERROR",
-            }
-        ), 500
+    # 3️⃣ Convertir le tableau d'amortissement en objets Pydantic
+    tableau_amortissement = [
+        TableauAmortissementLigne(**ligne)
+        for ligne in result["tableau_amortissement"]
+    ]
+
+    # 4️⃣ Créer la réponse
+    output = SimulateurOutput(
+        capacite_emprunt=result["capacite_emprunt"],
+        mensualite=result["mensualite"],
+        cout_total_credit=result["cout_total_credit"],
+        tableau_amortissement=tableau_amortissement,
+    )
+
+    return {
+        "status": "success",
+        "data": output.dict(),
+        "message": "Simulation effectuée avec succès",
+    }, 200
 
 
 @simulateur_bp.route("/info", methods=["GET"])
+@handle_errors()
 def get_info():
     """
     GET /api/v1/simulateur-pret/info
@@ -219,25 +190,23 @@ def get_info():
         }
     }
     """
-    return jsonify(
-        {
-            "status": "success",
-            "defauts": {
-                "taux_interet": CalculatricePret.TAUX_INTERET_DEFAUT,
-                "duree_ans": CalculatricePret.DUREE_ANS_DEFAUT,
-                "taux_assurance": CalculatricePret.TAUX_ASSURANCE_DEFAUT,
+    return {
+        "status": "success",
+        "defauts": {
+            "taux_interet": CalculatricePret.TAUX_INTERET_DEFAUT,
+            "duree_ans": CalculatricePret.DUREE_ANS_DEFAUT,
+            "taux_assurance": CalculatricePret.TAUX_ASSURANCE_DEFAUT,
+        },
+        "limites": {
+            "taux_interet": {
+                "min": 0,
+                "max": CalculatricePret.TAUX_USURE_MAX,
             },
-            "limites": {
-                "taux_interet": {
-                    "min": 0,
-                    "max": CalculatricePret.TAUX_USURE_MAX,
-                },
-                "duree_ans": {"min": 1, "max": 30},
-                "taux_assurance": {"min": 0},
-                "revenu_mensuel_net": {"min": 1},
-                "apport": {"min": 0},
-            },
-            "ratio_capacite": CalculatricePret.RATIO_CAPACITE,
-            "message": "Utilise ces valeurs pour valider les inputs côté frontend",
-        }
-    ), 200
+            "duree_ans": {"min": 1, "max": 30},
+            "taux_assurance": {"min": 0},
+            "revenu_mensuel_net": {"min": 1},
+            "apport": {"min": 0},
+        },
+        "ratio_capacite": CalculatricePret.RATIO_CAPACITE,
+        "message": "Utilise ces valeurs pour valider les inputs côté frontend",
+    }, 200

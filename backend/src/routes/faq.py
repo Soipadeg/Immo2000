@@ -11,12 +11,14 @@ Endpoints:
 
 from flask import Blueprint, request, jsonify
 from src.services.faq import get_faq_service
+from src.decorators.error_handling import handle_errors, ValidationError
 
 # Blueprint
 faq_bp = Blueprint("faq", __name__, url_prefix="/api/v1/faq")
 
 
 @faq_bp.route("", methods=["GET"])
+@handle_errors()
 def get_faq():
     """
     GET /api/v1/faq
@@ -35,40 +37,24 @@ def get_faq():
         }
     }
     """
-    try:
-        faq_service = get_faq_service()
-        role = request.args.get("role", "").lower()
+    faq_service = get_faq_service()
+    role = request.args.get("role", "").lower()
 
-        if role in ["acheteur", "vendeur"]:
-            data = {role: faq_service.get_faq_by_role(role)}
-        else:
-            data = faq_service.get_all_faq()
+    if role in ["acheteur", "vendeur"]:
+        data = {role: faq_service.get_faq_by_role(role)}
+    else:
+        data = faq_service.get_all_faq()
 
-        data["total"] = len(data.get("acheteur", [])) + len(data.get("vendeur", []))
+    data["total"] = len(data.get("acheteur", [])) + len(data.get("vendeur", []))
 
-        return (
-            jsonify(
-                {
-                    "status": "success",
-                    "data": data,
-                }
-            ),
-            200,
-        )
-
-    except Exception as e:
-        return (
-            jsonify(
-                {
-                    "status": "error",
-                    "error": f"Erreur interne: {str(e)}",
-                }
-            ),
-            500,
-        )
+    return {
+        "status": "success",
+        "data": data,
+    }, 200
 
 
 @faq_bp.route("/search", methods=["GET"])
+@handle_errors()
 def search_faq():
     """
     GET /api/v1/faq/search?q=...
@@ -88,52 +74,28 @@ def search_faq():
         }
     }
     """
-    try:
-        query = request.args.get("q", "").strip()
-        role = request.args.get("role", "").lower()
+    query = request.args.get("q", "").strip()
+    role = request.args.get("role", "").lower()
 
-        if not query:
-            return (
-                jsonify(
-                    {
-                        "status": "error",
-                        "error": "Le paramètre 'q' est requis.",
-                    }
-                ),
-                400,
-            )
+    if not query:
+        raise ValidationError("Le paramètre 'q' est requis.")
 
-        faq_service = get_faq_service()
-        results = faq_service.search_faq(query, role if role else None)
+    faq_service = get_faq_service()
+    results = faq_service.search_faq(query, role if role else None)
 
-        return (
-            jsonify(
-                {
-                    "status": "success",
-                    "data": {
-                        "query": query,
-                        "role": role if role else "tous",
-                        "results": results,
-                        "count": len(results),
-                    },
-                }
-            ),
-            200,
-        )
-
-    except Exception as e:
-        return (
-            jsonify(
-                {
-                    "status": "error",
-                    "error": f"Erreur interne: {str(e)}",
-                }
-            ),
-            500,
-        )
+    return {
+        "status": "success",
+        "data": {
+            "query": query,
+            "role": role if role else "tous",
+            "results": results,
+            "count": len(results),
+        },
+    }, 200
 
 
 @faq_bp.route("/stats", methods=["GET"])
+@handle_errors()
 def faq_stats():
     """
     GET /api/v1/faq/stats
@@ -151,33 +113,17 @@ def faq_stats():
         }
     }
     """
-    try:
-        faq_service = get_faq_service()
-        stats = faq_service.get_stats()
+    faq_service = get_faq_service()
+    stats = faq_service.get_stats()
 
-        return (
-            jsonify(
-                {
-                    "status": "success",
-                    "data": stats,
-                }
-            ),
-            200,
-        )
-
-    except Exception as e:
-        return (
-            jsonify(
-                {
-                    "status": "error",
-                    "error": f"Erreur interne: {str(e)}",
-                }
-            ),
-            500,
-        )
+    return {
+        "status": "success",
+        "data": stats,
+    }, 200
 
 
 @faq_bp.route("/health", methods=["GET"])
+@handle_errors()
 def health():
     """
     GET /api/v1/faq/health
@@ -189,28 +135,11 @@ def health():
         "faq_loaded": true
     }
     """
-    try:
-        faq_service = get_faq_service()
-        stats = faq_service.get_stats()
+    faq_service = get_faq_service()
+    stats = faq_service.get_stats()
 
-        return (
-            jsonify(
-                {
-                    "status": "ok",
-                    "faq_loaded": stats["total"] > 0,
-                    "total_faq": stats["total"],
-                }
-            ),
-            200,
-        )
-
-    except Exception as e:
-        return (
-            jsonify(
-                {
-                    "status": "error",
-                    "error": f"Service FAQ non disponible: {str(e)}",
-                }
-            ),
-            500,
-        )
+    return {
+        "status": "ok",
+        "faq_loaded": stats["total"] > 0,
+        "total_faq": stats["total"],
+    }, 200

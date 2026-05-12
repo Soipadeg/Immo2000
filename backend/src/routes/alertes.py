@@ -20,7 +20,8 @@ from src.schemas.alertes import (
     AlerteAnnonceResponse,
     AlerteAnnonceListResponse,
 )
-from pydantic import ValidationError
+from pydantic import ValidationError as PydanticValidationError
+from src.decorators.error_handling import handle_errors, ValidationError, NotFoundError
 
 # Blueprint
 alertes_bp = Blueprint("alertes", __name__, url_prefix="/api/v1/alertes")
@@ -28,6 +29,7 @@ alertes_bp = Blueprint("alertes", __name__, url_prefix="/api/v1/alertes")
 
 @alertes_bp.route("", methods=["GET"])
 @token_required
+@handle_errors()
 def list_alertes(current_user):
     """
     GET /api/v1/alertes
@@ -41,33 +43,29 @@ def list_alertes(current_user):
         200 OK + AlerteAnnonceListResponse
         401 Unauthorized
     """
-    try:
-        skip = int(request.args.get("skip", 0))
-        limit = int(request.args.get("limit", 20))
-        limit = min(limit, 100)  # Limite max 100
+    skip = int(request.args.get("skip", 0))
+    limit = int(request.args.get("limit", 20))
+    limit = min(limit, 100)
 
-        # Récupérer les alertes de l'utilisateur
-        alertes_query = AlerteAnnonce.query.filter_by(
-            utilisateur_id=current_user["user_id"]
-        ).order_by(AlerteAnnonce.date_creation.desc())
+    alertes_query = AlerteAnnonce.query.filter_by(
+        utilisateur_id=current_user["user_id"]
+    ).order_by(AlerteAnnonce.date_creation.desc())
 
-        total = alertes_query.count()
-        alertes = alertes_query.offset(skip).limit(limit).all()
+    total = alertes_query.count()
+    alertes = alertes_query.offset(skip).limit(limit).all()
 
-        response = AlerteAnnonceListResponse(
-            items=[AlerteAnnonceResponse.from_orm(a) for a in alertes],
-            total=total,
-            skip=skip,
-            limit=limit,
-        )
-        return jsonify(response.dict()), 200
-
-    except Exception as e:
-        return jsonify({"error": str(e), "code": 400}), 400
+    response = AlerteAnnonceListResponse(
+        items=[AlerteAnnonceResponse.from_orm(a) for a in alertes],
+        total=total,
+        skip=skip,
+        limit=limit,
+    )
+    return response.dict()
 
 
 @alertes_bp.route("", methods=["POST"])
 @token_required
+@handle_errors()
 def create_alerte(current_user):
     """
     POST /api/v1/alertes
@@ -80,60 +78,42 @@ def create_alerte(current_user):
         400 Bad Request (validation error)
         401 Unauthorized
     """
-    try:
-        data = request.get_json()
-        alerte_data = CreateAlerteAnnonce(**data)
+    data = request.get_json()
+    alerte_data = CreateAlerteAnnonce(**data)
 
-        # Créer l'alerte
-        alerte = AlerteAnnonce(
-            utilisateur_id=current_user["user_id"],
-            nom=alerte_data.nom,
-            ville=alerte_data.ville,
-            code_postal=alerte_data.code_postal,
-            type_bien=alerte_data.type_bien,
-            prix_min=alerte_data.prix_min,
-            prix_max=alerte_data.prix_max,
-            surface_min=alerte_data.surface_min,
-            surface_max=alerte_data.surface_max,
-            nombre_pieces_min=alerte_data.nombre_pieces_min,
-            nombre_pieces_max=alerte_data.nombre_pieces_max,
-            dpe=alerte_data.dpe,
-            ascenseur=alerte_data.ascenseur,
-            balcon=alerte_data.balcon,
-            terrasse=alerte_data.terrasse,
-            jardin=alerte_data.jardin,
-            piscine=alerte_data.piscine,
-            parking=alerte_data.parking,
-            frequence=alerte_data.frequence,
-            email_notification=alerte_data.email_notification,
-        )
+    alerte = AlerteAnnonce(
+        utilisateur_id=current_user["user_id"],
+        nom=alerte_data.nom,
+        ville=alerte_data.ville,
+        code_postal=alerte_data.code_postal,
+        type_bien=alerte_data.type_bien,
+        prix_min=alerte_data.prix_min,
+        prix_max=alerte_data.prix_max,
+        surface_min=alerte_data.surface_min,
+        surface_max=alerte_data.surface_max,
+        nombre_pieces_min=alerte_data.nombre_pieces_min,
+        nombre_pieces_max=alerte_data.nombre_pieces_max,
+        dpe=alerte_data.dpe,
+        ascenseur=alerte_data.ascenseur,
+        balcon=alerte_data.balcon,
+        terrasse=alerte_data.terrasse,
+        jardin=alerte_data.jardin,
+        piscine=alerte_data.piscine,
+        parking=alerte_data.parking,
+        frequence=alerte_data.frequence,
+        email_notification=alerte_data.email_notification,
+    )
 
-        db.session.add(alerte)
-        db.session.commit()
+    db.session.add(alerte)
+    db.session.commit()
 
-        response = AlerteAnnonceResponse.from_orm(alerte)
-        return jsonify(response.dict()), 201
-
-    except ValidationError as e:
-        errors = []
-        for err in e.errors():
-            errors.append({
-                "field": ".".join(str(x) for x in err.get("loc", [])),
-                "type": err.get("type"),
-                "msg": err.get("msg")
-            })
-        return jsonify({
-            "error": "Validation error",
-            "code": 400,
-            "details": errors
-        }), 400
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"error": str(e), "code": 400}), 400
+    response = AlerteAnnonceResponse.from_orm(alerte)
+    return response.dict()
 
 
 @alertes_bp.route("/<int:alerte_id>", methods=["GET"])
 @token_required
+@handle_errors()
 def get_alerte(current_user, alerte_id):
     """
     GET /api/v1/alertes/{id}
@@ -144,24 +124,21 @@ def get_alerte(current_user, alerte_id):
         403 Forbidden (not owner)
         404 Not Found
     """
-    try:
-        alerte = AlerteAnnonce.query.filter_by(
-            alerte_id=alerte_id,
-            utilisateur_id=current_user["user_id"]
-        ).first()
+    alerte = AlerteAnnonce.query.filter_by(
+        alerte_id=alerte_id,
+        utilisateur_id=current_user["user_id"]
+    ).first()
 
-        if not alerte:
-            return jsonify({"error": "Alerte non trouvée", "code": 404}), 404
+    if not alerte:
+        raise NotFoundError("Alerte non trouvée")
 
-        response = AlerteAnnonceResponse.from_orm(alerte)
-        return jsonify(response.dict()), 200
-
-    except Exception as e:
-        return jsonify({"error": str(e), "code": 400}), 400
+    response = AlerteAnnonceResponse.from_orm(alerte)
+    return response.dict()
 
 
 @alertes_bp.route("/<int:alerte_id>", methods=["PUT"])
 @token_required
+@handle_errors()
 def update_alerte(current_user, alerte_id):
     """
     PUT /api/v1/alertes/{id}
@@ -175,48 +152,30 @@ def update_alerte(current_user, alerte_id):
         404 Not Found
         400 Bad Request
     """
-    try:
-        alerte = AlerteAnnonce.query.filter_by(
-            alerte_id=alerte_id,
-            utilisateur_id=current_user["user_id"]
-        ).first()
+    alerte = AlerteAnnonce.query.filter_by(
+        alerte_id=alerte_id,
+        utilisateur_id=current_user["user_id"]
+    ).first()
 
-        if not alerte:
-            return jsonify({"error": "Alerte non trouvée", "code": 404}), 404
+    if not alerte:
+        raise NotFoundError("Alerte non trouvée")
 
-        data = request.get_json()
-        alerte_data = UpdateAlerteAnnonce(**data)
+    data = request.get_json()
+    alerte_data = UpdateAlerteAnnonce(**data)
 
-        # Mettre à jour les champs fournis
-        for field, value in alerte_data.dict(exclude_unset=True).items():
-            if value is not None:
-                setattr(alerte, field, value)
+    for field, value in alerte_data.dict(exclude_unset=True).items():
+        if value is not None:
+            setattr(alerte, field, value)
 
-        db.session.commit()
+    db.session.commit()
 
-        response = AlerteAnnonceResponse.from_orm(alerte)
-        return jsonify(response.dict()), 200
-
-    except ValidationError as e:
-        errors = []
-        for err in e.errors():
-            errors.append({
-                "field": ".".join(str(x) for x in err.get("loc", [])),
-                "type": err.get("type"),
-                "msg": err.get("msg")
-            })
-        return jsonify({
-            "error": "Validation error",
-            "code": 400,
-            "details": errors
-        }), 400
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"error": str(e), "code": 400}), 400
+    response = AlerteAnnonceResponse.from_orm(alerte)
+    return response.dict()
 
 
 @alertes_bp.route("/<int:alerte_id>", methods=["DELETE"])
 @token_required
+@handle_errors()
 def delete_alerte(current_user, alerte_id):
     """
     DELETE /api/v1/alertes/{id}
@@ -227,27 +186,23 @@ def delete_alerte(current_user, alerte_id):
         403 Forbidden (not owner)
         404 Not Found
     """
-    try:
-        alerte = AlerteAnnonce.query.filter_by(
-            alerte_id=alerte_id,
-            utilisateur_id=current_user["user_id"]
-        ).first()
+    alerte = AlerteAnnonce.query.filter_by(
+        alerte_id=alerte_id,
+        utilisateur_id=current_user["user_id"]
+    ).first()
 
-        if not alerte:
-            return jsonify({"error": "Alerte non trouvée", "code": 404}), 404
+    if not alerte:
+        raise NotFoundError("Alerte non trouvée")
 
-        db.session.delete(alerte)
-        db.session.commit()
+    db.session.delete(alerte)
+    db.session.commit()
 
-        return "", 204
-
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"error": str(e), "code": 400}), 400
+    return {"message": "Alerte supprimée"}
 
 
 @alertes_bp.route("/<int:alerte_id>/toggle", methods=["POST"])
 @token_required
+@handle_errors()
 def toggle_alerte(current_user, alerte_id):
     """
     POST /api/v1/alertes/{id}/toggle
@@ -258,21 +213,16 @@ def toggle_alerte(current_user, alerte_id):
         403 Forbidden (not owner)
         404 Not Found
     """
-    try:
-        alerte = AlerteAnnonce.query.filter_by(
-            alerte_id=alerte_id,
-            utilisateur_id=current_user["user_id"]
-        ).first()
+    alerte = AlerteAnnonce.query.filter_by(
+        alerte_id=alerte_id,
+        utilisateur_id=current_user["user_id"]
+    ).first()
 
-        if not alerte:
-            return jsonify({"error": "Alerte non trouvée", "code": 404}), 404
+    if not alerte:
+        raise NotFoundError("Alerte non trouvée")
 
-        alerte.actif = not alerte.actif
-        db.session.commit()
+    alerte.actif = not alerte.actif
+    db.session.commit()
 
-        response = AlerteAnnonceResponse.from_orm(alerte)
-        return jsonify(response.dict()), 200
-
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"error": str(e), "code": 400}), 400
+    response = AlerteAnnonceResponse.from_orm(alerte)
+    return response.dict()

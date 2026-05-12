@@ -11,12 +11,14 @@ from flask import Blueprint, request, jsonify, current_app
 from src.auth.decorators import token_required, role_required
 from src.melo_api import get_estimation_melo, compare_biens
 from datetime import datetime
+from src.decorators.error_handling import handle_errors, ValidationError
 
 estimations_bp = Blueprint("estimations", __name__, url_prefix="/api/v1/estimations")
 
 
 @estimations_bp.route("", methods=["POST"])
 @token_required
+@handle_errors()
 def create_estimation(current_user):
     """
     Créer une estimation avec l'API Melo.
@@ -42,67 +44,53 @@ def create_estimation(current_user):
             "error": "Missing required fields" | "Invalid property type" | ...
         }
     """
+    data = request.get_json()
+
+    if not data:
+        raise ValidationError("Request body must be JSON")
+
+    adresse = data.get("adresse", "").strip()
+    surface = data.get("surface")
+    type_bien = data.get("type_bien", "").strip()
+
+    if not adresse or not surface or not type_bien:
+        raise ValidationError("Missing required fields: adresse, surface, type_bien")
+
     try:
-        data = request.get_json()
+        surface = int(surface)
+    except ValueError:
+        raise ValidationError("Surface must be an integer")
 
-        # Validation
-        if not data:
-            return {"error": "Request body must be JSON"}, 400
+    valid_types = ["appartement", "maison", "terrain", "commercial"]
+    if type_bien not in valid_types:
+        raise ValidationError(f"type_bien must be one of {valid_types}")
 
-        adresse = data.get("adresse", "").strip()
-        surface = data.get("surface")
-        type_bien = data.get("type_bien", "").strip()
+    current_app.logger.info(f"User {current_user['user_id']} requesting estimation for {adresse}")
 
-        if not adresse or not surface or not type_bien:
-            return {"error": "Missing required fields: adresse, surface, type_bien"}, 400
+    result = get_estimation_melo(
+        adresse=adresse,
+        surface=surface,
+        type_bien=type_bien
+    )
 
-        try:
-            surface = int(surface)
-        except ValueError:
-            return {"error": "Surface must be an integer"}, 400
-
-        # Valider le type de bien
-        valid_types = ["appartement", "maison", "terrain", "commercial"]
-        if type_bien not in valid_types:
-            return {"error": f"type_bien must be one of {valid_types}"}, 400
-
-        # Appeler l'API Melo
-        current_app.logger.info(f"User {current_user['user_id']} requesting estimation for {adresse}")
-
-        result = get_estimation_melo(
-            adresse=adresse,
-            surface=surface,
-            type_bien=type_bien
-        )
-
-        # Vérifier le statut de la réponse
-        if result.get("metadata", {}).get("status") == "success":
-            # La réponse est directement retournée (pas de stockage en BD pour l'instant)
-            # TODO: Stocker l'estimation en base (créer une table Estimation si nécessaire)
-
-            return {
-                "message": "Estimation créée avec succès",
-                "estimation": result,
-                "user_id": current_user["user_id"],
-                "adresse": adresse,
-                "timestamp": datetime.utcnow().isoformat()
-            }, 201
-
-        else:
-            error_msg = result.get("metadata", {}).get("error", "Unknown error")
-            current_app.logger.warning(f"Melo API error: {error_msg}")
-            return {
-                "error": f"Melo API error: {error_msg}"
-            }, 400
-
-    except Exception as e:
-        current_app.logger.error(f"Estimation creation error: {str(e)}")
-        return {"error": "Internal server error"}, 500
+    if result.get("metadata", {}).get("status") == "success":
+        return {
+            "message": "Estimation créée avec succès",
+            "estimation": result,
+            "user_id": current_user["user_id"],
+            "adresse": adresse,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    else:
+        error_msg = result.get("metadata", {}).get("error", "Unknown error")
+        current_app.logger.warning(f"Melo API error: {error_msg}")
+        raise ValidationError(f"Melo API error: {error_msg}")
 
 
 @estimations_bp.route("/compare", methods=["POST"])
 @token_required
 @role_required(roles=["vendeur", "agent"])
+@handle_errors()
 def compare_estimations(current_user):
     """
     Comparer les estimations de plusieurs biens.
@@ -137,56 +125,48 @@ def compare_estimations(current_user):
             "error": "At least 2 properties required"
         }
     """
+    data = request.get_json()
+
+    if not data or not data.get("biens"):
+        raise ValidationError("biens array is required")
+
+    biens = data.get("biens", [])
+
+    if len(biens) < 2:
+        raise ValidationError("At least 2 properties required for comparison")
+
+    for bien in biens:
+        if not bien.get("adresse") or not bien.get("surface") or not bien.get("type_bien"):
+            raise ValidationError("Each property must have adresse, surface, and type_bien")
+
     try:
-        data = request.get_json()
+        biens_formatted = [
+            {
+                "adresse": bien["adresse"],
+                "surface": int(bien["surface"]),
+                "type_bien": bien["type_bien"]
+            }
+            for bien in biens
+        ]
+    except ValueError:
+        raise ValidationError("Surface must be an integer for all properties")
 
-        if not data or not data.get("biens"):
-            return {"error": "biens array is required"}, 400
+    current_app.logger.info(f"User {current_user['user_id']} comparing {len(biens_formatted)} properties")
 
-        biens = data.get("biens", [])
+    result = compare_biens(biens_formatted)
 
-        # Valider qu'on a au moins 2 biens
-        if len(biens) < 2:
-            return {"error": "At least 2 properties required for comparison"}, 400
-
-        # Valider chaque bien
-        for bien in biens:
-            if not bien.get("adresse") or not bien.get("surface") or not bien.get("type_bien"):
-                return {"error": "Each property must have adresse, surface, and type_bien"}, 400
-
-        try:
-            # Construire la liste de biens avec surface correctement typée
-            biens_formatted = [
-                {
-                    "adresse": bien["adresse"],
-                    "surface": int(bien["surface"]),
-                    "type_bien": bien["type_bien"]
-                }
-                for bien in biens
-            ]
-        except ValueError:
-            return {"error": "Surface must be an integer for all properties"}, 400
-
-        # Appeler la fonction de comparaison Melo
-        current_app.logger.info(f"User {current_user['user_id']} comparing {len(biens_formatted)} properties")
-
-        result = compare_biens(biens_formatted)
-
-        return {
-            "message": "Comparaison effectuée avec succès",
-            "comparison": result,
-            "count": len(biens_formatted),
-            "user_id": current_user["user_id"],
-            "timestamp": datetime.utcnow().isoformat()
-        }, 200
-
-    except Exception as e:
-        current_app.logger.error(f"Comparison error: {str(e)}")
-        return {"error": "Internal server error"}, 500
+    return {
+        "message": "Comparaison effectuée avec succès",
+        "comparison": result,
+        "count": len(biens_formatted),
+        "user_id": current_user["user_id"],
+        "timestamp": datetime.utcnow().isoformat()
+    }
 
 
 @estimations_bp.route("", methods=["GET"])
 @token_required
+@handle_errors()
 def get_estimations(current_user):
     """
     Récupérer les estimations.
@@ -209,19 +189,12 @@ def get_estimations(current_user):
             "count": 1
         }
     """
-    try:
-        # Pour l'instant, retourner une liste vide (estimations pas persistées)
-        # TODO: Créer table Estimation si persistance requise
-        return {
-            "estimations": [],
-            "count": 0,
-            "note": "Estimations retournées via Melo API (pas de persistance actuellement)",
-            "hint": "Utilisez POST /api/v1/estimations pour créer une estimation Melo"
-        }, 200
-
-    except Exception as e:
-        current_app.logger.error(f"Get estimations error: {str(e)}")
-        return {"error": "Internal server error"}, 500
+    return {
+        "estimations": [],
+        "count": 0,
+        "note": "Estimations retournées via Melo API (pas de persistance actuellement)",
+        "hint": "Utilisez POST /api/v1/estimations pour créer une estimation Melo"
+    }
 
 
 __all__ = ["estimations_bp"]
