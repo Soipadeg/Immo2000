@@ -70,6 +70,7 @@ class CreateAnnonce(BaseModel):
     jardin: bool = Field(default=False, description="Présence jardin")
     piscine: bool = Field(default=False, description="Présence piscine")
     parking: bool = Field(default=False, description="Présence parking")
+    masquer_adresse_complete: bool = Field(default=False, description="Masquer l'adresse complète (afficher seulement code postal et ville)")
     dpe: Optional[DPEEnum] = Field(default=None, description="Classe énergétique (A-G)")
     annee_construction: Optional[int] = Field(default=None, ge=1800, le=2100, description="Année de construction")
 
@@ -134,6 +135,7 @@ class UpdateAnnonce(BaseModel):
     jardin: Optional[bool] = Field(default=None)
     piscine: Optional[bool] = Field(default=None)
     parking: Optional[bool] = Field(default=None)
+    masquer_adresse_complete: Optional[bool] = Field(default=None)
     dpe: Optional[DPEEnum] = Field(default=None)
     annee_construction: Optional[int] = Field(default=None, ge=1800, le=2100)
     statut: Optional[StatutEnum] = Field(default=None)
@@ -175,6 +177,7 @@ class AnnoncesResponse(BaseModel):
     jardin: bool = False
     piscine: bool = False
     parking: bool = False
+    masquer_adresse_complete: bool = False
     dpe: Optional[str] = None
     annee_construction: Optional[int] = None
     statut: str = "brouillon"

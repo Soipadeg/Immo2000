@@ -82,6 +82,7 @@ class Annonce(db.Model):
     jardin = db.Column(db.Boolean, default=False)
     piscine = db.Column(db.Boolean, default=False)
     parking = db.Column(db.Boolean, default=False)
+    masquer_adresse_complete = db.Column(db.Boolean, default=False)
     dpe = db.Column(db.String(1), nullable=True)
     annee_construction = db.Column(db.Integer, nullable=True)
     statut = db.Column(

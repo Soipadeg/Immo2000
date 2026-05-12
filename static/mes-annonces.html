@@ -424,6 +424,14 @@
                     </div>
                 </div>
 
+                <div class="form-group">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="editMasquerAdresse" style="width: 20px; height: 20px; cursor: pointer;">
+                        <label for="editMasquerAdresse" style="margin: 0; cursor: pointer; font-weight: 500;">Je ne souhaite pas afficher l'adresse complète</label>
+                    </div>
+                    <small style="color: #999; margin-top: 5px; display: block;">✓ Seul le code postal et la ville seront visibles sur l'annonce</small>
+                </div>
+
                 <div class="form-row">
                     <div class="form-group">
                         <label>Type de bien</label>
@@ -561,6 +569,7 @@
                 document.getElementById('editAdresse').value = annonce.adresse || '';
                 document.getElementById('editCodePostal').value = annonce.code_postal || '';
                 document.getElementById('editVille').value = annonce.ville || '';
+                document.getElementById('editMasquerAdresse').checked = annonce.masquer_adresse_complete || false;
                 document.getElementById('editTypeBien').value = annonce.type_bien || '';
                 document.getElementById('editNombrePieces').value = annonce.nombre_pieces || '';
                 document.getElementById('editEtage').value = annonce.etage || '';
@@ -600,6 +609,7 @@
                     ville: document.getElementById('editVille').value,
                     type_bien: document.getElementById('editTypeBien').value,
                     nombre_pieces: parseInt(document.getElementById('editNombrePieces').value),
+                    masquer_adresse_complete: document.getElementById('editMasquerAdresse').checked,
                 };
 
                 // Optional fields
