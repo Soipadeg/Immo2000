@@ -17,7 +17,16 @@ export const useAuth = () => {
 
   // Initialiser l'authentification au montage
   useEffect(() => {
+    // Vérifier immédiatement sans aucun délai
     checkAuth();
+
+    // Écouter les changements de localStorage (pour mode dev)
+    const handleStorageChange = () => {
+      checkAuth();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   /**
@@ -26,6 +35,40 @@ export const useAuth = () => {
   const checkAuth = useCallback(async () => {
     setLoading(true);
     const token = localStorage.getItem('auth_token');
+    const devMode = localStorage.getItem('dev_mode') === 'true';
+
+    console.log('useAuth checkAuth:', { token: !!token, devMode, dev_mode_value: localStorage.getItem('dev_mode') });
+
+    // Mode développement: TOUJOURS utiliser les données stockées dans localStorage
+    // sans faire aucun appel API
+    if (devMode) {
+      const userData = {
+        utilisateur_id: localStorage.getItem('user_id'),
+        id: localStorage.getItem('user_id'),
+        email: localStorage.getItem('user_email'),
+        nom: localStorage.getItem('user_nom'),
+        prenom: localStorage.getItem('user_prenom'),
+        role: localStorage.getItem('user_role'),
+      };
+
+      console.log('useAuth dev mode userData:', userData);
+
+      // Si les données requises sont présentes
+      if (userData.role && userData.email) {
+        setUser({
+          id: userData.utilisateur_id || userData.id,
+          email: userData.email,
+          nom: userData.nom || 'User',
+          prenom: userData.prenom || 'Dev',
+          role: userData.role,
+        });
+
+        setIsAuthenticated(true);
+        setLoading(false);
+        console.log('useAuth dev mode SUCCESS: User authenticated as', userData.role);
+        return;
+      }
+    }
 
     if (!token) {
       setIsAuthenticated(false);

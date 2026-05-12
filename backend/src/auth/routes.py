@@ -281,7 +281,8 @@ def login():
             return jsonify({"error": "Request body must be JSON"}), 400
 
         email = data.get("email", "").strip()
-        password = data.get("mot_de_passe", "")
+        # Accept both "password" and "mot_de_passe" for compatibility
+        password = data.get("password", "") or data.get("mot_de_passe", "")
 
         if not email or not password:
             return jsonify({"error": "Email and password are required"}), 400

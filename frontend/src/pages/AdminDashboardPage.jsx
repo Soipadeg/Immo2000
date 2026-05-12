@@ -40,6 +40,7 @@ const AdminDashboardPage = () => {
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [suspiciousAccounts, setSuspiciousAccounts] = useState([]);
 
 
   useEffect(() => {
@@ -49,13 +50,35 @@ const AdminDashboardPage = () => {
   }, [user, authLoading, navigate]);
 
   useEffect(() => {
-    loadData();
-  }, []);
+    // Ne charger les données que si l'utilisateur est authentifié et admin
+    if (!authLoading && user && user.role === 'admin') {
+      loadData();
+    }
+  }, [user, authLoading]);
 
   const loadData = async () => {
     setLoading(true);
     setError('');
     try {
+      // Skip API calls in dev mode
+      const devMode = localStorage.getItem('dev_mode') === 'true';
+      if (devMode) {
+        // Use mock data in dev mode
+        setData({
+          utilisateurs: { total: 250 },
+          annonces: { total: 1200 },
+          offres: { total: 45 },
+          revenus: { valeur_totale_offres: 2750000 },
+        });
+        setAnalytics({
+          utilisateurs_nouveaux: 15,
+          annonces_creees: 23,
+          offres_creees: 8,
+        });
+        setLoading(false);
+        return;
+      }
+
       const [dashRes, anaRes] = await Promise.all([
         dashboardApi.getSummary(),
         analyticsApi.getSummary(),
@@ -81,6 +104,10 @@ const AdminDashboardPage = () => {
   if (!user || user.role !== 'admin') {
     return null;
   }
+
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
 
   const stats = [
     { label: '👥 Utilisateurs', value: data?.utilisateurs?.total || 0 },

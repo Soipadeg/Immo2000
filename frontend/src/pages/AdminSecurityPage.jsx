@@ -24,19 +24,29 @@ import WarningIcon from '@mui/icons-material/Warning';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { auditApi } from '../services/adminApi';
 import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 export default function AdminSecurityPage() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    loadSecurityStatus();
-    // Recharger toutes les 30 secondes
-    const interval = setInterval(loadSecurityStatus, 30000);
-    return () => clearInterval(interval);
-  }, []);
+    if (!authLoading && (!user || user?.role !== 'admin')) {
+      navigate('/');
+    }
+  }, [user, authLoading, navigate]);
+
+  useEffect(() => {
+    if (!authLoading && user && user?.role === 'admin') {
+      loadSecurityStatus();
+      // Recharger toutes les 30 secondes
+      const interval = setInterval(loadSecurityStatus, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [user, authLoading]);
 
   const loadSecurityStatus = async () => {
     try {

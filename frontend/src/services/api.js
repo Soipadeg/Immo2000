@@ -29,12 +29,35 @@ apiClient.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Token expiré ou invalide
-      localStorage.removeItem('auth_token');
-      window.location.href = '/login';
+      // Ne pas rediriger automatiquement - laisser les composants gérer l'authentification
+      // sauf si on n'est pas en mode dev
+      const devMode = localStorage.getItem('dev_mode') === 'true';
+      if (!devMode) {
+        // Nettoyer le token et laisser le composant gérer la redirection
+        localStorage.removeItem('auth_token');
+        // NOTE: Ne pas rediriger automatiquement vers /login
+        // Les pages protégées utiliseront useAuth() pour vérifier et rediriger
+      }
     }
     return Promise.reject(error);
   }
 );
+
+// Wrapper pour créer des fonctions API qui retournent des données simulées en mode dev
+const createDevSafeApiCall = (actualCall, mockData) => {
+  return async (...args) => {
+    const devMode = localStorage.getItem('dev_mode') === 'true';
+    if (devMode) {
+      // Return mock data in dev mode without making any API call
+      return Promise.resolve({
+        data: mockData,
+        status: 200,
+        statusText: 'OK (Mock)',
+      });
+    }
+    return actualCall(...args);
+  };
+};
 
 /**
  * Service d'annonces

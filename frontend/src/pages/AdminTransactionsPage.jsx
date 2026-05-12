@@ -13,7 +13,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 
 const AdminTransactionsPage = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,12 +24,16 @@ const AdminTransactionsPage = () => {
   const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
-    if (user?.role !== 'admin') navigate('/');
-  }, [user, navigate]);
+    if (!authLoading && (!user || user?.role !== 'admin')) {
+      navigate('/');
+    }
+  }, [user, authLoading, navigate]);
 
   useEffect(() => {
-    loadTransactions();
-  }, [status]);
+    if (!authLoading && user && user?.role === 'admin') {
+      loadTransactions();
+    }
+  }, [status, user, authLoading]);
 
   const loadTransactions = async () => {
     setLoading(true);

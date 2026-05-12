@@ -15,7 +15,7 @@ import { Edit, Refresh } from '@mui/icons-material';
 import { IconButton, Tooltip } from '@mui/material';
 
 const AdminSettingsPage = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [settings, setSettings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,12 +26,16 @@ const AdminSettingsPage = () => {
   const [resetConfirm, setResetConfirm] = useState(false);
 
   useEffect(() => {
-    if (user?.role !== 'admin') navigate('/');
-  }, [user, navigate]);
+    if (!authLoading && (!user || user?.role !== 'admin')) {
+      navigate('/');
+    }
+  }, [user, authLoading, navigate]);
 
   useEffect(() => {
-    loadSettings();
-  }, []);
+    if (!authLoading && user && user?.role === 'admin') {
+      loadSettings();
+    }
+  }, [user, authLoading]);
 
   const loadSettings = async () => {
     setLoading(true);

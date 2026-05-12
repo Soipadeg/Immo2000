@@ -27,9 +27,11 @@ import {
 import GetAppIcon from '@mui/icons-material/GetApp';
 import { auditApi } from '../services/adminApi';
 import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 export default function AdminAuditPage() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const [logs, setLogs] = useState([]);
   const [pagination, setPagination] = useState({ skip: 0, limit: 50, total: 0 });
   const [loading, setLoading] = useState(false);
@@ -45,8 +47,16 @@ export default function AdminAuditPage() {
   const [detailsOpen, setDetailsOpen] = useState(false);
 
   useEffect(() => {
-    loadLogs();
-  }, [pagination.skip, filters]);
+    if (!authLoading && (!user || user?.role !== 'admin')) {
+      navigate('/');
+    }
+  }, [user, authLoading, navigate]);
+
+  useEffect(() => {
+    if (!authLoading && user && user?.role === 'admin') {
+      loadLogs();
+    }
+  }, [pagination.skip, filters, user, authLoading]);
 
   const loadLogs = async () => {
     try {

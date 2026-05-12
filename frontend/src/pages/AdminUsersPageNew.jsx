@@ -14,7 +14,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 
 const AdminUsersPage = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,12 +27,16 @@ const AdminUsersPage = () => {
   const [suspendHours, setSuspendHours] = useState(48);
 
   useEffect(() => {
-    if (user?.role !== 'admin') navigate('/');
-  }, [user, navigate]);
+    if (!authLoading && (!user || user?.role !== 'admin')) {
+      navigate('/');
+    }
+  }, [user, authLoading, navigate]);
 
   useEffect(() => {
-    loadUsers();
-  }, [page, searchQuery]);
+    if (!authLoading && user && user?.role === 'admin') {
+      loadUsers();
+    }
+  }, [page, searchQuery, user, authLoading]);
 
   const loadUsers = async () => {
     setLoading(true);

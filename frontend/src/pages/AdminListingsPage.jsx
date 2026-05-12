@@ -13,7 +13,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 
 const AdminListingsPage = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,12 +23,16 @@ const AdminListingsPage = () => {
   const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
-    if (user?.role !== 'admin') navigate('/');
-  }, [user, navigate]);
+    if (!authLoading && (!user || user?.role !== 'admin')) {
+      navigate('/');
+    }
+  }, [user, authLoading, navigate]);
 
   useEffect(() => {
-    loadListings();
-  }, []);
+    if (!authLoading && user && user?.role === 'admin') {
+      loadListings();
+    }
+  }, [user, authLoading]);
 
   const loadListings = async () => {
     setLoading(true);

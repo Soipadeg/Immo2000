@@ -10,11 +10,12 @@ import {
 } from '@mui/material';
 import {
   Dashboard, People, Home, ShoppingCart, Settings, Analytics,
-  Logout, Person, History, Security,
+  Logout, Person, History, Security, TrendingUp,
 } from '@mui/icons-material';
 import { useAuth } from '../hooks/useAuth';
 import { useSessionTimeout } from '../hooks/useSessionTimeout';
 import SessionTimeoutDialog from './SessionTimeoutDialog';
+import DevModeWaitingWrapper from './DevModeWaitingWrapper';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
@@ -24,14 +25,15 @@ const AdminLayout = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const menuItems = [
-    { label: 'Dashboard', path: '/admin/dashboard', icon: <Dashboard /> },
+    { label: 'Accueil', path: '/admin', icon: <Dashboard /> },
+    { label: 'Dashboard', path: '/admin/dashboard', icon: <Analytics /> },
     { label: 'Utilisateurs', path: '/admin/users', icon: <People /> },
     { label: 'Annonces', path: '/admin/listings', icon: <Home /> },
     { label: 'Transactions', path: '/admin/transactions', icon: <ShoppingCart /> },
-    { label: 'Paramètres', path: '/admin/settings', icon: <Settings /> },
-    { label: 'Analytics', path: '/admin/analytics', icon: <Analytics /> },
+    { label: 'Analytics', path: '/admin/analytics', icon: <TrendingUp /> },
     { label: 'Audit Trail', path: '/admin/audit', icon: <History /> },
     { label: 'Sécurité', path: '/admin/security', icon: <Security /> },
+    { label: 'Paramètres', path: '/admin/settings', icon: <Settings /> },
   ];
 
   const isActive = (path) => location.pathname === path;
@@ -39,17 +41,27 @@ const AdminLayout = () => {
   return (
     <Box sx={{ display: 'flex' }}>
       {/* AppBar */}
-      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
         <Toolbar>
-          <Typography variant="h6" sx={{ flex: 1 }}>
-            🔐 Admin Immo2000
+          <Typography
+            variant="h6"
+            sx={{ flex: 1, cursor: 'pointer', fontWeight: 700 }}
+            onClick={() => navigate('/admin')}
+          >
+            🏢 Immo2000 Admin
           </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer' }}
-               onClick={(e) => setAnchorEl(e.currentTarget)}>
-            <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.dark' }}>
-              {user?.nom?.charAt(0).toUpperCase()}
-            </Avatar>
-            <Typography variant="body2">{user?.email}</Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Typography variant="caption" sx={{ opacity: 0.9 }}>
+              v3.0.0 - Task 3 Complete
+            </Typography>
+            <Divider orientation="vertical" sx={{ height: 24, bgcolor: 'rgba(255,255,255,0.3)' }} />
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer' }}
+                 onClick={(e) => setAnchorEl(e.currentTarget)}>
+              <Avatar sx={{ width: 32, height: 32, bgcolor: 'rgba(255,255,255,0.3)' }}>
+                {user?.nom?.charAt(0).toUpperCase()}
+              </Avatar>
+              <Typography variant="body2">{user?.email}</Typography>
+            </Box>
           </Box>
         </Toolbar>
       </AppBar>
@@ -119,7 +131,9 @@ const AdminLayout = () => {
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <Box sx={{ mt: '64px' }} /> {/* Espacement pour AppBar */}
         <Box sx={{ flex: 1, overflow: 'auto' }}>
-          <Outlet />
+          <DevModeWaitingWrapper>
+            <Outlet />
+          </DevModeWaitingWrapper>
         </Box>
       </Box>
 

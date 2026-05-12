@@ -21,6 +21,7 @@ import { useAuth } from './hooks/useAuth';
 import DynamicNavbar from './components/DynamicNavbar';
 import ProtectedRoute from './components/ProtectedRoute';
 import Chatbot from './components/Chatbot';
+import DevRoleWrapper from './components/DevRoleWrapper';
 
 // Pages
 import VendeurDashboard from './components/VendeurDashboard';
@@ -51,6 +52,7 @@ import NotificationsPage from './pages/NotificationsPage';
 
 // Admin Panel Components
 import AdminLayout from './components/AdminLayout';
+import AdminHomePage from './pages/AdminHomePage';
 import AdminUsersPageNew from './pages/AdminUsersPageNew';
 import AdminListingsPage from './pages/AdminListingsPage';
 import AdminTransactionsPage from './pages/AdminTransactionsPage';
@@ -58,6 +60,9 @@ import AdminSettingsPage from './pages/AdminSettingsPage';
 import AdminAnalyticsPage from './pages/AdminAnalyticsPage';
 import AdminAuditPage from './pages/AdminAuditPage';
 import AdminSecurityPage from './pages/AdminSecurityPage';
+import DevAccessPage from './pages/DevAccessPage';
+import DevTransitionPage from './pages/DevTransitionPage';
+import DashboardRedirectPage from './pages/DashboardRedirectPage';
 
 
 /**
@@ -175,6 +180,13 @@ function App() {
         <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
           <Routes>
             {/* Routes publiques - Pas de protection */}
+            {/* Route de développement - Mode sans login */}
+            <Route path="/dev" element={<DevAccessPage />} />
+            <Route path="/dev-transition" element={<DevTransitionPage />} />
+            <Route path="/utilisateur/*" element={<DevRoleWrapper roleId="user" targetPath="/dashboard" />} />
+            <Route path="/admin-dev/*" element={<DevRoleWrapper roleId="admin" targetPath="/admin" />} />
+            <Route path="/notaire-dev/*" element={<DevRoleWrapper roleId="notaire" targetPath="/notaire" />} />
+
             <Route path="/" element={!isAuthenticated ? <HomePage /> : <Navigate to="/dashboard" replace />} />
             <Route path="/login" element={<LoginRedirect />} />
             <Route path="/register" element={<RegisterRedirect />} />
@@ -217,15 +229,29 @@ function App() {
               }
             />
 
-            {/* Routes pour Utilisateur (user) */}
+            {/* Dashboard - Redirection intelligente selon le rôle */}
             <Route
               path="/dashboard"
+              element={
+                <ProtectedRoute
+                  element={<DashboardRedirectPage />}
+                  isAuthenticated={isAuthenticated}
+                  userRole={user?.role}
+                  requiredRoles={['user', 'admin', 'notaire']}
+                  loading={loading}
+                />
+              }
+            />
+
+            {/* Routes pour Utilisateur (user) - Dashboard utilisateur */}
+            <Route
+              path="/user/dashboard"
               element={
                 <ProtectedRoute
                   element={<UserDashboardPage />}
                   isAuthenticated={isAuthenticated}
                   userRole={user?.role}
-                  requiredRoles={['user', 'admin', 'notaire']}
+                  requiredRoles={['user', 'admin']}
                   loading={loading}
                 />
               }
@@ -245,19 +271,6 @@ function App() {
             />
 
             {/* Routes pour Admin uniquement */}
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute
-                  element={<AdminPage />}
-                  isAuthenticated={isAuthenticated}
-                  userRole={user?.role}
-                  requiredRoles={['admin']}
-                  loading={loading}
-                />
-              }
-            />
-
             {/* Admin Panel avec Layout */}
             <Route
               path="/admin/*"
@@ -271,6 +284,8 @@ function App() {
                 />
               }
             >
+              <Route path="" element={<AdminHomePage />} />
+              <Route path="home" element={<AdminHomePage />} />
               <Route path="dashboard" element={<AdminDashboardPage />} />
               <Route path="users" element={<AdminUsersPageNew />} />
               <Route path="listings" element={<AdminListingsPage />} />
@@ -339,6 +354,19 @@ function App() {
             />
 
             {/* Routes pour Notaires uniquement */}
+            <Route
+              path="/notaire"
+              element={
+                <ProtectedRoute
+                  element={<NotaireDashboardPage />}
+                  isAuthenticated={isAuthenticated}
+                  userRole={user?.role}
+                  requiredRoles={['notaire']}
+                  loading={loading}
+                />
+              }
+            />
+
             <Route
               path="/notaire/dashboard"
               element={

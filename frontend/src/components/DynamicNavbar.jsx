@@ -76,6 +76,13 @@ export const DynamicNavbar = ({
 
   const loadUnreadCount = async () => {
     try {
+      // Skip API call if in dev mode
+      const devMode = localStorage.getItem('dev_mode') === 'true';
+      if (devMode) {
+        setUnreadNotifications(0);
+        return;
+      }
+
       const response = await notificationsApi.getUnreadCount();
       if (response.data) {
         setUnreadNotifications(response.data.unread_count || 0);

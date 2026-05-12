@@ -16,7 +16,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 
 const AdminAnalyticsPage = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [summary, setSummary] = useState(null);
   const [users, setUsers] = useState(null);
@@ -27,12 +27,16 @@ const AdminAnalyticsPage = () => {
   const [tabValue, setTabValue] = useState(0);
 
   useEffect(() => {
-    if (user?.role !== 'admin') navigate('/');
-  }, [user, navigate]);
+    if (!authLoading && (!user || user?.role !== 'admin')) {
+      navigate('/');
+    }
+  }, [user, authLoading, navigate]);
 
   useEffect(() => {
-    loadAllData();
-  }, []);
+    if (!authLoading && user && user?.role === 'admin') {
+      loadAllData();
+    }
+  }, [user, authLoading]);
 
   const loadAllData = async () => {
     setLoading(true);
