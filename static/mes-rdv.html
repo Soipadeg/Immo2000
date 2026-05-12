@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Rendez-vous - Immo2000</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1976d2;
+            --secondary-color: #424242;
+            --success-color: #4caf50;
+            --danger-color: #f44336;
+            --warning-color: #ff9800;
+            --light-bg: #f5f5f5;
+            --border-color: #e0e0e0;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .container {
+            max-width: 1000px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .page-header {
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        .breadcrumb-nav {
+            padding: 15px 20px;
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb-nav a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb-nav a:hover {
+            text-decoration: underline;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .tab {
+            padding: 15px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: var(--secondary-color);
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .rdv-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .rdv-card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .rdv-card.status-confirmé {
+            border-left-color: var(--success-color);
+        }
+
+        .rdv-card.status-en_attente_vendeur,
+        .rdv-card.status-en_attente_acheteur {
+            border-left-color: var(--warning-color);
+        }
+
+        .rdv-card.status-refusé {
+            border-left-color: var(--danger-color);
+        }
+
+        .rdv-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+            gap: 15px;
+        }
+
+        .rdv-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        .rdv-status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .rdv-status.confirmé {
+            background-color: #c8e6c9;
+            color: #1b5e20;
+        }
+
+        .rdv-status.en_attente_vendeur,
+        .rdv-status.en_attente_acheteur {
+            background-color: #ffe0b2;
+            color: #e65100;
+        }
+
+        .rdv-status.refusé {
+            background-color: #ffcdd2;
+            color: #b71c1c;
+        }
+
+        .rdv-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: var(--light-bg);
+            border-radius: 6px;
+        }
+
+        .rdv-info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rdv-info-icon {
+            font-size: 20px;
+        }
+
+        .rdv-info-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .rdv-info-label {
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+        }
+
+        .rdv-info-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        .rdv-message {
+            padding: 15px;
+            background-color: #f0f4ff;
+            border-left: 3px solid var(--primary-color);
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: var(--secondary-color);
+            line-height: 1.6;
+        }
+
+        .rdv-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .rdv-action-btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-accept {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-accept:hover {
+            background-color: #45a049;
+        }
+
+        .btn-propose {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-propose:hover {
+            background-color: #1565c0;
+        }
+
+        .btn-refuse {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-refuse:hover {
+            background-color: #da190b;
+        }
+
+        .btn-message {
+            background-color: #00bcd4;
+            color: white;
+        }
+
+        .btn-message:hover {
+            background-color: #0097a7;
+        }
+
+        .btn-calendar {
+            background-color: #8e24aa;
+            color: white;
+        }
+
+        .btn-calendar:hover {
+            background-color: #6a1b9a;
+        }
+
+        .btn-history {
+            background-color: #5e35b1;
+            color: white;
+        }
+
+        .btn-history:hover {
+            background-color: #4527a0;
+        }
+
+        .btn-offer {
+            background-color: #ff6f00;
+            color: white;
+        }
+
+        .btn-offer:hover {
+            background-color: #e65100;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 20px;
+        }
+
+        .spinner {
+            border: 3px solid var(--light-bg);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Modal */
+        .modal-content {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--border-color);
+            padding: 20px;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .rdv-info {
+                grid-template-columns: 1fr;
+            }
+
+            .rdv-header {
+                flex-direction: column;
+            }
+
+            .rdv-actions {
+                flex-direction: column;
+            }
+
+            .rdv-action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div id="navbar-container"></div>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-nav">
+        <a href="dashboard.html">← Retour au dashboard</a>
+    </div>
+
+    <div class="container">
+        <h1 class="page-header">📅 Mes Rendez-vous</h1>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('all')">Tous</button>
+            <button class="tab" onclick="switchTab('confirmé')">✓ Confirmés</button>
+            <button class="tab" onclick="switchTab('en_attente')">⏳ En attente</button>
+            <button class="tab" onclick="switchTab('refusé')">✗ Refusés</button>
+        </div>
+
+        <!-- Content -->
+        <div id="loadingState">
+            <div class="loading">
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <div id="contentState" style="display: none;">
+            <div id="rdvList"></div>
+        </div>
+
+        <div id="emptyState" style="display: none;">
+            <div class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <p id="emptyMessage">Aucun rendez-vous</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Proposition RDV -->
+    <div class="modal fade" id="proposeModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">⏰ Proposer une autre date</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="proposeForm">
+                        <div class="form-group mb-3">
+                            <label for="proposeDate" class="form-label">Date<span style="color: red;">*</span></label>
+                            <input type="date" class="form-control" id="proposeDate" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="proposeTime" class="form-label">Heure<span style="color: red;">*</span></label>
+                            <input type="time" class="form-control" id="proposeTime" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="proposeMessage" class="form-label">Message<span style="color: red;">*</span></label>
+                            <textarea class="form-control" id="proposeMessage" rows="3" placeholder="Expliquez pourquoi cette date convient..." required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary" onclick="submitProposal()">Proposer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Historique RDV -->
+    <div class="modal fade" id="historiqueModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">📜 Historique des négociations</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="historiqueContent" style="max-height: 500px; overflow-y: auto;">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Chargement...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Faire une offre -->
+    <div class="modal fade" id="offerModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">💰 Faire une offre d'achat</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="offerForm">
+                        <div class="form-group mb-3">
+                            <label for="offerPrice" class="form-label">Prix proposé (€)<span style="color: red;">*</span></label>
+                            <input type="number" class="form-control" id="offerPrice" step="1000" min="1" required placeholder="ex: 350000">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="offerMessage" class="form-label">Message (conditions, etc.)<span style="color: red;">*</span></label>
+                            <textarea class="form-control" id="offerMessage" rows="4" placeholder="Décrivez les conditions de votre offre..." required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-success" onclick="submitOffer()">💰 Faire l'offre</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="js/navbar-component-loader.js"></script>
+    <script>
+        let rdvList = [];
+        let currentTab = 'all';
+        let currentRDVForProposal = null;
+        let proposeModal = null;
+
+        async function loadRDV() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                if (!token) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const response = await axios.get('http://localhost:5000/api/v1/rendez-vous', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                rdvList = response.data.items || [];
+                document.getElementById('loadingState').style.display = 'none';
+                renderRDV();
+
+                proposeModal = new bootstrap.Modal(document.getElementById('proposeModal'), {
+                    keyboard: false
+                });
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('emptyMessage').textContent = 'Erreur de chargement';
+            }
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            renderRDV();
+        }
+
+        function renderRDV() {
+            const container = document.getElementById('rdvList');
+
+            let filtered = rdvList;
+            if (currentTab !== 'all') {
+                if (currentTab === 'en_attente') {
+                    filtered = rdvList.filter(r => r.statut === 'en_attente_vendeur' || r.statut === 'en_attente_acheteur');
+                } else {
+                    filtered = rdvList.filter(r => r.statut === currentTab);
+                }
+            }
+
+            if (filtered.length === 0) {
+                document.getElementById('contentState').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+                const messages = {
+                    'all': 'Aucun rendez-vous',
+                    'confirmé': 'Aucun rendez-vous confirmé',
+                    'en_attente': 'Aucun rendez-vous en attente',
+                    'refusé': 'Aucun rendez-vous refusé'
+                };
+                document.getElementById('emptyMessage').textContent = messages[currentTab];
+                return;
+            }
+
+            document.getElementById('contentState').style.display = 'block';
+            document.getElementById('emptyState').style.display = 'none';
+
+            container.innerHTML = filtered.map(rdv => {
+                const dateProposée = new Date(rdv.date_proposée);
+                const dateConfirmée = rdv.date_confirmée ? new Date(rdv.date_confirmée) : null;
+                const dateAffiche = dateConfirmée || dateProposée;
+
+                const dateFormatée = dateAffiche.toLocaleDateString('fr-FR', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                const heureFormatée = dateAffiche.toLocaleTimeString('fr-FR', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                // Determine which action to show based on status
+                let actionButtons = '';
+                if (rdv.statut === 'en_attente_vendeur' && rdv.dernier_proposant === 'acheteur') {
+                    // Vendeur doit répondre
+                    actionButtons = `
+                        <button class="rdv-action-btn btn-accept" onclick="acceptRDV(${rdv.rdv_id})">✓ Accepter</button>
+                        <button class="rdv-action-btn btn-propose" onclick="openProposeModal(${rdv.rdv_id})">⏰ Proposer autre date</button>
+                    `;
+                } else if (rdv.statut === 'en_attente_acheteur' && rdv.dernier_proposant === 'vendeur') {
+                    // Acheteur doit répondre
+                    actionButtons = `
+                        <button class="rdv-action-btn btn-accept" onclick="acceptRDV(${rdv.rdv_id})">✓ Accepter</button>
+                        <button class="rdv-action-btn btn-propose" onclick="openProposeModal(${rdv.rdv_id})">⏰ Proposer autre date</button>
+                    `;
+                }
+
+                // Always allow contact
+                actionButtons += `<button class="rdv-action-btn btn-message" onclick="contactAboutRDV(${rdv.rdv_id})">💬 Discuter</button>`;
+
+                // Ajouter boutons supplémentaires
+                if (rdv.statut === 'confirmé') {
+                    // RDV confirmé: export iCal + historique + offre
+                    actionButtons += `<button class="rdv-action-btn btn-calendar" onclick="exportICAL(${rdv.rdv_id})">📥 Export iCal</button>`;
+                    actionButtons += `<button class="rdv-action-btn btn-history" onclick="showHistorique(${rdv.rdv_id})">📜 Historique</button>`;
+                    // Ajouter bouton offre seulement si l'utilisateur est acheteur
+                    const userRole = localStorage.getItem('user_role');
+                    if (userRole !== 'admin') {  // Simple heuristique: pas admin = peut être acheteur
+                        actionButtons += `<button class="rdv-action-btn btn-offer" onclick="openOfferModal(${rdv.rdv_id}, ${rdv.annonce_id})">💰 Faire une offre</button>`;
+                    }
+                } else {
+                    // RDV en attente ou refusé: juste l'historique
+                    actionButtons += `<button class="rdv-action-btn btn-history" onclick="showHistorique(${rdv.rdv_id})">📜 Historique</button>`;
+                }
+
+                return `
+                    <div class="rdv-card status-${rdv.statut}">
+                        <div class="rdv-header">
+                            <div>
+                                <div class="rdv-title">Visite de bien</div>
+                                <small style="color: #999;">Annonce #${rdv.annonce_id} • RDV #${rdv.rdv_id}</small>
+                            </div>
+                            <span class="rdv-status ${rdv.statut === 'confirmé' ? 'confirmé' : rdv.statut.includes('en_attente') ? 'en_attente_vendeur' : 'refusé'}">
+                                ${getStatusLabel(rdv.statut)}
+                            </span>
+                        </div>
+
+                        <div class="rdv-info">
+                            <div class="rdv-info-item">
+                                <div class="rdv-info-icon">📅</div>
+                                <div class="rdv-info-text">
+                                    <div class="rdv-info-label">Date ${rdv.date_confirmée ? '(confirmée)' : '(proposée)'}</div>
+                                    <div class="rdv-info-value">${dateFormatée}</div>
+                                </div>
+                            </div>
+                            <div class="rdv-info-item">
+                                <div class="rdv-info-icon">🕐</div>
+                                <div class="rdv-info-text">
+                                    <div class="rdv-info-label">Heure</div>
+                                    <div class="rdv-info-value">${heureFormatée}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        ${rdv.message_dernier ? `<div class="rdv-message">${rdv.message_dernier}</div>` : ''}
+
+                        <div class="rdv-actions">
+                            ${actionButtons}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getStatusLabel(statut) {
+            const labels = {
+                'confirmé': '✓ Confirmé',
+                'en_attente_vendeur': '⏳ En attente (vendeur)',
+                'en_attente_acheteur': '⏳ En attente (acheteur)',
+                'refusé': '✗ Refusé'
+            };
+            return labels[statut] || statut;
+        }
+
+        async function acceptRDV(rdvId) {
+            if (!confirm('Acceptez-vous cette date?')) return;
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await axios.put(
+                    `http://localhost:5000/api/v1/rendez-vous/${rdvId}`,
+                    {
+                        action: 'accepter',
+                        message: 'Date acceptée'
+                    },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+
+                // Update local list
+                const index = rdvList.findIndex(r => r.rdv_id === rdvId);
+                if (index !== -1) {
+                    rdvList[index] = response.data;
+                }
+
+                renderRDV();
+                alert('Rendez-vous accepté!');
+
+            } catch (error) {
+                alert('Erreur: ' + (error.response?.data?.error || error.message));
+            }
+        }
+
+        function openProposeModal(rdvId) {
+            currentRDVForProposal = rdvId;
+
+            // Set minimum date to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const minDate = tomorrow.toISOString().split('T')[0];
+            document.getElementById('proposeDate').min = minDate;
+
+            proposeModal.show();
+        }
+
+        async function submitProposal() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const dateStr = document.getElementById('proposeDate').value;
+                const timeStr = document.getElementById('proposeTime').value;
+                const message = document.getElementById('proposeMessage').value.trim();
+
+                if (!dateStr || !timeStr || !message) {
+                    alert('Veuillez remplir tous les champs');
+                    return;
+                }
+
+                const dateTime = new Date(`${dateStr}T${timeStr}:00`);
+
+                const response = await axios.put(
+                    `http://localhost:5000/api/v1/rendez-vous/${currentRDVForProposal}`,
+                    {
+                        action: 'refuser',
+                        date_proposée: dateTime.toISOString(),
+                        message: message
+                    },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+
+                const index = rdvList.findIndex(r => r.rdv_id === currentRDVForProposal);
+                if (index !== -1) {
+                    rdvList[index] = response.data;
+                }
+
+                renderRDV();
+                proposeModal.hide();
+                document.getElementById('proposeForm').reset();
+                alert('Nouvelle date proposée!');
+
+            } catch (error) {
+                alert('Erreur: ' + (error.response?.data?.error || error.message));
+            }
+        }
+
+        function contactAboutRDV(rdvId) {
+            const rdv = rdvList.find(r => r.rdv_id === rdvId);
+            if (rdv) {
+                window.location.href = `messagerie.html?annonce_id=${rdv.annonce_id}`;
+            }
+        }
+
+        async function exportICAL(rdvId) {
+            try {
+                const token = localStorage.getItem('auth_token');
+                if (!token) {
+                    alert('Vous devez être connecté');
+                    return;
+                }
+
+                // Télécharger le fichier iCal
+                const response = await axios.get(
+                    `http://localhost:5000/api/v1/rendez-vous/${rdvId}/ical`,
+                    {
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        responseType: 'blob'
+                    }
+                );
+
+                // Créer un lien de téléchargement
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', `rdv-${rdvId}.ics`);
+                document.body.appendChild(link);
+                link.click();
+                link.parentNode.removeChild(link);
+            } catch (error) {
+                console.error('Erreur export iCal:', error);
+                alert('Erreur lors du téléchargement du fichier iCal');
+            }
+        }
+
+        let historiqueModalInstance = null;
+        async function showHistorique(rdvId) {
+            try {
+                const token = localStorage.getItem('auth_token');
+                if (!token) {
+                    alert('Vous devez être connecté');
+                    return;
+                }
+
+                // Récupérer l'historique
+                const response = await axios.get(
+                    `http://localhost:5000/api/v1/rendez-vous/${rdvId}/historique`,
+                    {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    }
+                );
+
+                const historique = response.data;
+                const historiqueContent = document.getElementById('historiqueContent');
+
+                if (!historique || historique.length === 0) {
+                    historiqueContent.innerHTML = '<p class="text-muted">Aucun historique disponible.</p>';
+                } else {
+                    const timeline = historique.map(h => {
+                        const date = new Date(h.date_action);
+                        const dateStr = date.toLocaleDateString('fr-FR');
+                        const timeStr = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
+                        let actionIcon = '📝';
+                        let actionLabel = h.action;
+                        if (h.action === 'creation') {
+                            actionIcon = '✏️';
+                            actionLabel = 'RDV créé';
+                        } else if (h.action === 'acceptation') {
+                            actionIcon = '✓';
+                            actionLabel = 'Date acceptée';
+                        } else if (h.action === 'refus') {
+                            actionIcon = '✗';
+                            actionLabel = 'RDV refusé';
+                        } else if (h.action === 'contre_proposition') {
+                            actionIcon = '⏰';
+                            actionLabel = 'Nouvelle date proposée';
+                        }
+
+                        return `
+                            <div class="timeline-item" style="padding: 12px; border-left: 3px solid #1976d2; margin-bottom: 12px; background: #f9f9f9; border-radius: 4px;">
+                                <div style="font-weight: bold; color: #1976d2;">${actionIcon} ${actionLabel}</div>
+                                <div style="font-size: 12px; color: #999;">${dateStr} à ${timeStr}</div>
+                                ${h.date_proposée ? `<div style="margin-top: 6px;">📅 ${new Date(h.date_proposée).toLocaleDateString('fr-FR')}</div>` : ''}
+                                ${h.message ? `<div style="margin-top: 6px; color: #555; font-size: 13px;">"${h.message}"</div>` : ''}
+                            </div>
+                        `;
+                    }).join('');
+
+                    historiqueContent.innerHTML = timeline;
+                }
+
+                // Afficher la modal
+                if (!historiqueModalInstance) {
+                    historiqueModalInstance = new bootstrap.Modal(document.getElementById('historiqueModal'), {
+                        keyboard: false
+                    });
+                }
+                historiqueModalInstance.show();
+
+            } catch (error) {
+                console.error('Erreur historique:', error);
+                alert('Erreur lors du chargement de l\'historique');
+            }
+        }
+
+        let currentOfferId = null;
+        let currentOfferAnnonce = null;
+        function openOfferModal(rdvId, annonceId) {
+            currentOfferId = rdvId;
+            currentOfferAnnonce = annonceId;
+
+            // Réinitialiser le formulaire
+            document.getElementById('offerForm').reset();
+
+            // Afficher la modal
+            const offerModalInstance = new bootstrap.Modal(document.getElementById('offerModal'), {
+                keyboard: false
+            });
+            offerModalInstance.show();
+        }
+
+        async function submitOffer() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                if (!token) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const prix = document.getElementById('offerPrice').value;
+                const message = document.getElementById('offerMessage').value;
+
+                if (!prix || !message) {
+                    alert('Veuillez remplir tous les champs');
+                    return;
+                }
+
+                // Créer l'offre via l'API (nous avons un endpoint /api/v1/offres)
+                const response = await axios.post(
+                    'http://localhost:5000/api/v1/offres',
+                    {
+                        annonce_id: currentOfferAnnonce,
+                        prix_propose: parseFloat(prix),
+                        message: message,
+                        statut: 'proposee'
+                    },
+                    {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    }
+                );
+
+                alert('✓ Offre créée avec succès! Le vendeur a reçu une notification.');
+
+                // Fermer la modal
+                const offerModal = bootstrap.Modal.getInstance(document.getElementById('offerModal'));
+                offerModal.hide();
+
+                // Recharger les RDV
+                loadRDV();
+
+            } catch (error) {
+                console.error('Erreur offre:', error);
+                alert('Erreur lors de la création de l\'offre: ' + (error.response?.data?.error || error.message));
+            }
+        }
+
+        // Initialize
+        loadRDV();
+    </script>
+</body>
+</html>

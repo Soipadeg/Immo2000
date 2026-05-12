@@ -502,6 +502,9 @@
                         <button class="btn btn-success" onclick="contactSeller()" title="Prise de contact">
                             💬
                         </button>
+                        <button class="btn btn-info" onclick="openRDVModal()" title="Fixer un RDV">
+                            📅
+                        </button>
                     </div>
 
                     <!-- Type Bien -->
@@ -557,6 +560,39 @@
                     <!-- Back to listings -->
                     <a href="matching.html" class="btn btn-secondary" style="margin-top: 25px; display: block; text-align: center; padding: 12px 20px; font-size: 1rem;">← Retour aux annonces</a>
                 </aside>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal RDV -->
+    <div class="modal fade" id="rdvModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">📅 Proposer un rendez-vous</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="rdvForm">
+                        <div class="form-group mb-3">
+                            <label for="rdvDate" class="form-label">Date<span style="color: red;">*</span></label>
+                            <input type="date" class="form-control" id="rdvDate" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="rdvTime" class="form-label">Heure<span style="color: red;">*</span></label>
+                            <input type="time" class="form-control" id="rdvTime" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="rdvMessage" class="form-label">Message<span style="color: red;">*</span></label>
+                            <textarea class="form-control" id="rdvMessage" rows="4" placeholder="Décrivez votre demande de visite..." required></textarea>
+                            <small class="text-muted">Minimum 10 caractères</small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary" onclick="submitRDV()">Proposer le RDV</button>
+                </div>
             </div>
         </div>
     </div>
@@ -775,6 +811,67 @@
                 // Logged in - redirect to messaging page
                 // For now, create a messaging page URL with the annonce ID
                 window.location.href = `messagerie.html?annonce_id=${currentAnnonce.annonce_id}`;
+            }
+        }
+
+        // RDV Modal
+        let rdvModal = null;
+
+        function openRDVModal() {
+            const token = localStorage.getItem('auth_token');
+
+            if (!token) {
+                window.location.href = 'inscription.html';
+                return;
+            }
+
+            if (!rdvModal) {
+                rdvModal = new bootstrap.Modal(document.getElementById('rdvModal'), {
+                    keyboard: false
+                });
+            }
+
+            // Set minimum date to today
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const minDate = tomorrow.toISOString().split('T')[0];
+            document.getElementById('rdvDate').min = minDate;
+
+            rdvModal.show();
+        }
+
+        async function submitRDV() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const dateStr = document.getElementById('rdvDate').value;
+                const timeStr = document.getElementById('rdvTime').value;
+                const message = document.getElementById('rdvMessage').value.trim();
+
+                if (!dateStr || !timeStr || !message) {
+                    alert('Veuillez remplir tous les champs');
+                    return;
+                }
+
+                // Combine date and time
+                const dateTime = new Date(`${dateStr}T${timeStr}:00`);
+
+                const payload = {
+                    annonce_id: currentAnnonce.annonce_id,
+                    date_proposée: dateTime.toISOString(),
+                    message: message
+                };
+
+                const response = await axios.post('http://localhost:5000/api/v1/rendez-vous', payload, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                alert('Rendez-vous proposé avec succès!');
+                rdvModal.hide();
+                document.getElementById('rdvForm').reset();
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Erreur: ' + (error.response?.data?.error || error.message));
             }
         }
 

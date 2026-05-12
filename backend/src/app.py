@@ -35,11 +35,16 @@ from src.routes.chatbot import chatbot_bp
 from src.routes.faq import faq_bp
 from src.routes.images import images_bp
 from src.routes.documents import documents_bp
+from src.routes.rendez_vous import rdv_bp
 from src.routes.annonce_views import views_bp
 from src.routes.search_history import search_bp
 from src.routes.favoris import favoris_bp
 from src.routes.offres import offres_bp
 from src.routes.notaires import notaires_bp
+
+# Import models pour que SQLAlchemy les reconnaisse
+from src.models.historique_rdv import HistoriqueRDV
+
 from src.services.scheduler import SchedulerService
 from src.services.chatbot import init_chatbot
 from src.config import get_config
@@ -189,6 +194,9 @@ def create_app(config_name: str = None) -> Flask:
 
     # Blueprints - Messages (Messagerie P2P)
     app.register_blueprint(messages_bp)
+
+    # Blueprints - Rendez-vous (Tunnel achat)
+    app.register_blueprint(rdv_bp)
 
     # Blueprints - Chatbot
     app.register_blueprint(chatbot_bp)
