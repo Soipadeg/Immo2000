@@ -11,12 +11,11 @@ Endpoints:
 
 from flask import Blueprint, request, jsonify, send_file
 from datetime import datetime, timedelta
-from src.auth.models import db
+from src.auth.models import db, User
 from src.auth.decorators import token_required
 from src.models.rendez_vous import RendezVous
 from src.models.historique_rdv import HistoriqueRDV
 from src.models.annonces import Annonce
-from src.models.utilisateurs import Utilisateur
 from src.models.notifications import Notification, NotificationType
 from src.schemas.rendez_vous import (
     CreateRDV,
