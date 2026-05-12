@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Notifications - Immo2000</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .page-header {
+            color: #1976d2;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+        .notification-card {
+            background: white;
+            border-left: 4px solid #ff9800;
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            transition: background-color 0.2s;
+        }
+        .notification-card.unread {
+            background-color: #f0f8ff;
+            border-left-color: #1976d2;
+        }
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+        .notification-title {
+            font-weight: 600;
+            color: #333;
+        }
+        .notification-date {
+            color: #999;
+            font-size: 12px;
+        }
+        .notification-content {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .badge-unread {
+            background-color: #1976d2;
+            font-size: 10px;
+            padding: 2px 6px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        .empty-state-text {
+            color: #666;
+            font-size: 18px;
+        }
+        .notification-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        .btn-small {
+            padding: 4px 12px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar component will be loaded here -->
+    <div id="navbar-container"></div>
+
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <h1 class="page-header" style="margin: 0;">📢 Mes Notifications</h1>
+            <button class="btn btn-sm btn-outline-secondary" onclick="markAllAsRead()">Marquer tout comme lu</button>
+        </div>
+
+        <div id="notificationsContainer">
+            <div class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <p class="empty-state-text">Aucune notification</p>
+                <p style="color: #999; font-size: 14px;">Vous recevrez ici les notifications concernant vos alertes et vos interactions.</p>
+            </div>
+        </div>
+
+        <div id="notificationsList"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+    <script src="js/navbar-component-loader.js"></script>
+    <script>
+        // Load notifications from API
+        async function loadNotifications() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                if (!token) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const response = await axios.get('http://localhost:5000/notifications', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                const container = document.getElementById('notificationsContainer');
+                const list = document.getElementById('notificationsList');
+
+                if (!response.data || response.data.length === 0) {
+                    container.style.display = 'block';
+                    list.style.display = 'none';
+                    return;
+                }
+
+                container.style.display = 'none';
+                list.style.display = 'block';
+
+                response.data.forEach(notification => {
+                    const card = document.createElement('div');
+                    card.className = `notification-card ${notification.lue ? '' : 'unread'}`;
+
+                    const date = new Date(notification.date_creation);
+                    const formattedDate = date.toLocaleDateString('fr-FR') + ' ' + date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
+                    card.innerHTML = `
+                        <div class="notification-header">
+                            <div>
+                                <div class="notification-title">${notification.titre}</div>
+                                <div class="notification-date">${formattedDate}</div>
+                            </div>
+                            ${notification.lue ? '' : '<span class="badge badge-unread">Nouveau</span>'}
+                        </div>
+                        <div class="notification-content">${notification.message}</div>
+                        <div class="notification-actions">
+                            ${!notification.lue ? `<button class="btn btn-sm btn-primary btn-small" onclick="markAsRead(${notification.notification_id})">Marquer comme lu</button>` : ''}
+                            <button class="btn btn-sm btn-outline-danger btn-small" onclick="deleteNotification(${notification.notification_id})">Supprimer</button>
+                        </div>
+                    `;
+                    list.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Erreur lors du chargement des notifications:', error);
+                if (error.response?.status === 401) {
+                    window.location.href = 'login.html';
+                }
+            }
+        }
+
+        async function markAsRead(notificationId) {
+            try {
+                const token = localStorage.getItem('auth_token');
+                await axios.patch(`http://localhost:5000/notifications/${notificationId}/read`, {}, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                loadNotifications(); // Reload
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+
+        async function markAllAsRead() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                await axios.post('http://localhost:5000/notifications/read-all', {}, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                loadNotifications(); // Reload
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+
+        async function deleteNotification(notificationId) {
+            try {
+                const token = localStorage.getItem('auth_token');
+                await axios.delete(`http://localhost:5000/notifications/${notificationId}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                loadNotifications(); // Reload
+            } catch (error) {
+                console.error('Erreur lors de la suppression:', error);
+                alert('Erreur lors de la suppression');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadNotifications);
+    </script>
+</body>
+</html>

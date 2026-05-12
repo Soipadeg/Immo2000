@@ -178,7 +178,7 @@
                     });
 
                     // Stocke le token et l'utilisateur
-                    localStorage.setItem('token', response.data.access_token);
+                    localStorage.setItem('auth_token', response.data.access_token);
                     localStorage.setItem('refresh_token', response.data.refresh_token);
 
                     // Récupère les infos utilisateur
@@ -187,6 +187,11 @@
                             headers: { Authorization: `Bearer ${response.data.access_token}` }
                         });
                         localStorage.setItem('user', JSON.stringify(meResponse.data));
+                        localStorage.setItem('user_role', meResponse.data.role);
+                        localStorage.setItem('user_email', meResponse.data.email);
+                        localStorage.setItem('user_prenom', meResponse.data.prenom);
+                        localStorage.setItem('user_nom', meResponse.data.nom);
+                        localStorage.setItem('user_id', meResponse.data.utilisateur_id);
                     } catch (e) {
                         console.warn('Impossible de récupérer les infos utilisateur');
                     }
