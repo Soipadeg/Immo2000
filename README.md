@@ -129,8 +129,10 @@ Immo2000/
 |--------|---------|---------|
 | **Démarrer** | `docs/start/` | [QUICKSTART.md](docs/start/QUICKSTART.md) |
 | **Architecture** | `docs/core/` | [Architecture.md](docs/core/) |
+| **Modèle Utilisateur Unifié** ✨ | `docs/architecture/` | [UNIFIED_USER_MODEL.md](docs/architecture/UNIFIED_USER_MODEL.md) |
 | **API Reference** | `docs/reference/` | [API.md](docs/reference/) |
 | **Authentification** | `docs/auth/` | [JWT_REFERENCE.md](docs/auth/) |
+| **Matching Algorithm** | `docs/advanced/` | [MATCHING.md](docs/advanced/MATCHING.md) |
 | **Tests** | `docs/tests/` | [TEST_REPORT.md](docs/tests/) |
 | **Exemples** | `examples/` | [biens_exemple.json](examples/) |
 | **Initialisation** | `scripts/` | [setup.sh](scripts/) |
