@@ -104,7 +104,7 @@ export const DynamicNavbar = ({
     const items = [];
 
     // Items disponibles pour tous (connecté ou pas)
-    items.push({ label: 'Annonces', path: '/search', icon: <SearchIcon /> });
+    items.push({ label: 'Acheter', path: '/search', icon: <HomeIcon /> });
     items.push({ label: 'Simulateur', path: '/simulateur-pret', icon: <TimelineIcon /> });
 
     if (!isAuthenticated) {

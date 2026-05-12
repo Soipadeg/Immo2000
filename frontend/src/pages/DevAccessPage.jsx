@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   Container,
   Paper,
@@ -18,8 +17,6 @@ import {
 } from '@mui/icons-material';
 
 const DevAccessPage = () => {
-  const navigate = useNavigate();
-
   const roles = [
     {
       id: 'visitor',
@@ -56,11 +53,29 @@ const DevAccessPage = () => {
   ];
 
   const handleAccessRole = (roleId) => {
+    // Définir le rôle dans localStorage pour que useAuth le récupère
+    const roleMap = {
+      visitor: 'visitor',
+      user: 'user',
+      admin: 'admin',
+      notaire: 'notaire',
+    };
+
+    const userRole = roleMap[roleId] || 'user';
+    const userId = Math.random().toString(36).substr(2, 9);
+
+    // Stocker le rôle et les données utilisateur dans localStorage
+    localStorage.setItem('user_role', userRole);
+    localStorage.setItem('user_id', userId);
+    localStorage.setItem('user_email', `${userRole}_${userId}@immo2000.local`);
+    localStorage.setItem('user_nom', 'Utilisateur');
+    localStorage.setItem('user_prenom', 'Dev');
+
     // Récupérer le chemin cible
     const targetPath = roles.find(r => r.id === roleId)?.path || '/';
 
-    // Rediriger vers la page de transition avec les paramètres
-    navigate(`/dev-transition?role=${roleId}&target=${encodeURIComponent(targetPath)}`);
+    // Rediriger directement
+    window.location.href = targetPath;
   };
 
   return (

@@ -18,14 +18,13 @@ import { fr } from 'date-fns/locale';
 import { useAuth } from './hooks/useAuth';
 
 // Composants
-import DynamicNavbar from './components/DynamicNavbar';
 import ProtectedRoute from './components/ProtectedRoute';
+import DynamicNavbar from './components/DynamicNavbar';
 import Chatbot from './components/Chatbot';
 import DevRoleWrapper from './components/DevRoleWrapper';
 
 // Pages
 import VendeurDashboard from './components/VendeurDashboard';
-import RechercheBiens from './components/RechercheBiens';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
@@ -48,6 +47,7 @@ import ModerationPage from './pages/ModerationPage';
 import NotaireDashboardPage from './pages/NotaireDashboardPage';
 import UserDashboardPage from './pages/UserDashboardPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
+import SearchPage from './pages/SearchPage';
 import NotificationsPage from './pages/NotificationsPage';
 
 // Admin Panel Components
@@ -63,6 +63,7 @@ import AdminSecurityPage from './pages/AdminSecurityPage';
 import DevAccessPage from './pages/DevAccessPage';
 import DevTransitionPage from './pages/DevTransitionPage';
 import DashboardRedirectPage from './pages/DashboardRedirectPage';
+import HomePageV2 from './pages/HomePageV2';
 
 
 /**
@@ -96,46 +97,6 @@ const theme = createTheme({
     },
   },
 });
-
-/**
- * Page d'accueil pour visiteurs
- */
-const HomePage = () => (
-  <Box sx={{ textAlign: 'center', py: 8 }}>
-    <Typography variant="h4" gutterBottom>
-      🏠 Immo2000
-    </Typography>
-    <Typography variant="body1" gutterBottom sx={{ mb: 3 }}>
-      Votre plateforme immobilière
-    </Typography>
-    <Box sx={{ mt: 2, display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
-      <Button
-        variant="contained"
-        color="primary"
-        href="/search"
-        size="large"
-      >
-        Consulter les annonces
-      </Button>
-      <Button
-        variant="outlined"
-        color="primary"
-        href="http://localhost:5000/login.html"
-        size="large"
-      >
-        Se connecter
-      </Button>
-      <Button
-        variant="outlined"
-        color="primary"
-        href="http://localhost:5000/register.html"
-        size="large"
-      >
-        S'inscrire
-      </Button>
-    </Box>
-  </Box>
-);
 
 /**
  * Redirection pour le login (vers port 5000)
@@ -187,7 +148,7 @@ function App() {
             <Route path="/admin-dev/*" element={<DevRoleWrapper roleId="admin" targetPath="/admin" />} />
             <Route path="/notaire-dev/*" element={<DevRoleWrapper roleId="notaire" targetPath="/notaire" />} />
 
-            <Route path="/" element={!isAuthenticated ? <HomePage /> : <Navigate to="/dashboard" replace />} />
+            <Route path="/" element={!isAuthenticated ? <HomePageV2 /> : <Navigate to="/dashboard" replace />} />
             <Route path="/login" element={<LoginRedirect />} />
             <Route path="/register" element={<RegisterRedirect />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
@@ -198,91 +159,43 @@ function App() {
             <Route path="/politique-confidentialite" element={<PolitiqueConfidentialitePage />} />
 
             {/* Routes accessibles à tous (connecté ou pas) */}
-            <Route path="/search" element={<RechercheBiens />} />
+            <Route path="/search" element={<SearchPage />} />
             <Route path="/annonce/:id" element={<AnnoncePage />} />
             <Route path="/simulateur-pret" element={<SimulateurPret />} />
 
             {/* Routes protégées - Utilisateur connecté uniquement */}
             <Route
               path="/matching"
-              element={
-                <ProtectedRoute
-                  element={<MatchingPage />}
-                  isAuthenticated={isAuthenticated}
-                  userRole={user?.role}
-                  requiredRoles={['user', 'admin', 'notaire']}
-                  loading={loading}
-                />
-              }
+              element={<ProtectedRoute element={<MatchingPage />} />}
             />
 
             <Route
               path="/alertes"
-              element={
-                <ProtectedRoute
-                  element={<AlertesPage />}
-                  isAuthenticated={isAuthenticated}
-                  userRole={user?.role}
-                  requiredRoles={['user', 'admin']}
-                  loading={loading}
-                />
-              }
+              element={<ProtectedRoute element={<AlertesPage />} />}
             />
 
             {/* Dashboard - Redirection intelligente selon le rôle */}
             <Route
               path="/dashboard"
-              element={
-                <ProtectedRoute
-                  element={<DashboardRedirectPage />}
-                  isAuthenticated={isAuthenticated}
-                  userRole={user?.role}
-                  requiredRoles={['user', 'admin', 'notaire']}
-                  loading={loading}
-                />
-              }
+              element={<ProtectedRoute element={<DashboardRedirectPage />} />}
             />
 
             {/* Routes pour Utilisateur (user) - Dashboard utilisateur */}
             <Route
               path="/user/dashboard"
-              element={
-                <ProtectedRoute
-                  element={<UserDashboardPage />}
-                  isAuthenticated={isAuthenticated}
-                  userRole={user?.role}
-                  requiredRoles={['user', 'admin']}
-                  loading={loading}
-                />
-              }
+              element={<ProtectedRoute element={<UserDashboardPage />} requiredRoles={['user']} />}
             />
 
             <Route
               path="/annonces/create"
-              element={
-                <ProtectedRoute
-                  element={<CreateAnnoncePage />}
-                  isAuthenticated={isAuthenticated}
-                  userRole={user?.role}
-                  requiredRoles={['user', 'admin']}
-                  loading={loading}
-                />
-              }
+              element={<ProtectedRoute element={<CreateAnnoncePage />} requiredRoles={['user']} />}
             />
 
             {/* Routes pour Admin uniquement */}
             {/* Admin Panel avec Layout */}
             <Route
               path="/admin/*"
-              element={
-                <ProtectedRoute
-                  element={<AdminLayout />}
-                  isAuthenticated={isAuthenticated}
-                  userRole={user?.role}
-                  requiredRoles={['admin']}
-                  loading={loading}
-                />
-              }
+              element={<ProtectedRoute element={<AdminLayout />} requiredRoles={['admin']} />}
             >
               <Route path="" element={<AdminHomePage />} />
               <Route path="home" element={<AdminHomePage />} />
@@ -303,81 +216,33 @@ function App() {
             {/* Routes pour Utilisateurs authentifiés */}
             <Route
               path="/profile"
-              element={
-                <ProtectedRoute
-                  element={<ProfilePage />}
-                  isAuthenticated={isAuthenticated}
-                  userRole={user?.role}
-                  requiredRoles={['user', 'admin', 'notaire']}
-                  loading={loading}
-                />
-              }
+              element={<ProtectedRoute element={<ProfilePage />} />}
             />
 
             <Route
               path="/favoris"
-              element={
-                <ProtectedRoute
-                  element={<FavoritesPage />}
-                  isAuthenticated={isAuthenticated}
-                  userRole={user?.role}
-                  requiredRoles={['user', 'admin']}
-                  loading={loading}
-                />
-              }
+              element={<ProtectedRoute element={<FavoritesPage />} />}
             />
 
             <Route
               path="/historique"
-              element={
-                <ProtectedRoute
-                  element={<HistoryPage />}
-                  isAuthenticated={isAuthenticated}
-                  userRole={user?.role}
-                  requiredRoles={['user', 'admin']}
-                  loading={loading}
-                />
-              }
+              element={<ProtectedRoute element={<HistoryPage />} />}
             />
 
             <Route
               path="/notifications"
-              element={
-                <ProtectedRoute
-                  element={<NotificationsPage />}
-                  isAuthenticated={isAuthenticated}
-                  userRole={user?.role}
-                  requiredRoles={['user', 'admin', 'notaire']}
-                  loading={loading}
-                />
-              }
+              element={<ProtectedRoute element={<NotificationsPage />} />}
             />
 
             {/* Routes pour Notaires uniquement */}
             <Route
               path="/notaire"
-              element={
-                <ProtectedRoute
-                  element={<NotaireDashboardPage />}
-                  isAuthenticated={isAuthenticated}
-                  userRole={user?.role}
-                  requiredRoles={['notaire']}
-                  loading={loading}
-                />
-              }
+              element={<ProtectedRoute element={<NotaireDashboardPage />} requiredRoles={['notaire']} />}
             />
 
             <Route
               path="/notaire/dashboard"
-              element={
-                <ProtectedRoute
-                  element={<NotaireDashboardPage />}
-                  isAuthenticated={isAuthenticated}
-                  userRole={user?.role}
-                  requiredRoles={['notaire']}
-                  loading={loading}
-                />
-              }
+              element={<ProtectedRoute element={<NotaireDashboardPage />} requiredRoles={['notaire']} />}
             />
 
             {/* Redirection par défaut */}

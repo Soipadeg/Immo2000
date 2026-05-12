@@ -2,8 +2,9 @@
 Décorateurs pour protéger les routes et gérer les rôles.
 
 Fournit :
-- @token_required : Vérifie que le requête a un JWT valide
-- @role_required : Vérifie que l'utilisateur a l'un des rôles autorisés
+- @token_required : Vérifie et extrait le JWT du header Authorization
+- @role_required : Vérifie que l'utilisateur a l'un des rôles requis
+- @admin_required : Vérifie que l'utilisateur est administrateur
 """
 
 from functools import wraps
@@ -16,65 +17,55 @@ from .utils import verify_token, extract_token_from_header
 
 def token_required(f):
     """
-    Décorateur pour protéger une route avec JWT.
+    Décorateur qui exige un token JWT valide dans le header Authorization.
 
-    Vérifie :
-    - Que le header Authorization contient un JWT.
-    - Que le JWT est valide (signature, expiration).
-    - Que l'utilisateur existe toujours en base (au cas où il aurait été supprimé).
+    Valide :
+    - Présence du header Authorization au format "Bearer <token>"
+    - Validité et non-expiration du JWT
+    - Extraction du payload (user_id, email, role)
 
-    Passe à la fonction l'objet `current_user` contenant :
-    {
-        "user_id": 123,
-        "email": "user@example.com",
-        "role": "user" ou "admin",
-        "exp": 1717500000
-    }
-
-    Retourne :
-    - 401 Unauthorized si pas de token.
-    - 401 Unauthorized si token expiré ou invalide.
-    - 404 Not Found si l'utilisateur n'existe plus en base.
-
-    Example:
-        >>> @app.route("/biens", methods=["GET"])
-        ... @token_required
-        ... def get_biens(current_user):
-        ...     user_id = current_user["user_id"]
-        ...     return {"biens": []}
+    Si invalide, retourne 401 Unauthorized.
     """
 
     @wraps(f)
     def decorated(*args, **kwargs):
         # Récupérer le header Authorization
-        auth_header = request.headers.get("Authorization")
+        auth_header = request.headers.get('Authorization')
+
+        if not auth_header:
+            return jsonify({"error": "Missing Authorization header"}), 401
+
+        # Extraire le token du format "Bearer <token>"
         token = extract_token_from_header(auth_header)
 
         if not token:
-            return jsonify({"error": "Missing or invalid Authorization header"}), 401
+            return jsonify({"error": "Invalid Authorization header format. Use 'Bearer <token>'"}), 401
 
-        # Vérifier le token
+        # Vérifier et décoder le token
         payload = verify_token(token)
+
         if not payload:
             return jsonify({"error": "Invalid or expired token"}), 401
 
-        # Vérifier que l'utilisateur existe toujours en base
-        user = User.find_by_id(payload["user_id"])
-        if not user:
-            return jsonify({"error": "User not found"}), 404
+        # Récupérer l'utilisateur depuis la base de données
+        try:
+            user = User.query.filter_by(utilisateur_id=payload['user_id']).first()
+            if not user:
+                return jsonify({"error": "User not found"}), 401
 
-        # Vérifier que le compte est actif
-        if not user.actif:
-            return jsonify({"error": "User account is deactivated"}), 403
+            current_user = {
+                "user_id": user.utilisateur_id,
+                "email": user.email,
+                "role": user.role,
+                "nom": user.nom,
+                "prenom": user.prenom,
+                "exp": payload['exp'],
+            }
+        except Exception as e:
+            current_app.logger.error(f"Error retrieving user: {str(e)}")
+            return jsonify({"error": "Authentication error"}), 401
 
-        # Passer le payload de l'utilisateur à la fonction
-        current_user = {
-            "user_id": payload["user_id"],
-            "email": payload["email"],
-            "role": payload["role"],
-            "exp": payload["exp"],
-        }
-
+        # Passer au route handler
         return f(current_user, *args, **kwargs)
 
     return decorated
@@ -82,44 +73,29 @@ def token_required(f):
 
 def role_required(roles: List[str]):
     """
-    Décorateur pour restreindre l'accès à certains rôles.
+    Décorateur qui vérifie que l'utilisateur a l'un des rôles requis.
 
-    À utiliser **après** @token_required pour que current_user soit disponible.
+    À utiliser après @token_required qui aura défini current_user.
 
     Args:
-        roles (List[str]): Liste des rôles autorisés.
-            Valeurs valides : ["user", "admin"]
+        roles (List[str]): Liste des rôles autorisés (ex: ['admin', 'notaire'])
 
-    Retourne :
-    - 403 Forbidden si l'utilisateur n'a pas le bon rôle.
-
-    Example:
-        >>> @app.route("/admin/stats", methods=["GET"])
-        ... @token_required
-        ... @role_required(roles=["admin"])
-        ... def get_stats(current_user):
-        ...     return {"stats": {"total_users": 1000}}
-
-        >>> # Pour les utilisateurs standards
-        >>> @app.route("/dashboard", methods=["GET"])
-        ... @token_required
-        ... @role_required(roles=["user"])
-        ... def get_dashboard(current_user):
-        ...     return {"dashboard": {...}}
+    Exemple:
+        @admin_bp.route("/users")
+        @token_required
+        @role_required(['admin'])
+        def list_users(current_user):
+            ...
     """
 
     def decorator(f):
         @wraps(f)
         def decorated(current_user, *args, **kwargs):
-            if current_user["role"] not in roles:
-                return (
-                    jsonify(
-                        {
-                            "error": f"Forbidden. Required roles: {', '.join(roles)}. Got: {current_user['role']}"
-                        }
-                    ),
-                    403,
-                )
+            if current_user['role'] not in roles:
+                return jsonify({
+                    "error": f"Insufficient permissions. Required roles: {roles}",
+                    "user_role": current_user['role']
+                }), 403
 
             return f(current_user, *args, **kwargs)
 
@@ -130,34 +106,25 @@ def role_required(roles: List[str]):
 
 def admin_required(f):
     """
-    Décorateur pour restreindre l'accès aux administrateurs.
+    Décorateur qui vérifie que l'utilisateur est administrateur.
 
-    À utiliser **après** @token_required pour que current_user soit disponible.
+    À utiliser après @token_required qui aura défini current_user.
 
-    Vérifie que l'utilisateur a le rôle "admin".
-
-    Retourne :
-    - 403 Forbidden si l'utilisateur n'a pas le rôle "admin".
-
-    Example:
-        >>> @app.route("/api/v1/utilisateurs", methods=["GET"])
-        ... @token_required
-        ... @admin_required
-        ... def get_all_users(current_user):
-        ...     return {"users": [...]}
+    Exemple:
+        @admin_bp.route("/dashboard")
+        @token_required
+        @admin_required
+        def admin_dashboard(current_user):
+            ...
     """
 
     @wraps(f)
     def decorated(current_user, *args, **kwargs):
-        if current_user["role"] != "admin":
-            return (
-                jsonify(
-                    {
-                        "error": f"Forbidden. Admin access required. Got role: {current_user['role']}"
-                    }
-                ),
-                403,
-            )
+        if current_user['role'] != 'admin':
+            return jsonify({
+                "error": "This action requires admin privileges",
+                "user_role": current_user['role']
+            }), 403
 
         return f(current_user, *args, **kwargs)
 
