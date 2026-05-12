@@ -68,7 +68,7 @@ class Offre(db.Model):
 
     # Relationships
     annonce = relationship("Annonce", backref="offres")
-    acheteur = relationship("User", backref="offres", foreign_keys=[acheteur_id])
+    acheteur = relationship("User", foreign_keys=[acheteur_id])
 
     def __repr__(self) -> str:
         """Représentation lisible de l'offre."""
