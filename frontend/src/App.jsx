@@ -49,6 +49,16 @@ import UserDashboardPage from './pages/UserDashboardPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import NotificationsPage from './pages/NotificationsPage';
 
+// Admin Panel Components
+import AdminLayout from './components/AdminLayout';
+import AdminUsersPageNew from './pages/AdminUsersPageNew';
+import AdminListingsPage from './pages/AdminListingsPage';
+import AdminTransactionsPage from './pages/AdminTransactionsPage';
+import AdminSettingsPage from './pages/AdminSettingsPage';
+import AdminAnalyticsPage from './pages/AdminAnalyticsPage';
+import AdminAuditPage from './pages/AdminAuditPage';
+import AdminSecurityPage from './pages/AdminSecurityPage';
+
 
 /**
  * Thème Material-UI personnalisé
@@ -248,31 +258,28 @@ function App() {
               }
             />
 
+            {/* Admin Panel avec Layout */}
             <Route
-              path="/admin/users"
+              path="/admin/*"
               element={
                 <ProtectedRoute
-                  element={<AdminUsersPage />}
+                  element={<AdminLayout />}
                   isAuthenticated={isAuthenticated}
                   userRole={user?.role}
                   requiredRoles={['admin']}
                   loading={loading}
                 />
               }
-            />
-
-            <Route
-              path="/admin/moderation"
-              element={
-                <ProtectedRoute
-                  element={<ModerationPage />}
-                  isAuthenticated={isAuthenticated}
-                  userRole={user?.role}
-                  requiredRoles={['admin']}
-                  loading={loading}
-                />
-              }
-            />
+            >
+              <Route path="dashboard" element={<AdminDashboardPage />} />
+              <Route path="users" element={<AdminUsersPageNew />} />
+              <Route path="listings" element={<AdminListingsPage />} />
+              <Route path="transactions" element={<AdminTransactionsPage />} />
+              <Route path="settings" element={<AdminSettingsPage />} />
+              <Route path="analytics" element={<AdminAnalyticsPage />} />
+              <Route path="audit" element={<AdminAuditPage />} />
+              <Route path="security" element={<AdminSecurityPage />} />
+            </Route>
 
             {/* Routes pour Utilisateurs connectés - Pages publiques du contenu */}
             <Route path="/guides" element={<GuidesPage />} />
