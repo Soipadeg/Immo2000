@@ -414,18 +414,18 @@ class VisitesService:
         return [visite.to_dict() for visite in visites]
 
     @staticmethod
-    def lister_visites_acheteur(acheteur_id: int, statut: Optional[str] = None) -> list:
+    def lister_visites_acheteur(user_id: int, statut: Optional[str] = None) -> list:
         """
-        Lister toutes les visites réservées par un acheteur.
+        Lister toutes les visites réservées par un utilisateur en tant qu'acheteur.
 
         Args:
-            acheteur_id: ID de l'acheteur
+            user_id: ID de l'utilisateur
             statut: Optionnel, filtrer par statut
 
         Returns:
             Liste des visites formatées en dict
         """
-        query = Visite.query.filter_by(acheteur_id=acheteur_id)
+        query = Visite.query.filter_by(acheteur_id=user_id)
 
         if statut:
             query = query.filter_by(statut=statut)
@@ -493,14 +493,14 @@ class VisitesService:
             f"Surface: {annonce.surface} m²\n"
             f"Pièces: {annonce.nombre_pieces}\n"
             f"Prix: {annonce.prix:.0f}€\n\n"
-            f"Acheteur: {acheteur.utilisateur.prenom} {acheteur.utilisateur.nom}"
+            f"Acheteur: {acheteur.prenom} {acheteur.nom}"
         )
 
         event.add('location', f"{annonce.adresse}, {annonce.code_postal} {annonce.ville}")
 
         # Organisateur et participants
         event.add('organizer', f"mailto:{vendeur.email}")
-        event.add('attendee', f"mailto:{acheteur.utilisateur.email}")
+        event.add('attendee', f"mailto:{acheteur.email}")
 
         # Paramètres de notification
         event.add('status', 'CONFIRMED')
@@ -515,7 +515,7 @@ class VisitesService:
     @staticmethod
     def generer_lien_google_calendar(
         annonce: Annonce,
-        acheteur: Acheteur,
+        acheteur: User,
         date_heure: datetime,
         timezone: str = "Europe/Paris"
     ) -> str:
@@ -524,7 +524,7 @@ class VisitesService:
 
         Args:
             annonce: Objet Annonce
-            acheteur: Objet Acheteur
+            acheteur: Objet User (l'utilisateur acheteur)
             date_heure: Date/heure de la visite
             timezone: Timezone (default: Europe/Paris)
 
@@ -546,7 +546,7 @@ class VisitesService:
             'details': (
                 f"Rendez-vous pour visiter le bien situé à "
                 f"{annonce.adresse}, {annonce.code_postal} {annonce.ville}\n\n"
-                f"Acheteur: {acheteur.utilisateur.prenom} {acheteur.utilisateur.nom}"
+                f"Acheteur: {acheteur.prenom} {acheteur.nom}"
             ),
             'location': f"{annonce.adresse}, {annonce.code_postal}",
             'dates': f"{start}/{end}",
@@ -593,7 +593,7 @@ class VisitesService:
 
         # Récupérer annonce et acheteur
         annonce = Annonce.query.filter_by(annonce_id=visite.annonce_id).first()
-        acheteur = Acheteur.query.filter_by(id=visite.acheteur_id).first()
+        acheteur = User.query.filter_by(utilisateur_id=visite.acheteur_id).first()
 
         if not annonce or not acheteur:
             raise VisitesError("Données manquantes pour cette visite.")
@@ -820,7 +820,7 @@ class VisitesService:
 
         # 2. Vérifier permissions
         annonce = Annonce.query.filter_by(annonce_id=visite.annonce_id).first()
-        acheteur = Acheteur.query.filter_by(id=visite.acheteur_id).first()
+        acheteur = User.query.filter_by(utilisateur_id=visite.acheteur_id).first()
 
         is_vendeur = (annonce and annonce.utilisateur_id == utilisateur_id)
         is_acheteur = (acheteur and acheteur.utilisateur_id == utilisateur_id)
