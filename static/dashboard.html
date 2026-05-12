@@ -51,6 +51,110 @@
             font-size: 14px;
             opacity: 0.9;
         }
+
+        /* Three Columns Layout */
+        .features-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .feature-column {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .column-header {
+            font-size: 20px;
+            font-weight: 700;
+            padding: 15px 20px;
+            border-radius: 8px 8px 0 0;
+            color: white;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .column-acheteur .column-header {
+            background: linear-gradient(135deg, #667eea 0%, #5a67d8 100%);
+        }
+
+        .column-vendeur .column-header {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+
+        .column-compte .column-header {
+            background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+        }
+
+        .action-card {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border-left: 4px solid;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: inherit;
+        }
+
+        .action-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .column-acheteur .action-card {
+            border-left-color: #667eea;
+        }
+
+        .column-acheteur .action-card:hover {
+            background-color: #f0f4ff;
+        }
+
+        .column-vendeur .action-card {
+            border-left-color: #48bb78;
+        }
+
+        .column-vendeur .action-card:hover {
+            background-color: #f0fdf4;
+        }
+
+        .column-compte .action-card {
+            border-left-color: #ed8936;
+        }
+
+        .column-compte .action-card:hover {
+            background-color: #fffaf0;
+        }
+
+        .card-icon {
+            font-size: 28px;
+            min-width: 30px;
+        }
+
+        .card-content {
+            flex: 1;
+        }
+
+        .card-title {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+            color: #2d3748;
+        }
+
+        .card-desc {
+            font-size: 12px;
+            color: #718096;
+            line-height: 1.3;
+        }
     </style>
 </head>
 <body>
@@ -80,53 +184,110 @@
             </div>
         </div>
 
-        <!-- Welcome Section -->
-        <div class="dashboard-card">
-            <h3>👋 Bienvenue <span id="userName">Utilisateur</span>!</h3>
-            <p>Vous êtes connecté à votre dashboard personnel Immo2000.</p>
-            <p style="margin-top: 20px;">Explorez les fonctionnalités disponibles :</p>
-            <ul style="list-style: none; padding: 0; margin-top: 15px;">
-                <li style="margin-bottom: 12px;">
-                    <a href="matching.html" style="color: #1976d2; text-decoration: none; font-weight: 500; font-size: 16px;">
-                        🔍 Consulter les annonces immobilières
-                    </a>
-                </li>
-                <li style="margin-bottom: 12px;">
-                    <a href="create-annonce.html" style="color: #1976d2; text-decoration: none; font-weight: 500; font-size: 16px;">
-                        📝 Créer une annonce pour vendre mon bien
-                    </a>
-                </li>
-                <li style="margin-bottom: 12px;">
-                    <a href="mes-annonces.html" style="color: #1976d2; text-decoration: none; font-weight: 500; font-size: 16px;">
-                        📋 Gérer mes annonces
-                    </a>
-                </li>
-                <li style="margin-bottom: 12px;">
-                    <a href="favoris.html" style="color: #1976d2; text-decoration: none; font-weight: 500; font-size: 16px;">
-                        ❤️ Gérer vos favoris
-                    </a>
-                </li>
-                <li style="margin-bottom: 12px;">
-                    <a href="alertes.html" style="color: #1976d2; text-decoration: none; font-weight: 500; font-size: 16px;">
-                        🔔 Configurer vos alertes de recherche
-                    </a>
-                </li>
-                <li style="margin-bottom: 12px;">
-                    <a href="notifications.html" style="color: #1976d2; text-decoration: none; font-weight: 500; font-size: 16px;">
-                        📢 Suivre vos notifications
-                    </a>
-                </li>
-                <li style="margin-bottom: 12px;">
-                    <a href="simulateur_pret.html" style="color: #1976d2; text-decoration: none; font-weight: 500; font-size: 16px;">
-                        📈 Simuler votre capacité d'emprunt
-                    </a>
-                </li>
-                <li style="margin-bottom: 12px;">
-                    <a href="profile-settings.html" style="color: #1976d2; text-decoration: none; font-weight: 500; font-size: 16px;">
-                        👤 Mettre à jour votre profil
-                    </a>
-                </li>
-            </ul>
+        <!-- Features in 3 Columns -->
+        <div class="features-section">
+            <!-- ACHETEUR Column -->
+            <div class="feature-column column-acheteur">
+                <div class="column-header">👨 JE SUIS ACHETEUR</div>
+
+                <a href="matching.html" class="action-card">
+                    <div class="card-icon">🔍</div>
+                    <div class="card-content">
+                        <div class="card-title">Consulter les annonces</div>
+                        <div class="card-desc">Parcourir les biens disponibles</div>
+                    </div>
+                </a>
+
+                <a href="favoris.html" class="action-card">
+                    <div class="card-icon">❤️</div>
+                    <div class="card-content">
+                        <div class="card-title">Vos favoris</div>
+                        <div class="card-desc">Retrouvez vos biens préférés</div>
+                    </div>
+                </a>
+
+                <a href="alertes.html" class="action-card">
+                    <div class="card-icon">🔔</div>
+                    <div class="card-content">
+                        <div class="card-title">Configurer les alertes</div>
+                        <div class="card-desc">Recevez les nouveaux biens</div>
+                    </div>
+                </a>
+
+                <a href="simulateur_pret.html" class="action-card">
+                    <div class="card-icon">📈</div>
+                    <div class="card-content">
+                        <div class="card-title">Simuler votre emprunt</div>
+                        <div class="card-desc">Calculez vos capacités</div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- VENDEUR Column -->
+            <div class="feature-column column-vendeur">
+                <div class="column-header">📝 JE SUIS VENDEUR</div>
+
+                <a href="create-annonce.html" class="action-card">
+                    <div class="card-icon">✏️</div>
+                    <div class="card-content">
+                        <div class="card-title">Créer une annonce</div>
+                        <div class="card-desc">Publier votre bien à vendre</div>
+                    </div>
+                </a>
+
+                <a href="mes-annonces.html" class="action-card">
+                    <div class="card-icon">📋</div>
+                    <div class="card-content">
+                        <div class="card-title">Gérer mes annonces</div>
+                        <div class="card-desc">Éditer ou supprimer vos biens</div>
+                    </div>
+                </a>
+
+                <a href="notifications.html" class="action-card">
+                    <div class="card-icon">📢</div>
+                    <div class="card-content">
+                        <div class="card-title">Vos notifications</div>
+                        <div class="card-desc">Suivre vos messages et alertes</div>
+                    </div>
+                </a>
+
+                <a href="messagerie.html" class="action-card">
+                    <div class="card-icon">💬</div>
+                    <div class="card-content">
+                        <div class="card-title">Messagerie</div>
+                        <div class="card-desc">Communiquer avec les acheteurs</div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- MON COMPTE Column -->
+            <div class="feature-column column-compte">
+                <div class="column-header">👤 MON COMPTE</div>
+
+                <a href="profile-settings.html" class="action-card">
+                    <div class="card-icon">👨‍💼</div>
+                    <div class="card-content">
+                        <div class="card-title">Mon profil</div>
+                        <div class="card-desc">Gérer vos informations</div>
+                    </div>
+                </a>
+
+                <a href="#" class="action-card" onclick="alert('Paramètres en développement'); return false;">
+                    <div class="card-icon">⚙️</div>
+                    <div class="card-content">
+                        <div class="card-title">Paramètres</div>
+                        <div class="card-desc">Sécurité, confidentialité</div>
+                    </div>
+                </a>
+
+                <a href="#" class="action-card" onclick="alert('Vérification email en développement'); return false;">
+                    <div class="card-icon">✉️</div>
+                    <div class="card-content">
+                        <div class="card-title">Vérifier email</div>
+                        <div class="card-desc">Confirmer votre adresse</div>
+                    </div>
+                </a>
+            </div>
         </div>
     </div>
 
@@ -145,7 +306,8 @@
                 const meResponse = await axios.get('http://localhost:5000/auth/me', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                document.getElementById('userName').textContent = meResponse.data.prenom;
+                // User name no longer displayed in this version
+                // document.getElementById('userName').textContent = meResponse.data.prenom;
 
                 // Load favorites count
                 try {
