@@ -13,6 +13,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 import pytest
 from src.app import create_app
 from src.auth.models import db
+from sqlalchemy import text
 
 
 @pytest.fixture(scope="session")
@@ -27,10 +28,26 @@ def app():
     """Créer l'app Flask et initialiser la BD pour chaque test."""
     app = create_app("testing")
     with app.app_context():
-        db.create_all()
+        # Drop tous les objets de la BD précédents
+        try:
+            db.drop_all()
+        except Exception:
+            pass  # Ignorer les erreurs lors du drop
+
+        # Créer les tables - ignorer les erreurs d'index existant
+        try:
+            db.create_all()
+        except Exception as e:
+            # Ignorer les erreurs comme "index already exists"
+            if "already exists" not in str(e):
+                raise
+
         yield app
         db.session.remove()
-        db.drop_all()
+        try:
+            db.drop_all()
+        except Exception:
+            pass
 
 
 @pytest.fixture

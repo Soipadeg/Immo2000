@@ -208,11 +208,11 @@ class TransactionNotaire(db.Model):
     documents = db.relationship('DocumentNotaire', backref='transaction', cascade='all, delete-orphan')
     historique = db.relationship('HistoriqueNotaire', backref='transaction', cascade='all, delete-orphan')
 
-    # Indices
-    __table_args__ = (
-        Index('ix_transaction_notaire_statut', 'statut'),
-        Index('ix_transaction_notaire_dates', 'date_creation', 'date_assignation_notaire'),
-    )
+    # Note: Indices sont créés dans les migrations (migration 018)
+    # __table_args__ = (
+    #     Index('ix_transaction_notaire_statut', 'statut'),
+    #     Index('ix_transaction_notaire_dates', 'date_creation', 'date_assignation_notaire'),
+    # )
 
     def __repr__(self):
         return f"<TransactionNotaire {self.transaction_notaire_id} - {self.statut}>"

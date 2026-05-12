@@ -21,7 +21,7 @@ from src.schemas.notaires import (
     NotaireCreate,
     NotaireUpdate,
     TransactionNotaireAssign,
-    TransactionNotaireUpdate
+    TransactionNotaireModifications
 )
 from src.crud import notaires as crud_notaires
 

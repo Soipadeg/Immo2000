@@ -201,6 +201,11 @@ class TransactionNotaireRejet(BaseModel):
     raison_refus: str = Field(..., min_length=10, max_length=2000, description="Raison du refus")
 
 
+class TransactionNotaireAssign(BaseModel):
+    """Assigner une transaction notaire à un notaire."""
+    notaire_id: int = Field(..., gt=0, description="ID du notaire assigné")
+
+
 class TransactionNotaireResponse(BaseModel):
     """Réponse simple pour transaction notaire."""
 

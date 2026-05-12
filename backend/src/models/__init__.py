@@ -8,7 +8,6 @@ from .annonce_views import AnnonceView
 from .search_history import SearchHistory
 from .favoris import Favori
 from .offres import Offre
-from .acheteurs import Acheteur
 from .alertes import AlerteAnnonce
 from .visites import Visite
 from .feedbacks import Feedback

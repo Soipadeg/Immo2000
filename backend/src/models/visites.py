@@ -35,7 +35,7 @@ class Visite(db.Model):
     # Clés étrangères
     acheteur_id = db.Column(
         db.Integer,
-        ForeignKey("acheteurs.acheteur_id", ondelete="CASCADE"),
+        ForeignKey("utilisateurs.utilisateur_id", ondelete="CASCADE"),
         nullable=False,
         index=True
     )
