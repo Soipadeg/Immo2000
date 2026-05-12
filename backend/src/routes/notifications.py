@@ -62,10 +62,10 @@ def list_notifications(current_user):
         limit = min(100, int(request.args.get("limit", 20)))
 
         # Récupérer les notifications de l'utilisateur
-        total = Notification.query.filter_by(user_id=current_user.utilisateur_id).count()
+        total = Notification.query.filter_by(user_id=current_user["user_id"]).count()
 
         notifications = Notification.query.filter_by(
-            user_id=current_user.utilisateur_id
+            user_id=current_user["user_id"]
         ).order_by(
             Notification.created_at.desc()
         ).offset(skip).limit(limit).all()
@@ -105,7 +105,7 @@ def get_unread_count(current_user):
     """
     try:
         unread_count = Notification.query.filter_by(
-            user_id=current_user.utilisateur_id,
+            user_id=current_user["user_id"],
             is_read=False
         ).count()
 
@@ -138,7 +138,7 @@ def mark_as_read(current_user, notification_id):
     try:
         notification = Notification.query.filter_by(
             notification_id=notification_id,
-            user_id=current_user.utilisateur_id
+            user_id=current_user["user_id"]
         ).first()
 
         if not notification:
@@ -151,7 +151,7 @@ def mark_as_read(current_user, notification_id):
         notification.read_at = datetime.utcnow()
         db.session.commit()
 
-        logger.info(f"Notification {notification_id} marquée comme lue par user {current_user.utilisateur_id}")
+        logger.info(f"Notification {notification_id} marquée comme lue par user {current_user["user_id"]}")
 
         return jsonify({
             "success": True,
@@ -183,7 +183,7 @@ def delete_notification(current_user, notification_id):
     try:
         notification = Notification.query.filter_by(
             notification_id=notification_id,
-            user_id=current_user.utilisateur_id
+            user_id=current_user["user_id"]
         ).first()
 
         if not notification:
@@ -195,7 +195,7 @@ def delete_notification(current_user, notification_id):
         db.session.delete(notification)
         db.session.commit()
 
-        logger.info(f"Notification {notification_id} supprimée par user {current_user.utilisateur_id}")
+        logger.info(f"Notification {notification_id} supprimée par user {current_user["user_id"]}")
 
         return jsonify({
             "success": True,

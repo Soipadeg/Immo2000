@@ -114,40 +114,43 @@
                     return;
                 }
 
-                const response = await axios.get('http://localhost:5000/notifications', {
+                const response = await axios.get('http://localhost:5000/api/v1/notifications', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
                 const container = document.getElementById('notificationsContainer');
                 const list = document.getElementById('notificationsList');
 
-                if (!response.data || response.data.length === 0) {
+                // Response format: {success, data, pagination}
+                const notifications = response.data.data || [];
+
+                if (!notifications || notifications.length === 0) {
                     container.style.display = 'block';
-                    list.style.display = 'none';
+                    list.innerHTML = '';
                     return;
                 }
 
                 container.style.display = 'none';
-                list.style.display = 'block';
+                list.innerHTML = '';
 
-                response.data.forEach(notification => {
+                notifications.forEach(notification => {
                     const card = document.createElement('div');
-                    card.className = `notification-card ${notification.lue ? '' : 'unread'}`;
+                    card.className = `notification-card ${notification.is_read ? '' : 'unread'}`;
 
-                    const date = new Date(notification.date_creation);
+                    const date = new Date(notification.created_at);
                     const formattedDate = date.toLocaleDateString('fr-FR') + ' ' + date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
                     card.innerHTML = `
                         <div class="notification-header">
                             <div>
-                                <div class="notification-title">${notification.titre}</div>
+                                <div class="notification-title">${notification.title}</div>
                                 <div class="notification-date">${formattedDate}</div>
                             </div>
-                            ${notification.lue ? '' : '<span class="badge badge-unread">Nouveau</span>'}
+                            ${notification.is_read ? '' : '<span class="badge badge-unread">Nouveau</span>'}
                         </div>
                         <div class="notification-content">${notification.message}</div>
                         <div class="notification-actions">
-                            ${!notification.lue ? `<button class="btn btn-sm btn-primary btn-small" onclick="markAsRead(${notification.notification_id})">Marquer comme lu</button>` : ''}
+                            ${!notification.is_read ? `<button class="btn btn-sm btn-primary btn-small" onclick="markAsRead(${notification.notification_id})">Marquer comme lu</button>` : ''}
                             <button class="btn btn-sm btn-outline-danger btn-small" onclick="deleteNotification(${notification.notification_id})">Supprimer</button>
                         </div>
                     `;
@@ -164,7 +167,7 @@
         async function markAsRead(notificationId) {
             try {
                 const token = localStorage.getItem('auth_token');
-                await axios.patch(`http://localhost:5000/notifications/${notificationId}/read`, {}, {
+                await axios.patch(`http://localhost:5000/api/v1/notifications/${notificationId}/mark-as-read`, {}, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 loadNotifications(); // Reload
@@ -176,10 +179,24 @@
         async function markAllAsRead() {
             try {
                 const token = localStorage.getItem('auth_token');
-                await axios.post('http://localhost:5000/notifications/read-all', {}, {
+                // Get all notifications
+                const response = await axios.get('http://localhost:5000/api/v1/notifications?limit=100', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                loadNotifications(); // Reload
+
+                const notifications = response.data.data || [];
+                // Mark all unread notifications as read
+                const unreadNotifications = notifications.filter(n => !n.is_read);
+
+                for (const notification of unreadNotifications) {
+                    await axios.patch(`http://localhost:5000/api/v1/notifications/${notification.notification_id}/mark-as-read`, {}, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                }
+
+                if (unreadNotifications.length > 0) {
+                    loadNotifications(); // Reload
+                }
             } catch (error) {
                 console.error('Erreur:', error);
             }
@@ -188,7 +205,7 @@
         async function deleteNotification(notificationId) {
             try {
                 const token = localStorage.getItem('auth_token');
-                await axios.delete(`http://localhost:5000/notifications/${notificationId}`, {
+                await axios.delete(`http://localhost:5000/api/v1/notifications/${notificationId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 loadNotifications(); // Reload
