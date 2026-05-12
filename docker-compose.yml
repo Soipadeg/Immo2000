@@ -81,7 +81,7 @@ services:
     container_name: immo2000_frontend
     restart: unless-stopped
     environment:
-      - VITE_API_URL=http://localhost:5000
+      - VITE_API_URL=http://localhost:5000/api/v1
     ports:
       - "${FRONTEND_PORT:-3000}:5173"
     volumes:

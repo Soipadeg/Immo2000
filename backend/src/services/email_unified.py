@@ -1,7 +1,7 @@
 """
 Service email unifié et centralisé pour Immo2000.
 
-Fusion des anciens services email.py et email_service.py
+Fusion des services email.py et email_service.py
 Fournit une interface unique pour tous les envois d'email.
 """
 
@@ -140,115 +140,38 @@ class EmailService:
         annonce_titre: str,
         annonce_url: str
     ) -> bool:
-        """
-        Envoyer un email de notification annonce publiée.
-
-        Args:
-            to_email: Adresse email du destinataire
-            to_name: Nom du destinataire
-            annonce_titre: Titre de l'annonce
-            annonce_url: URL pour voir l'annonce
-
-        Returns:
-            True si envoyé avec succès
-        """
+        """Envoyer notification: annonce publiée."""
         subject = "Votre annonce a été publiée ! 🎉"
-
         html_content = f"""
         <html>
             <body style="font-family: Arial, sans-serif; color: #333;">
                 <h2>Bonjour {to_name},</h2>
-
                 <p>Bonne nouvelle ! Votre annonce <strong>{annonce_titre}</strong> vient d'être publiée.</p>
-
-                <p>
-                    <a href="{annonce_url}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
-                        Voir l'annonce
-                    </a>
-                </p>
-
-                <p>
-                    Elle est maintenant visible pour tous les acheteurs potentiels.
-                    Vous pouvez la gérer depuis votre tableau de bord.
-                </p>
-
-                <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
-
-                <p style="color: #666; font-size: 12px;">
-                    Immo2000 - Plateforme immobilière
-                </p>
+                <p><a href="{annonce_url}">Voir l'annonce</a></p>
+                <p>Cordialement,<br>L'équipe Immo2000</p>
             </body>
         </html>
         """
-
-        text_content = f"""
-        Bonjour {to_name},
-
-        Bonne nouvelle ! Votre annonce "{annonce_titre}" vient d'être publiée.
-
-        Lien: {annonce_url}
-
-        Elle est maintenant visible pour tous les acheteurs potentiels.
-
-        Immo2000 - Plateforme immobilière
-        """
-
-        return self.send_email(to_email, to_name, subject, html_content, text_content)
+        return self.send(to_email, to_name, subject, html_content)
 
     def send_annonce_sold(
         self,
         to_email: str,
         to_name: str,
-        annonce_titre: str,
-        sale_date: datetime = None
+        annonce_titre: str
     ) -> bool:
-        """
-        Envoyer un email de notification annonce vendue.
-
-        Args:
-            to_email: Adresse email du destinataire
-            to_name: Nom du destinataire
-            annonce_titre: Titre de l'annonce
-            sale_date: Date de vente
-
-        Returns:
-            True si envoyé avec succès
-        """
-        subject = "Votre bien a été vendu ! 🎊"
-
-        date_str = sale_date.strftime("%d/%m/%Y") if sale_date else "aujourd'hui"
-
+        """Envoyer notification: annonce vendue."""
+        subject = "Votre annonce a été vendue ! 🎊"
         html_content = f"""
         <html>
             <body style="font-family: Arial, sans-serif; color: #333;">
-                <h2>Félicitations {to_name},</h2>
-
-                <p>Nous avons le plaisir de vous annoncer que votre bien <strong>{annonce_titre}</strong> a été vendu le <strong>{date_str}</strong>.</p>
-
-                <p>Merci d'avoir utilisé Immo2000 pour cette transaction.</p>
-
-                <p>Vous pouvez consulter votre historique de ventes dans votre tableau de bord.</p>
-
-                <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
-
-                <p style="color: #666; font-size: 12px;">
-                    Immo2000 - Plateforme immobilière
-                </p>
+                <h2>Bonjour {to_name},</h2>
+                <p>Félicitations ! Votre annonce <strong>{annonce_titre}</strong> a été vendue.</p>
+                <p>Cordialement,<br>L'équipe Immo2000</p>
             </body>
         </html>
         """
-
-        text_content = f"""
-        Félicitations {to_name},
-
-        Nous avons le plaisir de vous annoncer que votre bien "{annonce_titre}" a été vendu le {date_str}.
-
-        Merci d'avoir utilisé Immo2000 pour cette transaction.
-
-        Immo2000 - Plateforme immobilière
-        """
-
-        return self.send_email(to_email, to_name, subject, html_content, text_content)
+        return self.send(to_email, to_name, subject, html_content)
 
     @staticmethod
     def generer_email_feedback(
@@ -286,13 +209,17 @@ class EmailService:
         return html
 
 
-# Instance globale du service
+# Instance singleton pour facilité d'accès
 _email_service = None
 
 
 def get_email_service() -> EmailService:
-    """Obtenir l'instance du service d'email."""
+    """Obtenir l'instance singleton du service d'email."""
     global _email_service
     if _email_service is None:
         _email_service = EmailService()
     return _email_service
+
+
+# Export pour facilité d'accès
+email_service = get_email_service()

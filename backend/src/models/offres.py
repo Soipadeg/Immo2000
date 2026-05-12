@@ -6,6 +6,7 @@ Permet aux acheteurs de faire des offres sur les annonces.
 
 from datetime import datetime
 from sqlalchemy import Index, ForeignKey, Enum as SQLEnum
+from sqlalchemy.orm import relationship
 import enum
 from src.auth.models import db
 
@@ -64,6 +65,10 @@ class Offre(db.Model):
     date_reponse = db.Column(db.DateTime(timezone=True), nullable=True)
 
     conditions = db.Column(db.JSON, nullable=True, default={})
+
+    # Relationships
+    annonce = relationship("Annonce", backref="offres")
+    acheteur = relationship("User", backref="offres", foreign_keys=[acheteur_id])
 
     def __repr__(self) -> str:
         """Représentation lisible de l'offre."""
