@@ -533,6 +533,7 @@
                         <span class="annonce-status status-${annonce.statut}">${annonce.statut}</span>
                     </div>
                     <div class="annonce-actions">
+                        <a href="annonce-detail.html?id=${annonce.annonce_id}" class="btn btn-secondary" style="text-decoration: none;">Voir détails</a>
                         <button class="btn btn-primary" onclick="openEditModal(${annonce.annonce_id})">Modifier</button>
                         <button class="btn btn-danger" onclick="deleteAnnonce(${annonce.annonce_id})">Supprimer</button>
                     </div>
