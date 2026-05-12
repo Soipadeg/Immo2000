@@ -25,6 +25,7 @@ import logging
 
 from src.auth.decorators import token_required, admin_required
 from src.auth.models import db, User
+from src.decorators.error_handling import handle_errors, ValidationError, NotFoundError, ForbiddenError, UnauthorizedError
 from src.schemas.notaires import (
     NotaireCreate, NotaireUpdate, NotaireResponse,
     TransactionNotaireCreate, TransactionNotaireModifications,
@@ -71,143 +72,117 @@ def notaire_required(f):
 @notaires_bp.route('', methods=['POST'])
 @token_required
 @admin_required
+@handle_errors()
 def create_notaire(utilisateur_id, **kwargs):
     """Créer profil notaire partenaire (admin seulement)."""
+    # Vérifier permissions (admin)
+    user = db.session.query(User).filter_by(utilisateur_id=utilisateur_id).first()
+    if not user or user.role != 'admin':
+        raise ForbiddenError('Permissions insuffisantes')
 
+    # Valider données
+    data = request.get_json()
     try:
-        # Vérifier permissions (admin)
-        user = db.session.query(User).filter_by(utilisateur_id=utilisateur_id).first()
-        if not user or user.role != 'admin':
-            return jsonify({'erreur': 'Permissions insuffisantes'}), 403
-
-        # Valider données
-        data = request.get_json()
         validated = NotaireCreate(**data)
-
-        # Créer notaire
-        notaire = crud_notaires.create_notaire(
-            db=db.session,
-            utilisateur_id=data.get('utilisateur_id'),
-            etude_notariale=validated.etude_notariale,
-            numero_rpps=validated.numero_rpps,
-            adresse_etude=validated.adresse_etude,
-            code_postal_etude=validated.code_postal_etude,
-            ville_etude=validated.ville_etude,
-            telephone=validated.telephone,
-            email_professionnel=validated.email_professionnel,
-            zone_geographique=validated.zone_geographique,
-            latitude=data.get('latitude'),
-            longitude=data.get('longitude'),
-        )
-
-        return jsonify(notaire.to_dict()), 201
-
-    except ValueError as e:
-        return jsonify({'erreur': str(e)}), 400
     except Exception as e:
-        logger.error(f"Erreur création notaire: {str(e)}")
-        return jsonify({'erreur': 'Erreur serveur'}), 500
+        raise ValidationError(f"Validation error: {str(e)}")
+
+    # Créer notaire
+    notaire = crud_notaires.create_notaire(
+        db=db.session,
+        utilisateur_id=data.get('utilisateur_id'),
+        etude_notariale=validated.etude_notariale,
+        numero_rpps=validated.numero_rpps,
+        adresse_etude=validated.adresse_etude,
+        code_postal_etude=validated.code_postal_etude,
+        ville_etude=validated.ville_etude,
+        telephone=validated.telephone,
+        email_professionnel=validated.email_professionnel,
+        zone_geographique=validated.zone_geographique,
+        latitude=data.get('latitude'),
+        longitude=data.get('longitude'),
+    )
+
+    return {'data': notaire.to_dict()}, 201
 
 
 @notaires_bp.route('', methods=['GET'])
 @token_required
+@handle_errors()
 def list_notaires(utilisateur_id, **kwargs):
     """Lister notaires partenaires (avec filtres)."""
+    # Paramètres filtres
+    ville = request.args.get('ville')
+    code_postal = request.args.get('code_postal')
+    specialisation = request.args.get('specialisation')
+    skip = request.args.get('skip', 0, type=int)
+    limit = request.args.get('limit', 10, type=int)
 
-    try:
-        # Paramètres filtres
-        ville = request.args.get('ville')
-        code_postal = request.args.get('code_postal')
-        specialisation = request.args.get('specialisation')
-        skip = request.args.get('skip', 0, type=int)
-        limit = request.args.get('limit', 10, type=int)
+    notaires, total = crud_notaires.search_notaires(
+        db=db.session,
+        ville=ville,
+        code_postal=code_postal,
+        specialisation=specialisation,
+        skip=skip,
+        limit=limit
+    )
 
-        notaires, total = crud_notaires.search_notaires(
-            db=db.session,
-            ville=ville,
-            code_postal=code_postal,
-            specialisation=specialisation,
-            skip=skip,
-            limit=limit
-        )
-
-        return jsonify({
-            'notaires': [n.to_dict() for n in notaires],
-            'total': total,
-            'skip': skip,
-            'limit': limit
-        }), 200
-
-    except Exception as e:
-        logger.error(f"Erreur liste notaires: {str(e)}")
-        return jsonify({'erreur': 'Erreur serveur'}), 500
+    return {
+        'notaires': [n.to_dict() for n in notaires],
+        'total': total,
+        'skip': skip,
+        'limit': limit
+    }
 
 
 @notaires_bp.route('/<int:notaire_id>', methods=['GET'])
 @token_required
+@handle_errors()
 def get_notaire(utilisateur_id, notaire_id, **kwargs):
     """Récupérer détails notaire."""
+    notaire = crud_notaires.get_notaire(db.session, notaire_id)
+    if not notaire:
+        raise NotFoundError('Notaire non trouvé')
 
-    try:
-        notaire = crud_notaires.get_notaire(db.session, notaire_id)
-        if not notaire:
-            return jsonify({'erreur': 'Notaire non trouvé'}), 404
-
-        return jsonify(notaire.to_dict()), 200
-
-    except Exception as e:
-        logger.error(f"Erreur récupération notaire: {str(e)}")
-        return jsonify({'erreur': 'Erreur serveur'}), 500
+    return {'data': notaire.to_dict()}
 
 
 @notaires_bp.route('/<int:notaire_id>', methods=['PUT'])
 @token_required
+@handle_errors()
 def update_notaire(utilisateur_id, notaire_id, **kwargs):
     """Mettre à jour profil notaire (notaire seulement)."""
+    # Vérifier que c'est le bon notaire
+    notaire = crud_notaires.get_notaire(db.session, notaire_id)
+    if not notaire:
+        raise NotFoundError('Notaire non trouvé')
 
-    try:
-        # Vérifier que c'est le bon notaire
-        notaire = crud_notaires.get_notaire(db.session, notaire_id)
-        if not notaire:
-            return jsonify({'erreur': 'Notaire non trouvé'}), 404
+    if notaire.utilisateur_id != utilisateur_id:
+        raise ForbiddenError('Non autorisé')
 
-        if notaire.utilisateur_id != utilisateur_id:
-            return jsonify({'erreur': 'Non autorisé'}), 403
+    # Valider données
+    data = request.get_json()
 
-        # Valider données
-        data = request.get_json()
+    # Mettre à jour
+    updated = crud_notaires.update_notaire(
+        db.session,
+        notaire_id,
+        **data
+    )
 
-        # Mettre à jour
-        updated = crud_notaires.update_notaire(
-            db.session,
-            notaire_id,
-            **data
-        )
-
-        return jsonify(updated.to_dict()), 200
-
-    except ValueError as e:
-        return jsonify({'erreur': str(e)}), 400
-    except Exception as e:
-        logger.error(f"Erreur mise à jour notaire: {str(e)}")
-        return jsonify({'erreur': 'Erreur serveur'}), 500
+    return {'data': updated.to_dict()}
 
 
 @notaires_bp.route('/<int:notaire_id>/stats', methods=['GET'])
 @token_required
+@handle_errors()
 def get_notaire_stats(utilisateur_id, notaire_id, **kwargs):
     """Récupérer statistiques notaire."""
+    stats = crud_notaires.get_notaire_stats(db.session, notaire_id)
+    if not stats:
+        raise NotFoundError('Notaire non trouvé')
 
-    try:
-        stats = crud_notaires.get_notaire_stats(db.session, notaire_id)
-        if not stats:
-            return jsonify({'erreur': 'Notaire non trouvé'}), 404
-
-        return jsonify(stats), 200
-
-    except Exception as e:
-        logger.error(f"Erreur stats notaire: {str(e)}")
-        return jsonify({'erreur': 'Erreur serveur'}), 500
+    return {'data': stats}
 
 
 # ===== TRANSACTIONS NOTAIRE =====
