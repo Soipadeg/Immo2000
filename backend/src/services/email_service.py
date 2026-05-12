@@ -106,14 +106,14 @@ class EmailService:
 
         Args:
             visite: Objet Visite
-            acheteur: Objet Acheteur
+            acheteur: Objet User (l'utilisateur acheteur)
             annonce: Objet Annonce
             est_rappel: True si c'est un rappel, False si confirmation
 
         Returns:
             Contenu HTML formaté
         """
-        nom_acheteur = acheteur.utilisateur.prenom if acheteur and acheteur.utilisateur else "Ami"
+        nom_acheteur = acheteur.prenom if acheteur else "Ami"
         adresse = annonce.adresse if annonce else "Bien immobilier"
         code_postal = annonce.code_postal if annonce else ""
         ville = annonce.ville if annonce else ""
@@ -238,7 +238,7 @@ class EmailService:
         <div class="footer">
             <p>© 2026 Immo2000. Tous droits réservés.</p>
             <p><a href="https://immo2000.fr" class="link">immo2000.fr</a></p>
-            <p><small>Cet email a été envoyé à {acheteur.utilisateur.email if acheteur and acheteur.utilisateur else destinataire}.</small></p>
+            <p><small>Cet email a été envoyé à {acheteur.email if acheteur else destinataire}.</small></p>
         </div>
     </div>
 </body>
@@ -268,7 +268,7 @@ class EmailService:
             Contenu HTML formaté
         """
         nom_vendeur = vendeur.prenom if vendeur else "Propriétaire"
-        nom_acheteur = acheteur.utilisateur.prenom if acheteur and acheteur.utilisateur else "Acheteur"
+        nom_acheteur = acheteur.prenom if acheteur else "Acheteur"
         adresse = annonce.adresse if annonce else "Bien immobilier"
         date_heure = visite.date_heure.strftime("%d/%m/%Y à %H:%M") if visite.date_heure else ""
 

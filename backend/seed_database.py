@@ -49,6 +49,12 @@ def seed_database():
                 'prenom': 'Marie',
                 'telephone': '06 12 34 56 78',
                 'adresse_contact': '123 Rue de Paris, 75001 Paris',
+                'budget_max': 350000,
+                'ville_recherchee': 'Paris',
+                'surface_min': 60,
+                'type_bien_recherche': 'appartement',
+                'nombre_pieces_min': 3,
+                'dpe_ideale': 'B',
             },
             {
                 'email': 'jean.martin@example.com',
@@ -56,6 +62,12 @@ def seed_database():
                 'prenom': 'Jean',
                 'telephone': '06 23 45 67 89',
                 'adresse_contact': '456 Avenue Lyon, 69000 Lyon',
+                'budget_max': 280000,
+                'ville_recherchee': 'Lyon',
+                'surface_min': 80,
+                'type_bien_recherche': 'maison',
+                'nombre_pieces_min': 4,
+                'dpe_ideale': 'C',
             },
             {
                 'email': 'sophie.bernard@example.com',
@@ -63,6 +75,12 @@ def seed_database():
                 'prenom': 'Sophie',
                 'telephone': '06 34 56 78 90',
                 'adresse_contact': '789 Boulevard Marseille, 13000 Marseille',
+                'budget_max': 220000,
+                'ville_recherchee': 'Marseille',
+                'surface_min': 50,
+                'type_bien_recherche': 'appartement',
+                'nombre_pieces_min': 2,
+                'dpe_ideale': 'B',
             },
         ]
 
@@ -116,6 +134,13 @@ def seed_database():
                 email_verified=True,
                 actif=True,
                 date_inscription=datetime.utcnow(),
+                # Critères acheteur (fusionnés dans User)
+                budget_max=data.get('budget_max'),
+                ville_recherchee=data.get('ville_recherchee'),
+                surface_min=data.get('surface_min'),
+                type_bien_recherche=data.get('type_bien_recherche'),
+                nombre_pieces_min=data.get('nombre_pieces_min'),
+                dpe_ideale=data.get('dpe_ideale'),
             )
             users_acheteurs.append(user)
             db.session.add(user)
