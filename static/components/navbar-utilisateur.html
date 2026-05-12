@@ -5,13 +5,11 @@
 
     <!-- Navigation Items (Phase 3: User Pages) -->
     <div style="display: flex; gap: 4px; align-items: center;">
-      <a href="http://localhost:3000/search" style="color: white; text-decoration: none; font-size: 14px; font-weight: 500; padding: 6px 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; opacity: 0.7; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'" title="Consulter les annonces immobilières">🔍 ANNONCES</a>
-      <a href="http://localhost:3000/simulateur-pret" style="color: white; text-decoration: none; font-size: 14px; font-weight: 500; padding: 6px 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; opacity: 0.7; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'" title="Simuler votre capacité d'emprunt">📈 SIMULATEUR</a>
-      <a href="http://localhost:3000/dashboard" style="color: white; text-decoration: none; font-size: 14px; font-weight: 500; padding: 6px 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; opacity: 0.7; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'" title="Mon dashboard personnel">📊 DASHBOARD</a>
-      <a href="http://localhost:3000/profile" style="color: white; text-decoration: none; font-size: 14px; font-weight: 500; padding: 6px 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; opacity: 0.7; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'" title="Gérer mon profil">👤 PROFIL</a>
-      <a href="http://localhost:3000/favoris" style="color: white; text-decoration: none; font-size: 14px; font-weight: 500; padding: 6px 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; opacity: 0.7; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'" title="Mes biens favoris">❤️ FAVORIS</a>
-      <a href="http://localhost:3000/alertes" style="color: white; text-decoration: none; font-size: 14px; font-weight: 500; padding: 6px 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; opacity: 0.7; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'" title="Mes alertes de recherche">🔔 ALERTES</a>
-      <a href="http://localhost:3000/notifications" style="color: white; text-decoration: none; font-size: 14px; font-weight: 500; padding: 6px 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; opacity: 0.7; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'" title="Mes notifications">📢 NOTIFS</a>
+      <a href="matching.html" style="color: white; text-decoration: none; font-size: 14px; font-weight: 500; padding: 6px 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; opacity: 0.7; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'" title="Consulter les annonces immobilières">🔍 ANNONCES</a>
+      <a href="simulateur_pret.html" style="color: white; text-decoration: none; font-size: 14px; font-weight: 500; padding: 6px 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; opacity: 0.7; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'" title="Simuler votre capacité d'emprunt">📈 SIMULATEUR</a>
+      <a href="dashboard.html" style="color: white; text-decoration: none; font-size: 14px; font-weight: 500; padding: 6px 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; opacity: 0.7; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'" title="Mon dashboard personnel">📊 DASHBOARD</a>
+      <a href="profile-settings.html" style="color: white; text-decoration: none; font-size: 14px; font-weight: 500; padding: 6px 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; opacity: 0.7; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'" title="Gérer mon profil">👤 PROFIL</a>
+      <a href="notifications.html" style="color: white; text-decoration: none; font-size: 14px; font-weight: 500; padding: 6px 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; opacity: 0.7; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'" title="Mes notifications">📢 NOTIFS</a>
     </div>
 
     <!-- User Menu -->
@@ -26,13 +24,16 @@
 function logout() {
   // Clear auth data from localStorage
   localStorage.removeItem('auth_token');
+  localStorage.removeItem('token');
+  localStorage.removeItem('refresh_token');
   localStorage.removeItem('user_id');
   localStorage.removeItem('user_email');
   localStorage.removeItem('user_role');
   localStorage.removeItem('user_nom');
   localStorage.removeItem('user_prenom');
+  localStorage.removeItem('user');
   // Redirect to home
-  window.location.href = 'http://localhost:5000/';
+  window.location.href = 'index.html';
 }
 
 // Display user name if available

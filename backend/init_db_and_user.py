@@ -25,9 +25,7 @@ def main():
             print(f"✅ Test user already exists")
             print(f"  Email: {existing_user.email}")
             print(f"  Name: {existing_user.prenom} {existing_user.nom}")
-            print(f"  Buyer: {existing_user.est_acheteur}")
-            print(f"  Seller: {existing_user.est_vendeur}")
-            print(f"  Active role: {existing_user.role_actif}")
+            print(f"  Role: {existing_user.role}")
         else:
             # Create test user
             print("Creating test user...")
@@ -35,12 +33,9 @@ def main():
                 email='test@immo2000.fr',
                 nom='User',
                 prenom='Test',
-                role='acheteur',
+                role='user',
                 telephone='0600000000',
                 adresse_contact='123 Rue Test, 75000 Paris',
-                est_acheteur=True,
-                est_vendeur=True,
-                role_actif='acheteur',
                 email_verified=True,
                 actif=True
             )
@@ -48,6 +43,9 @@ def main():
             db.session.add(user)
             db.session.commit()
             print("✅ Test user created successfully!")
+            print(f"  Email: {user.email}")
+            print(f"  Password: TestPassword123!")
+            print(f"  User ID: {user.utilisateur_id}")
             print(f"  Email: test@immo2000.fr")
             print(f"  Password: TestPassword123!")
             print(f"  Can buy: True")
