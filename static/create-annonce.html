@@ -488,6 +488,14 @@
                             <div class="error">La ville est obligatoire</div>
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" name="masquer_adresse_complete" id="masquerAdresse" style="width: 20px; height: 20px; cursor: pointer;">
+                            <label for="masquerAdresse" style="margin: 0; cursor: pointer; font-weight: 500;">Je ne souhaite pas afficher l'adresse complète</label>
+                        </div>
+                        <small style="color: #999; margin-top: 5px; display: block;">✓ Seul le code postal et la ville seront visibles sur l'annonce</small>
+                    </div>
                 </div>
 
                 <!-- Step 3: Caractéristiques -->
@@ -804,6 +812,7 @@
                     ville: formData.ville,
                     type_bien: formData.type_bien,
                     nombre_pieces: parseInt(formData.nombre_pieces),
+                    masquer_adresse_complete: formData.masquer_adresse_complete === 'on' ? true : false,
                 };
 
                 // Optional fields

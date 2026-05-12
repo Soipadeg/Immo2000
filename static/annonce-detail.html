@@ -600,8 +600,11 @@
             document.getElementById('annonceTitle').textContent = annonce.titre;
             document.getElementById('annoncePrix').textContent = (annonce.prix).toLocaleString('fr-FR') + ' €';
 
-            // Location
-            document.getElementById('locationText').textContent = `${annonce.adresse}, ${annonce.code_postal} ${annonce.ville}`;
+            // Location - Afficher adresse complète ou seulement code postal + ville
+            const locationText = annonce.masquer_adresse_complete
+                ? `${annonce.code_postal} ${annonce.ville}`
+                : `${annonce.adresse}, ${annonce.code_postal} ${annonce.ville}`;
+            document.getElementById('locationText').textContent = locationText;
 
             // Highlights
             document.getElementById('highlightSurface').textContent = annonce.surface + ' m²';
@@ -620,7 +623,10 @@
             document.getElementById('sidebarTypeBien').textContent = annonce.type_bien;
             document.getElementById('sidebarPieces').textContent = annonce.nombre_pieces + ' pièce(s)';
             document.getElementById('sidebarSurface').textContent = annonce.surface + ' m²';
-            document.getElementById('sidebarAdresse').textContent = annonce.adresse + ', ' + annonce.code_postal + ' ' + annonce.ville;
+            const sidebarAdresse = annonce.masquer_adresse_complete
+                ? `${annonce.code_postal} ${annonce.ville}`
+                : `${annonce.adresse}, ${annonce.code_postal} ${annonce.ville}`;
+            document.getElementById('sidebarAdresse').textContent = sidebarAdresse;
 
             // Date de création
             const date = new Date(annonce.date_creation);
