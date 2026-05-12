@@ -37,6 +37,7 @@ from src.crud.annonces import (
     AnnoncesValidationError,
 )
 from pydantic import ValidationError
+from src.decorators.error_handling import handle_errors, ValidationError as APIValidationError, NotFoundError, ForbiddenError
 
 # Blueprint
 annonces_bp = Blueprint("annonces", __name__, url_prefix="/api/v1/annonces")
@@ -44,6 +45,7 @@ annonces_bp = Blueprint("annonces", __name__, url_prefix="/api/v1/annonces")
 
 @annonces_bp.route("", methods=["POST"])
 @token_required
+@handle_errors()
 def create_annonce_endpoint(current_user):
     """
     POST /api/v1/annonces
@@ -56,40 +58,24 @@ def create_annonce_endpoint(current_user):
         400 Bad Request (validation error)
         401 Unauthorized (no JWT)
     """
+    # Valider les données avec Pydantic
+    data = request.get_json()
     try:
-        # Valider les données avec Pydantic
-        data = request.get_json()
         annonce_data = CreateAnnonce(**data)
-
-        # Créer l'annonce
-        annonce = create_annonce(db.session, current_user["user_id"], annonce_data)
-
-        # Répondre avec le schéma de réponse
-        response = AnnoncesResponse.from_orm(annonce)
-        return jsonify(response.dict()), 201
-
     except ValidationError as e:
-        # Convertir les erreurs Pydantic en format JSON sérialisable
-        errors = []
-        for err in e.errors():
-            errors.append({
-                "field": ".".join(str(x) for x in err.get("loc", [])),
-                "type": err.get("type"),
-                "msg": err.get("msg")
-            })
-        return jsonify({
-            "error": "Validation error",
-            "code": 400,
-            "details": errors
-        }), 400
-    except Exception as e:
-        return jsonify({
-            "error": str(e),
-            "code": 400
-        }), 400
+        errors = [{"field": ".".join(str(x) for x in err.get("loc", [])), "type": err.get("type"), "msg": err.get("msg")} for err in e.errors()]
+        raise APIValidationError(f"Validation error: {errors}")
+
+    # Créer l'annonce
+    annonce = create_annonce(db.session, current_user["user_id"], annonce_data)
+
+    # Répondre avec le schéma de réponse
+    response = AnnoncesResponse.from_orm(annonce)
+    return {"data": response.dict()}, 201
 
 
 @annonces_bp.route("", methods=["GET"])
+@handle_errors()
 def list_annonces_endpoint():
     """
     GET /api/v1/annonces?skip=0&limit=20&ville=Paris&type_bien=maison&...
@@ -114,66 +100,54 @@ def list_annonces_endpoint():
     Returns:
         200 OK + AnnoncesListResponse (paginated)
     """
-    try:
-        # Récupérer les paramètres de pagination
-        skip = request.args.get("skip", 0, type=int)
-        limit = request.args.get("limit", 20, type=int)
+    # Récupérer les paramètres de pagination
+    skip = request.args.get("skip", 0, type=int)
+    limit = request.args.get("limit", 20, type=int)
 
-        # Construire le dictionnaire de filtres
-        filters = {}
+    # Construire le dictionnaire de filtres
+    filters = {}
 
-        # Filtres simples
-        if request.args.get("ville"):
-            filters["ville"] = request.args.get("ville")
-        if request.args.get("code_postal"):
-            filters["code_postal"] = request.args.get("code_postal")
-        if request.args.get("type_bien"):
-            filters["type_bien"] = request.args.get("type_bien")
-        if request.args.get("statut"):
-            filters["statut"] = request.args.get("statut")
-        if request.args.get("utilisateur_id"):
-            filters["utilisateur_id"] = request.args.get("utilisateur_id", type=int)
-        if request.args.get("search"):
-            filters["search"] = request.args.get("search")
+    # Filtres simples
+    if request.args.get("ville"):
+        filters["ville"] = request.args.get("ville")
+    if request.args.get("code_postal"):
+        filters["code_postal"] = request.args.get("code_postal")
+    if request.args.get("type_bien"):
+        filters["type_bien"] = request.args.get("type_bien")
+    if request.args.get("statut"):
+        filters["statut"] = request.args.get("statut")
+    if request.args.get("utilisateur_id"):
+        filters["utilisateur_id"] = request.args.get("utilisateur_id", type=int)
+    if request.args.get("search"):
+        filters["search"] = request.args.get("search")
 
-        # Filtres numériques
-        if request.args.get("prix_min"):
-            filters["prix_min"] = float(request.args.get("prix_min"))
-        if request.args.get("prix_max"):
-            filters["prix_max"] = float(request.args.get("prix_max"))
-        if request.args.get("surface_min"):
-            filters["surface_min"] = float(request.args.get("surface_min"))
-        if request.args.get("surface_max"):
-            filters["surface_max"] = float(request.args.get("surface_max"))
+    # Filtres numériques (ValueError will be caught by @handle_errors())
+    if request.args.get("prix_min"):
+        filters["prix_min"] = float(request.args.get("prix_min"))
+    if request.args.get("prix_max"):
+        filters["prix_max"] = float(request.args.get("prix_max"))
+    if request.args.get("surface_min"):
+        filters["surface_min"] = float(request.args.get("surface_min"))
+    if request.args.get("surface_max"):
+        filters["surface_max"] = float(request.args.get("surface_max"))
 
-        # Récupérer les annonces
-        annonces, total = list_annonces(db.session, skip=skip, limit=limit, filters=filters)
+    # Récupérer les annonces
+    annonces, total = list_annonces(db.session, skip=skip, limit=limit, filters=filters)
 
-        # Construire la réponse
-        items = [AnnoncesResponse.from_orm(a) for a in annonces]
-        response = AnnoncesListResponse(
-            items=items,
-            total=total,
-            skip=skip,
-            limit=limit
-        )
+    # Construire la réponse
+    items = [AnnoncesResponse.from_orm(a) for a in annonces]
+    response = AnnoncesListResponse(
+        items=items,
+        total=total,
+        skip=skip,
+        limit=limit
+    )
 
-        return jsonify(response.dict()), 200
-
-    except ValueError as e:
-        return jsonify({
-            "error": "Invalid query parameter",
-            "code": 400,
-            "details": str(e)
-        }), 400
-    except Exception as e:
-        return jsonify({
-            "error": str(e),
-            "code": 400
-        }), 400
+    return {"data": response.dict()}
 
 
 @annonces_bp.route("/<int:annonce_id>", methods=["GET"])
+@handle_errors()
 def get_annonce_endpoint(annonce_id):
     """
     GET /api/v1/annonces/{id}
@@ -188,23 +162,16 @@ def get_annonce_endpoint(annonce_id):
     """
     try:
         annonce = get_annonce(db.session, annonce_id)
-        response = AnnoncesResponse.from_orm(annonce)
-        return jsonify(response.dict()), 200
+    except AnnoncesNotFoundError:
+        raise NotFoundError("Annonce not found")
 
-    except AnnoncesNotFoundError as e:
-        return jsonify({
-            "error": str(e),
-            "code": 404
-        }), 404
-    except Exception as e:
-        return jsonify({
-            "error": str(e),
-            "code": 400
-        }), 400
+    response = AnnoncesResponse.from_orm(annonce)
+    return {"data": response.dict()}
 
 
 @annonces_bp.route("/<int:annonce_id>", methods=["PUT"])
 @token_required
+@handle_errors()
 def update_annonce_endpoint(current_user, annonce_id):
     """
     PUT /api/v1/annonces/{id}
@@ -222,47 +189,33 @@ def update_annonce_endpoint(current_user, annonce_id):
         403 Forbidden (not owner)
         404 Not Found
     """
+    # Valider les données avec Pydantic
+    data = request.get_json() or {}
     try:
-        # Valider les données avec Pydantic
-        data = request.get_json() or {}
         annonce_data = UpdateAnnonce(**data)
+    except ValidationError as e:
+        raise APIValidationError(f"Validation error: {e.errors()}")
 
-        # Mettre à jour l'annonce
+    # Mettre à jour l'annonce
+    try:
         annonce = update_annonce(
             db.session,
             annonce_id,
             current_user["user_id"],
             annonce_data
         )
+    except AnnoncesNotFoundError:
+        raise NotFoundError("Annonce not found")
+    except AnnoncesUnauthorizedError:
+        raise ForbiddenError("Not the owner of this annonce")
 
-        response = AnnoncesResponse.from_orm(annonce)
-        return jsonify(response.dict()), 200
-
-    except ValidationError as e:
-        return jsonify({
-            "error": "Validation error",
-            "code": 400,
-            "details": e.errors()
-        }), 400
-    except AnnoncesNotFoundError as e:
-        return jsonify({
-            "error": str(e),
-            "code": 404
-        }), 404
-    except AnnoncesUnauthorizedError as e:
-        return jsonify({
-            "error": str(e),
-            "code": 403
-        }), 403
-    except Exception as e:
-        return jsonify({
-            "error": str(e),
-            "code": 400
-        }), 400
+    response = AnnoncesResponse.from_orm(annonce)
+    return {"data": response.dict()}
 
 
 @annonces_bp.route("/<int:annonce_id>", methods=["DELETE"])
 @token_required
+@handle_errors()
 def delete_annonce_endpoint(current_user, annonce_id):
     """
     DELETE /api/v1/annonces/{id}
@@ -279,27 +232,17 @@ def delete_annonce_endpoint(current_user, annonce_id):
     """
     try:
         delete_annonce(db.session, annonce_id, current_user["user_id"])
-        return "", 204
+    except AnnoncesNotFoundError:
+        raise NotFoundError("Annonce not found")
+    except AnnoncesUnauthorizedError:
+        raise ForbiddenError("Not the owner of this annonce")
 
-    except AnnoncesNotFoundError as e:
-        return jsonify({
-            "error": str(e),
-            "code": 404
-        }), 404
-    except AnnoncesUnauthorizedError as e:
-        return jsonify({
-            "error": str(e),
-            "code": 403
-        }), 403
-    except Exception as e:
-        return jsonify({
-            "error": str(e),
-            "code": 400
-        }), 400
+    return "", 204
 
 
 @annonces_bp.route("/<int:annonce_id>/publier", methods=["POST"])
 @token_required
+@handle_errors()
 def publish_annonce_endpoint(current_user, annonce_id):
     """
     POST /api/v1/annonces/{id}/publier [BONUS]
@@ -317,33 +260,20 @@ def publish_annonce_endpoint(current_user, annonce_id):
     """
     try:
         annonce = publish_annonce(db.session, annonce_id, current_user["user_id"])
-        response = AnnoncesResponse.from_orm(annonce)
-        return jsonify(response.dict()), 200
-
-    except AnnoncesNotFoundError as e:
-        return jsonify({
-            "error": str(e),
-            "code": 404
-        }), 404
-    except AnnoncesUnauthorizedError as e:
-        return jsonify({
-            "error": str(e),
-            "code": 403
-        }), 403
+    except AnnoncesNotFoundError:
+        raise NotFoundError("Annonce not found")
+    except AnnoncesUnauthorizedError:
+        raise ForbiddenError("Not the owner of this annonce")
     except AnnoncesValidationError as e:
-        return jsonify({
-            "error": str(e),
-            "code": 422
-        }), 422
-    except Exception as e:
-        return jsonify({
-            "error": str(e),
-            "code": 400
-        }), 400
+        raise APIValidationError(str(e))
+
+    response = AnnoncesResponse.from_orm(annonce)
+    return {"data": response.dict()}
 
 
 @annonces_bp.route("/<int:annonce_id>/archiver", methods=["POST"])
 @token_required
+@handle_errors()
 def archive_annonce_endpoint(current_user, annonce_id):
     """
     POST /api/v1/annonces/{id}/archiver
@@ -361,33 +291,20 @@ def archive_annonce_endpoint(current_user, annonce_id):
     """
     try:
         annonce = archive_annonce(db.session, annonce_id, current_user["user_id"])
-        response = AnnoncesResponse.from_orm(annonce)
-        return jsonify(response.dict()), 200
-
-    except AnnoncesNotFoundError as e:
-        return jsonify({
-            "error": str(e),
-            "code": 404
-        }), 404
-    except AnnoncesUnauthorizedError as e:
-        return jsonify({
-            "error": str(e),
-            "code": 403
-        }), 403
+    except AnnoncesNotFoundError:
+        raise NotFoundError("Annonce not found")
+    except AnnoncesUnauthorizedError:
+        raise ForbiddenError("Not the owner of this annonce")
     except AnnoncesValidationError as e:
-        return jsonify({
-            "error": str(e),
-            "code": 422
-        }), 422
-    except Exception as e:
-        return jsonify({
-            "error": str(e),
-            "code": 400
-        }), 400
+        raise APIValidationError(str(e))
+
+    response = AnnoncesResponse.from_orm(annonce)
+    return {"data": response.dict()}
 
 
 @annonces_bp.route("/<int:annonce_id>/vendre", methods=["POST"])
 @token_required
+@handle_errors()
 def sell_annonce_endpoint(current_user, annonce_id):
     """
     POST /api/v1/annonces/{id}/vendre

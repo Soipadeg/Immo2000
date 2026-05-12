@@ -1,13 +1,14 @@
 """
-CRUD operations for purchase offers
+CRUD operations for purchase offers - OPTIMIZED
 """
 
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from datetime import datetime
 from sqlalchemy import and_, or_, func, desc
 from src.models.offres import Offre, OffreStatus
 from src.models.annonces import Annonce
 from src.auth.models import User
+from src.helpers.query import paginate_query, PaginationParams
 
 
 def create_offer(
@@ -38,9 +39,12 @@ def create_offer(
 
 def get_offer(db: Session, offre_id: int) -> Offre:
     """
-    Get an offer by ID
+    Get an offer by ID with eager loading
     """
-    return db.query(Offre).filter(Offre.offre_id == offre_id).first()
+    return db.query(Offre).options(
+        joinedload(Offre.annonce),
+        joinedload(Offre.acheteur)
+    ).filter(Offre.offre_id == offre_id).first()
 
 
 def get_offer_with_permission_check(
@@ -51,10 +55,13 @@ def get_offer_with_permission_check(
     """
     Get an offer only if user is the seller or buyer
     """
-    return db.query(Offre).join(Annonce).filter(
+    return db.query(Offre).options(
+        joinedload(Offre.annonce),
+        joinedload(Offre.acheteur)
+    ).join(Annonce).filter(
         and_(
             Offre.offre_id == offre_id,
-            or_(Annonce.vendeur_id == user_id, Offre.acheteur_id == user_id)
+            or_(Annonce.utilisateur_id == user_id, Offre.acheteur_id == user_id)
         )
     ).first()
 
@@ -66,13 +73,14 @@ def list_offers_for_annonce(
     limit: int = 50
 ) -> tuple[list[Offre], int]:
     """
-    List all offers for an annonce
+    List all offers for an annonce with eager loading (NO N+1!)
     """
-    query = db.query(Offre).filter(Offre.annonce_id == annonce_id)
-    total = query.count()
+    query = db.query(Offre).options(
+        joinedload(Offre.annonce),
+        joinedload(Offre.acheteur)
+    ).filter(Offre.annonce_id == annonce_id).order_by(desc(Offre.date_offre))
 
-    offers = query.order_by(desc(Offre.date_offre)).offset(skip).limit(limit).all()
-    return offers, total
+    return paginate_query(query, skip, limit)
 
 
 def list_offers_for_buyer(
@@ -82,13 +90,15 @@ def list_offers_for_buyer(
     limit: int = 50
 ) -> tuple[list[Offre], int]:
     """
-    List all offers made by a buyer
+    List all offers made by a buyer with eager loading (NO N+1!)
     """
-    query = db.query(Offre).filter(Offre.acheteur_id == acheteur_id)
-    total = query.count()
+    query = db.query(Offre).options(
+        joinedload(Offre.annonce),
+        joinedload(Offre.acheteur)
+    ).filter(Offre.acheteur_id == acheteur_id).order_by(desc(Offre.date_offre))
 
-    offers = query.order_by(desc(Offre.date_offre)).offset(skip).limit(limit).all()
-    return offers, total
+    return paginate_query(query, skip, limit)
+
 
 
 def list_offers_for_vendor(
@@ -98,13 +108,14 @@ def list_offers_for_vendor(
     limit: int = 50
 ) -> tuple[list[Offre], int]:
     """
-    List all offers for a vendor's annonces
+    List all offers for a vendor's annonces with eager loading (NO N+1!)
     """
-    query = db.query(Offre).join(Annonce).filter(Annonce.vendeur_id == vendor_id)
-    total = query.count()
+    query = db.query(Offre).options(
+        joinedload(Offre.annonce),
+        joinedload(Offre.acheteur)
+    ).join(Annonce).filter(Annonce.utilisateur_id == vendor_id).order_by(desc(Offre.date_offre))
 
-    offers = query.order_by(desc(Offre.date_offre)).offset(skip).limit(limit).all()
-    return offers, total
+    return paginate_query(query, skip, limit)
 
 
 def update_offer_status(
@@ -118,7 +129,7 @@ def update_offer_status(
     """
     if vendor_id:
         offre = db.query(Offre).join(Annonce).filter(
-            and_(Offre.offre_id == offre_id, Annonce.vendeur_id == vendor_id)
+            and_(Offre.offre_id == offre_id, Annonce.utilisateur_id == vendor_id)
         ).first()
     else:
         offre = db.query(Offre).filter(Offre.offre_id == offre_id).first()

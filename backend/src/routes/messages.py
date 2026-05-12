@@ -30,7 +30,8 @@ from src.crud.messages import (
     MessageNotFoundError,
     MessageUnauthorizedError,
 )
-from pydantic import ValidationError
+from src.decorators.error_handling import handle_errors, ValidationError, NotFoundError, ForbiddenError
+from pydantic import ValidationError as PydanticValidationError
 
 # Blueprint
 messages_bp = Blueprint("messages", __name__, url_prefix="/api/v1/messages")
@@ -38,6 +39,7 @@ messages_bp = Blueprint("messages", __name__, url_prefix="/api/v1/messages")
 
 @messages_bp.route("", methods=["POST"])
 @token_required
+@handle_errors()
 def send_message_endpoint(current_user):
     """
     POST /api/v1/messages
@@ -56,26 +58,12 @@ def send_message_endpoint(current_user):
         401 Unauthorized (no JWT)
         404 Not Found (receiver ou annonce non trouvé)
     """
+    # Valider les données avec Pydantic
+    data = request.get_json()
     try:
-        # Valider les données avec Pydantic
-        data = request.get_json()
         message_data = CreateMessage(**data)
-
-        # Envoyer le message
-        message = send_message(
-            db.session,
-            sender_id=current_user["user_id"],
-            receiver_id=message_data.receiver_id,
-            annonce_id=message_data.annonce_id,
-            contenu=message_data.contenu
-        )
-
-        # Répondre avec le schéma de réponse
-        response = MessageResponse.from_orm(message)
-        return jsonify(response.dict()), 201
-
-    except ValidationError as e:
-        # Convertir les erreurs Pydantic en format JSON sérialisable
+    except PydanticValidationError as e:
+        # Convertir les erreurs Pydantic
         errors = []
         for err in e.errors():
             errors.append({
@@ -83,27 +71,25 @@ def send_message_endpoint(current_user):
                 "type": err.get("type"),
                 "msg": err.get("msg")
             })
-        return jsonify({
-            "error": "Validation error",
-            "code": 400,
-            "details": errors
-        }), 400
+        raise ValidationError(f"Validation error: {errors}")
 
-    except ValueError as e:
-        return jsonify({
-            "error": str(e),
-            "code": 400
-        }), 400
+    # Envoyer le message
+    message = send_message(
+        db.session,
+        sender_id=current_user["user_id"],
+        receiver_id=message_data.receiver_id,
+        annonce_id=message_data.annonce_id,
+        contenu=message_data.contenu
+    )
 
-    except Exception as e:
-        return jsonify({
-            "error": str(e),
-            "code": 500
-        }), 500
+    # Répondre avec le schéma de réponse
+    response = MessageResponse.from_orm(message)
+    return {"data": response.dict()}, 201
 
 
 @messages_bp.route("", methods=["GET"])
 @token_required
+@handle_errors()
 def list_messages_endpoint(current_user):
     """
     GET /api/v1/messages?folder=inbox&skip=0&limit=20
@@ -118,53 +104,47 @@ def list_messages_endpoint(current_user):
         200 OK + MessageListResponse
         401 Unauthorized (no JWT)
     """
-    try:
-        # Récupérer les paramètres
-        folder = request.args.get("folder", "inbox")
-        skip = request.args.get("skip", 0, type=int)
-        limit = request.args.get("limit", 20, type=int)
+    # Récupérer les paramètres
+    folder = request.args.get("folder", "inbox")
+    skip = request.args.get("skip", 0, type=int)
+    limit = request.args.get("limit", 20, type=int)
 
-        # Limiter le max
-        if limit > 100:
-            limit = 100
+    # Limiter le max
+    if limit > 100:
+        limit = 100
 
-        # Récupérer les messages
-        messages, total = list_messages(
-            db.session,
-            user_id=current_user["user_id"],
-            folder=folder,
-            skip=skip,
-            limit=limit
-        )
+    # Récupérer les messages
+    messages, total = list_messages(
+        db.session,
+        user_id=current_user["user_id"],
+        folder=folder,
+        skip=skip,
+        limit=limit
+    )
 
-        # Convertir en réponse détaillée avec infos des utilisateurs
-        message_responses = []
-        for msg in messages:
-            sender = db.session.query(User).filter(User.utilisateur_id == msg.sender_id).first()
-            receiver = db.session.query(User).filter(User.utilisateur_id == msg.receiver_id).first()
-            annonce = db.session.query(Annonce).filter(Annonce.annonce_id == msg.annonce_id).first()
+    # Convertir en réponse détaillée avec infos des utilisateurs
+    message_responses = []
+    for msg in messages:
+        sender = db.session.query(User).filter(User.utilisateur_id == msg.sender_id).first()
+        receiver = db.session.query(User).filter(User.utilisateur_id == msg.receiver_id).first()
+        annonce = db.session.query(Annonce).filter(Annonce.annonce_id == msg.annonce_id).first()
 
-            msg_detail = MessageDetailResponse.from_orm_with_details(msg, sender, receiver, annonce)
-            message_responses.append(msg_detail)
+        msg_detail = MessageDetailResponse.from_orm_with_details(msg, sender, receiver, annonce)
+        message_responses.append(msg_detail)
 
-        # Répondre avec le schéma de liste
-        response = MessageListResponse(
-            messages=message_responses,
-            total=total,
-            skip=skip,
-            limit=limit
-        )
-        return jsonify(response.dict()), 200
-
-    except Exception as e:
-        return jsonify({
-            "error": str(e),
-            "code": 500
-        }), 500
+    # Répondre avec le schéma de liste
+    response = MessageListResponse(
+        messages=message_responses,
+        total=total,
+        skip=skip,
+        limit=limit
+    )
+    return {"data": response.dict()}
 
 
 @messages_bp.route("/<int:message_id>", methods=["GET"])
 @token_required
+@handle_errors()
 def get_message_endpoint(current_user, message_id):
     """
     GET /api/v1/messages/{message_id}
@@ -178,36 +158,23 @@ def get_message_endpoint(current_user, message_id):
     """
     try:
         message = get_message(db.session, message_id, current_user["user_id"])
-
-        # Récupérer les détails
-        sender = db.session.query(User).filter(User.utilisateur_id == message.sender_id).first()
-        receiver = db.session.query(User).filter(User.utilisateur_id == message.receiver_id).first()
-        annonce = db.session.query(Annonce).filter(Annonce.annonce_id == message.annonce_id).first()
-
-        response = MessageDetailResponse.from_orm_with_details(message, sender, receiver, annonce)
-        return jsonify(response.dict()), 200
-
     except MessageNotFoundError:
-        return jsonify({
-            "error": "Message not found",
-            "code": 404
-        }), 404
-
+        raise NotFoundError("Message not found")
     except MessageUnauthorizedError:
-        return jsonify({
-            "error": "Unauthorized access to this message",
-            "code": 403
-        }), 403
+        raise ForbiddenError("Unauthorized access to this message")
 
-    except Exception as e:
-        return jsonify({
-            "error": str(e),
-            "code": 500
-        }), 500
+    # Récupérer les détails
+    sender = db.session.query(User).filter(User.utilisateur_id == message.sender_id).first()
+    receiver = db.session.query(User).filter(User.utilisateur_id == message.receiver_id).first()
+    annonce = db.session.query(Annonce).filter(Annonce.annonce_id == message.annonce_id).first()
+
+    response = MessageDetailResponse.from_orm_with_details(message, sender, receiver, annonce)
+    return {"data": response.dict()}
 
 
 @messages_bp.route("/<int:message_id>/read", methods=["PUT"])
 @token_required
+@handle_errors()
 def mark_as_read_endpoint(current_user, message_id):
     """
     PUT /api/v1/messages/{message_id}/read
@@ -221,30 +188,18 @@ def mark_as_read_endpoint(current_user, message_id):
     """
     try:
         message = mark_message_as_read(db.session, message_id, current_user["user_id"])
-        response = MessageResponse.from_orm(message)
-        return jsonify(response.dict()), 200
-
     except MessageNotFoundError:
-        return jsonify({
-            "error": "Message not found",
-            "code": 404
-        }), 404
-
+        raise NotFoundError("Message not found")
     except MessageUnauthorizedError:
-        return jsonify({
-            "error": "Only the receiver can mark as read",
-            "code": 403
-        }), 403
+        raise ForbiddenError("Only the receiver can mark as read")
 
-    except Exception as e:
-        return jsonify({
-            "error": str(e),
-            "code": 500
-        }), 500
+    response = MessageResponse.from_orm(message)
+    return {"data": response.dict()}
 
 
 @messages_bp.route("/<int:message_id>", methods=["DELETE"])
 @token_required
+@handle_errors()
 def delete_message_endpoint(current_user, message_id):
     """
     DELETE /api/v1/messages/{message_id}
@@ -258,22 +213,9 @@ def delete_message_endpoint(current_user, message_id):
     """
     try:
         delete_message(db.session, message_id, current_user["user_id"])
-        return "", 204
-
     except MessageNotFoundError:
-        return jsonify({
-            "error": "Message not found",
-            "code": 404
-        }), 404
-
+        raise NotFoundError("Message not found")
     except MessageUnauthorizedError:
-        return jsonify({
-            "error": "Unauthorized access to this message",
-            "code": 403
-        }), 403
+        raise ForbiddenError("Unauthorized access to this message")
 
-    except Exception as e:
-        return jsonify({
-            "error": str(e),
-            "code": 500
-        }), 500
+    return "", 204
