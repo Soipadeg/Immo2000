@@ -23,8 +23,9 @@ from src.schemas.rendez_vous import (
     RDVResponse,
     RDVListResponse,
 )
-from pydantic import ValidationError
+from pydantic import ValidationError as PydanticValidationError
 import io
+from src.decorators.error_handling import handle_errors, ValidationError, NotFoundError, ForbiddenError
 
 # Blueprint
 rdv_bp = Blueprint("rendez_vous", __name__, url_prefix="/api/v1/rendez-vous")
@@ -108,6 +109,7 @@ rdv_bp = Blueprint("rendez_vous", __name__, url_prefix="/api/v1/rendez-vous")
 
 @rdv_bp.route("", methods=["POST"])
 @token_required
+@handle_errors()
 def create_rdv(current_user):
     """
     POST /api/v1/rendez-vous
@@ -121,77 +123,64 @@ def create_rdv(current_user):
         401 Unauthorized (no JWT)
         404 Not Found (annonce n'existe pas)
     """
-    try:
-        # Valider les données
-        data = request.get_json()
-        rdv_data = CreateRDV(**data)
+    data = request.get_json()
+    rdv_data = CreateRDV(**data)
 
-        # Vérifier que l'annonce existe
-        annonce = Annonce.query.filter_by(annonce_id=rdv_data.annonce_id).first()
-        if not annonce:
-            return jsonify({"error": "Annonce non trouvée"}), 404
+    annonce = Annonce.query.filter_by(annonce_id=rdv_data.annonce_id).first()
+    if not annonce:
+        raise NotFoundError("Annonce non trouvée")
 
-        # Vérifier que l'acheteur n'est pas le vendeur
-        if annonce.utilisateur_id == current_user["user_id"]:
-            return jsonify({"error": "Vous ne pouvez pas proposer un RDV pour votre propre annonce"}), 400
+    if annonce.utilisateur_id == current_user["user_id"]:
+        raise ValidationError("Vous ne pouvez pas proposer un RDV pour votre propre annonce")
 
-        # Vérifier qu'il n'y a pas déjà un RDV en cours pour ce bien
-        existing_rdv = RendezVous.query.filter(
-            RendezVous.annonce_id == rdv_data.annonce_id,
-            RendezVous.acheteur_id == current_user["user_id"],
-            RendezVous.statut != "refusé"
-        ).first()
-        if existing_rdv:
-            return jsonify({"error": "Vous avez déjà un RDV en cours pour cette annonce"}), 400
+    existing_rdv = RendezVous.query.filter(
+        RendezVous.annonce_id == rdv_data.annonce_id,
+        RendezVous.acheteur_id == current_user["user_id"],
+        RendezVous.statut != "refusé"
+    ).first()
+    if existing_rdv:
+        raise ValidationError("Vous avez déjà un RDV en cours pour cette annonce")
 
-        # Créer le RDV
-        rdv = RendezVous(
-            annonce_id=rdv_data.annonce_id,
-            acheteur_id=current_user["user_id"],
-            vendeur_id=annonce.utilisateur_id,
-            date_proposée=rdv_data.date_proposée,
-            message_dernier=rdv_data.message,
-            dernier_proposant="acheteur",
-            statut="en_attente_vendeur"
-        )
+    rdv = RendezVous(
+        annonce_id=rdv_data.annonce_id,
+        acheteur_id=current_user["user_id"],
+        vendeur_id=annonce.utilisateur_id,
+        date_proposée=rdv_data.date_proposée,
+        message_dernier=rdv_data.message,
+        dernier_proposant="acheteur",
+        statut="en_attente_vendeur"
+    )
 
-        db.session.add(rdv)
-        db.session.commit()
+    db.session.add(rdv)
+    db.session.commit()
 
-        # Ajouter à l'historique
-        ajouter_historique(
-            rdv.rdv_id,
-            current_user["user_id"],
-            "creation",
-            rdv_data.date_proposée,
-            rdv_data.message
-        )
+    ajouter_historique(
+        rdv.rdv_id,
+        current_user["user_id"],
+        "creation",
+        rdv_data.date_proposée,
+        rdv_data.message
+    )
 
-        # Créer une notification pour le vendeur
-        notification = Notification(
-            user_id=annonce.utilisateur_id,
-            type=NotificationType.MESSAGE_RECEIVED,
-            title="Nouveau RDV proposé",
-            message=f"Un acheteur souhaite visiter votre annonce '{annonce.titre}'",
-            related_entity_type="rendez_vous",
-            related_entity_id=rdv.rdv_id,
-            icon="📅"
-        )
-        db.session.add(notification)
-        db.session.commit()
+    notification = Notification(
+        user_id=annonce.utilisateur_id,
+        type=NotificationType.MESSAGE_RECEIVED,
+        title="Nouveau RDV proposé",
+        message=f"Un acheteur souhaite visiter votre annonce '{annonce.titre}'",
+        related_entity_type="rendez_vous",
+        related_entity_id=rdv.rdv_id,
+        icon="📅"
+    )
+    db.session.add(notification)
+    db.session.commit()
 
-        response = RDVResponse.from_orm(rdv)
-        return jsonify(response.dict()), 201
-
-    except ValidationError as e:
-        errors = [{"field": ".".join(str(x) for x in err.get("loc", [])), "msg": err.get("msg")} for err in e.errors()]
-        return jsonify({"error": "Validation error", "details": errors}), 400
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
+    response = RDVResponse.from_orm(rdv)
+    return response.dict()
 
 
 @rdv_bp.route("", methods=["GET"])
 @token_required
+@handle_errors()
 def list_rdv(current_user):
     """
     GET /api/v1/rendez-vous?skip=0&limit=20&statut=confirmé&role=acheteur
@@ -206,53 +195,44 @@ def list_rdv(current_user):
     Returns:
         200 OK + RDVListResponse (paginated)
     """
-    try:
-        skip = request.args.get("skip", 0, type=int)
-        limit = request.args.get("limit", 20, type=int)
-        statut = request.args.get("statut", None)
-        role = request.args.get("role", None)
+    skip = request.args.get("skip", 0, type=int)
+    limit = request.args.get("limit", 20, type=int)
+    statut = request.args.get("statut", None)
+    role = request.args.get("role", None)
 
-        # Construire la requête
-        query = RendezVous.query
+    query = RendezVous.query
 
-        # Filtrer par rôle de l'utilisateur
-        if role == "acheteur":
-            query = query.filter_by(acheteur_id=current_user["user_id"])
-        elif role == "vendeur":
-            query = query.filter_by(vendeur_id=current_user["user_id"])
-        else:
-            # Par défaut, afficher les RDV où l'utilisateur est impliqué
-            from sqlalchemy import or_
-            query = query.filter(
-                or_(
-                    RendezVous.acheteur_id == current_user["user_id"],
-                    RendezVous.vendeur_id == current_user["user_id"]
-                )
+    if role == "acheteur":
+        query = query.filter_by(acheteur_id=current_user["user_id"])
+    elif role == "vendeur":
+        query = query.filter_by(vendeur_id=current_user["user_id"])
+    else:
+        from sqlalchemy import or_
+        query = query.filter(
+            or_(
+                RendezVous.acheteur_id == current_user["user_id"],
+                RendezVous.vendeur_id == current_user["user_id"]
             )
-
-        # Filtrer par statut
-        if statut:
-            query = query.filter_by(statut=statut)
-
-        # Pagination
-        total = query.count()
-        rdv_list = query.offset(skip).limit(limit).all()
-
-        # Répondre
-        response = RDVListResponse(
-            items=[RDVResponse.from_orm(rdv) for rdv in rdv_list],
-            total=total,
-            skip=skip,
-            limit=limit
         )
-        return jsonify(response.dict()), 200
 
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
+    if statut:
+        query = query.filter_by(statut=statut)
+
+    total = query.count()
+    rdv_list = query.offset(skip).limit(limit).all()
+
+    response = RDVListResponse(
+        items=[RDVResponse.from_orm(rdv) for rdv in rdv_list],
+        total=total,
+        skip=skip,
+        limit=limit
+    )
+    return response.dict()
 
 
 @rdv_bp.route("/<int:rdv_id>", methods=["GET"])
 @token_required
+@handle_errors()
 def get_rdv(current_user, rdv_id):
     """
     GET /api/v1/rendez-vous/{id}
@@ -263,25 +243,21 @@ def get_rdv(current_user, rdv_id):
         404 Not Found
         403 Forbidden (pas autorisé)
     """
-    try:
-        rdv = RendezVous.query.filter_by(rdv_id=rdv_id).first()
+    rdv = RendezVous.query.filter_by(rdv_id=rdv_id).first()
 
-        if not rdv:
-            return jsonify({"error": "RDV non trouvé"}), 404
+    if not rdv:
+        raise NotFoundError("RDV non trouvé")
 
-        # Vérifier que l'utilisateur est impliqué dans le RDV
-        if rdv.acheteur_id != current_user["user_id"] and rdv.vendeur_id != current_user["user_id"]:
-            return jsonify({"error": "Non autorisé"}), 403
+    if rdv.acheteur_id != current_user["user_id"] and rdv.vendeur_id != current_user["user_id"]:
+        raise ForbiddenError("Non autorisé")
 
-        response = RDVResponse.from_orm(rdv)
-        return jsonify(response.dict()), 200
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
+    response = RDVResponse.from_orm(rdv)
+    return response.dict()
 
 
 @rdv_bp.route("/<int:rdv_id>", methods=["PUT"])
 @token_required
+@handle_errors()
 def update_rdv(current_user, rdv_id):
     """
     PUT /api/v1/rendez-vous/{id}
@@ -302,121 +278,101 @@ def update_rdv(current_user, rdv_id):
         404 Not Found
         403 Forbidden
     """
-    try:
-        rdv = RendezVous.query.filter_by(rdv_id=rdv_id).first()
+    rdv = RendezVous.query.filter_by(rdv_id=rdv_id).first()
 
-        if not rdv:
-            return jsonify({"error": "RDV non trouvé"}), 404
+    if not rdv:
+        raise NotFoundError("RDV non trouvé")
 
-        # Vérifier que l'utilisateur est impliqué dans le RDV
-        if rdv.acheteur_id != current_user["user_id"] and rdv.vendeur_id != current_user["user_id"]:
-            return jsonify({"error": "Non autorisé"}), 403
+    if rdv.acheteur_id != current_user["user_id"] and rdv.vendeur_id != current_user["user_id"]:
+        raise ForbiddenError("Non autorisé")
 
-        # Valider les données
-        data = request.get_json()
-        rdv_data = UpdateRDV(**data)
+    data = request.get_json()
+    rdv_data = UpdateRDV(**data)
 
-        # Déterminer qui répond
-        is_acheteur = rdv.acheteur_id == current_user["user_id"]
-        is_vendeur = rdv.vendeur_id == current_user["user_id"]
+    is_acheteur = rdv.acheteur_id == current_user["user_id"]
+    is_vendeur = rdv.vendeur_id == current_user["user_id"]
 
-        # Vérifier le statut actuel
-        if is_acheteur and rdv.statut not in ["en_attente_acheteur"]:
-            return jsonify({"error": "Vous ne pouvez pas répondre à ce RDV dans son statut actuel"}), 400
-        if is_vendeur and rdv.statut not in ["en_attente_vendeur"]:
-            return jsonify({"error": "Vous ne pouvez pas répondre à ce RDV dans son statut actuel"}), 400
+    if is_acheteur and rdv.statut not in ["en_attente_acheteur"]:
+        raise ValidationError("Vous ne pouvez pas répondre à ce RDV dans son statut actuel")
+    if is_vendeur and rdv.statut not in ["en_attente_vendeur"]:
+        raise ValidationError("Vous ne pouvez pas répondre à ce RDV dans son statut actuel")
 
-        # Traiter la réponse
-        if rdv_data.action == "accepter":
-            # Accepter la date proposée
-            rdv.date_confirmée = rdv.date_proposée
-            rdv.statut = "confirmé"
-            rdv.message_dernier = rdv_data.message or "RDV accepté"
+    if rdv_data.action == "accepter":
+        rdv.date_confirmée = rdv.date_proposée
+        rdv.statut = "confirmé"
+        rdv.message_dernier = rdv_data.message or "RDV accepté"
+        rdv.dernier_proposant = "acheteur" if is_acheteur else "vendeur"
+
+        other_id = rdv.vendeur_id if is_acheteur else rdv.acheteur_id
+        notification = Notification(
+            user_id=other_id,
+            type=NotificationType.MESSAGE_RECEIVED,
+            title="RDV confirmé",
+            message=f"Votre rendez-vous de visite a été confirmé",
+            related_entity_type="rendez_vous",
+            related_entity_id=rdv.rdv_id,
+            icon="✓"
+        )
+        db.session.add(notification)
+
+    elif rdv_data.action == "refuser":
+        if rdv_data.date_proposée:
+            rdv.date_proposée = rdv_data.date_proposée
+            rdv.message_dernier = rdv_data.message or "Nouvelle date proposée"
             rdv.dernier_proposant = "acheteur" if is_acheteur else "vendeur"
 
-            # Créer notification pour l'autre
+            if is_acheteur:
+                rdv.statut = "en_attente_vendeur"
+            else:
+                rdv.statut = "en_attente_acheteur"
+
             other_id = rdv.vendeur_id if is_acheteur else rdv.acheteur_id
             notification = Notification(
                 user_id=other_id,
                 type=NotificationType.MESSAGE_RECEIVED,
-                title="RDV confirmé",
-                message=f"Votre rendez-vous de visite a été confirmé",
+                title="Nouvelle date proposée",
+                message=f"Une nouvelle date a été proposée pour votre RDV",
                 related_entity_type="rendez_vous",
                 related_entity_id=rdv.rdv_id,
-                icon="✓"
+                icon="⏰"
             )
             db.session.add(notification)
-
-        elif rdv_data.action == "refuser":
-            if rdv_data.date_proposée:
-                # Contre-proposer une date
-                rdv.date_proposée = rdv_data.date_proposée
-                rdv.message_dernier = rdv_data.message or "Nouvelle date proposée"
-                rdv.dernier_proposant = "acheteur" if is_acheteur else "vendeur"
-
-                # Basculer le statut en attente vers l'autre utilisateur
-                if is_acheteur:
-                    rdv.statut = "en_attente_vendeur"
-                else:
-                    rdv.statut = "en_attente_acheteur"
-
-                # Notification pour l'autre
-                other_id = rdv.vendeur_id if is_acheteur else rdv.acheteur_id
-                notification = Notification(
-                    user_id=other_id,
-                    type=NotificationType.MESSAGE_RECEIVED,
-                    title="Nouvelle date proposée",
-                    message=f"Une nouvelle date a été proposée pour votre RDV",
-                    related_entity_type="rendez_vous",
-                    related_entity_id=rdv.rdv_id,
-                    icon="⏰"
-                )
-                db.session.add(notification)
-            else:
-                # Refuser définitivement
-                rdv.statut = "refusé"
-                rdv.message_dernier = rdv_data.message or "RDV refusé"
-                rdv.dernier_proposant = "acheteur" if is_acheteur else "vendeur"
-
-                # Ajouter à l'historique
-                ajouter_historique(
-                    rdv_id,
-                    current_user["user_id"],
-                    "refus",
-                    None,
-                    rdv_data.message
-                )
-
-                # Notification pour l'autre
-                other_id = rdv.vendeur_id if is_acheteur else rdv.acheteur_id
-                notification = Notification(
-                    user_id=other_id,
-                    type=NotificationType.MESSAGE_RECEIVED,
-                    title="RDV refusé ✗",
-                    message=f"Votre rendez-vous de visite a été refusé",
-                    related_entity_type="rendez_vous",
-                    related_entity_id=rdv.rdv_id,
-                    icon="✗"
-                )
-                db.session.add(notification)
         else:
-            return jsonify({"error": "Action invalide (accepter ou refuser)"}), 400
+            rdv.statut = "refusé"
+            rdv.message_dernier = rdv_data.message or "RDV refusé"
+            rdv.dernier_proposant = "acheteur" if is_acheteur else "vendeur"
 
-        # Commit tous les changements
-        db.session.commit()
+            ajouter_historique(
+                rdv_id,
+                current_user["user_id"],
+                "refus",
+                None,
+                rdv_data.message
+            )
 
-        response = RDVResponse.from_orm(rdv)
-        return jsonify(response.dict()), 200
+            other_id = rdv.vendeur_id if is_acheteur else rdv.acheteur_id
+            notification = Notification(
+                user_id=other_id,
+                type=NotificationType.MESSAGE_RECEIVED,
+                title="RDV refusé ✗",
+                message=f"Votre rendez-vous de visite a été refusé",
+                related_entity_type="rendez_vous",
+                related_entity_id=rdv.rdv_id,
+                icon="✗"
+            )
+            db.session.add(notification)
+    else:
+        raise ValidationError("Action invalide (accepter ou refuser)")
 
-    except ValidationError as e:
-        errors = [{"field": ".".join(str(x) for x in err.get("loc", [])), "msg": err.get("msg")} for err in e.errors()]
-        return jsonify({"error": "Validation error", "details": errors}), 400
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
+    db.session.commit()
+
+    response = RDVResponse.from_orm(rdv)
+    return response.dict()
 
 
 @rdv_bp.route("/<int:rdv_id>", methods=["DELETE"])
 @token_required
+@handle_errors()
 def delete_rdv(current_user, rdv_id):
     """
     DELETE /api/v1/rendez-vous/{id}
@@ -427,35 +383,30 @@ def delete_rdv(current_user, rdv_id):
         404 Not Found
         403 Forbidden
     """
-    try:
-        rdv = RendezVous.query.filter_by(rdv_id=rdv_id).first()
+    rdv = RendezVous.query.filter_by(rdv_id=rdv_id).first()
 
-        if not rdv:
-            return jsonify({"error": "RDV non trouvé"}), 404
+    if not rdv:
+        raise NotFoundError("RDV non trouvé")
 
-        # Vérifier que l'utilisateur est impliqué dans le RDV
-        if rdv.acheteur_id != current_user["user_id"] and rdv.vendeur_id != current_user["user_id"]:
-            return jsonify({"error": "Non autorisé"}), 403
+    if rdv.acheteur_id != current_user["user_id"] and rdv.vendeur_id != current_user["user_id"]:
+        raise ForbiddenError("Non autorisé")
 
-        # Annuler le RDV
-        rdv.statut = "refusé"
-        ajouter_historique(
-            rdv_id,
-            current_user["user_id"],
-            "refus",
-            None,
-            "RDV annulé par l'utilisateur"
-        )
-        db.session.commit()
+    rdv.statut = "refusé"
+    ajouter_historique(
+        rdv_id,
+        current_user["user_id"],
+        "refus",
+        None,
+        "RDV annulé par l'utilisateur"
+    )
+    db.session.commit()
 
-        return jsonify({"message": "RDV annulé"}), 200
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
+    return {"message": "RDV annulé"}
 
 
 @rdv_bp.route("/<int:rdv_id>/historique", methods=["GET"])
 @token_required
+@handle_errors()
 def get_rdv_historique(current_user, rdv_id):
     """
     GET /api/v1/rendez-vous/{id}/historique
@@ -466,27 +417,22 @@ def get_rdv_historique(current_user, rdv_id):
         404 Not Found
         403 Forbidden
     """
-    try:
-        rdv = RendezVous.query.filter_by(rdv_id=rdv_id).first()
+    rdv = RendezVous.query.filter_by(rdv_id=rdv_id).first()
 
-        if not rdv:
-            return jsonify({"error": "RDV non trouvé"}), 404
+    if not rdv:
+        raise NotFoundError("RDV non trouvé")
 
-        # Vérifier que l'utilisateur est impliqué dans le RDV
-        if rdv.acheteur_id != current_user["user_id"] and rdv.vendeur_id != current_user["user_id"]:
-            return jsonify({"error": "Non autorisé"}), 403
+    if rdv.acheteur_id != current_user["user_id"] and rdv.vendeur_id != current_user["user_id"]:
+        raise ForbiddenError("Non autorisé")
 
-        # Récupérer l'historique ordonné par date
-        historique = HistoriqueRDV.query.filter_by(rdv_id=rdv_id).order_by(HistoriqueRDV.date_action).all()
+    historique = HistoriqueRDV.query.filter_by(rdv_id=rdv_id).order_by(HistoriqueRDV.date_action).all()
 
-        return jsonify([h.to_dict() for h in historique]), 200
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
+    return [h.to_dict() for h in historique]
 
 
 @rdv_bp.route("/<int:rdv_id>/ical", methods=["GET"])
 @token_required
+@handle_errors()
 def export_rdv_ical(current_user, rdv_id):
     """
     GET /api/v1/rendez-vous/{id}/ical
@@ -499,33 +445,25 @@ def export_rdv_ical(current_user, rdv_id):
         404 Not Found
         403 Forbidden
     """
-    try:
-        rdv = RendezVous.query.filter_by(rdv_id=rdv_id).first()
+    rdv = RendezVous.query.filter_by(rdv_id=rdv_id).first()
 
-        if not rdv:
-            return jsonify({"error": "RDV non trouvé"}), 404
+    if not rdv:
+        raise NotFoundError("RDV non trouvé")
 
-        # Vérifier que l'utilisateur est impliqué dans le RDV
-        if rdv.acheteur_id != current_user["user_id"] and rdv.vendeur_id != current_user["user_id"]:
-            return jsonify({"error": "Non autorisé"}), 403
+    if rdv.acheteur_id != current_user["user_id"] and rdv.vendeur_id != current_user["user_id"]:
+        raise ForbiddenError("Non autorisé")
 
-        # Vérifier que le RDV est confirmé
-        if rdv.statut != "confirmé":
-            return jsonify({"error": "Seuls les RDV confirmés peuvent être exportés"}), 400
+    if rdv.statut != "confirmé":
+        raise ValidationError("Seuls les RDV confirmés peuvent être exportés")
 
-        # Générer le fichier iCal
-        ical_content = generer_ical(rdv)
+    ical_content = generer_ical(rdv)
 
-        if not ical_content:
-            return jsonify({"error": "Erreur lors de la génération du fichier"}), 500
+    if not ical_content:
+        raise ValidationError("Erreur lors de la génération du fichier")
 
-        # Retourner le fichier
-        return send_file(
-            io.BytesIO(ical_content),
-            mimetype="text/calendar",
-            as_attachment=True,
-            download_name=f"rdv-{rdv_id}.ics"
-        )
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
+    return send_file(
+        io.BytesIO(ical_content),
+        mimetype="text/calendar",
+        as_attachment=True,
+        download_name=f"rdv-{rdv_id}.ics"
+    )
