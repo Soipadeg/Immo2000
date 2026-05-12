@@ -52,7 +52,7 @@ def list_alertes(current_user):
         ).order_by(AlerteAnnonce.date_creation.desc())
 
         total = alertes_query.count()
-        alertes = alertes_query.skip(skip).limit(limit).all()
+        alertes = alertes_query.offset(skip).limit(limit).all()
 
         response = AlerteAnnonceListResponse(
             items=[AlerteAnnonceResponse.from_orm(a) for a in alertes],
