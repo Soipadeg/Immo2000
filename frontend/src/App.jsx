@@ -6,13 +6,15 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import {
   ThemeProvider,
-  createTheme,
   CssBaseline,
   Box,
   Button,
   Typography,
 } from '@mui/material';
 import { fr } from 'date-fns/locale';
+
+// Theme professionnel
+import theme from './theme';
 
 // Hooks personnalisés
 import { useAuth } from './hooks/useAuth';
@@ -22,6 +24,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import DynamicNavbar from './components/DynamicNavbar';
 import Chatbot from './components/Chatbot';
 import DevRoleWrapper from './components/DevRoleWrapper';
+import DevRoleInitializer from './components/DevRoleInitializer';
 
 // Pages
 import VendeurDashboard from './components/VendeurDashboard';
@@ -67,38 +70,6 @@ import HomePageV2 from './pages/HomePageV2';
 
 
 /**
- * Thème Material-UI personnalisé
- */
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#1976d2',
-    },
-    secondary: {
-      main: '#dc004e',
-    },
-    success: {
-      main: '#4caf50',
-    },
-    warning: {
-      main: '#ff9800',
-    },
-    error: {
-      main: '#f44336',
-    },
-  },
-  typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-    h4: {
-      fontWeight: 700,
-    },
-    h6: {
-      fontWeight: 600,
-    },
-  },
-});
-
-/**
  * Redirection pour le login (vers port 5000)
  */
 const LoginRedirect = () => {
@@ -140,6 +111,12 @@ function App() {
         {/* Contenu principal */}
         <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
           <Routes>
+            {/* ✨ Routes de développement - Simuler les 4 rôles sans authentification */}
+            <Route path="/dev/visiteur" element={<DevRoleInitializer role="visiteur" />} />
+            <Route path="/dev/user" element={<DevRoleInitializer role="user" />} />
+            <Route path="/dev/admin" element={<DevRoleInitializer role="admin" />} />
+            <Route path="/dev/notaire" element={<DevRoleInitializer role="notaire" />} />
+
             {/* Routes publiques - Pas de protection */}
             {/* Route de développement - Mode sans login */}
             <Route path="/dev" element={<DevAccessPage />} />

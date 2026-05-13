@@ -8,6 +8,13 @@ Plateforme immobilière complète avec API Flask, authentification JWT, gestion 
 
 ## 🚀 Quick Start
 
+### 📍 Pour le Développement: 4 URLs sans authentification
+👉 **[Consultez DEV_MODE.md](DEV_MODE.md)** pour tester rapidement avec 4 rôles différents:
+- [http://localhost:3000/dev/visiteur](http://localhost:3000/dev/visiteur) → Interface visiteur
+- [http://localhost:3000/dev/user](http://localhost:3000/dev/user) → Dashboard utilisateur
+- [http://localhost:3000/dev/admin](http://localhost:3000/dev/admin) → Panel administrateur
+- [http://localhost:3000/dev/notaire](http://localhost:3000/dev/notaire) → Dashboard notaire
+
 ### Option 1: Docker (Recommandé)
 ```bash
 docker-compose --env-file .env.docker up --build
