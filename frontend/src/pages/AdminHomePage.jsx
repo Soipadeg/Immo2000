@@ -32,6 +32,8 @@ import {
 } from '@mui/icons-material';
 import { dashboardApi } from '../services/adminApi';
 import { useAuth } from '../hooks/useAuth';
+import StatCard from '../components/StatCard';
+import FeatureCard from '../components/FeatureCard';
 
 const AdminHomePage = () => {
   const navigate = useNavigate();
@@ -247,167 +249,80 @@ const AdminHomePage = () => {
       )}
 
       {/* KPI Summary Cards */}
-      <Grid container spacing={2} sx={{ mb: 4 }}>
+      <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid item xs={12} sm={6} md={3}>
-          <Paper sx={{ p: 2, backgroundColor: 'rgba(25, 118, 210, 0.08)' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <Box>
-                <Typography variant="caption" color="textSecondary">
-                  Utilisateurs Total
-                </Typography>
-                <Typography variant="h5" sx={{ fontWeight: 700, mt: 1 }}>
-                  {totalUsers}
-                </Typography>
-              </Box>
-              <People sx={{ fontSize: 40, color: '#1976d2', opacity: 0.3 }} />
-            </Box>
-          </Paper>
+          <StatCard
+            title="Utilisateurs Total"
+            value={totalUsers}
+            icon={<People />}
+            color="primary"
+          />
         </Grid>
 
         <Grid item xs={12} sm={6} md={3}>
-          <Paper sx={{ p: 2, backgroundColor: 'rgba(56, 142, 60, 0.08)' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <Box>
-                <Typography variant="caption" color="textSecondary">
-                  Annonces Publiées
-                </Typography>
-                <Typography variant="h5" sx={{ fontWeight: 700, mt: 1 }}>
-                  {totalListings}
-                </Typography>
-              </Box>
-              <Home sx={{ fontSize: 40, color: '#388e3c', opacity: 0.3 }} />
-            </Box>
-          </Paper>
+          <StatCard
+            title="Annonces Publiées"
+            value={totalListings}
+            icon={<Home />}
+            color="success"
+          />
         </Grid>
 
         <Grid item xs={12} sm={6} md={3}>
-          <Paper sx={{ p: 2, backgroundColor: 'rgba(123, 31, 162, 0.08)' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <Box>
-                <Typography variant="caption" color="textSecondary">
-                  Offres/Transactions
-                </Typography>
-                <Typography variant="h5" sx={{ fontWeight: 700, mt: 1 }}>
-                  {totalOffers}
-                </Typography>
-              </Box>
-              <ShoppingCart sx={{ fontSize: 40, color: '#7b1fa2', opacity: 0.3 }} />
-            </Box>
-          </Paper>
+          <StatCard
+            title="Offres/Transactions"
+            value={totalOffers}
+            icon={<ShoppingCart />}
+            color="secondary"
+          />
         </Grid>
 
         <Grid item xs={12} sm={6} md={3}>
-          <Paper sx={{ p: 2, backgroundColor: 'rgba(0, 150, 136, 0.08)' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <Box>
-                <Typography variant="caption" color="textSecondary">
-                  Utilisateurs Actifs
-                </Typography>
-                <Typography variant="h5" sx={{ fontWeight: 700, mt: 1 }}>
-                  {activeUsers}
-                </Typography>
-              </Box>
-              <TrendingUp sx={{ fontSize: 40, color: '#00796b', opacity: 0.3 }} />
-            </Box>
-          </Paper>
+          <StatCard
+            title="Utilisateurs Actifs"
+            value={activeUsers}
+            icon={<TrendingUp />}
+            color="info"
+          />
         </Grid>
       </Grid>
 
       {/* Features Grid */}
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+        <Typography variant="h5" sx={{ fontWeight: 700, mb: 3 }}>
           📋 Fonctionnalités Disponibles
         </Typography>
-        <Grid container spacing={2}>
+        <Grid container spacing={3}>
           {features.map((feature, index) => (
             <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-              <Card
-                sx={{
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  border: `2px solid ${feature.color}`,
-                  backgroundColor: `${feature.color}08`,
-                  '&:hover': {
-                    transform: 'translateY(-4px)',
-                    boxShadow: `0 8px 24px ${feature.color}30`,
-                    borderColor: feature.color,
-                  },
-                }}
-                onClick={() => navigate(feature.path)}
+              <FeatureCard
+                title={feature.title}
+                description={feature.description}
+                icon={feature.icon}
+                badge={feature.badge}
+                badgeColor={feature.badgeColor}
+                path={feature.path}
+                stats={feature.stats}
               >
-                <CardHeader
-                  avatar={
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: 56,
-                        height: 56,
-                        borderRadius: '12px',
-                        backgroundColor: `${feature.color}20`,
-                        color: feature.color,
-                      }}
-                    >
-                      {feature.icon}
-                    </Box>
-                  }
-                  action={
-                    <Chip
-                      label={feature.badge}
-                      size="small"
-                      color={feature.badgeColor}
-                      variant="outlined"
-                    />
-                  }
-                  title={feature.title}
-                  titleTypographyProps={{ variant: 'h6', sx: { fontWeight: 600 } }}
-                />
-                <CardContent sx={{ flex: 1, pt: 0 }}>
-                  <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
-                    {feature.description}
-                  </Typography>
-                  {feature.stats && (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1,
-                        p: 1,
-                        backgroundColor: 'rgba(0,0,0,0.02)',
-                        borderRadius: 1,
-                        mt: 'auto',
-                      }}
-                    >
-                      <CheckCircle sx={{ fontSize: 16, color: 'success.main' }} />
-                      <Typography variant="caption" sx={{ fontWeight: 600 }}>
-                        {feature.stats} actifs
-                      </Typography>
-                    </Box>
-                  )}
-                </CardContent>
-                <Box sx={{ p: 2, pt: 0 }}>
-                  <Button
-                    endIcon={<ArrowForward sx={{ fontSize: 16 }} />}
-                    fullWidth
-                    size="small"
+                {feature.stats && (
+                  <Box
                     sx={{
-                      color: feature.color,
-                      borderColor: feature.color,
-                      '&:hover': {
-                        backgroundColor: `${feature.color}10`,
-                        borderColor: feature.color,
-                      },
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      p: 1.5,
+                      backgroundColor: 'rgba(76, 175, 80, 0.08)',
+                      borderRadius: 1,
+                      border: '1px solid rgba(76, 175, 80, 0.2)',
                     }}
-                    variant="outlined"
                   >
-                    Accéder
-                  </Button>
-                </Box>
-              </Card>
+                    <CheckCircle sx={{ fontSize: 18, color: 'success.main' }} />
+                    <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                      {feature.stats} actifs
+                    </Typography>
+                  </Box>
+                )}
+              </FeatureCard>
             </Grid>
           ))}
         </Grid>

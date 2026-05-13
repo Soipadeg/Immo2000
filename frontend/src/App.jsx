@@ -6,13 +6,15 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import {
   ThemeProvider,
-  createTheme,
   CssBaseline,
   Box,
   Button,
   Typography,
 } from '@mui/material';
 import { fr } from 'date-fns/locale';
+
+// Theme professionnel
+import theme from './theme';
 
 // Hooks personnalisés
 import { useAuth } from './hooks/useAuth';
@@ -66,38 +68,6 @@ import DevTransitionPage from './pages/DevTransitionPage';
 import DashboardRedirectPage from './pages/DashboardRedirectPage';
 import HomePageV2 from './pages/HomePageV2';
 
-
-/**
- * Thème Material-UI personnalisé
- */
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#1976d2',
-    },
-    secondary: {
-      main: '#dc004e',
-    },
-    success: {
-      main: '#4caf50',
-    },
-    warning: {
-      main: '#ff9800',
-    },
-    error: {
-      main: '#f44336',
-    },
-  },
-  typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-    h4: {
-      fontWeight: 700,
-    },
-    h6: {
-      fontWeight: 600,
-    },
-  },
-});
 
 /**
  * Redirection pour le login (vers port 5000)

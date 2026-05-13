@@ -30,6 +30,7 @@ import {
 } from '@mui/material';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import StatCard from '../components/StatCard';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
@@ -58,21 +59,24 @@ const NotaireDashboardPage = () => {
       value: 8,
       icon: <DocumentScannerIcon />,
       color: 'primary',
-      trend: '+2 cette semaine'
+      trend: '+2 cette semaine',
+      trendUp: true
     },
     {
       label: 'Rendez-vous cette semaine',
       value: 5,
       icon: <CalendarTodayIcon />,
       color: 'success',
-      trend: '2 prévus demain'
+      trend: '2 prévus demain',
+      trendUp: true
     },
     {
       label: 'Documents validés',
       value: 34,
       icon: <VerifiedUserIcon />,
       color: 'info',
-      trend: '12 ce mois'
+      trend: '12 ce mois',
+      trendUp: true
     },
   ];
 
@@ -176,39 +180,14 @@ const NotaireDashboardPage = () => {
       <Grid container spacing={3} sx={{ mb: 4 }}>
         {stats.map((stat, index) => (
           <Grid item xs={12} sm={6} lg={4} key={index}>
-            <Card
-              sx={{
-                height: '100%',
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                color: 'white',
-                position: 'relative',
-                overflow: 'hidden',
-              }}
-            >
-              <CardContent>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <Box>
-                    <Typography variant="caption" sx={{ opacity: 0.9 }}>
-                      {stat.label}
-                    </Typography>
-                    <Typography variant="h4" sx={{ fontWeight: 'bold', my: 1 }}>
-                      {stat.value}
-                    </Typography>
-                    <Chip
-                      label={stat.trend}
-                      size="small"
-                      sx={{
-                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                        color: 'white'
-                      }}
-                    />
-                  </Box>
-                  <Box sx={{ fontSize: 32, opacity: 0.7 }}>
-                    {stat.icon}
-                  </Box>
-                </Box>
-              </CardContent>
-            </Card>
+            <StatCard
+              title={stat.label}
+              value={stat.value}
+              icon={stat.icon}
+              color={stat.color}
+              trend={stat.trend}
+              trendUp={stat.trendUp}
+            />
           </Grid>
         ))}
       </Grid>

@@ -29,6 +29,7 @@ import {
 } from '@mui/material';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import StatCard from '../components/StatCard';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -57,28 +58,32 @@ const UserDashboardPage = () => {
     {
       label: 'Annonces actives',
       value: 12,
-      icon: '📋',
+      icon: <EditIcon />,
+      color: 'primary',
       trend: '+2 ce mois',
       trendUp: true
     },
     {
       label: 'Vues totales',
       value: 1245,
-      icon: '👁️',
+      icon: <EyeIcon />,
+      color: 'info',
       trend: '+340 cette semaine',
       trendUp: true
     },
     {
       label: 'Messages reçus',
       value: 47,
-      icon: '💬',
+      icon: <AlertIcon />,
+      color: 'warning',
       trend: '8 non lus',
       trendUp: false
     },
     {
       label: 'Alertes',
       value: 5,
-      icon: '🔔',
+      icon: <TrendingUpIcon />,
+      color: 'success',
       trend: '2 nouvelles',
       trendUp: false
     },
@@ -191,39 +196,14 @@ const UserDashboardPage = () => {
       <Grid container spacing={3} sx={{ mb: 4 }}>
         {stats.map((stat, index) => (
           <Grid item xs={12} sm={6} lg={3} key={index}>
-            <Card
-              sx={{
-                height: '100%',
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                color: 'white',
-                position: 'relative',
-                overflow: 'hidden',
-              }}
-            >
-              <CardContent>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <Box>
-                    <Typography variant="caption" sx={{ opacity: 0.9 }}>
-                      {stat.label}
-                    </Typography>
-                    <Typography variant="h4" sx={{ fontWeight: 'bold', my: 1 }}>
-                      {stat.value}
-                    </Typography>
-                    <Chip
-                      label={stat.trend}
-                      size="small"
-                      color={stat.trendUp ? 'success' : 'default'}
-                      icon={<TrendingUpIcon />}
-                      sx={{
-                        backgroundColor: stat.trendUp ? 'rgba(76, 175, 80, 0.3)' : 'rgba(0, 0, 0, 0.2)',
-                        color: 'white'
-                      }}
-                    />
-                  </Box>
-                  <Typography sx={{ fontSize: 40 }}>{stat.icon}</Typography>
-                </Box>
-              </CardContent>
-            </Card>
+            <StatCard
+              title={stat.label}
+              value={stat.value}
+              icon={stat.icon}
+              color={stat.color}
+              trend={stat.trend}
+              trendUp={stat.trendUp}
+            />
           </Grid>
         ))}
       </Grid>

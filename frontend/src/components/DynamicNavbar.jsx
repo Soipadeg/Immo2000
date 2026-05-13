@@ -172,30 +172,44 @@ export const DynamicNavbar = ({
   };
 
   return (
-    <AppBar position="sticky">
+    <AppBar
+      position="sticky"
+      sx={{
+        backgroundColor: '#FFFFFF',
+        color: '#212121',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+        borderBottom: '1px solid #E8EEF5',
+      }}
+    >
       <Toolbar
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: '8px 16px',
-          minHeight: '64px',
+          padding: '12px 24px',
+          minHeight: '70px',
           maxWidth: '1400px',
           margin: '0 auto',
           width: '100%',
+          gap: 3,
         }}
       >
         {/* Logo - left aligned */}
         <Typography
-          variant="h6"
+          variant="h5"
           sx={{
-            fontWeight: 700,
+            fontWeight: 800,
             cursor: 'pointer',
             '&:hover': { opacity: 0.8 },
-            fontSize: '20px',
+            fontSize: '22px',
             display: 'flex',
             alignItems: 'center',
             gap: 1,
+            flexShrink: 0,
+            background: 'linear-gradient(135deg, #1E88E5 0%, #6F42C1 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
           }}
           onClick={() => handleNavigate('/')}
         >
