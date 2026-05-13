@@ -40,24 +40,84 @@ const AdminHomePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Vérifier si on est en mode dev
+  const devRole = localStorage.getItem('dev_role');
+  const isDevMode = !!devRole;
+
+  // Log pour débugger le timing
+  console.log('[AdminHomePage] Rendered with:', {
+    devRole,
+    isDevMode,
+    user: user?.email,
+    userRole: user?.role,
+    authLoading,
+  });
+
   useEffect(() => {
+    // En mode dev, ne pas rediriger immédiatement - attendre que useAuth se mette à jour
+    if (isDevMode) {
+      return; // Skip la vérification d'authentification en mode dev
+    }
+
+    // En mode production, vérifier l'authentification
     if (!authLoading && (!user || user?.role !== 'admin')) {
       navigate('/');
     }
-  }, [user, authLoading, navigate]);
+  }, [user, authLoading, navigate, isDevMode]);
 
   useEffect(() => {
+    // En mode dev, charger le dashboard si dev_role='admin'
+    if (isDevMode && devRole === 'admin') {
+      loadDashboard();
+      return;
+    }
+
+    // En mode production, attendre que useAuth se mette à jour
     if (!authLoading && user && user?.role === 'admin') {
       loadDashboard();
     }
-  }, [user, authLoading]);
+  }, [user, authLoading, isDevMode, devRole]);
 
   const loadDashboard = async () => {
     try {
+      // En mode dev, afficher des données statiques
+      if (isDevMode) {
+        console.log('[AdminHomePage] Dev mode detected, loading mock dashboard data');
+        setDashboard({
+          total_users: 1250,
+          active_users: 980,
+          users_by_role: {
+            'admin': 5,
+            'notaire': 45,
+            'user': 900,
+            'acheteur': 300,
+          },
+          total_listings: 3456,
+          active_listings: 2876,
+          new_listings_7d: 234,
+          new_listings_30d: 845,
+          new_users_7d: 56,
+          new_users_30d: 234,
+          active_users_7d: 678,
+          never_logged_in: 120,
+        });
+        setError(null);
+        setLoading(false);
+        return;
+      }
+
+      console.log('[AdminHomePage] loadDashboard called');
+      console.log('[AdminHomePage] Current localStorage:', {
+        dev_role: localStorage.getItem('dev_role'),
+        dev_mode: localStorage.getItem('dev_mode'),
+        auth_token: localStorage.getItem('auth_token') ? 'exists' : 'not exists',
+      });
       const response = await dashboardApi.getSummary();
+      console.log('[AdminHomePage] Dashboard loaded successfully');
       setDashboard(response.data);
       setError(null);
     } catch (err) {
+      console.error('[AdminHomePage] Error loading dashboard:', err);
       setError('Erreur lors du chargement du dashboard');
       console.error(err);
     } finally {

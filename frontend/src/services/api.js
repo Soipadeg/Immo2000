@@ -17,7 +17,13 @@ const apiClient = axios.create({
 // Interceptor pour ajouter le JWT token à chaque requête
 apiClient.interceptors.request.use((config) => {
   const token = localStorage.getItem('auth_token');
-  if (token) {
+  const devRole = localStorage.getItem('dev_role'); // Dev mode header
+
+  // En mode dev, ajouter le header X-Dev-Role au lieu du token Bearer
+  if (devRole) {
+    config.headers['X-Dev-Role'] = devRole;
+    console.log('[API Interceptor] Adding X-Dev-Role header:', devRole, 'for URL:', config.url);
+  } else if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;

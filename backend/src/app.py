@@ -41,6 +41,7 @@ from src.routes.search_history import search_bp
 from src.routes.favoris import favoris_bp
 from src.routes.offres import offres_bp
 from src.routes.notaires import notaires_bp
+from src.routes.dev_auth import dev_auth_bp
 
 # Import models pour que SQLAlchemy les reconnaisse
 from src.models.historique_rdv import HistoriqueRDV
@@ -224,6 +225,9 @@ def create_app(config_name: str = None) -> Flask:
 
     # Blueprints - Notaires Partenaires (Phase 3)
     app.register_blueprint(notaires_bp)
+
+    # Blueprints - Dev Auth (Development mode - bypass authentication)
+    app.register_blueprint(dev_auth_bp)
 
     @app.errorhandler(404)
     def not_found(error):

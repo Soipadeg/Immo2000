@@ -17,12 +17,10 @@ const DevModeWaitingWrapper = ({ children }) => {
       // If dev mode, wait a moment to ensure all localStorage values are synced
       // and useAuth() has had time to process them
       const timer = setTimeout(() => {
-        // Verify that required dev_mode fields are set
-        const role = localStorage.getItem('user_role');
-        const email = localStorage.getItem('user_email');
-        const token = localStorage.getItem('auth_token');
+        // Verify that required dev_mode field is set
+        const devRole = localStorage.getItem('dev_role');
 
-        if (role && email && token) {
+        if (devRole) {
           setDevModeReady(true);
           setIsWaiting(false);
         } else {

@@ -10,9 +10,20 @@ Fournit :
 from functools import wraps
 from typing import List, Optional
 from flask import request, jsonify, current_app
+import os
 
 from .models import User
 from .utils import verify_token, extract_token_from_header
+
+
+def is_dev_mode() -> bool:
+    """
+    Vérifie si le mode développement (bypass auth) est activé.
+
+    Returns:
+        bool: True si DEV_MODE=true, False sinon
+    """
+    return os.getenv("DEV_MODE", "").lower() == "true"
 
 
 def token_required(f):
@@ -25,10 +36,26 @@ def token_required(f):
     - Extraction du payload (user_id, email, role)
 
     Si invalide, retourne 401 Unauthorized.
+
+    En mode DEV_MODE=true, le token peut être contourné si un header 'X-Dev-Role' est présent.
     """
 
     @wraps(f)
     def decorated(*args, **kwargs):
+        # Mode développement : permettre le bypass avec X-Dev-Role header
+        if is_dev_mode():
+            dev_role = request.headers.get('X-Dev-Role')
+            if dev_role:
+                current_user = {
+                    "user_id": 999,  # Mock user ID
+                    "email": f"dev-{dev_role}@immo2000.dev",
+                    "role": dev_role,
+                    "nom": "Dev",
+                    "prenom": dev_role.capitalize(),
+                    "exp": None,
+                }
+                return f(current_user, *args, **kwargs)
+
         # Récupérer le header Authorization
         auth_header = request.headers.get('Authorization')
 

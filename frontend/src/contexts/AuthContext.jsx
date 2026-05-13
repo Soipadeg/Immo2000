@@ -1,17 +1,16 @@
 /**
- * Hook personnalisé pour gérer l'authentification et les rôles
- * Utilise JWT pour la vérification d'authentification avec le backend
- * Supporte aussi le mode dev pour tester les rôles sans authentification
+ * Contexte d'authentification pour Immo2000
+ * Fournit l'état d'authentification global à tous les composants
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import React, { createContext, useState, useCallback, useEffect, useRef } from 'react';
 import { authApi } from '../services/api';
 
-/**
- * Hook pour gérer l'authentification globale
- * @returns {Object} État et fonctions d'authentification
- */
-export const useAuth = () => {
+// Créer le contexte
+export const AuthContext = createContext();
+
+// Fournisseur de contexte
+export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -57,17 +56,6 @@ export const useAuth = () => {
       });
       setLoading(false);
       setError(null);
-      return;
-    }
-
-    setIsDevMode(false);
-    const token = localStorage.getItem('auth_token');
-
-    if (!token) {
-      // Pas de token - non authentifié
-      setIsAuthenticated(false);
-      setUser(null);
-      setLoading(false);
       return;
     }
 
@@ -135,8 +123,13 @@ export const useAuth = () => {
       return false;
     }
 
+    console.log('[AuthContext] initDevMode called with role:', role);
     localStorage.setItem('dev_role', role);
     localStorage.setItem('dev_mode', 'true');
+    console.log('[AuthContext] localStorage updated:', {
+      dev_role: localStorage.getItem('dev_role'),
+      dev_mode: localStorage.getItem('dev_mode'),
+    });
 
     // Mettre à jour l'état directement sans appeler checkAuth pour éviter les boucles
     setIsDevMode(true);
@@ -161,44 +154,42 @@ export const useAuth = () => {
     localStorage.removeItem('dev_role');
     localStorage.removeItem('dev_mode');
     setIsDevMode(false);
-    setIsAuthenticated(false);
     setUser(null);
+    setIsAuthenticated(false);
   }, []);
 
   /**
-   * Connecter l'utilisateur avec JWT token
+   * Se connecter avec email/password
    */
   const login = useCallback(async (email, password) => {
-    setLoading(true);
-    setError(null);
-
     try {
-      const response = await authApi.login({ email, password });
-
-      if (response.data && response.data.access_token) {
-        // Stocker le token
-        localStorage.setItem('auth_token', response.data.access_token);
-        // Supprimer le mode dev si encore actif
-        localStorage.removeItem('dev_role');
-        localStorage.removeItem('dev_mode');
-
-        // Récupérer les infos de l'utilisateur
-        await checkAuthRef.current();
-        return response.data;
+      const response = await authApi.login(email, password);
+      if (response.data.token) {
+        localStorage.setItem('auth_token', response.data.token);
+        setIsAuthenticated(true);
+        setLoading(false);
+        // Appeler checkAuth pour récupérer les infos utilisateur
+        if (checkAuthRef.current) {
+          await checkAuthRef.current();
+        }
+        return true;
       }
     } catch (err) {
-      const errorMsg = err.response?.data?.error || 'Login failed';
-      setError(errorMsg);
-      throw err;
-    } finally {
-      setLoading(false);
+      setError(err.response?.data?.error || 'Login failed');
+      setIsAuthenticated(false);
+      return false;
     }
   }, []);
 
   /**
-   * Déconnecter l'utilisateur
+   * Se déconnecter
    */
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
+    try {
+      await authApi.logout();
+    } catch (err) {
+      console.error('Logout failed:', err);
+    }
     localStorage.removeItem('auth_token');
     localStorage.removeItem('dev_role');
     localStorage.removeItem('dev_mode');
@@ -206,7 +197,6 @@ export const useAuth = () => {
     setUser(null);
     setIsDevMode(false);
     setError(null);
-    window.location.href = '/';
   }, []);
 
   /**
@@ -217,37 +207,40 @@ export const useAuth = () => {
   }, [user]);
 
   /**
-   * Vérifier si l'utilisateur a l'un des rôles spécifiés
+   * Vérifier si l'utilisateur a un des rôles spécifiés
    */
   const hasAnyRole = useCallback((roles) => {
-    return Array.isArray(roles) && roles.includes(user?.role);
+    return roles.includes(user?.role);
   }, [user]);
 
   /**
-   * Vérifier si l'utilisateur peut accéder une fonctionnalité
+   * Vérifier si l'utilisateur peut accéder à une ressource
    */
   const canAccess = useCallback((requiredRoles) => {
-    if (!Array.isArray(requiredRoles)) {
-      requiredRoles = [requiredRoles];
-    }
-    return isAuthenticated && requiredRoles.includes(user?.role);
-  }, [isAuthenticated, user]);
+    if (!isAuthenticated) return false;
+    if (!requiredRoles || requiredRoles.length === 0) return true;
+    return hasAnyRole(requiredRoles);
+  }, [isAuthenticated, hasAnyRole]);
 
-  return {
+  const value = {
     isAuthenticated,
     user,
     loading,
     error,
     isDevMode,
     checkAuth,
-    login,
-    logout,
     initDevMode,
     exitDevMode,
+    login,
+    logout,
     hasRole,
     hasAnyRole,
     canAccess,
   };
-};
 
-export default useAuth;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
+};

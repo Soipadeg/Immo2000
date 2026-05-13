@@ -24,6 +24,10 @@ export const ProtectedRoute = ({
 }) => {
   const { isAuthenticated, user, loading } = useAuth();
 
+  // Vérifier le mode dev immédiatement (sans dépendre de loading)
+  const devRole = localStorage.getItem('dev_role');
+  const isDevMode = !!devRole;
+
   // Afficher un chargement pendant la vérification
   if (loading) {
     return (
@@ -41,6 +45,11 @@ export const ProtectedRoute = ({
         <Typography>Chargement...</Typography>
       </Box>
     );
+  }
+
+  // En mode dev, si dev_role est présent, on laisse passer
+  if (isDevMode && devRole) {
+    return element;
   }
 
   // Si non authentifié, rediriger vers login

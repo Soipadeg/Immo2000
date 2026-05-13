@@ -22,6 +22,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import DynamicNavbar from './components/DynamicNavbar';
 import Chatbot from './components/Chatbot';
 import DevRoleWrapper from './components/DevRoleWrapper';
+import DevRoleInitializer from './components/DevRoleInitializer';
 
 // Pages
 import VendeurDashboard from './components/VendeurDashboard';
@@ -140,6 +141,12 @@ function App() {
         {/* Contenu principal */}
         <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
           <Routes>
+            {/* ✨ Routes de développement - Simuler les 4 rôles sans authentification */}
+            <Route path="/dev/visiteur" element={<DevRoleInitializer role="visiteur" />} />
+            <Route path="/dev/user" element={<DevRoleInitializer role="user" />} />
+            <Route path="/dev/admin" element={<DevRoleInitializer role="admin" />} />
+            <Route path="/dev/notaire" element={<DevRoleInitializer role="notaire" />} />
+
             {/* Routes publiques - Pas de protection */}
             {/* Route de développement - Mode sans login */}
             <Route path="/dev" element={<DevAccessPage />} />
