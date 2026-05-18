@@ -11,6 +11,7 @@ Endpoints :
 
 from flask import Blueprint, request, jsonify
 from typing import Dict, Any, Tuple, Optional, List
+from sqlalchemy.orm import joinedload
 from src.auth.models import db, User
 from src.auth.decorators import token_required
 from src.models.messages import Message
@@ -114,23 +115,31 @@ def list_messages_endpoint(current_user: User) -> Dict[str, Any]:
     if limit > 100:
         limit = 100
 
-    # Récupérer les messages
-    messages, total = list_messages(
-        db.session,
-        user_id=current_user["user_id"],
-        folder=folder,
-        skip=skip,
-        limit=limit
-    )
+    # Récupérer les messages avec joinedload pour éviter N+1 queries
+    # Au lieu de : pour chaque message, charger sender, receiver, annonce
+    # On charge tout en une seule requête
+    messages_optimized = Message.query.options(
+        joinedload(Message.sender),
+        joinedload(Message.receiver),
+        joinedload(Message.annonce)
+    ).filter(
+        (Message.sender_id == current_user["user_id"]) | (Message.receiver_id == current_user["user_id"])
+    ).order_by(Message.date_envoi.desc()).offset(skip).limit(limit).all()
+
+    total = db.session.query(Message).filter(
+        (Message.sender_id == current_user["user_id"]) | (Message.receiver_id == current_user["user_id"])
+    ).count()
 
     # Convertir en réponse détaillée avec infos des utilisateurs
     message_responses = []
-    for msg in messages:
-        sender = db.session.query(User).filter(User.utilisateur_id == msg.sender_id).first()
-        receiver = db.session.query(User).filter(User.utilisateur_id == msg.receiver_id).first()
-        annonce = db.session.query(Annonce).filter(Annonce.annonce_id == msg.annonce_id).first()
-
-        msg_detail = MessageDetailResponse.from_orm_with_details(msg, sender, receiver, annonce)
+    for msg in messages_optimized:
+        # Les relations sont déjà chargées via joinedload, pas de nouvelle requête
+        msg_detail = MessageDetailResponse.from_orm_with_details(
+            msg,
+            msg.sender,  # Déjà chargé, pas de requête supplémentaire
+            msg.receiver,  # Déjà chargé, pas de requête supplémentaire
+            msg.annonce  # Déjà chargé, pas de requête supplémentaire
+        )
         message_responses.append(msg_detail)
 
     # Répondre avec le schéma de liste
