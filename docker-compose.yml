@@ -9,7 +9,7 @@ services:
     environment:
       POSTGRES_DB: ${DB_NAME:-immo2000}
       POSTGRES_USER: ${DB_USER:-immo2000}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-immo2000_secure_password_change_me}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
     ports:
       - "${DB_PORT:-5432}:5432"
@@ -36,8 +36,8 @@ services:
         condition: service_healthy
     environment:
       # Database
-      DATABASE_URL: postgresql://${DB_USER:-immo2000}:${DB_PASSWORD:-immo2000_secure_password_change_me}@postgres:5432/${DB_NAME:-immo2000}
-      SQLALCHEMY_DATABASE_URI: postgresql://${DB_USER:-immo2000}:${DB_PASSWORD:-immo2000_secure_password_change_me}@postgres:5432/${DB_NAME:-immo2000}
+      DATABASE_URL: postgresql://${DB_USER:-immo2000}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-immo2000}
+      SQLALCHEMY_DATABASE_URI: postgresql://${DB_USER:-immo2000}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-immo2000}
 
       # Flask
       FLASK_ENV: ${FLASK_ENV:-production}
