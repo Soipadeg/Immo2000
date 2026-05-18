@@ -81,6 +81,9 @@ def list_annonces_endpoint():
     GET /api/v1/annonces?skip=0&limit=20&ville=Paris&type_bien=maison&...
     Lister les annonces avec pagination et filtrage (public).
 
+    **IMPORTANT**: Par défaut, seules les annonces PUBLIÉES sont affichées.
+    Les brouillons, archivées, vendues ne sont pas visibles publiquement.
+
     Query parameters:
         skip (int): Nombre de résultats à ignorer (default: 0)
         limit (int): Limite de résultats (default: 20, max: 100)
@@ -114,8 +117,15 @@ def list_annonces_endpoint():
         filters["code_postal"] = request.args.get("code_postal")
     if request.args.get("type_bien"):
         filters["type_bien"] = request.args.get("type_bien")
+
+    # Par défaut, filtrer par statut="publiée" pour les visiteurs publics
+    # Seule exception: si un utilisateur spécifie explicitement un statut, l'utiliser
     if request.args.get("statut"):
         filters["statut"] = request.args.get("statut")
+    else:
+        # Filtre par défaut: uniquement les annonces publiées sont visibles publiquement
+        filters["statut"] = "publiée"
+
     if request.args.get("utilisateur_id"):
         filters["utilisateur_id"] = request.args.get("utilisateur_id", type=int)
     if request.args.get("search"):

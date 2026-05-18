@@ -383,4 +383,106 @@ export const favorisApi = {
     apiClient.get(`/favoris/check/${annonceId}`),
 };
 
+/**
+ * Fonction pour récupérer les annonces publiques (sans authentification requise)
+ * Utilisée par PublicAnnonceListPage
+ *
+ * @param {object} filters - Filtres: { ville, type_bien, prix_min, prix_max, surface_min, skip, limit }
+ * @returns {Promise} Liste des annonces publiques (statut="publiée")
+ */
+export const getAnnonces = async (filters = {}) => {
+  const params = {
+    skip: filters.skip || 0,
+    limit: filters.limit || 20,
+    ...filters,
+  };
+  // Supprimer skip/limit des params pour eviter de les inclure deux fois
+  delete params.skip;
+  delete params.limit;
+
+  const response = await apiClient.get('/annonces', {
+    params: {
+      skip: filters.skip || 0,
+      limit: filters.limit || 20,
+      ...params,
+    },
+  });
+  return response.data?.data || response.data;
+};
+
+/**
+ * Fonction pour mettre à jour le profil acheteur (ÉTAPE 2 de l'inscription)
+ * Appelée par BuyerProfilePage
+ *
+ * @param {object} data - Données du profil: { type_bien_recherche, nombre_pieces_min, surface_min, budget_max, ville_recherchee, dpe_ideale }
+ * @returns {Promise} Réponse du serveur avec le profil mis à jour
+ */
+export const updateBuyerProfile = async (data) => {
+  const response = await apiClient.post('/auth/update-buyer-profile', data);
+  return response.data;
+};
+
+/**
+ * === TUNNEL DE CRÉATION D'ANNONCE ===
+ */
+
+/**
+ * Créer un brouillon d'annonce (Étape 1)
+ * Accessible sans authentification
+ *
+ * @param {FormData} formData - Données du brouillon incluant photos
+ * @returns {Promise} { annonce_id, temp_photo_urls }
+ */
+export const createBrouillonAnnonce = async (formData) => {
+  const response = await apiClient.post('/annonces/brouillon', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
+
+/**
+ * Compléter et publier une annonce (Étape 4)
+ * Requiert JWT + propriétaire de l'annonce
+ *
+ * @param {number} annonceId - ID de l'annonce
+ * @param {object} data - Données complètes (description, prix, surface, etc.)
+ * @returns {Promise} Annonce mise à jour avec statut "publiée"
+ */
+export const completerAnnonce = async (annonceId, data) => {
+  const response = await apiClient.put(`/annonces/${annonceId}/completer`, data);
+  return response.data;
+};
+
+/**
+ * Signer le contrat d'exclusivité (Étape 3)
+ * Requiert JWT
+ *
+ * @param {object} data - { accepte: boolean }
+ * @returns {Promise} { has_exclusivity_contract: boolean }
+ */
+export const signContratExclusivite = async (data) => {
+  const response = await apiClient.post('/contrats/exclusivite', data);
+  return response.data;
+};
+
+/**
+ * Récupérer les annonces de l'utilisateur connecté
+ * Requiert JWT
+ *
+ * @param {object} filters - { skip, limit, statut }
+ * @returns {Promise} { total, annonces: [] }
+ */
+export const getMesAnnonces = async (filters = {}) => {
+  const params = {
+    skip: filters.skip || 0,
+    limit: filters.limit || 20,
+    ...filters,
+  };
+
+  const response = await apiClient.get('/utilisateurs/me/annonces', { params });
+  return response.data;
+};
+
 export default apiClient;

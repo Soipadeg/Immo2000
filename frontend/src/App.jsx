@@ -67,6 +67,18 @@ import DevAccessPage from './pages/DevAccessPage';
 import DevTransitionPage from './pages/DevTransitionPage';
 import DashboardRedirectPage from './pages/DashboardRedirectPage';
 import HomePageV2 from './pages/HomePageV2';
+import RegisterPage from './pages/RegisterPage';
+import BuyerProfilePage from './pages/BuyerProfilePage';
+import PublicAnnonceListPage from './pages/PublicAnnonceListPage';
+import CreerAnnonceEtape1 from './pages/CreerAnnonceEtape1';
+import CreerAnnonceEtape2 from './pages/CreerAnnonceEtape2';
+import CreerAnnonceEtape3 from './pages/CreerAnnonceEtape3';
+import CreerAnnonceEtape4 from './pages/CreerAnnonceEtape4';
+import Dashboard from './pages/Dashboard';
+import MonCalendrier from './pages/MonCalendrier';
+import MesRendezVous from './pages/MesRendezVous';
+import Conversations from './pages/Conversations';
+import ContacterVendeur from './pages/ContacterVendeur';
 
 
 /**
@@ -75,16 +87,6 @@ import HomePageV2 from './pages/HomePageV2';
 const LoginRedirect = () => {
   React.useEffect(() => {
     window.location.href = 'http://localhost:5000/login.html';
-  }, []);
-  return null;
-};
-
-/**
- * Redirection pour le register (vers port 5000)
- */
-const RegisterRedirect = () => {
-  React.useEffect(() => {
-    window.location.href = 'http://localhost:5000/register.html';
   }, []);
   return null;
 };
@@ -127,7 +129,26 @@ function App() {
 
             <Route path="/" element={!isAuthenticated ? <HomePageV2 /> : <Navigate to="/dashboard" replace />} />
             <Route path="/login" element={<LoginRedirect />} />
-            <Route path="/register" element={<RegisterRedirect />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/inscription" element={<RegisterPage />} />
+            <Route path="/inscription/etape2" element={<BuyerProfilePage />} />
+
+            {/* === TUNNEL DE CRÉATION D'ANNONCE === */}
+            <Route path="/creer-annonce/etape1" element={<CreerAnnonceEtape1 />} />
+            <Route path="/creer-annonce/etape2" element={<CreerAnnonceEtape2 />} />
+            <Route path="/creer-annonce/etape3" element={<ProtectedRoute element={<CreerAnnonceEtape3 />} />} />
+            <Route path="/creer-annonce/etape4" element={<ProtectedRoute element={<CreerAnnonceEtape4 />} />} />
+
+            {/* === DASHBOARD === */}
+            <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} />} />
+
+            {/* === PLANIFICATION DE VISITE === */}
+            <Route path="/mon-calendrier" element={<ProtectedRoute element={<MonCalendrier />} />} />
+            <Route path="/mes-rendez-vous" element={<ProtectedRoute element={<MesRendezVous />} />} />
+            <Route path="/conversations/:conversationId" element={<ProtectedRoute element={<Conversations />} />} />
+            <Route path="/contacter-vendeur/:annonceId" element={<ProtectedRoute element={<ContacterVendeur />} />} />
+
+            <Route path="/annonces" element={<PublicAnnonceListPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/verify-email" element={<VerifyEmailPage />} />

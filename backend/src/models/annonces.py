@@ -73,6 +73,22 @@ class Annonce(db.Model):
         index=True
     )
 
+    # Relation SQLAlchemy vers les photos de l'annonce
+    photos_list = db.relationship(
+        "Photo",
+        backref="annonce",
+        lazy="select",
+        cascade="all, delete-orphan",
+        foreign_keys="Photo.annonce_id"
+    )
+
+    # Relation SQLAlchemy vers les rendez-vous de l'annonce
+    rendez_vous = db.relationship(
+        "RendezVous",
+        back_populates="annonce",
+        cascade="all, delete-orphan"
+    )
+
     # Champs optionnels
     photos = db.Column(db.JSON, nullable=True, default=[])
     etage = db.Column(db.Integer, nullable=True)
@@ -171,4 +187,40 @@ class Annonce(db.Model):
             "date_modification": self.date_modification.isoformat() if self.date_modification else None,
             "date_statut": self.date_statut.isoformat() if self.date_statut else None,
             "date_vente": self.date_vente.isoformat() if self.date_vente else None,
+        }
+
+    def to_dict_public(self) -> dict:
+        """
+        Convertir l'annonce en dictionnaire pour affichage PUBLIC.
+
+        Masque les infos sensibles (utilisateur_id, masquer_adresse_complete, etc.).
+        Utilisé par les visiteurs non connectés qui consultent les annonces.
+
+        Returns:
+            Dictionnaire avec uniquement les infos publiques de l'annonce
+        """
+        return {
+            "annonce_id": self.annonce_id,
+            "titre": self.titre,
+            "description": self.description,
+            "prix": self.prix,
+            "surface": self.surface,
+            # Adresse partielle si l'utilisateur a choisi de la masquer
+            "adresse": self.adresse if not self.masquer_adresse_complete else f"{self.code_postal} - {self.ville}",
+            "code_postal": self.code_postal,
+            "ville": self.ville,
+            "type_bien": self.type_bien,
+            "nombre_pieces": self.nombre_pieces,
+            # NE PAS exposer utilisateur_id pour les visiteurs publics
+            "photos": self.photos or [],
+            "etage": self.etage,
+            "ascenseur": self.ascenseur,
+            "balcon": self.balcon,
+            "terrasse": self.terrasse,
+            "jardin": self.jardin,
+            "piscine": self.piscine,
+            "parking": self.parking,
+            "dpe": self.dpe,
+            "annee_construction": self.annee_construction,
+            "date_publication": self.date_creation.isoformat() if self.date_creation else None,
         }
