@@ -89,6 +89,20 @@ def create_app(config_name: str = None) -> Flask:
     # Database
     db.init_app(app)
 
+    # Phase 3.2: Redis Cache Service
+    try:
+        from src.services.cache_service import RedisCache
+        cache = RedisCache()
+        if cache.is_available():
+            logger.info("✅ Redis cache initialized")
+            app.redis = cache
+        else:
+            logger.warning("⚠️  Redis cache not available - using app without caching")
+            app.redis = None
+    except Exception as e:
+        logger.warning(f"⚠️  Failed to initialize Redis: {e}")
+        app.redis = None
+
     # Logging
     if not app.debug:
         logger.setLevel(logging.INFO)
@@ -96,8 +110,36 @@ def create_app(config_name: str = None) -> Flask:
     # Routes de santé
     @app.route("/health", methods=["GET"])
     def health():
-        """Endpoint de health check."""
-        return {"status": "ok", "service": "immo2000-backend"}
+        """Endpoint de health check avec dépendances."""
+        health_status = {
+            "status": "ok",
+            "service": "immo2000-backend",
+            "database": "unknown",
+            "cache": "unknown"
+        }
+
+        # Vérifier BD
+        try:
+            from sqlalchemy import text
+            db.session.execute(text("SELECT 1"))
+            health_status["database"] = "connected"
+        except Exception as e:
+            health_status["database"] = f"error: {str(e)[:50]}"
+            health_status["status"] = "degraded"
+
+        # Vérifier cache
+        if hasattr(app, 'redis') and app.redis:
+            try:
+                if app.redis.is_available():
+                    health_status["cache"] = "connected"
+                else:
+                    health_status["cache"] = "unavailable"
+            except:
+                health_status["cache"] = "error"
+        else:
+            health_status["cache"] = "disabled"
+
+        return health_status
 
     @app.route("/", methods=["GET"])
     def index():
