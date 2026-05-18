@@ -103,6 +103,14 @@ def create_app(config_name: str = None) -> Flask:
         logger.warning(f"⚠️  Failed to initialize Redis: {e}")
         app.redis = None
 
+    # Phase 3.3: Rate Limiting
+    try:
+        from src.services.rate_limiter import init_rate_limiting
+        init_rate_limiting(app)
+        logger.info("✅ Rate limiting initialized")
+    except Exception as e:
+        logger.warning(f"⚠️  Failed to initialize rate limiting: {e}")
+
     # Logging
     if not app.debug:
         logger.setLevel(logging.INFO)
