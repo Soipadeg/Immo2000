@@ -10,6 +10,7 @@ Endpoints :
 """
 
 from flask import Blueprint, request, jsonify
+from typing import Dict, Any, Tuple, Optional, List
 from src.auth.models import db, User
 from src.auth.decorators import token_required
 from src.models.messages import Message
@@ -40,7 +41,7 @@ messages_bp = Blueprint("messages", __name__, url_prefix="/api/v1/messages")
 @messages_bp.route("", methods=["POST"])
 @token_required
 @handle_errors()
-def send_message_endpoint(current_user):
+def send_message_endpoint(current_user: User) -> Tuple[Dict[str, Any], int]:
     """
     POST /api/v1/messages
     Envoyer un message (JWT required).
@@ -90,7 +91,7 @@ def send_message_endpoint(current_user):
 @messages_bp.route("", methods=["GET"])
 @token_required
 @handle_errors()
-def list_messages_endpoint(current_user):
+def list_messages_endpoint(current_user: User) -> Dict[str, Any]:
     """
     GET /api/v1/messages?folder=inbox&skip=0&limit=20
     Lister les messages de l'utilisateur (JWT required).
@@ -145,7 +146,7 @@ def list_messages_endpoint(current_user):
 @messages_bp.route("/<int:message_id>", methods=["GET"])
 @token_required
 @handle_errors()
-def get_message_endpoint(current_user, message_id):
+def get_message_endpoint(current_user: User, message_id: int) -> Dict[str, Any]:
     """
     GET /api/v1/messages/{message_id}
     Récupérer un message (JWT required).
@@ -175,7 +176,7 @@ def get_message_endpoint(current_user, message_id):
 @messages_bp.route("/<int:message_id>/read", methods=["PUT"])
 @token_required
 @handle_errors()
-def mark_as_read_endpoint(current_user, message_id):
+def mark_as_read_endpoint(current_user: User, message_id: int) -> Tuple[Dict[str, Any], int]:
     """
     PUT /api/v1/messages/{message_id}/read
     Marquer un message comme lu (JWT required).
@@ -200,7 +201,7 @@ def mark_as_read_endpoint(current_user, message_id):
 @messages_bp.route("/<int:message_id>", methods=["DELETE"])
 @token_required
 @handle_errors()
-def delete_message_endpoint(current_user, message_id):
+def delete_message_endpoint(current_user: User, message_id: int) -> Tuple[Dict[str, Any], int]:
     """
     DELETE /api/v1/messages/{message_id}
     Supprimer un message (soft delete) (JWT required).
