@@ -19,14 +19,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from src.auth.models import db
-from src.auth.routes import auth_bp
+from src.auth import register_bp, login_bp, password_bp, tokens_bp
 from src.auth.oauth import oauth_bp
 from src.routes.annonces import annonces_bp
 from src.routes.tunnel_annonces import tunnel_bp
 from src.routes.contrats import contrats_bp
 from src.routes.matching import matching_bp
 from src.routes.notifications import notifications_bp
-from src.routes.admin import admin_bp
+from src.routes.admin import dashboard_bp, users_bp, listings_bp, transactions_bp
 from src.routes.alertes import alertes_bp
 from src.routes.biens import biens_bp
 from src.routes.estimations import estimations_bp
@@ -89,6 +89,20 @@ def create_app(config_name: str = None) -> Flask:
     # Database
     db.init_app(app)
 
+    # Phase 3.2: Redis Cache Service
+    try:
+        from src.services.cache_service import RedisCache
+        cache = RedisCache()
+        if cache.is_available():
+            logger.info("✅ Redis cache initialized")
+            app.redis = cache
+        else:
+            logger.warning("⚠️  Redis cache not available - using app without caching")
+            app.redis = None
+    except Exception as e:
+        logger.warning(f"⚠️  Failed to initialize Redis: {e}")
+        app.redis = None
+
     # Logging
     if not app.debug:
         logger.setLevel(logging.INFO)
@@ -96,8 +110,36 @@ def create_app(config_name: str = None) -> Flask:
     # Routes de santé
     @app.route("/health", methods=["GET"])
     def health():
-        """Endpoint de health check."""
-        return {"status": "ok", "service": "immo2000-backend"}
+        """Endpoint de health check avec dépendances."""
+        health_status = {
+            "status": "ok",
+            "service": "immo2000-backend",
+            "database": "unknown",
+            "cache": "unknown"
+        }
+
+        # Vérifier BD
+        try:
+            from sqlalchemy import text
+            db.session.execute(text("SELECT 1"))
+            health_status["database"] = "connected"
+        except Exception as e:
+            health_status["database"] = f"error: {str(e)[:50]}"
+            health_status["status"] = "degraded"
+
+        # Vérifier cache
+        if hasattr(app, 'redis') and app.redis:
+            try:
+                if app.redis.is_available():
+                    health_status["cache"] = "connected"
+                else:
+                    health_status["cache"] = "unavailable"
+            except:
+                health_status["cache"] = "error"
+        else:
+            health_status["cache"] = "disabled"
+
+        return health_status
 
     @app.route("/", methods=["GET"])
     def index():
@@ -163,7 +205,10 @@ def create_app(config_name: str = None) -> Flask:
             "auth": "/auth/register, /auth/login, /auth/refresh, /auth/me",
             "annonces": "/api/v1/annonces (CRUD operations)"
         }
-    app.register_blueprint(auth_bp)
+    app.register_blueprint(register_bp)
+    app.register_blueprint(login_bp)
+    app.register_blueprint(password_bp)
+    app.register_blueprint(tokens_bp)
     app.register_blueprint(oauth_bp)
 
     # Blueprints - Annonces
@@ -179,8 +224,11 @@ def create_app(config_name: str = None) -> Flask:
     # Blueprints - Notifications
     app.register_blueprint(notifications_bp)
 
-    # Blueprints - Admin
-    app.register_blueprint(admin_bp)
+    # Blueprints - Admin (Dashboard, Users, Listings, Transactions)
+    app.register_blueprint(dashboard_bp)
+    app.register_blueprint(users_bp)
+    app.register_blueprint(listings_bp)
+    app.register_blueprint(transactions_bp)
 
     # Blueprints - Alertes
     app.register_blueprint(alertes_bp)

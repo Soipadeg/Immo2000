@@ -12,7 +12,7 @@ class TestingConfig:
     """Configuration pour les tests."""
     TESTING = True
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
-    JWT_SECRET_KEY = "test-secret-key-very-secure"
+    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'test-secret-key-very-secure-dev')
     JWT_ACCESS_TOKEN_EXPIRES_IN = 86400  # 24h
     JWT_REFRESH_TOKEN_EXPIRES_IN = 604800  # 7j
     SQLALCHEMY_TRACK_MODIFICATIONS = False

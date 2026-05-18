@@ -9,7 +9,7 @@ services:
     environment:
       POSTGRES_DB: ${DB_NAME:-immo2000}
       POSTGRES_USER: ${DB_USER:-immo2000}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-immo2000_secure_password_change_me}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
     ports:
       - "${DB_PORT:-5432}:5432"
@@ -36,8 +36,8 @@ services:
         condition: service_healthy
     environment:
       # Database
-      DATABASE_URL: postgresql://${DB_USER:-immo2000}:${DB_PASSWORD:-immo2000_secure_password_change_me}@postgres:5432/${DB_NAME:-immo2000}
-      SQLALCHEMY_DATABASE_URI: postgresql://${DB_USER:-immo2000}:${DB_PASSWORD:-immo2000_secure_password_change_me}@postgres:5432/${DB_NAME:-immo2000}
+      DATABASE_URL: postgresql://${DB_USER:-immo2000}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-immo2000}
+      SQLALCHEMY_DATABASE_URI: postgresql://${DB_USER:-immo2000}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-immo2000}
 
       # Flask
       FLASK_ENV: ${FLASK_ENV:-production}
@@ -93,24 +93,30 @@ services:
       - immo2000_network
 
   # Optional: Redis for caching (future enhancement)
-  # redis:
-  #   image: redis:7-alpine
-  #   container_name: immo2000_redis
-  #   restart: unless-stopped
-  #   ports:
-  #     - "6379:6379"
-  #   volumes:
-  #     - redis_data:/data
-  #   networks:
-  #     - immo2000_network
+  redis:
+    image: redis:7-alpine
+    container_name: immo2000_redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - immo2000_network
 
 volumes:
   postgres_data:
     driver: local
   app_logs:
     driver: local
-  # redis_data:
-  #   driver: local
+  redis_data:
+    driver: local
 
 networks:
   immo2000_network:

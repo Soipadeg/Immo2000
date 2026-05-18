@@ -78,6 +78,12 @@ class Message(db.Model):
     # Relations
     conversation = relationship("Conversation", back_populates="messages", foreign_keys=[conversation_id])
 
+    # Phase 3.1: Performance indexes (composites)
+    __table_args__ = (
+        Index('idx_messages_receiver_unread', 'receiver_id', 'lu'),  # Unread messages count
+        Index('idx_messages_receiver_date', 'receiver_id', 'date_creation'),  # Message history ordered
+    )
+
     def __repr__(self) -> str:
         """Représentation lisible du message."""
         return f"<Message {self.message_id} from {self.sender_id} to {self.receiver_id}>"

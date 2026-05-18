@@ -10,6 +10,7 @@ Endpoints:
 """
 
 from flask import Blueprint, request, jsonify, send_file
+from typing import Dict, Any, Tuple, Optional, List
 from pydantic import ValidationError as PydanticValidationError
 from io import BytesIO
 from src.services.visites import VisitesService, VisitesError
@@ -29,7 +30,7 @@ visites_bp = Blueprint("visites", __name__, url_prefix="/api/v1/visites")
 @visites_bp.route("", methods=["POST"])
 @token_required
 @handle_errors()
-def creer_visite(current_user):
+def creer_visite(current_user: User) -> Tuple[Dict[str, Any], int]:
     """
     Créer une nouvelle réservation de visite.
 
@@ -79,7 +80,7 @@ def creer_visite(current_user):
 @visites_bp.route("", methods=["GET"])
 @token_required
 @handle_errors()
-def lister_visites(current_user):
+def lister_visites(current_user: User) -> Dict[str, Any]:
     """
     Lister les visites de l'utilisateur connecté (comme acheteur ou vendeur).
 
@@ -126,7 +127,7 @@ def lister_visites(current_user):
 @visites_bp.route("/<int:visite_id>", methods=["DELETE"])
 @token_required
 @handle_errors()
-def annuler_visite(current_user, visite_id):
+def annuler_visite(current_user: User, visite_id: int) -> Tuple[Dict[str, Any], int]:
     """
     Annuler une visite existante.
 
@@ -479,7 +480,7 @@ feedbacks_bp = Blueprint("feedbacks", __name__, url_prefix="/api/v1/feedbacks")
 @feedbacks_bp.route("/<int:feedback_id>/reponse", methods=["PUT"])
 @token_required
 @handle_errors()
-def ajouter_reponse_vendeur(current_user, feedback_id):
+def ajouter_reponse_vendeur(current_user: User, feedback_id: int) -> Tuple[Dict[str, Any], int]:
     """
     Ajouter ou modifier la réponse du vendeur à un feedback.
 

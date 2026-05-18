@@ -10,6 +10,7 @@ Endpoints :
 """
 
 from flask import Blueprint, request, jsonify, current_app
+from typing import Dict, Any, Tuple, Optional, List
 from src.auth.decorators import token_required, role_required
 from src.auth.models import User, db
 from src.models.biens import Bien
@@ -31,7 +32,7 @@ biens_bp = Blueprint("biens", __name__, url_prefix="/api/v1/biens")
 @biens_bp.route("", methods=["GET"])
 @token_required
 @handle_errors()
-def list_biens(current_user):
+def list_biens(current_user: User) -> Dict[str, Any]:
     """
     Récupérer la liste des biens.
     Accessible à : Tous les utilisateurs
@@ -145,7 +146,7 @@ def create_bien(current_user):
 @biens_bp.route("/me", methods=["GET"])
 @token_required
 @handle_errors()
-def my_biens(current_user):
+def my_biens(current_user: User) -> Dict[str, Any]:
     """
     Récupérer mes propres biens.
     Accessible à : Tous les utilisateurs
@@ -184,7 +185,7 @@ def get_stats(current_user):
 @biens_bp.route("/<int:bien_id>", methods=["GET"])
 @token_required
 @handle_errors()
-def get_bien(current_user, bien_id):
+def get_bien(current_user: User, bien_id: int) -> Dict[str, Any]:
     """
     Récupérer les détails d'un bien spécifique.
     Accessible à : Tous les utilisateurs
