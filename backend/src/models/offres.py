@@ -70,6 +70,11 @@ class Offre(db.Model):
     annonce = relationship("Annonce", backref="offres")
     acheteur = relationship("User", foreign_keys=[acheteur_id])
 
+    # Phase 3.1: Performance indexes (composites)
+    __table_args__ = (
+        Index('idx_offres_annonce_statut', 'annonce_id', 'statut'),  # Filter by listing + status
+    )
+
     def __repr__(self) -> str:
         """Représentation lisible de l'offre."""
         return f"<Offre {self.offre_id} {self.statut} ({self.prix_propose}€)>"
