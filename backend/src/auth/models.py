@@ -3,14 +3,22 @@ Modèle SQLAlchemy pour la table utilisateurs.
 
 Représente les utilisateurs de la plateforme Immo2000.
 Un utilisateur peut naturellement vendre (créer annonce) et acheter (contacter utilisateurs).
-Rôles: user (standard) ou admin (modérateur).
+Rôles: utilisateur (standard), administrateur (modérateur), notaire (expert en vente).
 """
 
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
+from enum import Enum
 import bcrypt
 
 db = SQLAlchemy()
+
+
+class RoleEnum(str, Enum):
+    """Énumération des rôles disponibles dans Immo2000."""
+    UTILISATEUR = "utilisateur"
+    ADMINISTRATEUR = "administrateur"
+    NOTAIRE = "notaire"
 
 
 class User(db.Model):
@@ -60,7 +68,7 @@ class User(db.Model):
     prenom = db.Column(db.String(100), nullable=False)
     telephone = db.Column(db.String(20), nullable=True)
     adresse_contact = db.Column(db.String(255), nullable=True)
-    role = db.Column(db.String(50), nullable=False, default="user")  # 'user' ou 'admin'
+    role = db.Column(db.Enum(RoleEnum), nullable=False, default=RoleEnum.UTILISATEUR)  # Enum: utilisateur, administrateur, notaire
     actif = db.Column(db.Boolean, default=True, index=True)
     date_inscription = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
     date_derniere_connexion = db.Column(db.DateTime(timezone=True), nullable=True)
@@ -95,6 +103,35 @@ class User(db.Model):
     type_bien_recherche = db.Column(db.String(50), nullable=True, index=True)  # Type bien recherché (optionnel)
     nombre_pieces_min = db.Column(db.Integer, nullable=True)  # Nb pièces min (optionnel)
     dpe_ideale = db.Column(db.String(1), nullable=True)  # Classe énergétique idéale A-G (optionnel)
+    is_profil_acheteur_complet = db.Column(db.Boolean, default=False)  # True si le profil acheteur (étape 2) est rempli
+
+    # === VENTE AVEC CONTRAT D'EXCLUSIVITÉ (IA future) ===
+    has_exclusivity_contract = db.Column(db.Boolean, default=False)  # True si contrat d'exclusivité signé (préparation pour outils IA)
+
+    # === RELATIONS PLANIFICATION DE VISITE ===
+    # Créneaux de disponibilité pour les visites
+    creneaux_disponibles = db.relationship(
+        "CreneauDisponible",
+        back_populates="utilisateur",
+        cascade="all, delete-orphan",
+        foreign_keys="CreneauDisponible.utilisateur_id"
+    )
+
+    # RDV où l'utilisateur est acheteur
+    rdv_en_tant_que_acheteur = db.relationship(
+        "RendezVous",
+        back_populates="acheteur",
+        foreign_keys="RendezVous.acheteur_id",
+        cascade="all, delete-orphan"
+    )
+
+    # RDV où l'utilisateur est vendeur
+    rdv_en_tant_que_vendeur = db.relationship(
+        "RendezVous",
+        back_populates="vendeur",
+        foreign_keys="RendezVous.vendeur_id",
+        cascade="all, delete-orphan"
+    )
 
     def __repr__(self) -> str:
         """Représentation lisible de l'utilisateur."""
@@ -158,8 +195,10 @@ class User(db.Model):
             "utilisateur_id": self.utilisateur_id,
             "nom": self.nom,
             "prenom": self.prenom,
-            "role": self.role,
+            "role": self.role.value if isinstance(self.role, RoleEnum) else self.role,  # Convertir Enum en string
             "actif": self.actif,
+            "email_verified": self.email_verified,
+            "is_profil_acheteur_complet": self.is_profil_acheteur_complet,  # Nouveau champ
             "date_inscription": self.date_inscription.isoformat() if self.date_inscription else None,
             # Critères acheteur (optionnels)
             "budget_max": float(self.budget_max) if self.budget_max else None,

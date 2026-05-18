@@ -6,6 +6,7 @@ Représente les messages entre utilisateurs pour discuter des annonces.
 
 from datetime import datetime
 from sqlalchemy import Index, ForeignKey
+from sqlalchemy.orm import relationship
 from src.auth.models import db
 
 
@@ -57,6 +58,13 @@ class Message(db.Model):
         index=True
     )
 
+    conversation_id = db.Column(
+        db.Integer,
+        ForeignKey("conversations.conversation_id", ondelete="CASCADE"),
+        nullable=True,  # Nullable car les anciens messages n'auront pas de conversation
+        index=True
+    )
+
     # Contenu
     contenu = db.Column(db.String(2000), nullable=False)
 
@@ -66,6 +74,9 @@ class Message(db.Model):
     date_lecture = db.Column(db.DateTime(timezone=True), nullable=True)
     supprime_par_expediteur = db.Column(db.Boolean, default=False)
     supprime_par_destinataire = db.Column(db.Boolean, default=False)
+
+    # Relations
+    conversation = relationship("Conversation", back_populates="messages", foreign_keys=[conversation_id])
 
     def __repr__(self) -> str:
         """Représentation lisible du message."""

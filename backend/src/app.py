@@ -22,6 +22,8 @@ from src.auth.models import db
 from src.auth.routes import auth_bp
 from src.auth.oauth import oauth_bp
 from src.routes.annonces import annonces_bp
+from src.routes.tunnel_annonces import tunnel_bp
+from src.routes.contrats import contrats_bp
 from src.routes.matching import matching_bp
 from src.routes.notifications import notifications_bp
 from src.routes.admin import admin_bp
@@ -36,6 +38,7 @@ from src.routes.faq import faq_bp
 from src.routes.images import images_bp
 from src.routes.documents import documents_bp
 from src.routes.rendez_vous import rdv_bp
+from src.routes.creneaux import creneaux_bp
 from src.routes.annonce_views import views_bp
 from src.routes.search_history import search_bp
 from src.routes.favoris import favoris_bp
@@ -166,6 +169,10 @@ def create_app(config_name: str = None) -> Flask:
     # Blueprints - Annonces
     app.register_blueprint(annonces_bp)
 
+    # Blueprints - Tunnel de création d'annonce (4 étapes + contrat)
+    app.register_blueprint(tunnel_bp)
+    app.register_blueprint(contrats_bp)
+
     # Blueprints - Matching (Recommendation system)
     app.register_blueprint(matching_bp)
 
@@ -198,6 +205,9 @@ def create_app(config_name: str = None) -> Flask:
 
     # Blueprints - Rendez-vous (Tunnel achat)
     app.register_blueprint(rdv_bp)
+
+    # Blueprints - Créneaux (Planification visite)
+    app.register_blueprint(creneaux_bp)
 
     # Blueprints - Chatbot
     app.register_blueprint(chatbot_bp)
