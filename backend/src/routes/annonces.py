@@ -13,6 +13,7 @@ Endpoints :
 """
 
 from flask import Blueprint, request, jsonify
+from typing import Dict, Any, Tuple, List, Optional
 from src.auth.models import db
 from src.auth.decorators import token_required
 from src.models.annonces import Annonce
@@ -46,7 +47,7 @@ annonces_bp = Blueprint("annonces", __name__, url_prefix="/api/v1/annonces")
 @annonces_bp.route("", methods=["POST"])
 @token_required
 @handle_errors()
-def create_annonce_endpoint(current_user):
+def create_annonce_endpoint(current_user: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
     """
     POST /api/v1/annonces
     Créer une nouvelle annonce (JWT required).
@@ -76,7 +77,7 @@ def create_annonce_endpoint(current_user):
 
 @annonces_bp.route("", methods=["GET"])
 @handle_errors()
-def list_annonces_endpoint():
+def list_annonces_endpoint() -> Dict[str, Any]:
     """
     GET /api/v1/annonces?skip=0&limit=20&ville=Paris&type_bien=maison&...
     Lister les annonces avec pagination et filtrage (public).
@@ -158,7 +159,7 @@ def list_annonces_endpoint():
 
 @annonces_bp.route("/<int:annonce_id>", methods=["GET"])
 @handle_errors()
-def get_annonce_endpoint(annonce_id):
+def get_annonce_endpoint(annonce_id: int) -> Dict[str, Any]:
     """
     GET /api/v1/annonces/{id}
     Récupérer une annonce par son ID (public).
@@ -182,7 +183,7 @@ def get_annonce_endpoint(annonce_id):
 @annonces_bp.route("/<int:annonce_id>", methods=["PUT"])
 @token_required
 @handle_errors()
-def update_annonce_endpoint(current_user, annonce_id):
+def update_annonce_endpoint(current_user: Dict[str, Any], annonce_id: int) -> Tuple[Dict[str, Any], int]:
     """
     PUT /api/v1/annonces/{id}
     Mettre à jour une annonce (JWT required + owner check).
@@ -226,7 +227,7 @@ def update_annonce_endpoint(current_user, annonce_id):
 @annonces_bp.route("/<int:annonce_id>", methods=["DELETE"])
 @token_required
 @handle_errors()
-def delete_annonce_endpoint(current_user, annonce_id):
+def delete_annonce_endpoint(current_user: Dict[str, Any], annonce_id: int) -> Tuple[Dict[str, Any], int]:
     """
     DELETE /api/v1/annonces/{id}
     Supprimer une annonce (JWT required + owner check).
