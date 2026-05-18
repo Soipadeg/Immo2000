@@ -79,6 +79,8 @@ import MonCalendrier from './pages/MonCalendrier';
 import MesRendezVous from './pages/MesRendezVous';
 import Conversations from './pages/Conversations';
 import ContacterVendeur from './pages/ContacterVendeur';
+import OffresPage from './pages/OffresPage';
+import CreerOffrePage from './pages/CreerOffrePage';
 
 
 /**
@@ -147,6 +149,10 @@ function App() {
             <Route path="/mes-rendez-vous" element={<ProtectedRoute element={<MesRendezVous />} />} />
             <Route path="/conversations/:conversationId" element={<ProtectedRoute element={<Conversations />} />} />
             <Route path="/contacter-vendeur/:annonceId" element={<ProtectedRoute element={<ContacterVendeur />} />} />
+
+            {/* === OFFRES D'ACHAT === */}
+            <Route path="/offres" element={<ProtectedRoute element={<OffresPage />} />} />
+            <Route path="/creer-offre" element={<ProtectedRoute element={<CreerOffrePage />} />} />
 
             <Route path="/annonces" element={<PublicAnnonceListPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />

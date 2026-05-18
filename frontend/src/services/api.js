@@ -485,4 +485,127 @@ export const getMesAnnonces = async (filters = {}) => {
   return response.data;
 };
 
+/**
+ * Service de gestion des visites
+ */
+export const visitesApi = {
+  /**
+   * Créer une nouvelle visite
+   */
+  create: (data) => apiClient.post('/visites', data),
+
+  /**
+   * Lister toutes les visites de l'utilisateur
+   */
+  listAll: (skip = 0, limit = 100) =>
+    apiClient.get('/visites', {
+      params: { skip, limit },
+    }),
+
+  /**
+   * Récupérer une visite par ID
+   */
+  getById: (id) => apiClient.get(`/visites/${id}`),
+
+  /**
+   * Modifier une visite
+   */
+  modify: (id, data) => apiClient.put(`/visites/${id}`, data),
+
+  /**
+   * Annuler une visite
+   */
+  cancel: (id) => apiClient.delete(`/visites/${id}`),
+
+  /**
+   * Télécharger l'invitation en format ICS
+   */
+  downloadIcs: (id) => apiClient.get(`/visites/${id}/download-ics`, {
+    responseType: 'blob',
+  }),
+};
+
+/**
+ * Service de gestion des feedbacks
+ */
+export const feedbacksApi = {
+  /**
+   * Soumettre un feedback pour une visite
+   */
+  create: (data) => apiClient.post('/visites/feedbacks', data),
+
+  /**
+   * Récupérer le feedback d'une visite
+   */
+  getForVisite: (visiteId) =>
+    apiClient.get(`/visites/${visiteId}/feedback`),
+
+  /**
+   * Récupérer tous les feedbacks pour le vendeur
+   */
+  getVendorDashboard: () =>
+    apiClient.get('/visites/vendeur/feedbacks'),
+
+  /**
+   * Ajouter une réponse du vendeur à un feedback
+   */
+  addVendorReply: (feedbackId, data) =>
+    apiClient.put(`/feedbacks/${feedbackId}/reponse`, data),
+};
+
+/**
+ * Service de gestion des offres d'achat
+ */
+export const offresApi = {
+  /**
+   * Créer une nouvelle offre
+   */
+  create: (data) => apiClient.post('/offres', data),
+
+  /**
+   * Récupérer une offre par ID
+   */
+  getById: (id) => apiClient.get(`/offres/${id}`),
+
+  /**
+   * Lister les offres pour une annonce
+   */
+  listForAnnonce: (annonceId) =>
+    apiClient.get(`/offres/annonce/${annonceId}`),
+
+  /**
+   * Récupérer les offres faites par l'acheteur
+   */
+  getBuyerOffers: () =>
+    apiClient.get('/offres/buyer'),
+
+  /**
+   * Récupérer les offres reçues pour les annonces du vendeur
+   */
+  getVendorOffers: () =>
+    apiClient.get('/offres/vendor'),
+
+  /**
+   * Mettre à jour le statut d'une offre
+   */
+  updateStatus: (id, status) =>
+    apiClient.put(`/offres/${id}/status`, { statut: status }),
+
+  /**
+   * Accepter une offre
+   */
+  accept: (id) => apiClient.post(`/offres/${id}/accept`),
+
+  /**
+   * Refuser une offre
+   */
+  reject: (id) => apiClient.post(`/offres/${id}/reject`),
+
+  /**
+   * Faire une contre-offre
+   */
+  counter: (id, data) =>
+    apiClient.post(`/offres/${id}/counter`, data),
+};
+
 export default apiClient;
