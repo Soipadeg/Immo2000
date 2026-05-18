@@ -26,7 +26,7 @@ from src.routes.tunnel_annonces import tunnel_bp
 from src.routes.contrats import contrats_bp
 from src.routes.matching import matching_bp
 from src.routes.notifications import notifications_bp
-from src.routes.admin import admin_bp
+from src.routes.admin import dashboard_bp, users_bp, listings_bp, transactions_bp
 from src.routes.alertes import alertes_bp
 from src.routes.biens import biens_bp
 from src.routes.estimations import estimations_bp
@@ -179,8 +179,11 @@ def create_app(config_name: str = None) -> Flask:
     # Blueprints - Notifications
     app.register_blueprint(notifications_bp)
 
-    # Blueprints - Admin
-    app.register_blueprint(admin_bp)
+    # Blueprints - Admin (Dashboard, Users, Listings, Transactions)
+    app.register_blueprint(dashboard_bp)
+    app.register_blueprint(users_bp)
+    app.register_blueprint(listings_bp)
+    app.register_blueprint(transactions_bp)
 
     # Blueprints - Alertes
     app.register_blueprint(alertes_bp)
