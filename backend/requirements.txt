@@ -79,3 +79,10 @@ mypy==1.7.1
 
 # Development
 ipython==8.18.1
+
+# FastAPI (Migration progressive de Flask)
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+httpx==0.25.2
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
