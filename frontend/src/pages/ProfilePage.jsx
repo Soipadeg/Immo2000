@@ -4,26 +4,9 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  Container,
-  Paper,
-  Typography,
-  Box,
-  TextField,
-  Button,
-  CircularProgress,
-  Alert,
-  Grid,
-  Card,
-  CardContent,
-  Divider,
-  Avatar,
-  Tab,
-  Tabs,
-  Chip,
-} from '@mui/material';
-import { Edit as EditIcon, Save as SaveIcon } from '@mui/icons-material';
+import { Button, Card, Alert, Input } from '@/components';
 import { authApi } from '../services/api';
+import '../styles/ProfilePage.css';
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -33,7 +16,6 @@ const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [tabValue, setTabValue] = useState(0);
 
-  // État pour l'édition
   const [formData, setFormData] = useState({
     nom: '',
     prenom: '',
@@ -41,7 +23,6 @@ const ProfilePage = () => {
     adresse_contact: '',
   });
 
-  // Charger les infos utilisateur
   useEffect(() => {
     loadUserProfile();
   }, []);
@@ -77,11 +58,9 @@ const ProfilePage = () => {
     setError('');
     try {
       const response = await authApi.updateProfile(formData);
-
       setUser(response.data);
       setSuccess('Profil mis à jour avec succès');
       setIsEditing(false);
-
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
       setError(err.response?.data?.detail || 'Erreur lors de la mise à jour');
@@ -90,234 +69,206 @@ const ProfilePage = () => {
 
   if (loading) {
     return (
-      <Container maxWidth="md" sx={{ py: 4, textAlign: 'center' }}>
-        <CircularProgress />
-      </Container>
+      <div className="loading-page">
+        <div className="spinner"></div>
+      </div>
     );
   }
 
   if (!user) {
     return (
-      <Container maxWidth="md" sx={{ py: 4 }}>
-        <Alert severity="error">Impossible de charger le profil</Alert>
-      </Container>
+      <div className="profile-page-container">
+        <Alert type="error" title="Erreur" message="Impossible de charger le profil" />
+      </div>
     );
   }
 
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
-      <Typography variant="h4" gutterBottom sx={{ mb: 3 }}>
-        👤 Mon Profil
-      </Typography>
+    <div className="profile-page-container">
+      <h1 className="page-title">👤 Mon Profil</h1>
 
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-      {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
+      {error && <Alert type="error" title="Erreur" message={error} />}
+      {success && <Alert type="success" title="Succès" message={success} />}
 
       {/* Card d'information générale */}
-      <Card sx={{ mb: 3 }}>
-        <CardContent>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <Avatar
-              sx={{
-                width: 80,
-                height: 80,
-                mr: 2,
-                backgroundColor: '#1976d2',
-                fontSize: '2rem',
-              }}
-            >
+      <Card className="profile-header-card">
+        <div className="profile-header-content">
+          <div className="avatar-section">
+            <div className="avatar">
               {user.prenom?.[0]?.toUpperCase()}
-            </Avatar>
-            <Box sx={{ flex: 1 }}>
-              <Typography variant="h6">
+            </div>
+            <div className="profile-info">
+              <h2 className="profile-name">
                 {user.prenom} {user.nom}
-              </Typography>
-              <Typography color="text.secondary" variant="body2">
-                {user.email}
-              </Typography>
-            </Box>
-            {!isEditing && (
-              <Button
-                startIcon={<EditIcon />}
-                onClick={() => setIsEditing(true)}
-                variant="outlined"
-              >
-                Modifier
-              </Button>
-            )}
-          </Box>
-        </CardContent>
+              </h2>
+              <p className="profile-email">{user.email}</p>
+            </div>
+          </div>
+          {!isEditing && (
+            <Button
+              variant="secondary"
+              onClick={() => setIsEditing(true)}
+            >
+              ✏️ Modifier
+            </Button>
+          )}
+        </div>
       </Card>
 
-      <Tabs value={tabValue} onChange={(e, v) => setTabValue(v)} sx={{ mb: 3 }}>
-        <Tab label="Informations personnelles" />
-        <Tab label="Paramètres de sécurité" />
-        <Tab label="Préférences" />
-      </Tabs>
+      {/* Onglets */}
+      <div className="profile-tabs">
+        <div className="tabs-nav">
+          <button
+            className={`tab-button ${tabValue === 0 ? 'active' : ''}`}
+            onClick={() => setTabValue(0)}
+          >
+            Informations personnelles
+          </button>
+          <button
+            className={`tab-button ${tabValue === 1 ? 'active' : ''}`}
+            onClick={() => setTabValue(1)}
+          >
+            🔐 Sécurité
+          </button>
+          <button
+            className={`tab-button ${tabValue === 2 ? 'active' : ''}`}
+            onClick={() => setTabValue(2)}
+          >
+            ⚙️ Préférences
+          </button>
+        </div>
 
-      {/* Onglet 1: Informations personnelles */}
-      {tabValue === 0 && (
-        <Paper sx={{ p: 3 }}>
-          {isEditing ? (
-            <Box>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
+        {/* Onglet 0: Informations personnelles */}
+        {tabValue === 0 && (
+          <Card className="tab-content">
+            {isEditing ? (
+              <div className="form-container">
+                <div className="form-row">
+                  <Input
                     label="Prénom"
                     name="prenom"
                     value={formData.prenom}
                     onChange={handleInputChange}
                   />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
+                  <Input
                     label="Nom"
                     name="nom"
                     value={formData.nom}
                     onChange={handleInputChange}
                   />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
+                </div>
+                <div className="form-row">
+                  <Input
                     label="Téléphone"
                     name="telephone"
                     value={formData.telephone}
                     onChange={handleInputChange}
                   />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
+                  <Input
                     label="Email"
                     value={user.email}
                     disabled
                   />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Adresse de contact"
+                </div>
+                <div>
+                  <label className="form-label">Adresse de contact</label>
+                  <textarea
                     name="adresse_contact"
                     value={formData.adresse_contact}
                     onChange={handleInputChange}
-                    multiline
-                    rows={2}
+                    className="form-textarea"
+                    rows="2"
                   />
-                </Grid>
-                <Grid item xs={12}>
-                  <Box sx={{ display: 'flex', gap: 1 }}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      startIcon={<SaveIcon />}
-                      onClick={handleSaveProfile}
-                    >
-                      Enregistrer
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      onClick={() => setIsEditing(false)}
-                    >
-                      Annuler
-                    </Button>
-                  </Box>
-                </Grid>
-              </Grid>
-            </Box>
-          ) : (
-            <Box>
-              <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="caption" color="text.secondary">
-                    PRÉNOM
-                  </Typography>
-                  <Typography variant="body1">{user.prenom || '-'}</Typography>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="caption" color="text.secondary">
-                    NOM
-                  </Typography>
-                  <Typography variant="body1">{user.nom || '-'}</Typography>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="caption" color="text.secondary">
-                    EMAIL
-                  </Typography>
-                  <Typography variant="body1">{user.email}</Typography>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="caption" color="text.secondary">
-                    TÉLÉPHONE
-                  </Typography>
-                  <Typography variant="body1">{user.telephone || '-'}</Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography variant="caption" color="text.secondary">
-                    ADRESSE DE CONTACT
-                  </Typography>
-                  <Typography variant="body1">{user.adresse_contact || '-'}</Typography>
-                </Grid>
-              </Grid>
-            </Box>
-          )}
-        </Paper>
-      )}
+                </div>
+                <div className="form-actions">
+                  <Button
+                    variant="primary"
+                    onClick={handleSaveProfile}
+                  >
+                    💾 Enregistrer
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={() => setIsEditing(false)}
+                  >
+                    Annuler
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="profile-info-grid">
+                <div className="info-item">
+                  <span className="info-label">PRÉNOM</span>
+                  <p className="info-value">{user.prenom || '-'}</p>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">NOM</span>
+                  <p className="info-value">{user.nom || '-'}</p>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">EMAIL</span>
+                  <p className="info-value">{user.email}</p>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">TÉLÉPHONE</span>
+                  <p className="info-value">{user.telephone || '-'}</p>
+                </div>
+                <div className="info-item full-width">
+                  <span className="info-label">ADRESSE DE CONTACT</span>
+                  <p className="info-value">{user.adresse_contact || '-'}</p>
+                </div>
+              </div>
+            )}
+          </Card>
+        )}
 
-      {/* Onglet 2: Sécurité */}
-      {tabValue === 1 && (
-        <Paper sx={{ p: 3 }}>
-          <Typography variant="h6" gutterBottom>
-            🔐 Sécurité du Compte
-          </Typography>
-          <Divider sx={{ my: 2 }} />
+        {/* Onglet 1: Sécurité */}
+        {tabValue === 1 && (
+          <Card className="tab-content">
+            <div className="security-section">
+              <h3 className="section-title">🔐 Sécurité du Compte</h3>
 
-          <Box sx={{ mb: 3 }}>
-            <Typography variant="subtitle2" gutterBottom>
-              Email vérifié
-            </Typography>
-            <Chip
-              label={user.email_verified ? 'Vérifié' : 'Non vérifié'}
-              color={user.email_verified ? 'success' : 'error'}
-              variant="outlined"
-            />
-          </Box>
+              <div className="security-item">
+                <p className="security-label">Email vérifié</p>
+                <span className={`verification-badge ${user.email_verified ? 'verified' : 'unverified'}`}>
+                  {user.email_verified ? '✓ Vérifié' : '✗ Non vérifié'}
+                </span>
+              </div>
 
-          <Button variant="outlined" color="primary" sx={{ mr: 1 }}>
-            Changer le mot de passe
-          </Button>
-          <Button variant="outlined" color="error">
-            Activer l'authentification à 2 facteurs
-          </Button>
-        </Paper>
-      )}
+              <div className="security-actions">
+                <Button variant="secondary">
+                  🔑 Changer le mot de passe
+                </Button>
+                <Button variant="danger">
+                  2️⃣ Activer authentification à 2 facteurs
+                </Button>
+              </div>
+            </div>
+          </Card>
+        )}
 
-      {/* Onglet 3: Préférences */}
-      {tabValue === 2 && (
-        <Paper sx={{ p: 3 }}>
-          <Typography variant="h6" gutterBottom>
-            ⚙️ Préférences
-          </Typography>
-          <Divider sx={{ my: 2 }} />
+        {/* Onglet 2: Préférences */}
+        {tabValue === 2 && (
+          <Card className="tab-content">
+            <div className="preferences-section">
+              <h3 className="section-title">⚙️ Préférences</h3>
 
-          <Typography color="text.secondary" sx={{ mb: 2 }}>
-            Vous pouvez personnaliser votre expérience Immo2000 ici.
-          </Typography>
+              <p className="preferences-text">
+                Vous pouvez personnaliser votre expérience Immo2000 ici.
+              </p>
 
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="subtitle2" gutterBottom>
-              Notifications par email
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Fonctionnalité à venir...
-            </Typography>
-          </Box>
-        </Paper>
-      )}
-    </Container>
+              <div className="preference-item">
+                <p className="preference-label">📧 Notifications par email</p>
+                <p className="preference-value">Fonctionnalité à venir...</p>
+              </div>
+            </div>
+          </Card>
+        )}
+      </div>
+    </div>
   );
 };
+
+export default ProfilePage;
 
 export default ProfilePage;
