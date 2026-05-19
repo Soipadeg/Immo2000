@@ -3,14 +3,11 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Typography, Box, CircularProgress, Alert, Button, Dialog, DialogTitle, DialogContent,
-  DialogActions, TextField, Chip, Grid, Card, CardContent,
-} from '@mui/material';
+import { Button, Input, Alert } from '@/components';
 import { listingsApi } from '../services/adminApi';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import '../styles/AdminListingsPage.css';
 
 const AdminListingsPage = () => {
   const { user, loading: authLoading } = useAuth();
@@ -74,111 +71,95 @@ const AdminListingsPage = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" gutterBottom>🏠 Modération des Annonces</Typography>
+    <div className="admin-listings-page">
+      <div className="page-header">
+        <h1>🏠 Modération des Annonces</h1>
+      </div>
 
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      {error && <Alert type="error" title="Erreur" message={error} />}
 
       {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress />
-        </Box>
+        <div className="admin-container">
+          <div className="loading-spinner">⏳ Chargement...</div>
+        </div>
       ) : (
         <>
           {listings.length === 0 ? (
-            <Alert severity="success">✅ Toutes les annonces en attente ont été modérées</Alert>
+            <Alert type="success" title="Succès" message="✅ Toutes les annonces en attente ont été modérées" />
           ) : (
             <>
-              <Alert severity="info" sx={{ mb: 2 }}>
-                {listings.length} annonce(s) en attente de modération
-              </Alert>
+              <Alert type="info" title="Info" message={`${listings.length} annonce(s) en attente de modération`} />
 
-              <Grid container spacing={2}>
+              <div className="listings-grid">
                 {listings.map((listing) => (
-                  <Grid item xs={12} lg={6} key={listing.annonce_id}>
-                    <Card>
-                      <CardContent>
-                        <Typography variant="h6" gutterBottom>
-                          {listing.titre || 'Sans titre'}
-                        </Typography>
-                        <Box sx={{ mb: 2 }}>
-                          <Chip
-                            label={`${listing.prix || 0} €`}
-                            size="small"
-                            color="primary"
-                            variant="outlined"
-                            sx={{ mr: 1 }}
-                          />
-                          <Chip
-                            label={listing.type_bien || 'N/A'}
-                            size="small"
-                            variant="outlined"
-                          />
-                        </Box>
-                        <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
-                          {listing.description || 'Pas de description'}
-                        </Typography>
-                        <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
-                          <Button
-                            size="small"
-                            variant="contained"
-                            color="success"
-                            onClick={() => setDialog({ open: true, action: 'approve', listingId: listing.annonce_id })}
-                          >
-                            ✓ Approuver
-                          </Button>
-                          <Button
-                            size="small"
-                            variant="contained"
-                            color="warning"
-                            onClick={() => setDialog({ open: true, action: 'reject', listingId: listing.annonce_id })}
-                          >
-                            ✗ Rejeter
-                          </Button>
-                        </Box>
-                      </CardContent>
-                    </Card>
-                  </Grid>
+                  <div key={listing.annonce_id} className="listing-card">
+                    <h3>{listing.titre || 'Sans titre'}</h3>
+                    <div className="listing-meta">
+                      <span className="price-badge">€{listing.prix || 0}</span>
+                      <span className="type-badge">{listing.type_bien || 'N/A'}</span>
+                    </div>
+                    <p className="listing-desc">{listing.description || 'Pas de description'}</p>
+                    <div className="listing-actions">
+                      <Button
+                        variant="primary"
+                        size="small"
+                        onClick={() => setDialog({ open: true, action: 'approve', listingId: listing.annonce_id })}
+                      >
+                        ✓ Approuver
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        size="small"
+                        onClick={() => setDialog({ open: true, action: 'reject', listingId: listing.annonce_id })}
+                      >
+                        ✗ Rejeter
+                      </Button>
+                    </div>
+                  </div>
                 ))}
-              </Grid>
+              </div>
             </>
           )}
         </>
       )}
 
-      {/* Dialog */}
-      <Dialog open={dialog.open} onClose={() => setDialog({ open: false, action: null, listingId: null })}>
-        <DialogTitle>
-          {dialog.action === 'approve' && 'Approuver cette annonce?'}
-          {dialog.action === 'reject' && 'Rejeter cette annonce?'}
-        </DialogTitle>
-        <DialogContent>
-          {dialog.action === 'reject' && (
-            <TextField
-              label="Raison du rejet"
-              multiline
-              rows={3}
-              fullWidth
-              value={rejectReason}
-              onChange={(e) => setRejectReason(e.target.value)}
-              sx={{ mt: 2 }}
-              placeholder="Ex: Contenu inapproprié, photo manquante, prix anormal..."
-            />
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDialog({ open: false, action: null, listingId: null })}>Annuler</Button>
-          <Button
-            onClick={() => handleAction(dialog.action, dialog.listingId)}
-            disabled={actionLoading || (dialog.action === 'reject' && !rejectReason)}
-            variant="contained"
-            color={dialog.action === 'approve' ? 'success' : 'warning'}
-          >
-            {actionLoading ? <CircularProgress size={24} /> : 'Confirmer'}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Container>
+      {/* Dialog Modal */}
+      {dialog.open && (
+        <div className="modal-overlay" onClick={() => setDialog({ open: false, action: null, listingId: null })}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>{dialog.action === 'approve' ? 'Approuver' : 'Rejeter'} cette annonce?</h2>
+              <button className="modal-close" onClick={() => setDialog({ open: false, action: null, listingId: null })}>✕</button>
+            </div>
+            {dialog.action === 'reject' && (
+              <div className="modal-body">
+                <textarea
+                  className="reject-textarea"
+                  value={rejectReason}
+                  onChange={(e) => setRejectReason(e.target.value)}
+                  placeholder="Ex: Contenu inapproprié, photo manquante, prix anormal..."
+                ></textarea>
+              </div>
+            )}
+            <div className="modal-actions">
+              <Button
+                variant="secondary"
+                onClick={() => setDialog({ open: false, action: null, listingId: null })}
+              >
+                Annuler
+              </Button>
+              <Button
+                variant={dialog.action === 'approve' ? 'primary' : 'danger'}
+                onClick={() => handleAction(dialog.action, dialog.listingId)}
+                disabled={actionLoading || (dialog.action === 'reject' && !rejectReason)}
+              >
+                {actionLoading ? '⏳ ...' : 'Confirmer'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
