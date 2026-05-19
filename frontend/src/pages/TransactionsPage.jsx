@@ -5,33 +5,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  CardActions,
-  Button,
-  Chip,
-  Grid,
-  Alert,
-  CircularProgress,
-  Tab,
-  Tabs,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
-import ErrorIcon from '@mui/icons-material/Error';
+import { Button, Alert } from '@/components';
 import { transactionsApi } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
+import '../styles/TransactionsPage.css';
 
 const statutColors = {
   en_attente_selection: 'default',
@@ -53,17 +30,30 @@ const statutLabels = {
   finalisee: 'Finalisée',
 };
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
+function TransactionRow({ transaction, getActionButton }) {
   return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`tabpanel-${index}`}
-      aria-labelledby={`tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box sx={{ pt: 3 }}>{children}</Box>}
+    <div className="table-row">
+      <div className="table-cell">
+        {transaction.annonce?.titre || `Transaction #${transaction.transaction_notaire_id}`}
+      </div>
+      <div className="table-cell">
+        {transaction.prix_compromis?.toLocaleString('fr-FR')} €
+      </div>
+      <div className="table-cell">
+        <span className={`status-badge status-${transaction.statut}`}>
+          {statutLabels[transaction.statut] || transaction.statut}
+        </span>
+      </div>
+      <div className="table-cell">
+        {transaction.notaire ? (
+          <span>{transaction.notaire.etude_notariale}</span>
+        ) : (
+          <span className="text-secondary">Non sélectionné</span>
+        )}
+      </div>
+      <div className="table-cell actions">
+        {getActionButton(transaction)}
+      </div>
     </div>
   );
 }
@@ -162,151 +152,69 @@ export default function TransactionsPage() {
   };
 
   const TransactionRow = ({ transaction }) => (
-    <TableRow hover>
-      <TableCell>
-        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-          {transaction.annonce?.titre || `Transaction #${transaction.transaction_notaire_id}`}
-        </Typography>
-      </TableCell>
-      <TableCell>
-        <Typography variant="body2">
-          {transaction.prix_compromis?.toLocaleString('fr-FR')} €
-        </Typography>
-      </TableCell>
-      <TableCell>
-        <Chip
-          label={statutLabels[transaction.statut] || transaction.statut}
-          color={statutColors[transaction.statut]}
-          size="small"
-        />
-      </TableCell>
-      <TableCell>
-        {transaction.notaire ? (
-          <Typography variant="body2">{transaction.notaire.etude_notariale}</Typography>
-        ) : (
-          <Typography variant="body2" color="textSecondary">
-            Non sélectionné
-          </Typography>
-        )}
-      </TableCell>
-      <TableCell align="right">{getActionButton(transaction)}</TableCell>
-    </TableRow>
+    <TransactionRow transaction={transaction} getActionButton={getActionButton} />
   );
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
-        <CircularProgress />
-      </Box>
+      <div className="transactions-container">
+        <div className="loading-spinner">⏳ Chargement...</div>
+      </div>
     );
   }
 
+  const renderTable = (data) => {
+    if (data.length === 0) {
+      return <Alert type="info" title="Info" message="Aucune transaction pour cette catégorie." />;
+    }
+
+    return (
+      <div className="transactions-table">
+        <div className="table-header">
+          <div className="table-cell">Bien</div>
+          <div className="table-cell">Prix</div>
+          <div className="table-cell">Statut</div>
+          <div className="table-cell">Notaire</div>
+          <div className="table-cell actions">Action</div>
+        </div>
+        {data.map((transaction) => (
+          <TransactionRow key={transaction.transaction_notaire_id} transaction={transaction} />
+        ))}
+      </div>
+    );
+  };
+
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
+    <div className="transactions-page">
+      <div className="page-header">
+        <h1>Mes Transactions Notariales</h1>
+      </div>
 
-      <Typography variant="h4" sx={{ mb: 4, fontWeight: 'bold' }}>
-        Mes Transactions Notariales
-      </Typography>
+      {error && <Alert type="error" title="Erreur" message={error} />}
 
-      {/* Tabs */}
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-        <Tabs
-          value={activeTab}
-          onChange={(e, newValue) => setActiveTab(newValue)}
-          aria-label="transaction tabs"
-        >
-          <Tab label={`En cours (${activeTransactions.length})`} id="tab-0" />
-          <Tab label={`Finalisées (${completedTransactions.length})`} id="tab-1" />
-          <Tab label={`Échouées (${failedTransactions.length})`} id="tab-2" />
-        </Tabs>
-      </Box>
+      {/* Tabs Navigation */}
+      <div className="tabs-nav">
+        {[
+          { label: `En cours (${activeTransactions.length})`, index: 0 },
+          { label: `Finalisées (${completedTransactions.length})`, index: 1 },
+          { label: `Échouées (${failedTransactions.length})`, index: 2 },
+        ].map((tab) => (
+          <button
+            key={tab.index}
+            className={`tab-btn ${activeTab === tab.index ? 'active' : ''}`}
+            onClick={() => setActiveTab(tab.index)}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
 
-      {/* Onglet: En cours */}
-      <TabPanel value={activeTab} index={0}>
-        {activeTransactions.length === 0 ? (
-          <Alert severity="info">
-            Aucune transaction en cours. Créez une offre pour démarrer le processus de vente.
-          </Alert>
-        ) : (
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead sx={{ bgcolor: 'background.paper' }}>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Bien</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Prix</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Statut</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Notaire</TableCell>
-                  <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                    Action
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {activeTransactions.map((transaction) => (
-                  <TransactionRow key={transaction.transaction_notaire_id} transaction={transaction} />
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
-      </TabPanel>
-
-      {/* Onglet: Finalisées */}
-      <TabPanel value={activeTab} index={1}>
-        {completedTransactions.length === 0 ? (
-          <Alert severity="info">Aucune transaction finalisée pour le moment.</Alert>
-        ) : (
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead sx={{ bgcolor: 'background.paper' }}>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Bien</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Prix</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Statut</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Notaire</TableCell>
-                  <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                    Action
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {completedTransactions.map((transaction) => (
-                  <TransactionRow key={transaction.transaction_notaire_id} transaction={transaction} />
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
-      </TabPanel>
-
-      {/* Onglet: Échouées */}
-      <TabPanel value={activeTab} index={2}>
-        {failedTransactions.length === 0 ? (
-          <Alert severity="info">Aucune transaction échouée.</Alert>
-        ) : (
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead sx={{ bgcolor: 'background.paper' }}>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Bien</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Prix</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Statut</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Notaire</TableCell>
-                  <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                    Action
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {failedTransactions.map((transaction) => (
-                  <TransactionRow key={transaction.transaction_notaire_id} transaction={transaction} />
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
-      </TabPanel>
-    </Container>
+      {/* Tab Content */}
+      <div className="tab-content">
+        {activeTab === 0 && renderTable(activeTransactions)}
+        {activeTab === 1 && renderTable(completedTransactions)}
+        {activeTab === 2 && renderTable(failedTransactions)}
+      </div>
+    </div>
   );
 }
