@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}Configuration de la Double Authentification{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">🔐 Double Authentification (2FA)</h3>
+                </div>
+
+                <div class="card-body">
+                    {% if error %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endif %}
+
+                    {% if success %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ success }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endif %}
+
+                    <div id="setup-step-1">
+                        <h5>Étape 1: Installer une application d'authentification</h5>
+                        <p>Téléchargez l'une de ces applications sur votre téléphone:</p>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item">
+                                <strong>Google Authenticator</strong> -
+                                <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank">Android</a> |
+                                <a href="https://apps.apple.com/app/google-authenticator/id388497605" target="_blank">iOS</a>
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Microsoft Authenticator</strong> -
+                                <a href="https://play.google.com/store/apps/details?id=com.azure.authenticator" target="_blank">Android</a> |
+                                <a href="https://apps.apple.com/app/microsoft-authenticator/id434200076" target="_blank">iOS</a>
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Authy</strong> -
+                                <a href="https://play.google.com/store/apps/details?id=com.authy.authy" target="_blank">Android</a> |
+                                <a href="https://apps.apple.com/app/authy/id494196866" target="_blank">iOS</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <hr>
+
+                    <div id="setup-step-2">
+                        <h5>Étape 2: Scanner le QR Code</h5>
+                        <p>Scannez ce code QR avec votre application d'authentification:</p>
+                        <div class="text-center mb-4">
+                            <div id="qr-code-container">
+                                <img id="qr-code" src="" alt="QR Code" class="border p-2" style="max-width: 300px;">
+                            </div>
+                        </div>
+                        <p class="text-muted small">
+                            Si vous ne pouvez pas scanner le code, entrez cette clé manuellement:<br>
+                            <code id="secret-key"></code>
+                        </p>
+                    </div>
+
+                    <hr>
+
+                    <div id="setup-step-3">
+                        <h5>Étape 3: Entrer le code de vérification</h5>
+                        <form id="verify-2fa-form">
+                            <div class="mb-3">
+                                <label for="code" class="form-label">
+                                    Code à 6 chiffres de votre application:
+                                </label>
+                                <input
+                                    type="text"
+                                    class="form-control form-control-lg text-center"
+                                    id="code"
+                                    name="code"
+                                    pattern="[0-9]{6}"
+                                    placeholder="000000"
+                                    maxlength="6"
+                                    required
+                                >
+                            </div>
+                            <button type="submit" class="btn btn-success btn-lg w-100">
+                                ✓ Activer le 2FA
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="alert alert-info mt-3">
+                        <strong>⚠️ Important:</strong> Gardez les codes de secours en lieu sûr. Vous en aurez besoin si vous perdez accès à votre application d'authentification.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+    // Récupérer le QR code et le secret
+    try {
+        const response = await fetch('/api/v1/security/2fa/setup', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) throw new Error('Erreur lors de la génération du QR code');
+
+        const data = await response.json();
+
+        // Afficher le QR code
+        document.getElementById('qr-code').src = `data:image/png;base64,${data.qr_code}`;
+
+        // Afficher la clé secrète
+        document.getElementById('secret-key').textContent = data.secret;
+
+        // Stocker le secret dans le formulaire
+        document.getElementById('verify-2fa-form').dataset.secret = data.secret;
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('Erreur lors de la génération du QR code');
+    }
+});
+
+// Soumission du formulaire
+document.getElementById('verify-2fa-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const secret = this.dataset.secret;
+    const code = document.getElementById('code').value;
+
+    try {
+        const response = await fetch('/api/v1/security/2fa/setup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                secret: secret,
+                code: code
+            })
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            alert('Erreur: ' + error.error);
+            return;
+        }
+
+        const data = await response.json();
+
+        // Afficher les codes de secours
+        alert('2FA activé! Codes de secours:\n\n' + (data.backup_codes || []).join('\n'));
+        window.location.href = '/utilisateurs/profile';
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('Erreur lors de l\'activation du 2FA');
+    }
+});
+
+// Format automatique du code (6 chiffres uniquement)
+document.getElementById('code').addEventListener('input', function(e) {
+    this.value = this.value.replace(/\D/g, '').slice(0, 6);
+});
+</script>
+
+<style>
+#qr-code {
+    width: 300px;
+    height: 300px;
+    image-rendering: pixelated;
+}
+</style>
+{% endblock %}
