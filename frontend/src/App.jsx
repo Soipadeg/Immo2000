@@ -81,6 +81,15 @@ import Conversations from './pages/Conversations';
 import ContacterVendeur from './pages/ContacterVendeur';
 import OffresPage from './pages/OffresPage';
 import CreerOffrePage from './pages/CreerOffrePage';
+import RepondreOffrePage from './pages/RepondreOffrePage';
+import TransactionsPage from './pages/TransactionsPage';
+import SelectNotairePage from './pages/SelectNotairePage';
+import PaymentPage from './pages/PaymentPage';
+import ValidateFeesPage from './pages/ValidateFeesPage';
+import SignCompromisPage from './pages/SignCompromisPage';
+import SignActePage from './pages/SignActePage';
+import TransactionDetailsPage from './pages/TransactionDetailsPage';
+import DocuSignCallbackPage from './pages/DocuSignCallbackPage';
 
 
 /**
@@ -153,6 +162,19 @@ function App() {
             {/* === OFFRES D'ACHAT === */}
             <Route path="/offres" element={<ProtectedRoute element={<OffresPage />} />} />
             <Route path="/creer-offre" element={<ProtectedRoute element={<CreerOffrePage />} />} />
+            <Route path="/offres/:offerId/repondre" element={<ProtectedRoute element={<RepondreOffrePage />} />} />
+
+            {/* === TRANSACTIONS NOTARIALES === */}
+            <Route path="/transactions" element={<ProtectedRoute element={<TransactionsPage />} />} />
+            <Route path="/transactions/:transactionId" element={<ProtectedRoute element={<TransactionDetailsPage />} />} />
+            <Route path="/transactions/:transactionId/select-notaire" element={<ProtectedRoute element={<SelectNotairePage />} />} />
+            <Route path="/transactions/:transactionId/validate-fees" element={<ProtectedRoute element={<ValidateFeesPage />} />} />
+            <Route path="/transactions/:transactionId/sign-compromis" element={<ProtectedRoute element={<SignCompromisPage />} />} />
+            <Route path="/transactions/:transactionId/payment" element={<ProtectedRoute element={<PaymentPage />} />} />
+            <Route path="/transactions/:transactionId/sign-acte" element={<ProtectedRoute element={<SignActePage />} />} />
+
+            {/* === DOCUSIGN OAUTH CALLBACK === */}
+            <Route path="/docusign/callback" element={<ProtectedRoute element={<DocuSignCallbackPage />} />} />
 
             <Route path="/annonces" element={<PublicAnnonceListPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />

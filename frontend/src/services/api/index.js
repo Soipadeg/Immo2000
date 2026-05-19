@@ -13,6 +13,8 @@ export { authApi } from './auth';
 export { listingsApi } from './listings';
 export { messagesApi, conversationsApi, notificationsApi } from './messages';
 export { offersApi, visitsApi, appointmentsApi } from './offers';
+export { transactionsApi, paymentsApi, notairesApi } from './transactions';
+export { default as docusignApi } from './docusign';
 
 // Re-export de api.js pour compatibilité
 // TODO: Migrer progressivement vers les nouveaux modules
