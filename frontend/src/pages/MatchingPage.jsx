@@ -1,17 +1,11 @@
+import '../styles/MatchingPage.css';
+import './MatchingPage.css';
+import { Alert,Button,Input } from '@/components';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './MatchingPage.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
-import { Button, Alert, Input } from '@/components';
-import '../styles/MatchingPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/MatchingPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/MatchingPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/MatchingPage.css';
 
 
 

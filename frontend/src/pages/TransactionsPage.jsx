@@ -1,3 +1,4 @@
+import '../styles/TransactionsPage.css';
 /**
  * Page de gestion des transactions notariales
  * Voir l'état des ventes en cours, sélectionner notaire, valider frais, payer
@@ -8,7 +9,6 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Alert } from '@/components';
 import { transactionsApi } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
-import '../styles/TransactionsPage.css';
 
 const statutColors = {
   en_attente_selection: 'default',

@@ -1,3 +1,5 @@
+import '../styles/DashboardRedirectPage.css';
+import { Alert,Button,Input } from '@/components';
 /**
  * Page de redirection intelligente du dashboard
  * Redirige vers le dashboard approprié selon le rôle de l'utilisateur
@@ -6,14 +8,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { Button, Alert, Input } from '@/components';
-import '../styles/DashboardRedirectPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/DashboardRedirectPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/DashboardRedirectPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/DashboardRedirectPage.css';
 
 
 

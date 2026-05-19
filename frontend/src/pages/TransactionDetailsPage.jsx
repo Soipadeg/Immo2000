@@ -1,3 +1,5 @@
+import '../styles/TransactionDetailsPage.css';
+import { Alert,Button,Input } from '@/components';
 /**
  * Page de détails d'une transaction
  * Affiche la timeline, les documents, les paiements, les frais
@@ -7,14 +9,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { transactionsApi } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
-import { Button, Alert, Input } from '@/components';
-import '../styles/TransactionDetailsPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/TransactionDetailsPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/TransactionDetailsPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/TransactionDetailsPage.css';
 
 
 

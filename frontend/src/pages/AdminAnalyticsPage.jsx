@@ -1,9 +1,9 @@
+import '../styles/AdminAnalyticsPage.css';
 import React, { useState, useEffect } from 'react';
 import { Alert, Button } from '@/components';
 import { analyticsApi } from '../services/adminApi';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import '../styles/AdminAnalyticsPage.css';
 
 const AdminAnalyticsPage = () => {
   const { user, loading: authLoading } = useAuth();

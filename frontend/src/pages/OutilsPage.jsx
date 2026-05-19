@@ -1,13 +1,7 @@
+import '../styles/OutilsPage.css';
+import { Alert,Button,Input } from '@/components';
 import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { Button, Alert, Input } from '@/components';
-import '../styles/OutilsPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/OutilsPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/OutilsPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/OutilsPage.css';
 
 
 

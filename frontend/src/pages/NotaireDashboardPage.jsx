@@ -1,3 +1,4 @@
+import '../styles/NotaireDashboardPage.css';
 /**
  * Dashboard Notaire - Gestion des dossiers et documents
  */
@@ -7,7 +8,6 @@ import { Button, Alert, Card } from '@/components';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { notairesApi } from '../services/api/transactions';
-import '../styles/NotaireDashboardPage.css';
 
 const NotaireDashboardPage = () => {
   const { user, loading: authLoading } = useAuth();
@@ -45,53 +45,6 @@ const NotaireDashboardPage = () => {
       setLoading(false);
     }
   };
-
-  // Calculate stats from dossiers
-  const stats = [
-    {
-      label: 'Dossiers en cours',
-      value: dossiers.length,
-      icon: <DocumentScannerIcon />,
-      color: 'primary',
-      trend: `${dossiers.length} dossier(s) en attente`,
-      trendUp: dossiers.length > 0
-    },
-    {
-      label: 'En attente de validation',
-      value: dossiers.filter(d => d.statut === 'en_attente_validation').length,
-      icon: <CalendarTodayIcon />,
-      color: 'success',
-      trend: 'Action requise',
-      trendUp: true
-    },
-    {
-      label: 'Modifications demandées',
-      value: dossiers.filter(d => d.statut === 'modifications_demandees').length,
-      icon: <VerifiedUserIcon />,
-      color: 'warning',
-      trend: 'À réviser',
-      trendUp: false
-    },
-  ];
-
-  // Build rendez-vous from dossiers (simplified)
-  const rendezVous = dossiers.slice(0, 4).map((dossier, idx) => ({
-    id: idx + 1,
-    temps: `${9 + idx * 2}:00`,
-    client: dossier.vendeur_nom || 'Client',
-    dossier: dossier.annonce_titre || 'Dossier',
-    lieu: 'Bureau'
-  }));
-
-  // Notifications based on dossiers status
-  const notifications = [
-    ...dossiers.slice(0, 2).map((d, idx) => ({
-      id: idx + 1,
-      texte: `Dossier #${d.transaction_notaire_id}: ${d.statut}`,
-      type: d.statut === 'modifications_demandees' ? 'warning' : 'info'
-    })),
-    { id: 3, texte: 'Vérifiez les documents en attente', type: 'warning' },
-  ].slice(0, 4);
 
   if (authLoading || loading) {
     return (

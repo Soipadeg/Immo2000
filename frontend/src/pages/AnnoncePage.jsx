@@ -1,3 +1,4 @@
+import '../styles/AnnoncePage.css';
 /**
  * Page de détail d'une annonce immobilière
  * Affiche tous les détails du bien avec photos en galerie et annonces similaires
@@ -10,7 +11,6 @@ import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { annoncesApi } from '../services/api';
 import SimilarAnnoncesCarousel from '../components/SimilarAnnoncesCarousel';
-import '../styles/AnnoncePage.css';
 
 const AnnoncePage = () => {
   const { id } = useParams();

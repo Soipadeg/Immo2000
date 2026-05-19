@@ -1,3 +1,4 @@
+import '../styles/AdminUsersPageNew.css';
 /**
  * TÂCHE 2: Gestion des Utilisateurs
  */
@@ -7,13 +8,6 @@ import { usersApi } from '../services/adminApi';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { Button, Alert, Input } from '@/components';
-import '../styles/AdminUsersPageNew.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/AdminUsersPageNew.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/AdminUsersPageNew.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/AdminUsersPageNew.css';
 
 
 
@@ -225,7 +219,7 @@ const AdminUsersPage = () => {
             />
           )}
           {dialog.action === 'delete' && (
-            <p color="error">Cette action est irréversible!</h4>
+            <Typography color="error">Cette action est irréversible!</Typography>
           )}
         </div>
         <div>

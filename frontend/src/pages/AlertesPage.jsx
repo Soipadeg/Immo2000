@@ -1,3 +1,4 @@
+import '../styles/AlertesPage.css';
 /**
  * Composant de gestion des alertes d'annonces
  * Permet aux utilisateurs de créer et gérer des alertes pour recevoir des notifications
@@ -6,7 +7,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Input, Card, Modal, Alert } from '@/components';
 import { alertesApi } from '../services/api';
-import '../styles/AlertesPage.css';
 
 const AlertesAnnonces = () => {
   const [alertes, setAlertes] = useState([]);

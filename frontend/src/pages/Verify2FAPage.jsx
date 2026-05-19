@@ -1,8 +1,8 @@
+import './Verify2FAPage.css';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Button, Input, Alert, FormContainer } from '@/components';
 import { authApi } from '../services/api';
-import './Verify2FAPage.css';
 
 export default function Verify2FAPage() {
   const navigate = useNavigate();

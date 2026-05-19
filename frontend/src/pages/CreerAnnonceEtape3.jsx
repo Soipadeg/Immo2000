@@ -1,3 +1,4 @@
+import '../styles/CreerAnnonceEtape3.css';
 import React
 import { Button, Alert, Input } from '@/components';, { useState } from 'react';
 
@@ -8,7 +9,6 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 
 import { signContratExclusivite } from '../services/api';
-import '../styles/CreerAnnonceEtape3.css';
 
 /**
  * Page ÉTAPE 3 du tunnel : Contrat d'exclusivité

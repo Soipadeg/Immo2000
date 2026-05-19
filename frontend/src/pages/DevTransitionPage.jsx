@@ -1,13 +1,7 @@
+import '../styles/DevTransitionPage.css';
+import { Alert,Button,Input } from '@/components';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Button, Alert, Input } from '@/components';
-import '../styles/DevTransitionPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/DevTransitionPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/DevTransitionPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/DevTransitionPage.css';
 
 
 

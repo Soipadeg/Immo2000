@@ -1,3 +1,4 @@
+import '../styles/ValidateFeesPage.css';
 /**
  * Page de validation des frais notaire
  * Affiche les frais calculés, commission Immo2000, et permet de valider
@@ -8,7 +9,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { transactionsApi } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import { Button, Alert, Input } from '@/components';
-import '../styles/ValidateFeesPage.css';
 
 
 
@@ -85,7 +85,7 @@ export default function ValidateFeesPage() {
 
       <h4>
         Validation des Frais Notaire
-      </p>
+      </h4>
 
       {/* Infos transaction */}
       <div className="card">
@@ -281,23 +281,26 @@ export default function ValidateFeesPage() {
         </Button>
       </div>
 
-      {/* Dialog Succès */}
-      <div className="modal"> setSuccessOpen(false)}>
-        <div className="modal">
-          <span className="icon-placeholder">CheckCircleIcon</span>
-          Frais Validés
-        </DialogTitle>
-        <div className="modal">
-          <p>
-            Les frais ont été validés avec succès. Vous pouvez maintenant procéder à la signature du compromis.
-          </p>
-        </DialogContent>
-        <div className="modal">
-          <Button onClick={() => setSuccessOpen(false)} variant="contained">
-            OK
-          </Button>
-        </DialogActions>
-      </div>
+      {/* Modal de Succès */}
+      {successOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="modal-header">
+              <h2>✓ Frais Validés</h2>
+            </div>
+            <div className="modal-body">
+              <p>
+                Les frais ont été validés avec succès. Vous pouvez maintenant procéder à la signature du compromis.
+              </p>
+            </div>
+            <div className="modal-footer">
+              <Button onClick={() => setSuccessOpen(false)} variant="contained">
+                OK
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

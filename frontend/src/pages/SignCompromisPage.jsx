@@ -1,3 +1,4 @@
+import '../styles/SignCompromisPage.css';
 /**
  * Page de signature du compromis de vente
  * Intégration DocuSign pour signer le compromis avec OAuth
@@ -8,7 +9,6 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { transactionsApi, docusignApi } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import { Button, Alert, Input } from '@/components';
-import '../styles/SignCompromisPage.css';
 
 
 

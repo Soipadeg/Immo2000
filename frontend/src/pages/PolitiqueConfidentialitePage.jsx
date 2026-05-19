@@ -1,12 +1,6 @@
+import '../styles/PolitiqueConfidentialitePage.css';
+import { Alert,Button,Input } from '@/components';
 import React from 'react';
-import { Button, Alert, Input } from '@/components';
-import '../styles/PolitiqueConfidentialitePage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/PolitiqueConfidentialitePage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/PolitiqueConfidentialitePage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/PolitiqueConfidentialitePage.css';
 
 
 

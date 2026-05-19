@@ -1,16 +1,10 @@
+import '../styles/GuidesPage.css';
+import { Alert,Button,Input } from '@/components';
 /**
  * Page Guides - Guides immobiliers
  */
 
 import React, { useState } from 'react';
-import { Button, Alert, Input } from '@/components';
-import '../styles/GuidesPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/GuidesPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/GuidesPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/GuidesPage.css';
 
 
 

@@ -1,3 +1,4 @@
+import '../styles/CreerAnnonceEtape1.css';
 import React
 import { Button, Alert, Input } from '@/components';, { useState } from 'react';
 
@@ -5,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 
 
 import { createBrouillonAnnonce } from '../services/api';
-import '../styles/CreerAnnonceEtape1.css';
 
 /**
  * Page ÉTAPE 1 du tunnel : Adresse et Photos

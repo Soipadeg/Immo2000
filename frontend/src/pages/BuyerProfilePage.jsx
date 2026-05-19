@@ -1,8 +1,8 @@
+import '../styles/BuyerProfilePage.css';
 import React, { useState, useEffect } from 'react';
 import { Button, Alert, Input } from '@/components';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { updateBuyerProfile } from '../services/api';
-import '../styles/BuyerProfilePage.css';
 
 export default function BuyerProfilePage() {
   const navigate = useNavigate();

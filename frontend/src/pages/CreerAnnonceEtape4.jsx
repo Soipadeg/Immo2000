@@ -1,9 +1,9 @@
+import '../styles/CreerAnnonceEtape4.css';
 import React
 import { Button, Alert, Input } from '@/components';, { useState, useEffect } from 'react';
 
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { completerAnnonce } from '../services/api';
-import '../styles/CreerAnnonceEtape4.css';
 
 /**
  * Page ÉTAPE 4 du tunnel : Informations complémentaires

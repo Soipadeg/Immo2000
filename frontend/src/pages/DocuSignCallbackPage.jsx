@@ -1,3 +1,5 @@
+import '../styles/DocuSignCallbackPage.css';
+import { Alert,Button,Input } from '@/components';
 /**
  * Composant pour gérer le callback DocuSign OAuth
  * Traite le code d'autorisation retourné par DocuSign
@@ -6,14 +8,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import docusignApi from '../services/api/docusign';
-import { Button, Alert, Input } from '@/components';
-import '../styles/DocuSignCallbackPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/DocuSignCallbackPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/DocuSignCallbackPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/DocuSignCallbackPage.css';
 
 
 

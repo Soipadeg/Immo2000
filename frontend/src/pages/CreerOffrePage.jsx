@@ -1,3 +1,5 @@
+import '../styles/CreerOffrePage.css';
+import { Alert,Button,Input } from '@/components';
 /**
  * Page de création d'une offre d'achat
  * Appelée depuis MesRendezVous avec ?annonce_id=X
@@ -7,14 +9,6 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { offresApi, annoncesApi } from '../services/api';
-import { Button, Alert, Input } from '@/components';
-import '../styles/CreerOffrePage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/CreerOffrePage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/CreerOffrePage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/CreerOffrePage.css';
 
 
 

@@ -1,3 +1,4 @@
+import './SearchPage.css';
 /**
  * Page de recherche d'annonces - Version design system
  */
@@ -5,7 +6,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Input, Card, FormContainer, Alert } from '@/components';
-import './SearchPage.css';
 
 const mockAnnonces = [
   {

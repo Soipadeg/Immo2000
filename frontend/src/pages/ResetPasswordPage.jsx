@@ -1,8 +1,8 @@
+import './ResetPasswordPage.css';
 import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Button, Input, Alert, FormContainer } from '@/components';
 import { authApi } from '../services/api';
-import './ResetPasswordPage.css';
 
 const PASSWORD_STRENGTH_RULES = {
   length: (pwd) => pwd.length >= 8,

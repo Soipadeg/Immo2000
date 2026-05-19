@@ -1,9 +1,9 @@
+import '../styles/ModerationPage.css';
 /**
  * Page Modération des Annonces (Admin)
  */
 
 import React, { useState } from 'react';
-import '../styles/ModerationPage.css';
 import { Button, Alert, Input } from '@/components';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';

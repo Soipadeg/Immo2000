@@ -1,8 +1,8 @@
+import './ForgotPasswordPage.css';
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button, Input, Alert, FormContainer } from '@/components';
 import { authApi } from '../services/api';
-import './ForgotPasswordPage.css';
 
 /**
  * ForgotPasswordPage

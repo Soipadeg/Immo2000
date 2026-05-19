@@ -1,3 +1,4 @@
+import '../styles/CreateAnnoncePage.css';
 /**
  * Page de création d'annonce immobilière
  * Formulaire complet pour créer une nouvelle annonce
@@ -10,7 +11,6 @@ import { useNavigate } from 'react-router-dom';
 
 import ImageUpload from '../components/ImageUpload';
 import { annoncesApi } from '../services/api';
-import '../styles/CreateAnnoncePage.css';
 
 const TYPES_BIEN = ['maison', 'appartement', 'terrain', 'local commercial'];
 const DPE_VALUES = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];

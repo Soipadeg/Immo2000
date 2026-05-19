@@ -1,9 +1,9 @@
+import '../styles/CreerAnnonceEtape2.css';
 import React
 import { Button, Alert, Input } from '@/components';, { useState } from 'react';
 
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { register } from '../services/api';
-import '../styles/CreerAnnonceEtape2.css';
 
 /**
  * Page ÉTAPE 2 du tunnel : Création de compte

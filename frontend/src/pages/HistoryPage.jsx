@@ -1,3 +1,4 @@
+import '../styles/HistoryPage.css';
 /**
  * Page Historique - Biens consultés et annonces contactées
  */
@@ -6,7 +7,6 @@ import React, { useState } from 'react';
 import { Button, Alert } from '@/components';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import '../styles/HistoryPage.css';
 
 const HistoryPage = () => {
   const { user, loading } = useAuth();

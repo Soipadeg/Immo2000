@@ -1,3 +1,5 @@
+import '../styles/VisitesPage.css';
+import { Alert,Button,Input } from '@/components';
 /**
  * Page de gestion des visites
  * Permettre de planifier une visite et voir l'historique
@@ -11,14 +13,6 @@ import {
 } from '../components/FeedbackComponent';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
-import { Button, Alert, Input } from '@/components';
-import '../styles/VisitesPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/VisitesPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/VisitesPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/VisitesPage.css';
 
 
 

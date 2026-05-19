@@ -1,12 +1,6 @@
+import '../styles/CGUPage.css';
+import { Alert,Button,Input } from '@/components';
 import React from 'react';
-import { Button, Alert, Input } from '@/components';
-import '../styles/CGUPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/CGUPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/CGUPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/CGUPage.css';
 
 
 

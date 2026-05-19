@@ -1,3 +1,4 @@
+import '../styles/UserDashboardPage.css';
 /**
  * Dashboard Utilisateur (Vendeur/Acheteur)
  */
@@ -6,7 +7,6 @@ import React, { useState, useEffect } from 'react';
 import { Button, Card, Alert } from '@/components';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import '../styles/UserDashboardPage.css';
 
 const UserDashboardPage = () => {
   const { user, loading: authLoading } = useAuth();

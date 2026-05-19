@@ -1,3 +1,4 @@
+import './FAQPage.css';
 /**
  * Page FAQ - Questions Fréquemment Posées
  */
@@ -5,7 +6,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Input, Card, Alert, FormContainer } from '@/components';
 import { faqApi } from '../services/api';
-import './FAQPage.css';
 
 const FAQPage = () => {
   const [tabValue, setTabValue] = useState(0);

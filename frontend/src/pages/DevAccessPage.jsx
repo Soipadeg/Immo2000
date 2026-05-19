@@ -1,12 +1,6 @@
+import '../styles/DevAccessPage.css';
+import { Alert,Button,Input } from '@/components';
 import React from 'react';
-import { Button, Alert, Input } from '@/components';
-import '../styles/DevAccessPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/DevAccessPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/DevAccessPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/DevAccessPage.css';
 
 
 

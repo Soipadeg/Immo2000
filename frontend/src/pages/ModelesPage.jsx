@@ -1,10 +1,10 @@
+import '../styles/ModelesPage.css';
 /**
  * Page Modèles - Modèles de documents immobiliers
  */
 
 import React, { useState } from 'react';
 import { Button, Card, Modal } from '@/components';
-import '../styles/ModelesPage.css';
 
 const ModelesPage = () => {
   const [openDialog, setOpenDialog] = useState(null);

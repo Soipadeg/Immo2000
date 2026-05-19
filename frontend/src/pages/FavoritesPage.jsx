@@ -1,3 +1,4 @@
+import '../styles/FavoritesPage.css';
 /**
  * Page Favoris - Biens sauvegardés
  */
@@ -7,7 +8,6 @@ import { Button, Alert } from '@/components';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { favorisApi } from '../services/api';
-import '../styles/FavoritesPage.css';
 
 const FavoritesPage = () => {
   const { user, loading: authLoading } = useAuth();

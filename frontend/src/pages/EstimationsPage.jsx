@@ -1,3 +1,5 @@
+import '../styles/EstimationsPage.css';
+import { Alert,Button,Input } from '@/components';
 /**
  * Page des Estimations - Melo API
  * Estimer la valeur d'une propriété via l'API Melo
@@ -5,14 +7,6 @@
 
 import React, { useState } from 'react';
 import { estimationsApi } from '../services/api';
-import { Button, Alert, Input } from '@/components';
-import '../styles/EstimationsPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/EstimationsPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/EstimationsPage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/EstimationsPage.css';
 
 
 

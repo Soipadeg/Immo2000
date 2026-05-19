@@ -1,3 +1,4 @@
+import '../styles/MonCalendrier.css';
 /**
  * MonCalendrier.jsx - Calendrier de disponibilité pour les vendeurs
  *
@@ -15,7 +16,6 @@ import { useAuth } from '../hooks/useAuth';
 import api from '../services/api';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import '../styles/MonCalendrier.css';
 
 const MonCalendrier = () => {
   const { user, token } = useAuth();

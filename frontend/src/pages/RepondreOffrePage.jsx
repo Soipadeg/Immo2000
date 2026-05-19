@@ -1,3 +1,5 @@
+import '../styles/RepondreOffrePage.css';
+import { Alert,Button,Input } from '@/components';
 /**
  * Page de réponse à une offre (accepter/refuser/négocier)
  * Vendeur répond à une offre reçue
@@ -7,14 +9,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { offersApi, transactionsApi } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
-import { Button, Alert, Input } from '@/components';
-import '../styles/RepondreOffrePage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/RepondreOffrePage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/RepondreOffrePage.css';
-import { Button, Alert, Input } from '@/components';
-import '../styles/RepondreOffrePage.css';
 
 
 

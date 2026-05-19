@@ -1,3 +1,4 @@
+import './SimulateurPret.css';
 /**
  * Simulateur de Prêt Immobilier
  * Calcul de mensualité et taux d'endettement selon règles bancaires françaises
@@ -5,7 +6,6 @@
 
 import React, { useState, useMemo } from 'react';
 import { Button, Input, Card, Alert, FormContainer } from '@/components';
-import './SimulateurPret.css';
 
 const SimulateurPret = () => {
   const [formData, setFormData] = useState({

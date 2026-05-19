@@ -1,3 +1,4 @@
+import '../styles/SignActePage.css';
 /**
  * Page de signature de l'acte authentique
  * Signature finale avec DocuSign OAuth
@@ -8,7 +9,6 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { transactionsApi, docusignApi } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import { Button, Alert, Input } from '@/components';
-import '../styles/SignActePage.css';
 
 
 
