@@ -3,28 +3,9 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  Container,
-  Typography,
-  Box,
-  TextField,
-  Paper,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  CircularProgress,
-  Alert,
-  Grid,
-  InputAdornment,
-  Tabs,
-  Tab,
-  LinearProgress,
-  Card,
-  CardContent,
-  Chip,
-} from '@mui/material';
-import { ExpandMore as ExpandMoreIcon, Search as SearchIcon } from '@mui/icons-material';
+import { Button, Input, Card, Alert, FormContainer } from '@/components';
 import { faqApi } from '../services/api';
+import './FAQPage.css';
 
 const FAQPage = () => {
   const [tabValue, setTabValue] = useState(0);
@@ -104,262 +85,222 @@ const FAQPage = () => {
   };
 
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
-      {/* En-tête */}
-      <Box sx={{ textAlign: 'center', mb: 4 }}>
-        <Typography variant="h3" gutterBottom sx={{ fontWeight: 700 }}>
-          ❓ Questions Fréquemment Posées
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Trouvez les réponses aux questions les plus courantes sur Immo2000
-        </Typography>
-      </Box>
+    <FormContainer
+      title="❓ Questions Fréquemment Posées"
+      subtitle="Trouvez les réponses aux questions les plus courantes sur Immo2000"
+      maxWidth="medium"
+    >
+      {error && (
+        <Alert
+          isOpen={true}
+          type="error"
+          title="Erreur"
+          message={error}
+          dismissible={true}
+          onClose={() => setError('')}
+        />
+      )}
 
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      {/* Tab Navigation */}
+      <div className="faq-tabs">
+        <button
+          className={`tab-button ${tabValue === 0 ? 'active' : ''}`}
+          onClick={() => setTabValue(0)}
+        >
+          📚 Parcourir les FAQs
+        </button>
+        <button
+          className={`tab-button ${tabValue === 1 ? 'active' : ''}`}
+          onClick={() => {
+            setTabValue(1);
+            if (stats === null) loadStats();
+          }}
+        >
+          📊 Statistiques
+        </button>
+      </div>
 
-      <Tabs value={tabValue} onChange={(e, v) => setTabValue(v)} sx={{ mb: 3 }}>
-        <Tab label="Parcourir les FAQs" />
-        <Tab label="Statistiques" />
-      </Tabs>
-
-      {/* Onglet 1: Parcourir les FAQs */}
+      {/* Tab 1: Browse FAQs */}
       {tabValue === 0 && (
-        <>
-          <Paper sx={{ p: 2, mb: 3 }}>
-            <TextField
-              fullWidth
-              placeholder="Rechercher dans les FAQs..."
-              value={searchTerm}
-              onChange={(e) => handleSearch(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Paper>
+        <div className="faq-browse">
+          <Input
+            label="Rechercher dans les FAQs"
+            type="text"
+            name="search"
+            placeholder="Ex: comment acheter un bien..."
+            value={searchTerm}
+            onChange={(e) => handleSearch(e.target.value)}
+          />
 
           {loading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
-              <CircularProgress />
-            </Box>
+            <div className="faq-loading">
+              <div className="spinner"></div>
+              <p>Chargement des FAQs...</p>
+            </div>
           ) : filteredFaqs.length === 0 ? (
-            <Paper sx={{ p: 3, textAlign: 'center' }}>
-              <Typography color="text.secondary">
+            <div className="faq-empty">
+              <p>
                 {searchTerm
                   ? 'Aucune FAQ ne correspond à votre recherche'
                   : 'Aucune FAQ disponible'}
-              </Typography>
-            </Paper>
+              </p>
+            </div>
           ) : (
             <>
-              {/* Filtres de catégories */}
+              {/* Category Filters */}
               {categories.length > 1 && (
-                <Box sx={{ mb: 3, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                  <Typography variant="body2" sx={{ alignSelf: 'center', mr: 1 }}>
-                    <strong>Catégories:</strong>
-                  </Typography>
-                  <Box
+                <div className="faq-categories">
+                  <span className="categories-label">Catégories:</span>
+                  <button
+                    className={`category-chip ${!selectedCategory ? 'active' : ''}`}
                     onClick={() => handleCategoryFilter('')}
-                    sx={{
-                      px: 2,
-                      py: 1,
-                      borderRadius: 2,
-                      cursor: 'pointer',
-                      backgroundColor: !selectedCategory ? '#1976d2' : '#f0f0f0',
-                      color: !selectedCategory ? 'white' : 'black',
-                      fontSize: '0.875rem',
-                      fontWeight: '500',
-                      transition: 'all 0.2s',
-                      '&:hover': { opacity: 0.8 },
-                    }}
                   >
                     Toutes
-                  </Box>
+                  </button>
                   {categories.map((category) => (
-                    <Box
+                    <button
                       key={category}
+                      className={`category-chip ${selectedCategory === category ? 'active' : ''}`}
                       onClick={() => handleCategoryFilter(category)}
-                      sx={{
-                        px: 2,
-                        py: 1,
-                        borderRadius: 2,
-                        cursor: 'pointer',
-                        backgroundColor: selectedCategory === category ? '#1976d2' : '#f0f0f0',
-                        color: selectedCategory === category ? 'white' : 'black',
-                        fontSize: '0.875rem',
-                        fontWeight: '500',
-                        transition: 'all 0.2s',
-                        '&:hover': { opacity: 0.8 },
-                      }}
                     >
                       {category}
-                    </Box>
+                    </button>
                   ))}
-                </Box>
+                </div>
               )}
 
-              {/* Liste des FAQs */}
-              <Box sx={{ mb: 3 }}>
+              {/* FAQ Accordion */}
+              <div className="faq-list">
                 {filteredFaqs.map((faq, index) => (
-                  <Accordion key={faq.faq_id || index} sx={{ mb: 1 }}>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                      <Typography
-                        sx={{
-                          fontWeight: 500,
-                          fontSize: '1.05rem',
-                          flex: 1,
-                        }}
-                      >
-                        {faq.question}
-                      </Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      <Typography color="text.secondary" sx={{ whiteSpace: 'pre-wrap' }}>
-                        {faq.reponse}
-                      </Typography>
-                      {faq.categorie && (
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            display: 'block',
-                            mt: 2,
-                            color: '#1976d2',
-                            fontWeight: 600,
-                          }}
-                        >
-                          📂 {faq.categorie}
-                        </Typography>
-                      )}
-                    </AccordionDetails>
-                  </Accordion>
+                  <FAQAccordion
+                    key={faq.faq_id || index}
+                    faq={faq}
+                    index={index}
+                  />
                 ))}
-              </Box>
+              </div>
 
-              {/* Résumé */}
-              <Paper
-                sx={{
-                  p: 2,
-                  backgroundColor: '#f5f5f5',
-                  textAlign: 'center',
-                  borderRadius: 2,
-                }}
-              >
-                <Typography variant="body2" color="text.secondary">
-                  Affichage de {filteredFaqs.length} FAQ{selectedCategory && ` - Catégorie: ${selectedCategory}`}
-                </Typography>
-              </Paper>
+              {/* Summary */}
+              <div className="faq-summary">
+                <p>
+                  <strong>{filteredFaqs.length} FAQ{filteredFaqs.length > 1 ? 's' : ''}</strong>
+                  {selectedCategory && ` - Catégorie: ${selectedCategory}`}
+                </p>
+              </div>
             </>
           )}
-        </>
+        </div>
       )}
+
+      {/* Tab 2: Statistics */}
       {tabValue === 1 && (
-        <Box>
+        <div className="faq-stats">
           {statsLoading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
-              <CircularProgress />
-            </Box>
+            <div className="faq-loading">
+              <div className="spinner"></div>
+              <p>Chargement des statistiques...</p>
+            </div>
           ) : stats ? (
-            <Grid container spacing={2}>
+            <div className="stats-grid">
               {/* Total FAQs */}
-              <Grid item xs={12} sm={6} md={3}>
-                <Paper sx={{ p: 2, textAlign: 'center' }}>
-                  <Typography variant="body2" color="text.secondary">
-                    Total FAQs
-                  </Typography>
-                  <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                    {stats.total_faqs || 0}
-                  </Typography>
-                </Paper>
-              </Grid>
+              <Card variant="elevated">
+                <div className="stat-card">
+                  <div className="stat-label">Total FAQs</div>
+                  <div className="stat-value">{stats.total_faqs || 0}</div>
+                </div>
+              </Card>
 
-              {/* Total Catégories */}
-              <Grid item xs={12} sm={6} md={3}>
-                <Paper sx={{ p: 2, textAlign: 'center' }}>
-                  <Typography variant="body2" color="text.secondary">
-                    Catégories
-                  </Typography>
-                  <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                    {stats.total_categories || 0}
-                  </Typography>
-                </Paper>
-              </Grid>
+              {/* Total Categories */}
+              <Card variant="elevated">
+                <div className="stat-card">
+                  <div className="stat-label">Catégories</div>
+                  <div className="stat-value">{stats.total_categories || 0}</div>
+                </div>
+              </Card>
 
-              {/* Distribution par catégorie */}
+              {/* Category Distribution */}
               {stats.category_distribution && stats.category_distribution.length > 0 && (
-                <Grid item xs={12}>
-                  <Card>
-                    <CardContent>
-                      <Typography variant="h6" gutterBottom>
-                        📊 FAQs par Catégorie
-                      </Typography>
-                      {stats.category_distribution.map((cat, idx) => (
-                        <Box key={idx} sx={{ mb: 2 }}>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                              {cat.categorie}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                              {cat.count} FAQ{cat.count > 1 ? 's' : ''}
-                            </Typography>
-                          </Box>
-                          <LinearProgress
-                            variant="determinate"
-                            value={(cat.count / (stats.total_faqs || 1)) * 100}
-                          />
-                        </Box>
-                      ))}
-                    </CardContent>
-                  </Card>
-                </Grid>
+                <Card variant="elevated" interactive>
+                  <div className="stat-section">
+                    <h3>📊 FAQs par Catégorie</h3>
+                    {stats.category_distribution.map((cat, idx) => (
+                      <div key={idx} className="distribution-item">
+                        <div className="distribution-header">
+                          <span className="dist-category">{cat.categorie}</span>
+                          <span className="dist-count">
+                            {cat.count} FAQ{cat.count > 1 ? 's' : ''}
+                          </span>
+                        </div>
+                        <div className="distribution-bar">
+                          <div
+                            className="distribution-fill"
+                            style={{
+                              width: `${(cat.count / (stats.total_faqs || 1)) * 100}%`,
+                            }}
+                          ></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
               )}
 
-              {/* Questions populaires */}
+              {/* Popular Questions */}
               {stats.popular_questions && stats.popular_questions.length > 0 && (
-                <Grid item xs={12}>
-                  <Card>
-                    <CardContent>
-                      <Typography variant="h6" gutterBottom>
-                        ⭐ Questions Populaires
-                      </Typography>
+                <Card variant="elevated" interactive>
+                  <div className="stat-section">
+                    <h3>⭐ Questions Populaires</h3>
+                    <ol className="popular-questions">
                       {stats.popular_questions.map((q, idx) => (
-                        <Box
-                          key={idx}
-                          sx={{
-                            mb: 1.5,
-                            pb: 1.5,
-                            borderBottom: idx < stats.popular_questions.length - 1 ? '1px solid #eee' : 'none',
-                          }}
-                        >
-                          <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                            {idx + 1}. {q.question}
-                          </Typography>
-                          <Chip
-                            label={`${q.views || 0} vues`}
-                            size="small"
-                            variant="outlined"
-                            sx={{ mt: 0.5 }}
-                          />
-                        </Box>
+                        <li key={idx}>
+                          <div className="question-text">{q.question}</div>
+                          <div className="question-views">
+                            👁️ {q.views || 0} vue{(q.views || 0) > 1 ? 's' : ''}
+                          </div>
+                        </li>
                       ))}
-                    </CardContent>
-                  </Card>
-                </Grid>
+                    </ol>
+                  </div>
+                </Card>
               )}
-            </Grid>
+            </div>
           ) : (
-            <Paper sx={{ p: 3, textAlign: 'center' }}>
-              <Typography color="text.secondary">
-                Aucune donnée statistique disponible
-              </Typography>
-            </Paper>
+            <div className="faq-empty">
+              <p>Aucune donnée statistique disponible</p>
+            </div>
           )}
-        </Box>
+        </div>
       )}
-    </Container>
+    </FormContainer>
   );
 };
+
+/**
+ * FAQ Accordion Component
+ */
+function FAQAccordion({ faq, index }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className={`faq-accordion ${isOpen ? 'open' : ''}`}>
+      <button
+        className="faq-accordion-header"
+        onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
+      >
+        <span className="accordion-icon">▶</span>
+        <span className="accordion-question">{faq.question}</span>
+      </button>
+      {isOpen && (
+        <div className="faq-accordion-content">
+          <p className="accordion-answer">{faq.reponse}</p>
+          {faq.categorie && (
+            <div className="accordion-category">📂 {faq.categorie}</div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default FAQPage;

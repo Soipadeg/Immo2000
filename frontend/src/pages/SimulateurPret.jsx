@@ -4,25 +4,7 @@
  */
 
 import React, { useState, useMemo } from 'react';
-import {
-  Container,
-  Paper,
-  TextField,
-  Button,
-  Box,
-  Typography,
-  Alert,
-  Card,
-  CardContent,
-  Grid,
-  FormControlLabel,
-  Switch,
-  ToggleButton,
-  ToggleButtonGroup,
-  Chip,
-  Link,
-} from '@mui/material';
-import { Info as InfoIcon, CheckCircle as CheckCircleIcon, Error as ErrorIcon } from '@mui/icons-material';
+import { Button, Input, Card, Alert, FormContainer } from '@/components';
 import './SimulateurPret.css';
 
 const SimulateurPret = () => {
@@ -176,23 +158,6 @@ const SimulateurPret = () => {
     }));
   };
 
-  const handleToggleChange = (e) => {
-    const { name, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: checked ? 'ancien' : 'neuf',
-    }));
-  };
-
-  const handleDurationChange = (e, newDuration) => {
-    if (newDuration !== null) {
-      setFormData((prev) => ({
-        ...prev,
-        duree: newDuration,
-      }));
-    }
-  };
-
   const handleReset = () => {
     setFormData({
       prixBien: '',
@@ -226,512 +191,324 @@ const SimulateurPret = () => {
   };
 
   return (
-    <div className="simulateur-pret-page">
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        {/* Header */}
-        <Box sx={{ mb: 4, textAlign: 'center' }}>
-          <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 700 }}>
-            🏠 Simulateur de Prêt Immobilier
-          </Typography>
-          <Typography variant="subtitle1" color="textSecondary">
-            Calculez votre mensualité et votre capacité d'emprunt selon les critères bancaires français
-          </Typography>
-        </Box>
+    <FormContainer
+      title="🏠 Simulateur de Prêt Immobilier"
+      subtitle="Calculez votre mensualité et votre capacité d'emprunt selon les critères bancaires français"
+      maxWidth="large"
+    >
+      <div className="simulateur-pret-container">
+        {/* Form Section */}
+        <div className="pret-form-section">
+          <h3 className="section-title">📝 Informations du bien et financement</h3>
 
-        <Grid container spacing={4}>
-          {/* Colonne gauche: Formulaire */}
-          <Grid item xs={12} lg={6}>
-            <Paper elevation={2} sx={{ p: 3 }}>
-              <Typography variant="h6" gutterBottom sx={{ mb: 3, fontWeight: 700 }}>
-                📝 Informations du bien et financement
-              </Typography>
+          <div className="form-grid">
+            <Input
+              label="Prix du bien visé (€) *"
+              name="prixBien"
+              type="number"
+              value={formData.prixBien}
+              onChange={handleInputChange}
+              placeholder="Ex: 400000"
+              required
+            />
 
-              <Grid container spacing={2}>
-                {/* Prix du bien */}
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Prix du bien visé (€) *"
-                    name="prixBien"
-                    type="number"
-                    value={formData.prixBien}
-                    onChange={handleInputChange}
-                    inputProps={{ min: 0, step: 1000 }}
-                    placeholder="Ex: 400000"
-                    required
-                  />
-                </Grid>
-
-                {/* Type logement: Ancien / Neuf */}
-                <Grid item xs={12}>
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={formData.typeLogement === 'ancien'}
-                        onChange={handleToggleChange}
-                        name="typeLogement"
-                      />
-                    }
-                    label={
-                      <Typography variant="body2">
-                        {formData.typeLogement === 'neuf' ? '🆕 Neuf' : '🏛️ Ancien'}
-                      </Typography>
-                    }
-                  />
-                </Grid>
-
-                {/* Durée du prêt */}
-                <Grid item xs={12}>
-                  <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
-                    Durée du prêt *
-                  </Typography>
-                  <ToggleButtonGroup
-                    value={formData.duree}
-                    exclusive
-                    onChange={handleDurationChange}
-                    fullWidth
-                    size="small"
-                  >
-                    <ToggleButton value={7}>7 ans</ToggleButton>
-                    <ToggleButton value={10}>10 ans</ToggleButton>
-                    <ToggleButton value={15}>15 ans</ToggleButton>
-                    <ToggleButton value={20}>20 ans</ToggleButton>
-                    <ToggleButton value={25}>25 ans</ToggleButton>
-                  </ToggleButtonGroup>
-                </Grid>
-
-                {/* Région */}
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    select
-                    label="Région *"
-                    name="region"
-                    value={formData.region}
-                    onChange={handleInputChange}
-                    SelectProps={{
-                      native: true,
-                    }}
-                  >
-                    <option value="Île-de-France">Île-de-France</option>
-                    <option value="PACA">PACA (Provence-Alpes-Côte d'Azur)</option>
-                    <option value="Auvergne-Rhône-Alpes">Auvergne-Rhône-Alpes</option>
-                    <option value="Bretagne">Bretagne</option>
-                    <option value="Nouvelle-Aquitaine">Nouvelle-Aquitaine</option>
-                    <option value="Occitanie">Occitanie</option>
-                    <option value="Pays-de-la-Loire">Pays-de-la-Loire</option>
-                    <option value="Bourgogne-Franche-Comté">Bourgogne-Franche-Comté</option>
-                    <option value="Centre-Val-de-Loire">Centre-Val-de-Loire</option>
-                    <option value="Corse">Corse</option>
-                  </TextField>
-                  <Typography variant="caption" color="textSecondary" sx={{ mt: 0.5 }}>
-                    Ajuste les frais de notaire
-                  </Typography>
-                </Grid>
-
-                {/* Apport */}
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    label="Apport du foyer (€)"
-                    name="apport"
-                    type="number"
-                    value={formData.apport}
-                    onChange={handleInputChange}
-                    inputProps={{ min: 0, step: 1000 }}
-                    placeholder="Ex: 80000"
-                  />
-                </Grid>
-
-                {/* Taux d'intérêt */}
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    label="Taux d'intérêt (%)"
-                    name="tauxInteret"
-                    type="number"
-                    value={formData.tauxInteret}
-                    onChange={handleInputChange}
-                    inputProps={{ min: 0, max: 10, step: 0.1 }}
-                    placeholder="Ex: 3.5"
-                  />
-                </Grid>
-
-                {/* Budget travaux */}
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Budget travaux/rénovation (€)"
-                    name="budgetTravaux"
-                    type="number"
-                    value={formData.budgetTravaux}
-                    onChange={handleInputChange}
-                    inputProps={{ min: 0, step: 1000 }}
-                    placeholder="Ex: 50000 (optionnel)"
-                    helperText="Estimez les travaux, rénovations ou améliorations prévues"
-                  />
-                </Grid>
-
-                {/* Revenus */}
-                <Grid item xs={12}>
-                  <Typography variant="body2" color="textSecondary" sx={{ mb: 2, fontWeight: 600 }}>
-                    💰 Revenus nets mensuels avant impôt
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    label="Vôtres (€) *"
-                    name="revenuMensuel"
-                    type="number"
-                    value={formData.revenuMensuel}
-                    onChange={handleInputChange}
-                    inputProps={{ min: 0, step: 100 }}
-                    placeholder="Ex: 3000"
-                    required
-                  />
-                </Grid>
-
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    label="Conjoint (€)"
-                    name="revenuConjoint"
-                    type="number"
-                    value={formData.revenuConjoint}
-                    onChange={handleInputChange}
-                    inputProps={{ min: 0, step: 100 }}
-                    placeholder="Ex: 2500"
-                  />
-                </Grid>
-
-                {/* Charges mensuelles */}
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Charges mensuelles et autres crédits du foyer (€)"
-                    name="chargesMensuelles"
-                    type="number"
-                    value={formData.chargesMensuelles}
-                    onChange={handleInputChange}
-                    inputProps={{ min: 0, step: 100 }}
-                    placeholder="Ex: 500"
-                    helperText="Loyer, crédits auto, crédits conso, etc."
-                  />
-                </Grid>
-
-                {/* Boutons */}
-                <Grid item xs={12}>
-                  <Box sx={{ display: 'flex', gap: 1 }}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      fullWidth
-                      disabled={!calculations.isValid}
-                    >
-                      Calculer
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      onClick={handleReset}
-                    >
-                      Réinitialiser
-                    </Button>
-                  </Box>
-                </Grid>
-              </Grid>
-            </Paper>
-          </Grid>
-
-          {/* Colonne droite: Résultats */}
-          <Grid item xs={12} lg={6}>
-            {calculations.isValid && (
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                {/* Coût total du projet */}
-                <Card sx={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', color: 'white' }}>
-                  <CardContent sx={{ textAlign: 'center' }}>
-                    <Typography variant="body2" sx={{ opacity: 0.9, mb: 1 }}>
-                      Coût total du projet
-                    </Typography>
-                    <Typography variant="h3" sx={{ fontWeight: 700 }}>
-                      {formatCurrency(calculations.coutTotalProjet)}
-                    </Typography>
-                    <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid rgba(255,255,255,0.3)', fontSize: '0.85rem' }}>
-                      <Grid container spacing={1}>
-                        <Grid item xs={6}>
-                          <Typography variant="caption" sx={{ opacity: 0.9 }}>Prix du bien</Typography>
-                          <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                            {formatCurrency(parseFloat(formData.prixBien) || 0)}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={6}>
-                          <Typography variant="caption" sx={{ opacity: 0.9 }}>Frais de notaire</Typography>
-                          <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                            {formatCurrency(calculations.fraisNotaire)}
-                          </Typography>
-                        </Grid>
-                        {calculations.budgetTravaux > 0 && (
-                          <Grid item xs={12}>
-                            <Typography variant="caption" sx={{ opacity: 0.9 }}>Budget travaux</Typography>
-                            <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                              {formatCurrency(calculations.budgetTravaux)}
-                            </Typography>
-                          </Grid>
-                        )}
-                      </Grid>
-                    </Box>
-                  </CardContent>
-                </Card>
-
-                {/* Mensualité */}
-                <Card sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white' }}>
-                  <CardContent sx={{ textAlign: 'center' }}>
-                    <Typography variant="body2" sx={{ opacity: 0.9, mb: 1 }}>
-                      Mensualité estimée
-                    </Typography>
-                    <Typography variant="h3" sx={{ fontWeight: 700 }}>
-                      {formatCurrency(calculations.mensualite)}
-                    </Typography>
-                    <Typography variant="caption" sx={{ opacity: 0.8 }}>
-                      pour une durée de {formData.duree} ans
-                    </Typography>
-                  </CardContent>
-                </Card>
-
-                {/* Taux d'endettement */}
-                <Card
-                  sx={{
-                    borderLeft: `4px solid ${
-                      calculations.statusEndettement.color === 'success'
-                        ? '#4caf50'
-                        : calculations.statusEndettement.color === 'warning'
-                        ? '#ff9800'
-                        : '#f44336'
-                    }`,
-                  }}
+            <div className="form-toggle">
+              <label>Type de bien</label>
+              <div className="toggle-buttons">
+                <button
+                  className={`toggle-btn ${formData.typeLogement === 'neuf' ? 'active' : ''}`}
+                  onClick={() => setFormData({ ...formData, typeLogement: 'neuf' })}
                 >
-                  <CardContent>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                      <Box
-                        sx={{
-                          color:
-                            calculations.statusEndettement.color === 'success'
-                              ? '#4caf50'
-                              : calculations.statusEndettement.color === 'warning'
-                              ? '#ff9800'
-                              : '#f44336',
-                        }}
-                      >
-                        {calculations.statusEndettement.icon}
-                      </Box>
-                      <Box>
-                        <Typography variant="body2" color="textSecondary">
-                          Taux d'endettement
-                        </Typography>
-                        <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                          {calculations.tauxEndettement.toFixed(1)}%
-                        </Typography>
-                      </Box>
-                    </Box>
-                    <Typography variant="caption" color="textSecondary">
-                      {calculations.statusEndettement.message}
-                    </Typography>
-                  </CardContent>
-                </Card>
+                  🆕 Neuf
+                </button>
+                <button
+                  className={`toggle-btn ${formData.typeLogement === 'ancien' ? 'active' : ''}`}
+                  onClick={() => setFormData({ ...formData, typeLogement: 'ancien' })}
+                >
+                  🏛️ Ancien
+                </button>
+              </div>
+            </div>
 
-                {/* Frais d'acquisition et type de bien */}
-                <Card sx={{ bgcolor: calculations.isNeuf ? '#e8f5e9' : '#fff3e0' }}>
-                  <CardContent>
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-                      <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                        {calculations.isNeuf ? '🆕 Bien Neuf' : '🏛️ Bien Ancien'}
-                      </Typography>
-                      <Chip
-                        label={calculations.isNeuf ? 'Meilleur profil' : 'Profil moins favorable'}
-                        color={calculations.isNeuf ? 'success' : 'warning'}
-                        variant="outlined"
-                        size="small"
-                      />
-                    </Box>
+            <div className="form-duration">
+              <label>Durée du prêt *</label>
+              <div className="duration-buttons">
+                {[7, 10, 15, 20, 25].map((year) => (
+                  <button
+                    key={year}
+                    className={`duration-btn ${formData.duree === year ? 'active' : ''}`}
+                    onClick={() => setFormData({ ...formData, duree: year })}
+                  >
+                    {year} ans
+                  </button>
+                ))}
+              </div>
+            </div>
 
-                    <Grid container spacing={2}>
-                      <Grid item xs={6}>
-                        <Typography variant="caption" color="textSecondary" display="block">
-                          Frais d'acquisition
-                        </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                          {formatCurrency(calculations.fraisAcquisition)}
-                        </Typography>
-                        <Typography variant="caption" color="textSecondary">
-                          ({calculations.isNeuf ? '2%' : '8%'} du prix)
-                        </Typography>
-                      </Grid>
+            <select
+              className="form-select"
+              name="region"
+              value={formData.region}
+              onChange={handleInputChange}
+            >
+              <option value="Île-de-France">Île-de-France</option>
+              <option value="PACA">PACA (Provence-Alpes-Côte d'Azur)</option>
+              <option value="Auvergne-Rhône-Alpes">Auvergne-Rhône-Alpes</option>
+              <option value="Bretagne">Bretagne</option>
+              <option value="Nouvelle-Aquitaine">Nouvelle-Aquitaine</option>
+              <option value="Occitanie">Occitanie</option>
+              <option value="Pays-de-la-Loire">Pays-de-la-Loire</option>
+              <option value="Bourgogne-Franche-Comté">Bourgogne-Franche-Comté</option>
+              <option value="Centre-Val-de-Loire">Centre-Val-de-Loire</option>
+              <option value="Corse">Corse</option>
+            </select>
 
-                      <Grid item xs={6}>
-                        <Typography variant="caption" color="textSecondary" display="block">
-                          Taux d'intérêt ajusté
-                        </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                          {calculations.tauxAnnuel.toFixed(2)}%
-                        </Typography>
-                        {calculations.tauxAdjustement !== 0 && (
-                          <Typography variant="caption" color="error">
-                            {calculations.tauxAdjustement > 0 ? '+' : ''}{calculations.tauxAdjustement.toFixed(1)}%
-                          </Typography>
-                        )}
-                      </Grid>
+            <Input
+              label="Apport du foyer (€)"
+              name="apport"
+              type="number"
+              value={formData.apport}
+              onChange={handleInputChange}
+              placeholder="Ex: 80000"
+            />
 
-                      <Grid item xs={6}>
-                        <Typography variant="caption" color="textSecondary" display="block">
-                          Mensualité prêt
-                        </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                          {formatCurrency(calculations.mensualitePrincipal)}
-                        </Typography>
-                      </Grid>
+            <Input
+              label="Taux d'intérêt (%)"
+              name="tauxInteret"
+              type="number"
+              value={formData.tauxInteret}
+              onChange={handleInputChange}
+              placeholder="Ex: 3.5"
+            />
 
-                      <Grid item xs={6}>
-                        <Typography variant="caption" color="textSecondary" display="block">
-                          Assurance emprunteur
-                        </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                          {formatCurrency(calculations.mensualiteAssurance)}
-                        </Typography>
-                        <Typography variant="caption" color="textSecondary">
-                          ({calculations.isNeuf ? '0,4%' : '0,7%'}/an)
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  </CardContent>
-                </Card>
+            <Input
+              label="Budget travaux/rénovation (€)"
+              name="budgetTravaux"
+              type="number"
+              value={formData.budgetTravaux}
+              onChange={handleInputChange}
+              placeholder="Optionnel"
+              hint="Estimez les travaux, rénovations ou améliorations prévues"
+            />
 
-                {/* Détails du calcul */}
-                <Card variant="outlined">
-                  <CardContent>
-                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 700, mb: 2 }}>
-                      📊 Détails du calcul
-                    </Typography>
+            <div className="section-divider">
+              <h4>💰 Revenus nets mensuels avant impôt</h4>
+            </div>
 
-                    <Grid container spacing={2}>
-                      <Grid item xs={6}>
-                        <Typography variant="caption" color="textSecondary" display="block">
-                          Principal à emprunter
-                        </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                          {formatCurrency(calculations.principal)}
-                        </Typography>
-                      </Grid>
+            <Input
+              label="Vôtres (€) *"
+              name="revenuMensuel"
+              type="number"
+              value={formData.revenuMensuel}
+              onChange={handleInputChange}
+              placeholder="Ex: 3000"
+              required
+            />
 
-                      <Grid item xs={6}>
-                        <Typography variant="caption" color="textSecondary" display="block">
-                          Revenus nets totaux
-                        </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                          {formatCurrency(calculations.revenusNetsTotaux)}
-                        </Typography>
-                      </Grid>
+            <Input
+              label="Conjoint (€)"
+              name="revenuConjoint"
+              type="number"
+              value={formData.revenuConjoint}
+              onChange={handleInputChange}
+              placeholder="Ex: 2500"
+            />
 
-                      <Grid item xs={6}>
-                        <Typography variant="caption" color="textSecondary" display="block">
-                          Charges mensuelles totales
-                        </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                          {formatCurrency(calculations.debtCharges)}
-                        </Typography>
-                      </Grid>
+            <Input
+              label="Charges mensuelles et autres crédits (€)"
+              name="chargesMensuelles"
+              type="number"
+              value={formData.chargesMensuelles}
+              onChange={handleInputChange}
+              placeholder="Ex: 500"
+              hint="Loyer, crédits auto, crédits conso, etc."
+            />
 
-                      <Grid item xs={6}>
-                        <Typography variant="caption" color="textSecondary" display="block">
-                          Durée du prêt
-                        </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                          {calculations.nombreMois} mois ({formData.duree} ans)
-                        </Typography>
-                      </Grid>
+            <div className="form-actions">
+              <Button
+                variant="primary"
+                size="medium"
+                fullWidth
+                disabled={!calculations.isValid}
+              >
+                Calculer
+              </Button>
+              <Button
+                variant="secondary"
+                size="medium"
+                onClick={handleReset}
+              >
+                Réinitialiser
+              </Button>
+            </div>
+          </div>
+        </div>
 
-                      <Grid item xs={6}>
-                        <Typography variant="caption" color="textSecondary" display="block">
-                          Coût total des intérêts
-                        </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                          {formatCurrency(calculations.coutTotalCredit)}
-                        </Typography>
-                      </Grid>
-
-                      <Grid item xs={6}>
-                        <Typography variant="caption" color="textSecondary" display="block">
-                          Coût de l'assurance
-                        </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                          {formatCurrency(calculations.coutTotalAssurance)}
-                        </Typography>
-                      </Grid>
-
-                      <Grid item xs={12}>
-                        <Box sx={{ pt: 1, borderTop: '1px solid #e0e0e0' }}>
-                          <Typography variant="caption" color="textSecondary" display="block">
-                            Montant total remboursé (prêt + assurance)
-                          </Typography>
-                          <Typography variant="body2" sx={{ fontWeight: 700, color: '#667eea' }}>
-                            {formatCurrency(
-                              calculations.principal + calculations.coutTotalCredit + calculations.coutTotalAssurance
-                            )}
-                          </Typography>
-                        </Box>
-                      </Grid>
-                    </Grid>
-                  </CardContent>
-                </Card>
-
-                {/* Avertissement RGPD */}
-                <Alert severity="info" icon={<InfoIcon />}>
-                  <Typography variant="body2" sx={{ fontWeight: 600, mb: 1 }}>
-                    ⚠️ Information importante
-                  </Typography>
-                  <Typography variant="caption" color="inherit" component="div" sx={{ mb: 1 }}>
-                    Cette estimation n'est qu'une simulation à titre informatif. Elle ne constitue en aucun cas une offre de crédit ou un engagement de financement.
-                  </Typography>
-                  <Typography variant="caption" color="inherit" component="div" sx={{ mb: 2 }}>
-                    La consultation d'un professionnel du financement est <strong>nécessaire</strong> avant toute démarche concrète et avant de faire une proposition de prêt.
-                  </Typography>
-                  <Typography variant="caption" color="inherit">
-                    En savoir plus: <Link href="#courtiers" underline="always">Nos courtiers partenaires</Link>
-                  </Typography>
-                </Alert>
-              </Box>
-            )}
-
-            {!calculations.isValid && (
-              <Card sx={{ bgcolor: '#f5f5f5', textAlign: 'center', py: 4 }}>
-                <CardContent>
-                  <Typography variant="body1" color="textSecondary" sx={{ mb: 2 }}>
-                    Remplissez tous les champs obligatoires pour voir les résultats
-                  </Typography>
-                  <Typography variant="caption" color="textSecondary">
-                    Les champs marqués d'un * sont obligatoires
-                  </Typography>
-                </CardContent>
+        {/* Results Section */}
+        <div className="pret-results-section">
+          {calculations.isValid && (
+            <div className="results-grid">
+              {/* Total Cost Card */}
+              <Card variant="elevated" interactive>
+                <div className="result-card gradient-purple">
+                  <div className="result-label">Coût total du projet</div>
+                  <div className="result-value">
+                    {formatCurrency(calculations.coutTotalProjet)}
+                  </div>
+                  <div className="result-details">
+                    <div className="detail-row">
+                      <span>Prix du bien</span>
+                      <span>{formatCurrency(parseFloat(formData.prixBien) || 0)}</span>
+                    </div>
+                    <div className="detail-row">
+                      <span>Frais de notaire</span>
+                      <span>{formatCurrency(calculations.fraisNotaire)}</span>
+                    </div>
+                    {calculations.budgetTravaux > 0 && (
+                      <div className="detail-row">
+                        <span>Budget travaux</span>
+                        <span>{formatCurrency(calculations.budgetTravaux)}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </Card>
-            )}
-          </Grid>
-        </Grid>
 
-        {/* Courtiers partenaires */}
-        <Paper elevation={0} sx={{ p: 3, mt: 6, bgcolor: '#f9f9f9', borderRadius: 2 }} id="courtiers">
-          <Typography variant="h6" gutterBottom sx={{ fontWeight: 700 }}>
-            🤝 Nos courtiers partenaires
-          </Typography>
-          <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
-            Nous travaillons avec des professionnels du financement pour vous offrir les meilleures conditions de crédit.
-          </Typography>
-          <Alert severity="warning">
-            Nous ajouterons prochainement les détails de nos partenaires courtiers.
-          </Alert>
-        </Paper>
-      </Container>
-    </div>
+              {/* Monthly Payment Card */}
+              <Card variant="elevated" interactive>
+                <div className="result-card gradient-blue">
+                  <div className="result-label">Mensualité estimée</div>
+                  <div className="result-value">
+                    {formatCurrency(calculations.mensualite)}
+                  </div>
+                  <div className="result-caption">
+                    pour une durée de {formData.duree} ans
+                  </div>
+                </div>
+              </Card>
+
+              {/* Debt Ratio Card */}
+              <Card variant="elevated" interactive>
+                <div className={`result-card debt-ratio-${calculations.statusEndettement.color}`}>
+                  <div className="result-label">Taux d'endettement</div>
+                  <div className="result-value">
+                    {calculations.tauxEndettement.toFixed(1)}%
+                  </div>
+                  <div className="result-status">
+                    {calculations.statusEndettement.message}
+                  </div>
+                </div>
+              </Card>
+
+              {/* Property Type Details */}
+              <Card variant="elevated" interactive>
+                <div className={`result-card property-${calculations.isNeuf ? 'neuf' : 'ancien'}`}>
+                  <div className="property-header">
+                    <h4>{calculations.isNeuf ? '🆕 Bien Neuf' : '🏛️ Bien Ancien'}</h4>
+                    <span className="badge">
+                      {calculations.isNeuf ? 'Meilleur profil' : 'Profil moins favorable'}
+                    </span>
+                  </div>
+                  <div className="property-grid">
+                    <div className="prop-item">
+                      <span className="prop-label">Frais d'acquisition</span>
+                      <span className="prop-value">
+                        {formatCurrency(calculations.fraisAcquisition)}
+                      </span>
+                      <span className="prop-note">
+                        ({calculations.isNeuf ? '2%' : '8%'} du prix)
+                      </span>
+                    </div>
+                    <div className="prop-item">
+                      <span className="prop-label">Taux ajusté</span>
+                      <span className="prop-value">
+                        {calculations.tauxAnnuel.toFixed(2)}%
+                      </span>
+                      {calculations.tauxAdjustement !== 0 && (
+                        <span className="prop-note">
+                          {calculations.tauxAdjustement > 0 ? '+' : ''}{calculations.tauxAdjustement.toFixed(1)}%
+                        </span>
+                      )}
+                    </div>
+                    <div className="prop-item">
+                      <span className="prop-label">Mensualité prêt</span>
+                      <span className="prop-value">
+                        {formatCurrency(calculations.mensualitePrincipal)}
+                      </span>
+                    </div>
+                    <div className="prop-item">
+                      <span className="prop-label">Assurance emprunteur</span>
+                      <span className="prop-value">
+                        {formatCurrency(calculations.mensualiteAssurance)}
+                      </span>
+                      <span className="prop-note">
+                        ({calculations.isNeuf ? '0,4%' : '0,7%'}/an)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Calculation Details */}
+              <Card variant="elevated" interactive>
+                <div className="result-card details-card">
+                  <h4>📊 Détails du calcul</h4>
+                  <div className="details-grid">
+                    <div className="detail-item">
+                      <span className="detail-label">Principal à emprunter</span>
+                      <span>{formatCurrency(calculations.principal)}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-label">Revenus nets totaux</span>
+                      <span>{formatCurrency(calculations.revenusNetsTotaux)}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-label">Charges mensuelles</span>
+                      <span>{formatCurrency(calculations.debtCharges)}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-label">Durée du prêt</span>
+                      <span>{calculations.nombreMois} mois ({formData.duree} ans)</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-label">Coût des intérêts</span>
+                      <span>{formatCurrency(calculations.coutTotalCredit)}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-label">Coût de l'assurance</span>
+                      <span>{formatCurrency(calculations.coutTotalAssurance)}</span>
+                    </div>
+                    <div className="detail-item total">
+                      <span className="detail-label">Montant total remboursé</span>
+                      <span>
+                        {formatCurrency(
+                          calculations.principal + calculations.coutTotalCredit + calculations.coutTotalAssurance
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          )}
+
+          {!calculations.isValid && (
+            <div className="results-empty">
+              <p>Remplissez tous les champs obligatoires pour voir les résultats</p>
+              <small>Les champs marqués d'un * sont obligatoires</small>
+            </div>
+          )}
+
+          {/* Important Notice */}
+          <Alert
+            isOpen={calculations.isValid}
+            type="info"
+            title="⚠️ Information importante"
+            message="Cette estimation n'est qu'une simulation à titre informatif. Elle ne constitue en aucun cas une offre de crédit. Consultez un professionnel du financement avant toute démarche concrète."
+          />
+        </div>
+      </div>
+    </FormContainer>
   );
 };
 

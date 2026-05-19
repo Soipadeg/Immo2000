@@ -1,0 +1,166 @@
+/* VerifyEmailPage Styles */
+
+.verifying-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 32px 0;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #E5E7EB;
+  border-top-color: #2563EB;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.verifying-loader p {
+  font-size: 0.875rem;
+  color: #6B7280;
+}
+
+/* Verify Email Form */
+
+.verify-email-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-description {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #6B7280;
+  line-height: 1.5;
+}
+
+.form-description strong {
+  color: #1F2937;
+}
+
+/* Resend Section */
+
+.resend-section {
+  padding-top: 12px;
+  text-align: center;
+}
+
+.resend-text {
+  font-size: 0.875rem;
+  color: #6B7280;
+  margin: 0 0 12px 0;
+}
+
+/* Form Link */
+
+.form-link {
+  text-align: center;
+  margin-top: 12px;
+}
+
+.form-link a {
+  color: #2563EB;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 300ms ease;
+}
+
+.form-link a:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+/* Info Box */
+
+.verify-email-info {
+  margin-top: 24px;
+  padding: 16px;
+  background-color: #E0F2FE;
+  border: 1px solid #BAE6FD;
+  border-radius: 8px;
+  color: #0C4A6E;
+  font-size: 0.875rem;
+}
+
+.verify-email-info strong {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #075985;
+}
+
+.verify-email-info p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Dark Mode Support */
+
+@media (prefers-color-scheme: dark) {
+  .spinner {
+    border-color: #374151;
+    border-top-color: #3B82F6;
+  }
+
+  .verifying-loader p {
+    color: #9CA3AF;
+  }
+
+  .form-description {
+    color: #9CA3AF;
+  }
+
+  .form-description strong {
+    color: #F3F4F6;
+  }
+
+  .resend-text {
+    color: #9CA3AF;
+  }
+
+  .form-link a {
+    color: #3B82F6;
+  }
+
+  .form-link a:hover {
+    color: #60A5FA;
+  }
+
+  .verify-email-info {
+    background-color: #082F49;
+    border-color: #0284C7;
+    color: #7DD3FC;
+  }
+
+  .verify-email-info strong {
+    color: #FFFFFF;
+  }
+}
+
+/* Responsive */
+
+@media (max-width: 640px) {
+  .verifying-loader {
+    padding: 24px 0;
+  }
+
+  .spinner {
+    width: 32px;
+    height: 32px;
+  }
+
+  .verify-email-info {
+    padding: 12px;
+    font-size: 0.8rem;
+  }
+}

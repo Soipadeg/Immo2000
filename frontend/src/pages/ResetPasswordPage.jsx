@@ -1,17 +1,8 @@
 import React, { useState } from 'react';
-import {
-  Container,
-  Paper,
-  TextField,
-  Button,
-  Box,
-  Typography,
-  Alert,
-  Link,
-  LinearProgress,
-} from '@mui/material';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { Button, Input, Alert, FormContainer } from '@/components';
 import { authApi } from '../services/api';
+import './ResetPasswordPage.css';
 
 const PASSWORD_STRENGTH_RULES = {
   length: (pwd) => pwd.length >= 8,
@@ -117,21 +108,6 @@ export default function ResetPasswordPage() {
     }
   };
 
-  if (!resetToken || !email) {
-    return (
-      <Container maxWidth="sm">
-        <Box sx={{ py: 4, textAlign: 'center' }}>
-          <Alert severity="error" sx={{ mb: 2 }}>
-            Lien invalide ou expiré
-          </Alert>
-          <Button variant="contained" href="/forgot-password">
-            Demander un nouveau lien
-          </Button>
-        </Box>
-      </Container>
-    );
-  }
-
   const getStrengthColor = () => {
     if (passwordStrength < 40) return '#f44336';
     if (passwordStrength < 70) return '#ff9800';
@@ -144,126 +120,166 @@ export default function ResetPasswordPage() {
     return 'Fort';
   };
 
-  return (
-    <Container maxWidth="sm">
-      <Box sx={{ py: 4 }}>
-        <Typography variant="h3" component="h1" gutterBottom sx={{ mb: 4, textAlign: 'center' }}>
-          Créer un nouveau mot de passe
-        </Typography>
+  if (!resetToken || !email) {
+    return (
+      <FormContainer
+        title="Lien invalide"
+        subtitle="Ce lien de réinitialisation a expiré"
+        maxWidth="small"
+      >
+        <Alert
+          isOpen={true}
+          type="error"
+          title="Erreur"
+          message="Le lien de réinitialisation est invalide ou a expiré. Demandez un nouveau lien."
+          dismissible={false}
+        />
+        <Button
+          variant="primary"
+          size="medium"
+          fullWidth
+          onClick={() => window.location.href = '/forgot-password'}
+          style={{ marginTop: '16px' }}
+        >
+          Demander un nouveau lien
+        </Button>
+      </FormContainer>
+    );
+  }
 
-        {successMessage && (
-          <Alert severity="success" sx={{ mb: 2 }}>
-            {successMessage}
-          </Alert>
+  return (
+    <FormContainer
+      title="Créer un nouveau mot de passe"
+      subtitle={`Choisissez un mot de passe sécurisé pour ${email}`}
+      maxWidth="small"
+    >
+      {successMessage && (
+        <Alert
+          isOpen={true}
+          type="success"
+          title="Succès"
+          message={successMessage}
+          dismissible={false}
+        />
+      )}
+
+      {error && (
+        <Alert
+          isOpen={true}
+          type="error"
+          title="Erreur"
+          message={error}
+          dismissible={true}
+          onClose={() => setError('')}
+        />
+      )}
+
+      <form onSubmit={handleSubmit} className="reset-password-form">
+        <Input
+          label="Nouveau mot de passe"
+          type="password"
+          name="password"
+          placeholder="Entrez un mot de passe sécurisé"
+          value={formData.password}
+          onChange={handleChange}
+          required
+          hint="Minimum 8 caractères avec majuscules, minuscules, chiffres et caractères spéciaux"
+        />
+
+        {/* Indicateur de force */}
+        {formData.password && (
+          <div className="password-strength">
+            <div className="strength-header">
+              <span className="strength-label">Force du mot de passe:</span>
+              <span className={`strength-value ${getStrengthLabel().toLowerCase()}`}>
+                {getStrengthLabel()} ({passwordStrength}%)
+              </span>
+            </div>
+            <div className="strength-bar">
+              <div
+                className="strength-fill"
+                style={{ width: `${passwordStrength}%` }}
+              ></div>
+            </div>
+          </div>
         )}
 
-        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+        {/* Checklist des critères */}
+        {formData.password && (
+          <div className="password-criteria">
+            <div className="criteria-label">Critères de sécurité:</div>
+            <ul className="criteria-list">
+              <li className={PASSWORD_STRENGTH_RULES.length(formData.password) ? 'met' : 'unmet'}>
+                <span className="criterion-icon">●</span>
+                Au moins 8 caractères
+              </li>
+              <li className={PASSWORD_STRENGTH_RULES.uppercase(formData.password) ? 'met' : 'unmet'}>
+                <span className="criterion-icon">●</span>
+                Une lettre majuscule
+              </li>
+              <li className={PASSWORD_STRENGTH_RULES.lowercase(formData.password) ? 'met' : 'unmet'}>
+                <span className="criterion-icon">●</span>
+                Une lettre minuscule
+              </li>
+              <li className={PASSWORD_STRENGTH_RULES.number(formData.password) ? 'met' : 'unmet'}>
+                <span className="criterion-icon">●</span>
+                Un chiffre
+              </li>
+              <li className={PASSWORD_STRENGTH_RULES.special(formData.password) ? 'met' : 'unmet'}>
+                <span className="criterion-icon">●</span>
+                Un caractère spécial (!@#$%^&*...)
+              </li>
+            </ul>
+          </div>
+        )}
 
-        <Paper elevation={3} sx={{ p: 3 }}>
-          <form onSubmit={handleSubmit}>
-            <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
-              Choisissez un mot de passe sécurisé pour <strong>{email}</strong>
-            </Typography>
+        <Input
+          label="Confirmer le mot de passe"
+          type="password"
+          name="passwordConfirm"
+          placeholder="Confirmez votre mot de passe"
+          value={formData.passwordConfirm}
+          onChange={handleChange}
+          required
+          error={
+            formData.password &&
+            formData.passwordConfirm &&
+            formData.password !== formData.passwordConfirm
+          }
+          errorMessage={
+            formData.password &&
+            formData.passwordConfirm &&
+            formData.password !== formData.passwordConfirm
+              ? "Les mots de passe ne correspondent pas"
+              : ""
+          }
+        />
 
-            <TextField
-              fullWidth
-              label="Nouveau mot de passe"
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-              margin="normal"
-              required
-            />
+        {formData.password &&
+          formData.passwordConfirm &&
+          formData.password === formData.passwordConfirm && (
+            <div className="password-match-success">
+              <span className="check-icon">✓</span>
+              Les mots de passe correspondent
+            </div>
+          )}
 
-            {/* Indicateur de force */}
-            {formData.password && (
-              <Box sx={{ mt: 2, mb: 2 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                  <Typography variant="caption" color="textSecondary">
-                    Force du mot de passe:
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: getStrengthColor(), fontWeight: 600 }}>
-                    {getStrengthLabel()} ({passwordStrength}%)
-                  </Typography>
-                </Box>
-                <LinearProgress
-                  variant="determinate"
-                  value={passwordStrength}
-                  sx={{
-                    backgroundColor: '#e0e0e0',
-                    '& .MuiLinearProgress-bar': {
-                      backgroundColor: getStrengthColor(),
-                    },
-                  }}
-                />
-              </Box>
-            )}
+        <Button
+          variant="primary"
+          size="medium"
+          fullWidth
+          disabled={loading || !formData.password || !formData.passwordConfirm}
+          loading={loading}
+          type="submit"
+        >
+          {loading ? 'Réinitialisation...' : 'Réinitialiser le mot de passe'}
+        </Button>
 
-            {/* Checklist des règles */}
-            {formData.password && (
-              <Box sx={{ mt: 2, mb: 2, p: 2, bgcolor: '#f5f5f5', borderRadius: 1 }}>
-                <Typography variant="caption" sx={{ fontWeight: 600, mb: 1, display: 'block' }}>
-                  Critères:
-                </Typography>
-                <Typography variant="caption" color={PASSWORD_STRENGTH_RULES.length(formData.password) ? '#4caf50' : '#999'} sx={{ display: 'block' }}>
-                  {PASSWORD_STRENGTH_RULES.length(formData.password) ? '✓' : '✗'} Au moins 8 caractères
-                </Typography>
-                <Typography variant="caption" color={PASSWORD_STRENGTH_RULES.uppercase(formData.password) ? '#4caf50' : '#999'} sx={{ display: 'block' }}>
-                  {PASSWORD_STRENGTH_RULES.uppercase(formData.password) ? '✓' : '✗'} Une lettre majuscule
-                </Typography>
-                <Typography variant="caption" color={PASSWORD_STRENGTH_RULES.lowercase(formData.password) ? '#4caf50' : '#999'} sx={{ display: 'block' }}>
-                  {PASSWORD_STRENGTH_RULES.lowercase(formData.password) ? '✓' : '✗'} Une lettre minuscule
-                </Typography>
-                <Typography variant="caption" color={PASSWORD_STRENGTH_RULES.number(formData.password) ? '#4caf50' : '#999'} sx={{ display: 'block' }}>
-                  {PASSWORD_STRENGTH_RULES.number(formData.password) ? '✓' : '✗'} Un chiffre
-                </Typography>
-                <Typography variant="caption" color={PASSWORD_STRENGTH_RULES.special(formData.password) ? '#4caf50' : '#999'} sx={{ display: 'block' }}>
-                  {PASSWORD_STRENGTH_RULES.special(formData.password) ? '✓' : '✗'} Un caractère spécial
-                </Typography>
-              </Box>
-            )}
-
-            <TextField
-              fullWidth
-              label="Confirmer le mot de passe"
-              name="passwordConfirm"
-              type="password"
-              value={formData.passwordConfirm}
-              onChange={handleChange}
-              margin="normal"
-              required
-            />
-
-            {formData.password && formData.passwordConfirm && formData.password === formData.passwordConfirm && (
-              <Alert severity="success" sx={{ mt: 2 }}>
-                ✓ Les mots de passe correspondent
-              </Alert>
-            )}
-
-            <Button
-              fullWidth
-              variant="contained"
-              color="primary"
-              size="large"
-              sx={{ mt: 3 }}
-              disabled={loading || !formData.password || !formData.passwordConfirm}
-              type="submit"
-            >
-              {loading ? 'Réinitialisation...' : 'Réinitialiser le mot de passe'}
-            </Button>
-
-            <Box sx={{ mt: 2, textAlign: 'center' }}>
-              <Typography variant="body2">
-                Vous vous souvenez de votre mot de passe ?{' '}
-                <Link href="/login" underline="hover">
-                  Se connecter
-                </Link>
-              </Typography>
-            </Box>
-          </form>
-        </Paper>
-      </Box>
-    </Container>
+        <div className="form-link">
+          Vous vous souvenez de votre mot de passe ?{' '}
+          <Link to="/login">Se connecter</Link>
+        </div>
+      </form>
+    </FormContainer>
   );
 }
