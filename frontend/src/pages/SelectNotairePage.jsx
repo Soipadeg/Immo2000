@@ -5,35 +5,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  Box,
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  CardActions,
-  Button,
-  TextField,
-  Grid,
-  Alert,
-  CircularProgress,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Chip,
-  Radio,
-  FormControlLabel,
-  RadioGroup,
-  Paper,
-  Divider,
-} from '@mui/material';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import PhoneIcon from '@mui/icons-material/Phone';
-import EmailIcon from '@mui/icons-material/Email';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { transactionsApi, notairesApi } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
+import { Button, Alert, Input } from '@/components';
+import '../styles/SelectNotairePage.css';
+
+
 
 export default function SelectNotairePage() {
   const navigate = useNavigate();
@@ -115,62 +92,62 @@ export default function SelectNotairePage() {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
-        <CircularProgress />
-      </Box>
+      <div>
+        <span>Loading...</span>
+      </div>
     );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <div className="container">
       {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
-      <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold' }}>
+      <h4>
         Sélectionner un Notaire
-      </Typography>
+      </p>
 
       {/* Infos transaction */}
-      <Card sx={{ mb: 4 }}>
-        <CardContent>
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
-              <Typography color="textSecondary" gutterBottom>
+      <div className="card">
+        <div className="card">
+          <div className="grid-container">
+            <div className="grid-item">
+              <p>
                 Bien à vendre
-              </Typography>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+              </p>
+              <p>
                 {transaction?.annonce?.titre}
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography color="textSecondary" gutterBottom>
+              </p>
+            </div>
+            <div className="grid-item">
+              <p>
                 Localisation
-              </Typography>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+              </p>
+              <p>
                 {transaction?.annonce?.code_postal} {transaction?.annonce?.ville}
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography color="textSecondary" gutterBottom>
+              </p>
+            </div>
+            <div className="grid-item">
+              <p>
                 Prix du compromis
-              </Typography>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+              </p>
+              <p>
                 {transaction?.prix_compromis?.toLocaleString('fr-FR')} €
-              </Typography>
-            </Grid>
-          </Grid>
-        </CardContent>
-      </Card>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <Divider sx={{ my: 4 }} />
 
       {/* Recherche de notaires */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
+      <div>
+        <h4>
           Rechercher un Notaire
-        </Typography>
+        </p>
 
-        <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-          <TextField
+        <div>
+          <Input
             label="Code postal"
             type="number"
             value={codePostal}
@@ -184,36 +161,25 @@ export default function SelectNotairePage() {
             disabled={searching || !codePostal}
             sx={{ minWidth: '150px' }}
           >
-            {searching ? <CircularProgress size={24} /> : 'Rechercher'}
+            {searching ? <span>Loading...</span> : 'Rechercher'}
           </Button>
-        </Box>
-      </Box>
+        </div>
+      </div>
 
       {/* Résultats */}
       {notaires.length > 0 && (
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
+        <div>
+          <h4>
             Notaires Disponibles ({notaires.length})
-          </Typography>
+          </p>
 
           <RadioGroup value={selectedNotaire} onChange={(e) => setSelectedNotaire(e.target.value)}>
-            <Grid container spacing={2}>
+            <div className="grid-container">
               {notaires.map((notaire) => (
-                <Grid item xs={12} key={notaire.notaire_id}>
-                  <Card
-                    sx={{
-                      cursor: 'pointer',
-                      border: selectedNotaire === notaire.notaire_id.toString() ? '2px solid' : '1px solid',
-                      borderColor:
-                        selectedNotaire === notaire.notaire_id.toString() ? 'primary.main' : 'divider',
-                      bgcolor:
-                        selectedNotaire === notaire.notaire_id.toString() ? 'action.selected' : 'background.paper',
-                      transition: 'all 0.3s',
-                      '&:hover': { boxShadow: 2 },
-                    }}
-                  >
-                    <CardContent>
-                      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+                <div className="grid-item">
+                  <div className="card">
+                    <div className="card">
+                      <div>
                         <FormControlLabel
                           value={notaire.notaire_id.toString()}
                           control={<Radio />}
@@ -221,53 +187,53 @@ export default function SelectNotairePage() {
                           sx={{ mt: 0 }}
                         />
 
-                        <Box sx={{ flex: 1 }}>
-                          <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                        <div>
+                          <p>
                             {notaire.etude_notariale}
-                          </Typography>
+                          </p>
 
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
-                            <LocationOnIcon sx={{ fontSize: '18px', color: 'textSecondary' }} />
-                            <Typography variant="body2">
+                          <div>
+                            <span className="icon-placeholder">LocationOnIcon</span>
+                            <span>
                               {notaire.adresse_etude}, {notaire.code_postal_etude} {notaire.ville_etude}
-                            </Typography>
-                          </Box>
+                            </p>
+                          </div>
 
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
-                            <PhoneIcon sx={{ fontSize: '18px', color: 'textSecondary' }} />
-                            <Typography variant="body2">{notaire.telephone}</Typography>
-                          </Box>
+                          <div>
+                            <span className="icon-placeholder">PhoneIcon</span>
+                            <span>{notaire.telephone}</p>
+                          </div>
 
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
-                            <EmailIcon sx={{ fontSize: '18px', color: 'textSecondary' }} />
-                            <Typography variant="body2">{notaire.email_professionnel}</Typography>
-                          </Box>
+                          <div>
+                            <span className="icon-placeholder">EmailIcon</span>
+                            <span>{notaire.email_professionnel}</p>
+                          </div>
 
                           {notaire.zone_geographique?.villes && (
-                            <Box sx={{ mt: 2 }}>
-                              <Typography variant="caption" color="textSecondary">
+                            <div>
+                              <p>
                                 Zones d'intervention:
-                              </Typography>
-                              <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
+                              </p>
+                              <div>
                                 {notaire.zone_geographique.villes.map((ville) => (
                                   <Chip key={ville} label={ville} size="small" variant="outlined" />
                                 ))}
-                              </Box>
-                            </Box>
+                              </div>
+                            </div>
                           )}
-                        </Box>
+                        </div>
 
                         {selectedNotaire === notaire.notaire_id.toString() && (
-                          <CheckCircleIcon sx={{ color: 'success.main', fontSize: '24px', mt: 1 }} />
+                          <span className="icon-placeholder">CheckCircleIcon</span>
                         )}
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </Grid>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               ))}
-            </Grid>
+            </div>
           </RadioGroup>
-        </Box>
+        </div>
       )}
 
       {notaires.length === 0 && !searching && (
@@ -277,7 +243,7 @@ export default function SelectNotairePage() {
       )}
 
       {/* Boutons d'action */}
-      <Box sx={{ display: 'flex', gap: 2 }}>
+      <div>
         <Button
           variant="outlined"
           onClick={() => navigate(-1)}
@@ -292,24 +258,24 @@ export default function SelectNotairePage() {
           disabled={submitting || !selectedNotaire}
           fullWidth
         >
-          {submitting ? <CircularProgress size={24} /> : 'Confirmer la Sélection'}
+          {submitting ? <span>Loading...</span> : 'Confirmer la Sélection'}
         </Button>
-      </Box>
+      </div>
 
       {/* Dialog de succès */}
-      <Dialog open={successOpen} onClose={() => setSuccessOpen(false)}>
-        <DialogTitle>Notaire sélectionné</DialogTitle>
-        <DialogContent>
-          <Typography sx={{ mt: 2 }}>
+      <div className="modal"> setSuccessOpen(false)}>
+        <div className="modal">Notaire sélectionné</DialogTitle>
+        <div className="modal">
+          <p>
             Le notaire a été sélectionné avec succès. Vous pouvez maintenant valider les frais notaire.
-          </Typography>
+          </p>
         </DialogContent>
-        <DialogActions>
+        <div className="modal">
           <Button onClick={() => setSuccessOpen(false)} variant="contained">
             OK
           </Button>
         </DialogActions>
-      </Dialog>
-    </Container>
+      </div>
+    </div>
   );
 }

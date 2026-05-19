@@ -5,37 +5,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import {
-  Box,
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  Button,
-  Alert,
-  CircularProgress,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Grid,
-  Divider,
-  Stepper,
-  Step,
-  StepLabel,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-} from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import ErrorIcon from '@mui/icons-material/Error';
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import SecurityIcon from '@mui/icons-material/Security';
-import EditIcon from '@mui/icons-material/Edit';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { transactionsApi, docusignApi } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
+import { Button, Alert, Input } from '@/components';
+import '../styles/SignCompromisPage.css';
+
+
 
 const steps = ['Télécharger', 'Authentifier DocuSign', 'Signer', 'Vérifier'];
 
@@ -203,62 +178,62 @@ export default function SignCompromisPage() {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
-        <CircularProgress />
-      </Box>
+      <div>
+        <span>Loading...</span>
+      </div>
     );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <div className="container">
       {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
-      <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold' }}>
+      <h4>
         Signature du Compromis avec DocuSign
-      </Typography>
+      </p>
 
       {/* Infos transaction */}
-      <Card sx={{ mb: 4 }}>
-        <CardContent>
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
-              <Typography color="textSecondary" gutterBottom>
+      <div className="card">
+        <div className="card">
+          <div className="grid-container">
+            <div className="grid-item">
+              <p>
                 Bien
-              </Typography>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+              </p>
+              <p>
                 {transaction?.annonce?.titre}
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography color="textSecondary" gutterBottom>
+              </p>
+            </div>
+            <div className="grid-item">
+              <p>
                 Notaire
-              </Typography>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+              </p>
+              <p>
                 {transaction?.notaire?.etude_notariale}
-              </Typography>
-            </Grid>
-          </Grid>
-        </CardContent>
-      </Card>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <Divider sx={{ my: 4 }} />
 
       {/* Stepper */}
-      <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
+      <div className="stepper">
         {steps.map((label) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
+          <div className="step">
+            <div className="step">{label}</StepLabel>
+          </div>
         ))}
-      </Stepper>
+      </div>
 
       {/* Étape 1: Télécharger */}
       {activeStep === 0 && (
-        <Card sx={{ mb: 4 }}>
-          <CardContent>
-            <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold' }}>
+        <div className="card">
+          <div className="card">
+            <h4>
               📥 Étape 1: Télécharger le Compromis
-            </Typography>
+            </p>
 
             <Alert severity="info" sx={{ mb: 3 }}>
               Le compromis a été préparé par le notaire. Téléchargez-le pour le consulter avant la signature.
@@ -266,9 +241,7 @@ export default function SignCompromisPage() {
 
             <List>
               <ListItem>
-                <ListItemIcon>
-                  <FileDownloadIcon color="primary" />
-                </ListItemIcon>
+                <span className="icon-placeholder">ListItemIcon</span>
                 <ListItemText
                   primary="Compromis de vente"
                   secondary={`${transaction?.annonce?.titre} - ${transaction?.prix_compromis?.toLocaleString('fr-FR')} €`}
@@ -276,50 +249,46 @@ export default function SignCompromisPage() {
               </ListItem>
             </List>
 
-            <Box sx={{ mt: 3, display: 'flex', gap: 2 }}>
+            <div>
               <Button
                 variant="outlined"
-                startIcon={<FileDownloadIcon />}
+                startIcon={<span className="icon-placeholder">FileDownloadIcon</span>}
                 onClick={handleDownloadDocument}
                 fullWidth
               >
                 Télécharger le PDF
               </Button>
-            </Box>
-          </CardContent>
-        </Card>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Étape 2: Authentifier DocuSign */}
       {activeStep === 1 && (
-        <Card sx={{ mb: 4 }}>
-          <CardContent>
-            <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold' }}>
+        <div className="card">
+          <div className="card">
+            <h4>
               🔐 Étape 2: S'authentifier avec DocuSign
-            </Typography>
+            </p>
 
             <Alert severity="info" sx={{ mb: 3 }}>
               Vous devez vous connecter à votre compte DocuSign pour signer électroniquement le compromis.
             </Alert>
 
-            <Typography variant="body2" sx={{ mb: 3 }}>
+            <span>
               Lors de la connexion, vous devrez:
-            </Typography>
+            </p>
 
             <List>
               <ListItem>
-                <ListItemIcon>
-                  <SecurityIcon color="primary" />
-                </ListItemIcon>
+                <span className="icon-placeholder">ListItemIcon</span>
                 <ListItemText
                   primary="Entrer vos identifiants DocuSign"
                   secondary="Votre email et mot de passe"
                 />
               </ListItem>
               <ListItem>
-                <ListItemIcon>
-                  <SecurityIcon color="primary" />
-                </ListItemIcon>
+                <span className="icon-placeholder">ListItemIcon</span>
                 <ListItemText
                   primary="Autoriser Immo2000"
                   secondary="Permettre à Immo2000 d'accéder à votre compte"
@@ -327,7 +296,7 @@ export default function SignCompromisPage() {
               </ListItem>
             </List>
 
-            <Box sx={{ mt: 4, display: 'flex', gap: 2 }}>
+            <div>
               <Button
                 variant="outlined"
                 onClick={() => setActiveStep(0)}
@@ -342,44 +311,40 @@ export default function SignCompromisPage() {
                 disabled={submitting}
                 fullWidth
               >
-                {submitting ? <CircularProgress size={24} /> : 'Connecter DocuSign'}
+                {submitting ? <span>Loading...</span> : 'Connecter DocuSign'}
               </Button>
-            </Box>
-          </CardContent>
-        </Card>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Étape 3: Signer */}
       {activeStep === 2 && (
-        <Card sx={{ mb: 4 }}>
-          <CardContent>
-            <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold' }}>
+        <div className="card">
+          <div className="card">
+            <h4>
               ✍️ Étape 3: Signer le Compromis
-            </Typography>
+            </p>
 
             <Alert severity="warning" sx={{ mb: 3 }}>
               Vous allez être redirigé vers <strong>DocuSign</strong> pour placer votre signature électronique sur le
               compromis.
             </Alert>
 
-            <Typography variant="body2" sx={{ mb: 3 }}>
+            <span>
               Lors de la signature, vous devrez:
-            </Typography>
+            </p>
 
             <List>
               <ListItem>
-                <ListItemIcon>
-                  <EditIcon color="primary" />
-                </ListItemIcon>
+                <span className="icon-placeholder">ListItemIcon</span>
                 <ListItemText
                   primary="Placer votre signature"
                   secondary="Cliquez sur les zones de signature indiquées"
                 />
               </ListItem>
               <ListItem>
-                <ListItemIcon>
-                  <EditIcon color="primary" />
-                </ListItemIcon>
+                <span className="icon-placeholder">ListItemIcon</span>
                 <ListItemText
                   primary="Confirmer votre signature"
                   secondary="Valider la signature électronique"
@@ -387,7 +352,7 @@ export default function SignCompromisPage() {
               </ListItem>
             </List>
 
-            <Box sx={{ mt: 4, display: 'flex', gap: 2 }}>
+            <div>
               <Button
                 variant="outlined"
                 onClick={() => setActiveStep(1)}
@@ -401,59 +366,59 @@ export default function SignCompromisPage() {
                 onClick={handleRedirectToDocuSign}
                 disabled={!signingUrl || submitting}
                 fullWidth
-                endIcon={<OpenInNewIcon />}
+                endIcon={<span className="icon-placeholder">OpenInNewIcon</span>}
               >
-                {submitting ? <CircularProgress size={24} /> : 'Accéder à DocuSign'}
+                {submitting ? <span>Loading...</span> : 'Accéder à DocuSign'}
               </Button>
-            </Box>
+            </div>
 
             <Alert severity="info" sx={{ mt: 3 }}>
               <strong>Info:</strong> Une fenêtre DocuSign va s'ouvrir. Après avoir signé, revenez ici pour confirmer.
             </Alert>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       {/* Étape 4: Vérifier */}
       {activeStep === 3 && (
-        <Card sx={{ mb: 4 }}>
-          <CardContent>
-            <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold' }}>
+        <div className="card">
+          <div className="card">
+            <h4>
               ✅ Étape 4: Vérifier la Signature
-            </Typography>
+            </p>
 
             <Alert severity="success" sx={{ mb: 3 }}>
               Votre signature a bien été enregistrée dans DocuSign. Confirmez pour continuer.
             </Alert>
 
-            <Card sx={{ bgcolor: '#f0f8ff', p: 2, mb: 3 }}>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <Typography color="textSecondary" gutterBottom>
+            <div className="card">
+              <div className="grid-container">
+                <div className="grid-item">
+                  <p>
                     Statut Signature
-                  </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <CheckCircleIcon sx={{ color: 'success.main' }} />
-                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: 'success.main' }}>
+                  </p>
+                  <div>
+                    <span className="icon-placeholder">CheckCircleIcon</span>
+                    <p>
                       Signée
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Typography color="textSecondary" gutterBottom>
+                    </p>
+                  </div>
+                </div>
+                <div className="grid-item">
+                  <p>
                     Enveloppe DocuSign
-                  </Typography>
-                  <Typography variant="body2">{envelopeId}</Typography>
-                </Grid>
-              </Grid>
-            </Card>
+                  </p>
+                  <span>{envelopeId}</p>
+                </div>
+              </div>
+            </div>
 
-            <Typography variant="body2" sx={{ mb: 3 }}>
+            <span>
               Une copie du compromis signé a été archivée dans votre espace personnel. Vous pouvez maintenant procéder
               au paiement du dépôt de garantie.
-            </Typography>
+            </p>
 
-            <Box sx={{ mt: 4, display: 'flex', gap: 2 }}>
+            <div>
               <Button
                 variant="outlined"
                 onClick={() => setActiveStep(2)}
@@ -468,31 +433,31 @@ export default function SignCompromisPage() {
                 disabled={submitting}
                 fullWidth
               >
-                {submitting ? <CircularProgress size={24} /> : 'Continuer au Paiement'}
+                {submitting ? <span>Loading...</span> : 'Continuer au Paiement'}
               </Button>
-            </Box>
-          </CardContent>
-        </Card>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Dialog Succès */}
-      <Dialog open={successOpen} onClose={() => setSuccessOpen(false)}>
-        <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <CheckCircleIcon sx={{ color: 'success.main' }} />
+      <div className="modal"> setSuccessOpen(false)}>
+        <div className="modal">
+          <span className="icon-placeholder">CheckCircleIcon</span>
           Signature Confirmée
         </DialogTitle>
-        <DialogContent>
-          <Typography sx={{ mt: 2 }}>
+        <div className="modal">
+          <p>
             Le compromis a été signé avec succès par DocuSign. Vous pouvez maintenant effectuer le paiement du dépôt
             de garantie.
-          </Typography>
+          </p>
         </DialogContent>
-        <DialogActions>
+        <div className="modal">
           <Button onClick={() => setSuccessOpen(false)} variant="contained">
             OK
           </Button>
         </DialogActions>
-      </Dialog>
-    </Container>
+      </div>
+    </div>
   );
 }

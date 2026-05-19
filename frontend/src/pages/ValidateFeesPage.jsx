@@ -5,34 +5,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  Box,
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  CardActions,
-  Button,
-  Alert,
-  CircularProgress,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Grid,
-  Divider,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableRow,
-  Paper,
-  Chip,
-} from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import ErrorIcon from '@mui/icons-material/Error';
 import { transactionsApi } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
+import { Button, Alert, Input } from '@/components';
+import '../styles/ValidateFeesPage.css';
+
+
 
 export default function ValidateFeesPage() {
   const navigate = useNavigate();
@@ -95,69 +73,69 @@ export default function ValidateFeesPage() {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
-        <CircularProgress />
-      </Box>
+      <div>
+        <span>Loading...</span>
+      </div>
     );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <div className="container">
       {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
-      <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold' }}>
+      <h4>
         Validation des Frais Notaire
-      </Typography>
+      </p>
 
       {/* Infos transaction */}
-      <Card sx={{ mb: 4 }}>
-        <CardContent>
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <Typography color="textSecondary" gutterBottom>
+      <div className="card">
+        <div className="card">
+          <div className="grid-container">
+            <div className="grid-item">
+              <p>
                 Bien
-              </Typography>
-              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+              </p>
+              <h4>
                 {transaction?.annonce?.titre}
-              </Typography>
-            </Grid>
+              </p>
+            </div>
 
-            <Grid item xs={12} sm={4}>
-              <Typography color="textSecondary" gutterBottom>
+            <div className="grid-item">
+              <p>
                 Prix de vente
-              </Typography>
-              <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+              </p>
+              <h4>
                 {transaction?.prix_compromis?.toLocaleString('fr-FR')} €
-              </Typography>
-            </Grid>
+              </p>
+            </div>
 
-            <Grid item xs={12} sm={4}>
-              <Typography color="textSecondary" gutterBottom>
+            <div className="grid-item">
+              <p>
                 Notaire
-              </Typography>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+              </p>
+              <p>
                 {transaction?.notaire?.etude_notariale || 'Non sélectionné'}
-              </Typography>
-            </Grid>
+              </p>
+            </div>
 
-            <Grid item xs={12} sm={4}>
-              <Typography color="textSecondary" gutterBottom>
+            <div className="grid-item">
+              <p>
                 Localité
-              </Typography>
-              <Typography variant="subtitle1">
+              </p>
+              <p>
                 {transaction?.annonce?.code_postal} {transaction?.annonce?.ville}
-              </Typography>
-            </Grid>
-          </Grid>
-        </CardContent>
-      </Card>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <Divider sx={{ my: 4 }} />
 
       {/* Détail des frais */}
-      <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
+      <h4>
         Détail des Frais
-      </Typography>
+      </p>
 
       {fees && (
         <TableContainer component={Paper} sx={{ mb: 4 }}>
@@ -174,19 +152,19 @@ export default function ValidateFeesPage() {
               {/* Frais notaire */}
               <TableRow>
                 <TableCell sx={{ pl: 4 }}>
-                  <Box>
-                    <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                  <div>
+                    <span>
                       Frais de notaire
-                    </Typography>
-                    <Typography variant="caption" color="textSecondary">
+                    </p>
+                    <p>
                       {fees.pourcentage_frais}% selon tarif légal
-                    </Typography>
-                  </Box>
+                    </p>
+                  </div>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                  <span>
                     {fees.montant_frais?.toLocaleString('fr-FR')} €
-                  </Typography>
+                  </p>
                 </TableCell>
               </TableRow>
 
@@ -233,48 +211,48 @@ export default function ValidateFeesPage() {
       )}
 
       {/* Récapitulatif */}
-      <Card sx={{ mb: 4, bgcolor: '#f0f8ff', border: '1px solid #0099ff' }}>
-        <CardContent>
-          <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 2 }}>
+      <div className="card">
+        <div className="card">
+          <p>
             📊 Récapitulatif
-          </Typography>
+          </p>
 
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <Box sx={{ p: 2, bgcolor: 'white', borderRadius: 1 }}>
-                <Typography variant="caption" color="textSecondary">
+          <div className="grid-container">
+            <div className="grid-item">
+              <div>
+                <p>
                   Frais notaire (HT)
-                </Typography>
-                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                </p>
+                <h4>
                   {fees?.montant_frais?.toLocaleString('fr-FR')} €
-                </Typography>
-              </Box>
-            </Grid>
+                </p>
+              </div>
+            </div>
 
-            <Grid item xs={12} sm={6}>
-              <Box sx={{ p: 2, bgcolor: 'white', borderRadius: 1 }}>
-                <Typography variant="caption" color="textSecondary">
+            <div className="grid-item">
+              <div>
+                <p>
                   Commission Immo2000 (2%)
-                </Typography>
-                <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+                </p>
+                <h4>
                   {fees?.commission_immo2000?.toLocaleString('fr-FR')} €
-                </Typography>
-              </Box>
-            </Grid>
+                </p>
+              </div>
+            </div>
 
-            <Grid item xs={12}>
-              <Box sx={{ p: 2, bgcolor: 'white', borderRadius: 1, border: '2px solid #0099ff' }}>
-                <Typography variant="caption" color="textSecondary">
+            <div className="grid-item">
+              <div>
+                <p>
                   Montant total (frais + commission TTC)
-                </Typography>
-                <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#0099ff' }}>
+                </p>
+                <h4>
                   {fees?.montant_total?.toLocaleString('fr-FR')} €
-                </Typography>
-              </Box>
-            </Grid>
-          </Grid>
-        </CardContent>
-      </Card>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Conditions */}
       <Alert severity="info" sx={{ mb: 4 }}>
@@ -283,7 +261,7 @@ export default function ValidateFeesPage() {
       </Alert>
 
       {/* Boutons d'action */}
-      <Box sx={{ display: 'flex', gap: 2 }}>
+      <div>
         <Button
           variant="outlined"
           onClick={() => navigate(-1)}
@@ -299,27 +277,27 @@ export default function ValidateFeesPage() {
           disabled={submitting || !fees}
           fullWidth
         >
-          {submitting ? <CircularProgress size={24} /> : 'Valider et Continuer'}
+          {submitting ? <span>Loading...</span> : 'Valider et Continuer'}
         </Button>
-      </Box>
+      </div>
 
       {/* Dialog Succès */}
-      <Dialog open={successOpen} onClose={() => setSuccessOpen(false)}>
-        <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <CheckCircleIcon sx={{ color: 'success.main' }} />
+      <div className="modal"> setSuccessOpen(false)}>
+        <div className="modal">
+          <span className="icon-placeholder">CheckCircleIcon</span>
           Frais Validés
         </DialogTitle>
-        <DialogContent>
-          <Typography sx={{ mt: 2 }}>
+        <div className="modal">
+          <p>
             Les frais ont été validés avec succès. Vous pouvez maintenant procéder à la signature du compromis.
-          </Typography>
+          </p>
         </DialogContent>
-        <DialogActions>
+        <div className="modal">
           <Button onClick={() => setSuccessOpen(false)} variant="contained">
             OK
           </Button>
         </DialogActions>
-      </Dialog>
-    </Container>
+      </div>
+    </div>
   );
 }

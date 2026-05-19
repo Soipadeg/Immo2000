@@ -7,33 +7,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Elements } from '@stripe/react-stripe-js';
-import {
-  Box,
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  Button,
-  Alert,
-  CircularProgress,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Grid,
-  Divider,
-  FormControlLabel,
-  Checkbox,
-  Stepper,
-  Step,
-  StepLabel,
-} from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import LockIcon from '@mui/icons-material/Lock';
 import StripePaymentForm from '../components/StripePaymentForm';
 import { stripePromise } from '../config/stripe-config';
 import { transactionsApi, paymentsApi } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
+import { Button, Alert, Input } from '@/components';
+import '../styles/PaymentPage.css';
+
+
 
 const steps = ['Confirmation', 'Paiement', 'Succès'];
 
@@ -128,83 +109,83 @@ export default function PaymentPage() {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
-        <CircularProgress />
-      </Box>
+      <div>
+        <span>Loading...</span>
+      </div>
     );
   }
 
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
+    <div className="container">
       {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
-      <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold' }}>
+      <h4>
         💳 Paiement du Dépôt de Garantie
-      </Typography>
+      </p>
 
       {/* Stepper */}
-      <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
+      <div className="stepper">
         {steps.map((label) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
+          <div className="step">
+            <div className="step">{label}</StepLabel>
+          </div>
         ))}
-      </Stepper>
+      </div>
 
       {/* Étape 0: Confirmation */}
       {activeStep === 0 && (
         <>
           {/* Résumé de la transaction */}
-          <Card sx={{ mb: 4 }}>
-            <CardContent>
-              <Grid container spacing={3}>
-                <Grid item xs={12}>
-                  <Typography color="textSecondary" gutterBottom>
+          <div className="card">
+            <div className="card">
+              <div className="grid-container">
+                <div className="grid-item">
+                  <p>
                     Bien
-                  </Typography>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                  </p>
+                  <h4>
                     {transaction?.annonce?.titre}
-                  </Typography>
-                </Grid>
+                  </p>
+                </div>
 
-                <Grid item xs={12} sm={4}>
-                  <Typography color="textSecondary" gutterBottom>
+                <div className="grid-item">
+                  <p>
                     Prix de vente (TTC)
-                  </Typography>
-                  <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                  </p>
+                  <h4>
                     {prixVente?.toLocaleString('fr-FR')} €
-                  </Typography>
-                </Grid>
+                  </p>
+                </div>
 
-                <Grid item xs={12} sm={4}>
-                  <Typography color="textSecondary" gutterBottom>
+                <div className="grid-item">
+                  <p>
                     Dépôt à verser (15%)
-                  </Typography>
-                  <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'warning.main' }}>
+                  </p>
+                  <h4>
                     {montantDépôt?.toLocaleString('fr-FR')} €
-                  </Typography>
-                </Grid>
+                  </p>
+                </div>
 
-                <Grid item xs={12} sm={4}>
-                  <Typography color="textSecondary" gutterBottom>
+                <div className="grid-item">
+                  <p>
                     Solde futur (85%)
-                  </Typography>
-                  <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                  </p>
+                  <h4>
                     {montantSolde?.toLocaleString('fr-FR')} €
-                  </Typography>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <Divider sx={{ my: 3 }} />
 
           {/* Conditions */}
-          <Card sx={{ mb: 4, bgcolor: '#f5f5f5' }}>
-            <CardContent>
-              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold' }}>
+          <div className="card">
+            <div className="card">
+              <p>
                 ⚠️ Conditions
-              </Typography>
+              </p>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -213,17 +194,17 @@ export default function PaymentPage() {
                   />
                 }
                 label={
-                  <Typography variant="body2">
+                  <span>
                     Je confirme que je suis le propriétaire de la carte bancaire utilisée et que j'autorise le
                     prélèvement du montant du dépôt.
-                  </Typography>
+                  </p>
                 }
               />
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Boutons */}
-          <Box sx={{ display: 'flex', gap: 2 }}>
+          <div>
             <Button
               variant="outlined"
               onClick={() => navigate(-1)}
@@ -240,23 +221,23 @@ export default function PaymentPage() {
             >
               Continuer
             </Button>
-          </Box>
+          </div>
         </>
       )}
 
       {/* Étape 1: Formulaire de Paiement */}
       {activeStep === 1 && (
         <>
-          <Card sx={{ mb: 4 }}>
-            <CardContent>
+          <div className="card">
+            <div className="card">
               <Alert severity="info" sx={{ mb: 3 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <LockIcon />
-                  <Typography variant="body2">
+                <div>
+                  <span className="icon-placeholder">LockIcon</span>
+                  <span>
                     Paiement sécurisé par <strong>Stripe</strong>. Vos données bancaires ne sont jamais partagées avec
                     Immo2000.
-                  </Typography>
-                </Box>
+                  </p>
+                </div>
               </Alert>
 
               {/* Utiliser Stripe Elements via le composant */}
@@ -274,8 +255,8 @@ export default function PaymentPage() {
                   />
                 </Elements>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Bouton retour */}
           <Button
@@ -290,24 +271,24 @@ export default function PaymentPage() {
 
       {/* Étape 2: Succès */}
       {activeStep === 2 && (
-        <Card sx={{ bgcolor: '#e8f5e9', border: '2px solid #4caf50' }}>
-          <CardContent sx={{ textAlign: 'center', py: 4 }}>
-            <CheckCircleIcon sx={{ fontSize: 64, color: 'success.main', mb: 2 }} />
-            <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'success.main', mb: 2 }}>
+        <div className="card">
+          <div className="card">
+            <span className="icon-placeholder">CheckCircleIcon</span>
+            <h4>
               Paiement Réussi! ✅
-            </Typography>
-            <Typography sx={{ mb: 3 }}>
+            </p>
+            <p>
               Votre dépôt de <strong>{montantDépôt?.toLocaleString('fr-FR')} €</strong> a été reçu avec succès.
-            </Typography>
-            <Typography color="textSecondary" sx={{ mb: 3 }}>
+            </p>
+            <p>
               Vous serez redirigé vers la signature de l'acte authentique dans quelques secondes...
-            </Typography>
-            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-              <CircularProgress />
-            </Box>
-          </CardContent>
-        </Card>
+            </p>
+            <div>
+              <span>Loading...</span>
+            </div>
+          </div>
+        </div>
       )}
-    </Container>
+    </div>
   );
 }
