@@ -1,0 +1,343 @@
+/* ========================================
+   FAVORITES PAGE - Saved Properties
+   ======================================== */
+
+.favorites-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  font-family: var(--font-family-base);
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 0.5rem 0;
+}
+
+.page-header p {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.favorites-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  width: 100%;
+}
+
+.loading-spinner {
+  font-size: 1.25rem;
+  color: var(--color-text-secondary);
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-background);
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+  font-size: 1.25rem;
+  color: var(--color-text);
+  margin: 0 0 0.5rem 0;
+}
+
+.empty-state p {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  margin: 0 0 1.5rem 0;
+}
+
+.link-button {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--color-primary);
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.link-button:hover {
+  background-color: var(--color-primary-dark);
+}
+
+/* Favorites Grid */
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.favorite-card {
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-background);
+  overflow: hidden;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.favorite-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.card-image {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background-color: var(--color-background-secondary);
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.favorite-card:hover .card-image img {
+  transform: scale(1.05);
+}
+
+.card-content {
+  flex: 1;
+  padding: 1.25rem;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.favorite-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background-color: rgba(244, 67, 54, 0.15);
+  color: #c62828;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.rating {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.annonce-id {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 0.75rem 0;
+}
+
+.commentaire {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin: 0 0 0.75rem 0;
+}
+
+.date-ajout {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.card-actions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  background-color: var(--color-background-secondary);
+  border-top: 1px solid var(--color-border);
+  align-items: center;
+}
+
+.action-link {
+  flex: 1;
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.action-link:hover {
+  background-color: var(--color-primary-light);
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+.remove-btn:hover {
+  transform: scale(1.2);
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (max-width: 1024px) {
+  .favorites-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .favorites-page {
+    padding: 1.5rem 1rem;
+  }
+
+  .page-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .favorites-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+
+  .card-image {
+    height: 150px;
+  }
+
+  .card-content {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .favorites-page {
+    padding: 1rem 0.75rem;
+  }
+
+  .page-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .favorites-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card-image {
+    height: 180px;
+  }
+
+  .card-actions {
+    flex-direction: column;
+  }
+
+  .action-link {
+    width: 100%;
+  }
+
+  .empty-icon {
+    font-size: 2rem;
+  }
+
+  .empty-state h3 {
+    font-size: 1.125rem;
+  }
+}
+
+/* ========================================
+   DARK MODE
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+  .page-header h1 {
+    color: var(--color-text);
+  }
+
+  .page-header p {
+    color: var(--color-text-secondary);
+  }
+
+  .empty-state {
+    border-color: var(--color-border);
+    background-color: var(--color-background);
+  }
+
+  .empty-state h3 {
+    color: var(--color-text);
+  }
+
+  .empty-state p {
+    color: var(--color-text-secondary);
+  }
+
+  .link-button {
+    background-color: var(--color-primary);
+  }
+
+  .link-button:hover {
+    background-color: var(--color-primary-dark);
+  }
+
+  .favorite-card {
+    border-color: var(--color-border);
+    background-color: var(--color-background);
+  }
+
+  .card-image {
+    background-color: var(--color-background-secondary);
+  }
+
+  .card-content {
+    background-color: var(--color-background);
+  }
+
+  .annonce-id {
+    color: var(--color-text);
+  }
+
+  .commentaire {
+    color: var(--color-text-secondary);
+  }
+
+  .date-ajout {
+    color: var(--color-text-secondary);
+  }
+
+  .card-actions {
+    background-color: var(--color-background-secondary);
+    border-top-color: var(--color-border);
+  }
+
+  .action-link {
+    color: var(--color-primary);
+  }
+
+  .action-link:hover {
+    background-color: var(--color-primary-light);
+  }
+}
