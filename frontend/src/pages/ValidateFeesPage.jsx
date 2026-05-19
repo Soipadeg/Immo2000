@@ -97,7 +97,7 @@ export default function ValidateFeesPage() {
               </p>
               <h4>
                 {transaction?.annonce?.titre}
-              </p>
+              </h4>
             </div>
 
             <div className="grid-item">
@@ -106,7 +106,7 @@ export default function ValidateFeesPage() {
               </p>
               <h4>
                 {transaction?.prix_compromis?.toLocaleString('fr-FR')} €
-              </p>
+              </h4>
             </div>
 
             <div className="grid-item">
@@ -135,7 +135,7 @@ export default function ValidateFeesPage() {
       {/* Détail des frais */}
       <h4>
         Détail des Frais
-      </p>
+      </h4>
 
       {fees && (
         <TableContainer component={Paper} sx={{ mb: 4 }}>
@@ -155,7 +155,7 @@ export default function ValidateFeesPage() {
                   <div>
                     <span>
                       Frais de notaire
-                    </p>
+                    </span>
                     <p>
                       {fees.pourcentage_frais}% selon tarif légal
                     </p>
@@ -164,7 +164,7 @@ export default function ValidateFeesPage() {
                 <TableCell align="right">
                   <span>
                     {fees.montant_frais?.toLocaleString('fr-FR')} €
-                  </p>
+                  </span>
                 </TableCell>
               </TableRow>
 
@@ -225,7 +225,7 @@ export default function ValidateFeesPage() {
                 </p>
                 <h4>
                   {fees?.montant_frais?.toLocaleString('fr-FR')} €
-                </p>
+                </h4>
               </div>
             </div>
 
@@ -236,7 +236,7 @@ export default function ValidateFeesPage() {
                 </p>
                 <h4>
                   {fees?.commission_immo2000?.toLocaleString('fr-FR')} €
-                </p>
+                </h4>
               </div>
             </div>
 
@@ -247,7 +247,7 @@ export default function ValidateFeesPage() {
                 </p>
                 <h4>
                   {fees?.montant_total?.toLocaleString('fr-FR')} €
-                </p>
+                </h4>
               </div>
             </div>
           </div>

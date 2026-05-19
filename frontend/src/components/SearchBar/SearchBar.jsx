@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import SearchIcon from '@mui/icons-material/Search';
 import Button from '@/components/Button/Button';
 import Input from '@/components/Input/Input';
 import './SearchBar.css';
@@ -43,7 +42,7 @@ const SearchBar = ({
             placeholder={placeholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            icon={SearchIcon}
+            icon="🔍"
             className="search-bar-input"
           />
 

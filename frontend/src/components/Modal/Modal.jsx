@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import CloseIcon from '@mui/icons-material/Close';
 import './Modal.css';
 
 /**
@@ -73,7 +72,7 @@ const Modal = ({
               onClick={onClose}
               aria-label="Close modal"
             >
-              <CloseIcon />
+              ×
             </button>
           )}
         </div>

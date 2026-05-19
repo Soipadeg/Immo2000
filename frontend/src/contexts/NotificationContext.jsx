@@ -4,11 +4,7 @@
  */
 
 import React, { createContext, useState, useCallback } from 'react';
-import {
-  Snackbar,
-  Alert,
-  Box,
-} from '@mui/material';
+import Alert from '@/components/Alert/Alert';
 
 export const NotificationContext = createContext();
 
@@ -73,39 +69,32 @@ export const NotificationProvider = ({ children }) => {
       {children}
 
       {/* Affichage des Toasts */}
-      <Box
-        sx={{
+      <div
+        style={{
           position: 'fixed',
           bottom: 20,
           right: 20,
           zIndex: 9999,
           display: 'flex',
           flexDirection: 'column',
-          gap: 1,
+          gap: '8px',
           maxWidth: '500px',
         }}
       >
         {notifications.map((notification) => (
-          <Snackbar
+          <Alert
             key={notification.id}
-            open={true}
-            autoHideDuration={notification.duration}
+            type={notification.severity}
             onClose={() => removeNotification(notification.id)}
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            style={{
+              minWidth: '300px',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            }}
           >
-            <Alert
-              onClose={() => removeNotification(notification.id)}
-              severity={notification.severity}
-              sx={{
-                minWidth: '300px',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-              }}
-            >
-              {notification.message}
-            </Alert>
-          </Snackbar>
+            {notification.message}
+          </Alert>
         ))}
-      </Box>
+      </div>
     </NotificationContext.Provider>
   );
 };
