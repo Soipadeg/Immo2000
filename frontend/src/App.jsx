@@ -67,6 +67,7 @@ import DevAccessPage from './pages/DevAccessPage';
 import DevTransitionPage from './pages/DevTransitionPage';
 import DashboardRedirectPage from './pages/DashboardRedirectPage';
 import HomePageV2 from './pages/HomePageV2';
+import HomePage from './pages/HomePage';
 
 
 /**
@@ -126,6 +127,7 @@ function App() {
             <Route path="/notaire-dev/*" element={<DevRoleWrapper roleId="notaire" targetPath="/notaire" />} />
 
             <Route path="/" element={!isAuthenticated ? <HomePageV2 /> : <Navigate to="/dashboard" replace />} />
+            <Route path="/design-system" element={<HomePage />} />
             <Route path="/login" element={<LoginRedirect />} />
             <Route path="/register" element={<RegisterRedirect />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
