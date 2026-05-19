@@ -19,7 +19,6 @@ alembic==1.12.1
 
 # Caching & Sessions
 redis==5.0.1
-redis-py==5.0.1
 
 # Validation
 pydantic==2.5.0
