@@ -17,6 +17,10 @@ SQLAlchemy==2.0.23
 psycopg2-binary==2.9.9
 alembic==1.12.1
 
+# Caching & Sessions
+redis==5.0.1
+redis-py==5.0.1
+
 # Validation
 pydantic==2.5.0
 email-validator==2.1.0
@@ -48,6 +52,36 @@ cryptography==41.0.7
 # Task Scheduling
 APScheduler==3.10.4
 
+# Priority 3: Backend Optimizations & Advanced Features
+# Async Tasks
+celery==5.3.4
+kombu==5.3.4
+
+# Advanced Search
+elasticsearch==8.11.0
+elasticsearch-dsl==8.11.0
+
+# Real-time Communication
+Flask-SocketIO==5.3.5
+python-socketio==5.10.0
+python-engineio==4.8.0
+
+# Async HTTP Clients
+httpx==0.25.2
+
+# Firebase Cloud Messaging (Push Notifications)
+firebase-admin==6.2.0
+
+# Error Tracking & Monitoring
+sentry-sdk==1.39.2
+
+# External Integrations (Parcours de Vente - Phase 3)
+docusign-esign==3.20.0
+stripe==7.0.0
+sendgrid==6.9.7
+boto3==1.34.0
+pdfkit==1.0.0
+
 # Security & Encryption (Task 3)
 cryptography==41.0.7
 pydantic==2.5.0
@@ -69,3 +103,12 @@ mypy==1.7.1
 
 # Development
 ipython==8.18.1
+
+# FastAPI (Migration progressive de Flask)
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+httpx==0.25.2
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+pyotp==2.9.0
+qrcode[pil]==8.2

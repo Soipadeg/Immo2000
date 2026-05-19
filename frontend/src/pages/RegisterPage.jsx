@@ -102,9 +102,18 @@ export default function RegisterPage() {
         captchaToken,
       });
 
-      // Redirection automatique vers login
-      navigate('/login', {
-        state: { message: 'Inscription réussie ! Connectez-vous.' },
+      // Redirection vers l'étape 2 (profil acheteur)
+      // Passer les infos nécessaires via query params si l'utilisateur venait d'une annonce
+      const searchParams = new URLSearchParams(location.search);
+      const from = searchParams.get('from');
+      const annonceId = searchParams.get('annonce_id');
+
+      const nextPageUrl = from && annonceId
+        ? `/inscription/etape2?from=${from}&annonce_id=${annonceId}`
+        : '/inscription/etape2';
+
+      navigate(nextPageUrl, {
+        state: { message: 'Profil créé ! Complétez votre profil acheteur.' },
       });
     } catch (err) {
       setError(err.response?.data?.error || 'Erreur lors de l\'inscription');

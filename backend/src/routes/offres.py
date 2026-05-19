@@ -3,10 +3,12 @@ API routes for purchase offers - REFACTORED with @handle_errors()
 """
 
 from flask import Blueprint, request, jsonify
+from typing import Dict, Any, Tuple, Optional, List
 from src.auth.decorators import token_required
 from src.auth.models import User, db
 from src.models.annonces import Annonce
 from src.crud import offres as crud_offres
+from src.crud import notaires as crud_notaires
 from src.schemas.offres import (
     OffreCreate, OffreResponse, OffreListResponse,
     OffreStatsResponse, OffreDetailResponse
@@ -19,7 +21,7 @@ offres_bp = Blueprint('offres', __name__, url_prefix='/api/v1/offres')
 @offres_bp.route('', methods=['POST'])
 @token_required
 @handle_errors()
-def create_offer(current_user: User):
+def create_offer(current_user: User) -> Tuple[Dict[str, Any], int]:
     """
     Create a new purchase offer
     """
@@ -46,7 +48,7 @@ def create_offer(current_user: User):
 @offres_bp.route('/<int:offre_id>', methods=['GET'])
 @token_required
 @handle_errors()
-def get_offer(current_user: User, offre_id: int):
+def get_offer(current_user: User, offre_id: int) -> Dict[str, Any]:
     """
     Get offer details
     """
@@ -63,7 +65,7 @@ def get_offer(current_user: User, offre_id: int):
 @offres_bp.route('/annonce/<int:annonce_id>', methods=['GET'])
 @token_required
 @handle_errors()
-def list_annonce_offers(current_user: User, annonce_id: int):
+def list_annonce_offers(current_user: User, annonce_id: int) -> Dict[str, Any]:
     """
     List offers for an annonce (vendor only)
     """
@@ -162,26 +164,41 @@ def update_offer_status(current_user: User, offre_id: int):
 @offres_bp.route('/<int:offre_id>/accept', methods=['POST'])
 @token_required
 @handle_errors()
-def accept_offer(current_user: User, offre_id: int):
+def accept_offer(current_user: User, offre_id: int) -> Tuple[Dict[str, Any], int]:
     """
-    Accept an offer (vendor only)
+    Accept an offer (vendor only) and create TransactionNotaire
     """
     offre = crud_offres.accept_offer(db.session, offre_id, current_user.user_id)
 
     if not offre:
         raise ForbiddenError('Offer not found or unauthorized')
 
+    # Create TransactionNotaire for the accepted offer
+    try:
+        transaction = crud_notaires.create_transaction_notaire(
+            db=db.session,
+            offre_id=offre.offre_id,
+            annonce_id=offre.annonce_id,
+            vendeur_id=offre.vendeur_id,
+            acheteur_id=offre.acheteur_id,
+            prix_compromis=float(offre.prix_propose),
+            notaire_id=None  # Notaire will be selected later
+        )
+    except ValueError as e:
+        raise ValidationError(f"Erreur lors de la création de la transaction: {str(e)}")
+
     return {
         'offre_id': offre.offre_id,
         'statut': 'acceptee',
-        'message': 'Offer accepted'
+        'transaction_id': transaction.transaction_notaire_id,
+        'message': 'Offer accepted and transaction created'
     }
 
 
 @offres_bp.route('/<int:offre_id>/reject', methods=['POST'])
 @token_required
 @handle_errors()
-def reject_offer(current_user: User, offre_id: int):
+def reject_offer(current_user: User, offre_id: int) -> Tuple[Dict[str, Any], int]:
     """
     Reject an offer (vendor only)
     """

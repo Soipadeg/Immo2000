@@ -40,12 +40,15 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import PersonIcon from '@mui/icons-material/Person';
 import DescriptionIcon from '@mui/icons-material/Description';
 import ClockIcon from '@mui/icons-material/Schedule';
+import { notairesApi } from '../services/api/transactions';
 
 const NotaireDashboardPage = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [tabValue, setTabValue] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [dossiers, setDossiers] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!authLoading && (!user || user.role !== 'notaire')) {
@@ -53,89 +56,75 @@ const NotaireDashboardPage = () => {
     }
   }, [user, authLoading, navigate]);
 
+  // Load dossiers from API
+  useEffect(() => {
+    if (user && user.notaire_id) {
+      loadDossiers();
+    }
+  }, [user]);
+
+  const loadDossiers = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await notairesApi.getPendingDossiers(user.notaire_id, 0, 20);
+      setDossiers(response.data.transactions || []);
+    } catch (err) {
+      setError('Erreur lors du chargement des dossiers');
+      console.error('Error loading dossiers:', err);
+      // Fallback to empty list to show UI anyway
+      setDossiers([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Calculate stats from dossiers
   const stats = [
     {
       label: 'Dossiers en cours',
-      value: 8,
+      value: dossiers.length,
       icon: <DocumentScannerIcon />,
       color: 'primary',
-      trend: '+2 cette semaine',
-      trendUp: true
+      trend: `${dossiers.length} dossier(s) en attente`,
+      trendUp: dossiers.length > 0
     },
     {
-      label: 'Rendez-vous cette semaine',
-      value: 5,
+      label: 'En attente de validation',
+      value: dossiers.filter(d => d.statut === 'en_attente_validation').length,
       icon: <CalendarTodayIcon />,
       color: 'success',
-      trend: '2 prévus demain',
+      trend: 'Action requise',
       trendUp: true
     },
     {
-      label: 'Documents validés',
-      value: 34,
+      label: 'Modifications demandées',
+      value: dossiers.filter(d => d.statut === 'modifications_demandees').length,
       icon: <VerifiedUserIcon />,
-      color: 'info',
-      trend: '12 ce mois',
-      trendUp: true
+      color: 'warning',
+      trend: 'À réviser',
+      trendUp: false
     },
   ];
 
-  const dossiers = [
-    {
-      id: 1,
-      titre: 'Vente maison Paris 15ème',
-      client: 'Jean Dupont',
-      statut: 'En attente de documents',
-      progression: 45,
-      montant: '€450 000',
-      date: '2026-05-15',
-      docs: 3
-    },
-    {
-      id: 2,
-      titre: 'Achat appartement Lyon',
-      client: 'Marie Martin',
-      statut: 'Documents reçus',
-      progression: 75,
-      montant: '€380 000',
-      date: '2026-05-12',
-      docs: 8
-    },
-    {
-      id: 3,
-      titre: 'Investissement immobilier',
-      client: 'Pierre Bernard',
-      statut: 'Signature prévue',
-      progression: 95,
-      montant: '€620 000',
-      date: '2026-05-20',
-      docs: 12
-    },
-    {
-      id: 4,
-      titre: 'Succession immobilière',
-      client: 'Laure Dupuis',
-      statut: 'En cours d\'évaluation',
-      progression: 30,
-      montant: '€280 000',
-      date: '2026-06-01',
-      docs: 5
-    },
-  ];
+  // Build rendez-vous from dossiers (simplified)
+  const rendezVous = dossiers.slice(0, 4).map((dossier, idx) => ({
+    id: idx + 1,
+    temps: `${9 + idx * 2}:00`,
+    client: dossier.vendeur_nom || 'Client',
+    dossier: dossier.annonce_titre || 'Dossier',
+    lieu: 'Bureau'
+  }));
 
-  const rendezVous = [
-    { id: 1, temps: '09:00', client: 'Jean Dupont', dossier: 'Vente maison', lieu: 'Bureau Paris' },
-    { id: 2, temps: '11:00', client: 'Marie Martin', dossier: 'Achat appartement', lieu: 'Bureau Lyon' },
-    { id: 3, temps: '14:30', client: 'Pierre Bernard', dossier: 'Signature', lieu: 'Étude' },
-    { id: 4, temps: '16:00', client: 'Laure Dupuis', dossier: 'Succession', lieu: 'Bureau' },
-  ];
-
+  // Notifications based on dossiers status
   const notifications = [
-    { id: 1, texte: 'Nouveau dossier créé: Vente maison (Jean Dupont)', type: 'info' },
-    { id: 2, texte: 'Documents manquants pour dossier #2', type: 'warning' },
-    { id: 3, texte: 'Signature prévue demain à 14h', type: 'success' },
-    { id: 4, texte: 'Document validé: acte de vente', type: 'success' },
-  ];
+    ...dossiers.slice(0, 2).map((d, idx) => ({
+      id: idx + 1,
+      texte: `Dossier #${d.transaction_notaire_id}: ${d.statut}`,
+      type: d.statut === 'modifications_demandees' ? 'warning' : 'info'
+    })),
+    { id: 3, texte: 'Vérifiez les documents en attente', type: 'warning' },
+  ].slice(0, 4);
 
   if (authLoading || loading) {
     return (

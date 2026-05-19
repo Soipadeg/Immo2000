@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block title %}Profil de Sécurité{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <h1 class="mb-4">🔐 Profil de Sécurité</h1>
+
+            <!-- Statut 2FA -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">🔑 Double Authentification (2FA)</h5>
+                </div>
+                <div class="card-body">
+                    <div id="2fa-status">Chargement...</div>
+                </div>
+            </div>
+
+            <!-- Vérification d'Identité -->
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">✓ Vérification d'Identité</h5>
+                </div>
+                <div class="card-body">
+                    <div id="identity-status">Chargement...</div>
+                </div>
+            </div>
+
+            <!-- Session Actives -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">💻 Sessions Actives</h5>
+                </div>
+                <div class="card-body">
+                    <div id="sessions-list">Chargement...</div>
+                </div>
+            </div>
+
+            <!-- Journal d'Audit -->
+            <div class="card mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">📊 Journal d'Audit (10 dernières actions)</h5>
+                </div>
+                <div class="card-body">
+                    <div id="audit-log">Chargement...</div>
+                </div>
+            </div>
+
+            <!-- Alertes de Sécurité -->
+            <div class="card mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">🚨 Alertes de Sécurité</h5>
+                </div>
+                <div class="card-body">
+                    <p id="security-alerts">Aucune alerte récente.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function loadSecurityProfile() {
+    try {
+        const response = await fetch('/api/v1/security/profile');
+        const data = await response.json();
+
+        if (!data.success) {
+            console.error('Erreur:', data.error);
+            return;
+        }
+
+        const profile = data.profile;
+
+        // 2FA Status
+        let twoFAHtml = '<div class="alert alert-';
+        if (profile.is_2fa_enabled) {
+            twoFAHtml += 'success">' +
+                '✅ <strong>Activé</strong> - Votre compte est protégé par double authentification' +
+                '<br><button class="btn btn-sm btn-danger mt-2" onclick="disable2FA()">Désactiver</button>';
+        } else {
+            twoFAHtml += 'warning">' +
+                '⚠️ <strong>Désactivé</strong> - Activez le 2FA pour sécuriser votre compte' +
+                '<br><a href="/security/2fa/setup" class="btn btn-sm btn-primary mt-2">Activer le 2FA</a>';
+        }
+        twoFAHtml += '</div>';
+        document.getElementById('2fa-status').innerHTML = twoFAHtml;
+
+        // Identity Verification
+        let identityHtml = '<div class="alert alert-';
+        if (profile.identite_verifiee) {
+            const expiresDate = new Date(profile.verification_expires);
+            identityHtml += 'success">' +
+                '✅ <strong>Vérifiée</strong> - Votre identité a été confirmée' +
+                '<br><small class="text-muted">Expire le: ' + expiresDate.toLocaleDateString('fr-FR') + '</small>';
+        } else {
+            identityHtml += 'warning">' +
+                '⚠️ <strong>Non vérifiée</strong> - Vérifiez votre identité pour accéder à toutes les fonctionnalités' +
+                '<br><button class="btn btn-sm btn-success mt-2" onclick="startIdentityVerification()">Vérifier Identité</button>';
+        }
+        identityHtml += '</div>';
+        document.getElementById('identity-status').innerHTML = identityHtml;
+
+        // Active Sessions
+        let sessionsHtml = `<p><strong>${profile.active_sessions}</strong> session(s) active(s)</p>`;
+        document.getElementById('sessions-list').innerHTML = sessionsHtml;
+
+        // Security Alerts
+        if (profile.last_security_alert) {
+            const alertDate = new Date(profile.last_security_alert);
+            document.getElementById('security-alerts').innerHTML =
+                `<div class="alert alert-info">` +
+                `Dernière alerte: ${alertDate.toLocaleDateString('fr-FR')} à ${alertDate.toLocaleTimeString('fr-FR')}` +
+                `</div>`;
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+    }
+}
+
+async function loadAuditLog() {
+    try {
+        const response = await fetch('/api/v1/security/audit-log?limit=10');
+        const data = await response.json();
+
+        if (!data.success || !data.logs || data.logs.length === 0) {
+            document.getElementById('audit-log').innerHTML =
+                '<p class="text-muted">Aucune action enregistrée</p>';
+            return;
+        }
+
+        let html = '<table class="table table-sm">' +
+            '<thead><tr><th>Action</th><th>Ressource</th><th>Status</th><th>Date</th></tr></thead>' +
+            '<tbody>';
+
+        data.logs.forEach(log => {
+            const date = new Date(log.timestamp);
+            const statusBadge = log.status === 'success' ?
+                '<span class="badge bg-success">✓</span>' :
+                '<span class="badge bg-danger">✗</span>';
+
+            html += `<tr>
+                <td><code>${log.action}</code></td>
+                <td>${log.resource_type}${log.resource_id ? ' #' + log.resource_id : ''}</td>
+                <td>${statusBadge}</td>
+                <td>${date.toLocaleDateString('fr-FR')} ${date.toLocaleTimeString('fr-FR')}</td>
+            </tr>`;
+        });
+
+        html += '</tbody></table>';
+        document.getElementById('audit-log').innerHTML = html;
+    } catch (error) {
+        console.error('Erreur:', error);
+    }
+}
+
+async function startIdentityVerification() {
+    const provider = confirm('Utiliser Yousign? (OK=Yousign, Annuler=Veriff)') ? 'yousign' : 'veriff';
+
+    try {
+        const response = await fetch('/api/v1/security/identity/start', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ provider })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            window.location.href = data.url;
+        } else {
+            alert('Erreur: ' + (data.error || 'Impossible de démarrer la vérification'));
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('Erreur lors du démarrage de la vérification');
+    }
+}
+
+async function disable2FA() {
+    const code = prompt('Entrez le code 2FA pour désactiver:');
+    if (!code) return;
+
+    try {
+        const response = await fetch('/api/v1/security/2fa/disable', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert('✅ 2FA désactivé');
+            loadSecurityProfile();
+        } else {
+            alert('❌ Erreur: ' + (data.error || 'Code invalide'));
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('Erreur lors de la désactivation');
+    }
+}
+
+// Charger au démarrage
+loadSecurityProfile();
+loadAuditLog();
+
+// Rafraîchir chaque minute
+setInterval(loadSecurityProfile, 60000);
+</script>
+{% endblock %}

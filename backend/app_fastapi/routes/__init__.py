@@ -1,0 +1,1 @@
+"""Initialisation des routes FastAPI."""

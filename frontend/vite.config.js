@@ -27,8 +27,47 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: false,
     chunkSizeWarningLimit: 1000,
+
+    // Code splitting configuration (Phase 4.4)
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Vendor chunks (dépendances externes)
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-state': ['zustand'],
+          'vendor-form': ['react-hook-form', 'zod', '@hookform/resolvers'],
+          'vendor-ui': ['@mui/material', '@mui/icons-material'],
+          'vendor-axios': ['axios'],
+
+          // Feature chunks (fonctionnalités)
+          'store': [
+            './src/store/authStore.js',
+            './src/store/notificationStore.js',
+            './src/store/uiStore.js',
+          ],
+          'api': [
+            './src/services/api/client.js',
+            './src/services/api/auth.js',
+            './src/services/api/listings.js',
+            './src/services/api/messages.js',
+            './src/services/api/offers.js',
+          ],
+          'forms': [
+            './src/components/forms/schemas.js',
+            './src/components/forms/FormField.jsx',
+          ],
+        },
+      },
+    },
   },
+
+  // Optimization pour les previews
   preview: {
     port: 3000,
+  },
+
+  // Optimisation: minification et compression
+  esbuild: {
+    drop: ['console', 'debugger'],
   },
 });

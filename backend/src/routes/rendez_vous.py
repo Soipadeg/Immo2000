@@ -11,6 +11,7 @@ Endpoints:
 
 from flask import Blueprint, request, jsonify, send_file
 from datetime import datetime, timedelta
+from sqlalchemy.orm import joinedload
 from src.auth.models import db, User
 from src.auth.decorators import token_required
 from src.models.rendez_vous import RendezVous
@@ -218,6 +219,9 @@ def list_rdv(current_user):
     if statut:
         query = query.filter_by(statut=statut)
 
+    # Optimisation: eager load les relations pour éviter N+1 queries
+    query = query.options(joinedload(RendezVous.annonce))
+
     total = query.count()
     rdv_list = query.offset(skip).limit(limit).all()
 
@@ -417,7 +421,7 @@ def get_rdv_historique(current_user, rdv_id):
         404 Not Found
         403 Forbidden
     """
-    rdv = RendezVous.query.filter_by(rdv_id=rdv_id).first()
+    rdv = RendezVous.query.options(joinedload(RendezVous.annonce)).filter_by(rdv_id=rdv_id).first()
 
     if not rdv:
         raise NotFoundError("RDV non trouvé")

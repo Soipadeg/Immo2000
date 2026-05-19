@@ -5,6 +5,7 @@ Tâches 1-6: Dashboard, Utilisateurs, Annonces, Transactions, Paramètres, Analy
 
 import pytest
 import json
+import os
 from datetime import datetime, timedelta
 
 # Fixture pour le client de test
@@ -31,7 +32,7 @@ def admin_token(client, db):
     # Générer token
     import jwt
     from datetime import datetime, timedelta
-    secret = 'change-me-in-production'
+    secret = os.getenv('JWT_SECRET_KEY', 'test-secret-key-dev')
     payload = {
         'user_id': admin.utilisateur_id,
         'email': admin.email,
@@ -59,7 +60,7 @@ def regular_user_token(client, db):
 
     import jwt
     from datetime import datetime, timedelta
-    secret = 'change-me-in-production'
+    secret = os.getenv('JWT_SECRET_KEY', 'test-secret-key-dev')
     payload = {
         'user_id': user.utilisateur_id,
         'email': user.email,
