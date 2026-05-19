@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion de vos Données - RGPD{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <h1 class="mb-4">📋 Gestion de vos Données Personnelles (RGPD)</h1>
+
+            <!-- Statut RGPD -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Statut de vos Demandes</h5>
+                </div>
+                <div class="card-body">
+                    <div id="requests-list">
+                        <p class="text-muted">Chargement...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export de Données -->
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">📥 Exporter vos Données</h5>
+                </div>
+                <div class="card-body">
+                    <p>Téléchargez une copie de toutes vos données au format JSON.</p>
+                    <div class="mb-3">
+                        <label for="export-reason" class="form-label">Raison (optionnel):</label>
+                        <textarea
+                            class="form-control"
+                            id="export-reason"
+                            rows="2"
+                            placeholder="Ex: Transfert vers un autre service"
+                        ></textarea>
+                    </div>
+                    <button class="btn btn-success btn-lg" onclick="exportData()">
+                        📥 Demander l'Export
+                    </button>
+                    <p class="text-muted small mt-2">
+                        Vous recevrez un lien de téléchargement par email dans les 30 jours.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Suppression de Compte -->
+            <div class="card mb-4 border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">🗑️ Supprimer Votre Compte</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning mb-3">
+                        <strong>⚠️ Attention:</strong> Cette action est irréversible. Vous avez 30 jours pour changer d'avis.
+                    </div>
+
+                    <p>Entrez votre mot de passe pour confirmer la suppression:</p>
+
+                    <form id="delete-account-form">
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Mot de passe:</label>
+                            <input
+                                type="password"
+                                class="form-control"
+                                id="password"
+                                name="password"
+                                required
+                            >
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="delete-reason" class="form-label">Raison de la suppression (optionnel):</label>
+                            <textarea
+                                class="form-control"
+                                id="delete-reason"
+                                name="reason"
+                                rows="2"
+                                placeholder="Vos retours nous aident à améliorer"
+                            ></textarea>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input
+                                type="checkbox"
+                                class="form-check-input"
+                                id="confirm-delete"
+                                required
+                            >
+                            <label class="form-check-label" for="confirm-delete">
+                                Je comprends que cette action est irréversible
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            🗑️ Supprimer Mon Compte
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Informations RGPD -->
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">ℹ️ Informations Légales</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Vos Droits selon le RGPD:</h6>
+                    <ul>
+                        <li><strong>Droit d'accès:</strong> Vous pouvez demander une copie de vos données</li>
+                        <li><strong>Droit de rectification:</strong> Vous pouvez corriger vos données inexactes</li>
+                        <li><strong>Droit à l'oubli:</strong> Vous pouvez demander la suppression de vos données</li>
+                        <li><strong>Droit à la portabilité:</strong> Vous pouvez exporter vos données</li>
+                        <li><strong>Droit d'opposition:</strong> Vous pouvez refuser le traitement de vos données</li>
+                    </ul>
+
+                    <p class="text-muted small mt-3">
+                        Pour toute question concernant la protection de vos données, veuillez contacter:<br>
+                        <strong>dpo@immo2000.fr</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmation -->
+<div class="modal fade" id="confirmModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="confirmMessage"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-danger" id="confirmButton" onclick="confirmAction()">Confirmer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Charger les demandes RGPD
+async function loadRequests() {
+    try {
+        const response = await fetch('/api/v1/security/rgpd/status');
+        const data = await response.json();
+
+        if (!data.success || !data.requests || data.requests.length === 0) {
+            document.getElementById('requests-list').innerHTML =
+                '<p class="text-muted">Aucune demande pour le moment</p>';
+            return;
+        }
+
+        let html = '<table class="table">';
+        data.requests.forEach(req => {
+            const statusBadge = {
+                'pending': '<span class="badge bg-warning">En attente</span>',
+                'confirmed': '<span class="badge bg-info">Confirmée</span>',
+                'processing': '<span class="badge bg-primary">En cours</span>',
+                'completed': '<span class="badge bg-success">Complétée</span>',
+                'rejected': '<span class="badge bg-danger">Rejetée</span>'
+            }[req.status] || req.status;
+
+            const typeLabel = {
+                'data_export': '📥 Export de Données',
+                'delete_account': '🗑️ Suppression de Compte',
+                'anonymize': '👤 Anonymisation'
+            }[req.type] || req.type;
+
+            html += `<tr>
+                <td>${typeLabel}</td>
+                <td>${statusBadge}</td>
+                <td>${new Date(req.requested_at).toLocaleDateString('fr-FR')}</td>
+                ${req.data_url ? `<td><a href="${req.data_url}" class="btn btn-sm btn-primary">Télécharger</a></td>` : '<td></td>'}
+            </tr>`;
+        });
+        html += '</table>';
+
+        document.getElementById('requests-list').innerHTML = html;
+    } catch (error) {
+        console.error('Erreur:', error);
+        document.getElementById('requests-list').innerHTML =
+            '<p class="text-danger">Erreur lors du chargement</p>';
+    }
+}
+
+// Exporter les données
+async function exportData() {
+    const reason = document.getElementById('export-reason').value;
+
+    try {
+        const response = await fetch('/api/v1/security/rgpd/export-data', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reason })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert('✅ Demande d\'export enregistrée. Vous recevrez un email dans les 30 jours.');
+            loadRequests();
+            document.getElementById('export-reason').value = '';
+        } else {
+            alert('❌ Erreur: ' + (data.error || 'Impossible de créer la demande'));
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('Erreur lors de la demande d\'export');
+    }
+}
+
+// Supprimer le compte
+document.getElementById('delete-account-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const password = document.getElementById('password').value;
+    const reason = document.getElementById('delete-reason').value;
+
+    try {
+        const response = await fetch('/api/v1/security/rgpd/delete-account', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password, reason })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert('✅ Demande de suppression enregistrée. Veuillez confirmer par email dans les 30 jours.');
+            loadRequests();
+            this.reset();
+        } else {
+            alert('❌ Erreur: ' + (data.error || 'Impossible de créer la demande'));
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('Erreur lors de la suppression du compte');
+    }
+});
+
+// Charger au démarrage
+loadRequests();
+</script>
+{% endblock %}

@@ -19,12 +19,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from src.auth.models import db
-from src.auth.routes import auth_bp
+from src.auth import register_bp, login_bp, password_bp, tokens_bp
 from src.auth.oauth import oauth_bp
 from src.routes.annonces import annonces_bp
+from src.routes.tunnel_annonces import tunnel_bp
+from src.routes.contrats import contrats_bp
 from src.routes.matching import matching_bp
 from src.routes.notifications import notifications_bp
-from src.routes.admin import admin_bp
+from src.routes.admin import dashboard_bp, users_bp, listings_bp, transactions_bp
 from src.routes.alertes import alertes_bp
 from src.routes.biens import biens_bp
 from src.routes.estimations import estimations_bp
@@ -36,12 +38,20 @@ from src.routes.faq import faq_bp
 from src.routes.images import images_bp
 from src.routes.documents import documents_bp
 from src.routes.rendez_vous import rdv_bp
+from src.routes.creneaux import creneaux_bp
 from src.routes.annonce_views import views_bp
 from src.routes.search_history import search_bp
 from src.routes.favoris import favoris_bp
 from src.routes.offres import offres_bp
 from src.routes.notaires import notaires_bp
 from src.routes.dev_auth import dev_auth_bp
+from src.routes.transactions import transactions_vente_bp
+from src.routes.paiements import paiements_vente_bp
+
+# Import des nouvelles routes (Priority 3)
+from src.routes.pret import pret_bp
+from src.routes.fcm import fcm_bp
+from src.routes.chat import chat_bp
 
 # Import models pour que SQLAlchemy les reconnaisse
 from src.models.historique_rdv import HistoriqueRDV
@@ -86,6 +96,69 @@ def create_app(config_name: str = None) -> Flask:
     # Database
     db.init_app(app)
 
+    # Phase 3: Celery async tasks
+    try:
+        from src.tasks import celery_app
+        celery_app.conf.update(app.config)
+
+        class ContextTask(celery_app.Task):
+            def __call__(self, *args, **kwargs):
+                with app.app_context():
+                    return self.run(*args, **kwargs)
+
+        celery_app.Task = ContextTask
+        logger.info("✅ Celery initialized")
+    except Exception as e:
+        logger.warning(f"⚠️  Failed to initialize Celery: {e}")
+
+    # Phase 3: SocketIO for real-time chat
+    try:
+        from flask_socketio import SocketIO
+        socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
+
+        # Initialiser les événements WebSocket
+        from src.routes.chat import init_socketio
+        init_socketio(socketio, app)
+
+        app.socketio = socketio
+        logger.info("✅ SocketIO initialized")
+    except Exception as e:
+        logger.warning(f"⚠️  Failed to initialize SocketIO: {e}")
+        app.socketio = None
+
+    # Phase 3: Elasticsearch for advanced search
+    try:
+        from src.utils.search import init_search_engine
+        es_url = os.getenv('ELASTICSEARCH_URL', 'http://localhost:9200')
+        search_engine = init_search_engine(es_url)
+        app.search_engine = search_engine
+        logger.info(f"✅ Elasticsearch initialized at {es_url}")
+    except Exception as e:
+        logger.warning(f"⚠️  Failed to initialize Elasticsearch: {e}")
+        app.search_engine = None
+
+    # Phase 3.2: Redis Cache Service
+    try:
+        from src.services.cache_service import RedisCache
+        cache = RedisCache()
+        if cache.is_available():
+            logger.info("✅ Redis cache initialized")
+            app.redis = cache
+        else:
+            logger.warning("⚠️  Redis cache not available - using app without caching")
+            app.redis = None
+    except Exception as e:
+        logger.warning(f"⚠️  Failed to initialize Redis: {e}")
+        app.redis = None
+
+    # Phase 3.3: Rate Limiting
+    try:
+        from src.services.rate_limiter import init_rate_limiting
+        init_rate_limiting(app)
+        logger.info("✅ Rate limiting initialized")
+    except Exception as e:
+        logger.warning(f"⚠️  Failed to initialize rate limiting: {e}")
+
     # Logging
     if not app.debug:
         logger.setLevel(logging.INFO)
@@ -93,8 +166,36 @@ def create_app(config_name: str = None) -> Flask:
     # Routes de santé
     @app.route("/health", methods=["GET"])
     def health():
-        """Endpoint de health check."""
-        return {"status": "ok", "service": "immo2000-backend"}
+        """Endpoint de health check avec dépendances."""
+        health_status = {
+            "status": "ok",
+            "service": "immo2000-backend",
+            "database": "unknown",
+            "cache": "unknown"
+        }
+
+        # Vérifier BD
+        try:
+            from sqlalchemy import text
+            db.session.execute(text("SELECT 1"))
+            health_status["database"] = "connected"
+        except Exception as e:
+            health_status["database"] = f"error: {str(e)[:50]}"
+            health_status["status"] = "degraded"
+
+        # Vérifier cache
+        if hasattr(app, 'redis') and app.redis:
+            try:
+                if app.redis.is_available():
+                    health_status["cache"] = "connected"
+                else:
+                    health_status["cache"] = "unavailable"
+            except:
+                health_status["cache"] = "error"
+        else:
+            health_status["cache"] = "disabled"
+
+        return health_status
 
     @app.route("/", methods=["GET"])
     def index():
@@ -160,11 +261,18 @@ def create_app(config_name: str = None) -> Flask:
             "auth": "/auth/register, /auth/login, /auth/refresh, /auth/me",
             "annonces": "/api/v1/annonces (CRUD operations)"
         }
-    app.register_blueprint(auth_bp)
+    app.register_blueprint(register_bp)
+    app.register_blueprint(login_bp)
+    app.register_blueprint(password_bp)
+    app.register_blueprint(tokens_bp)
     app.register_blueprint(oauth_bp)
 
     # Blueprints - Annonces
     app.register_blueprint(annonces_bp)
+
+    # Blueprints - Tunnel de création d'annonce (4 étapes + contrat)
+    app.register_blueprint(tunnel_bp)
+    app.register_blueprint(contrats_bp)
 
     # Blueprints - Matching (Recommendation system)
     app.register_blueprint(matching_bp)
@@ -172,8 +280,11 @@ def create_app(config_name: str = None) -> Flask:
     # Blueprints - Notifications
     app.register_blueprint(notifications_bp)
 
-    # Blueprints - Admin
-    app.register_blueprint(admin_bp)
+    # Blueprints - Admin (Dashboard, Users, Listings, Transactions)
+    app.register_blueprint(dashboard_bp)
+    app.register_blueprint(users_bp)
+    app.register_blueprint(listings_bp)
+    app.register_blueprint(transactions_bp)
 
     # Blueprints - Alertes
     app.register_blueprint(alertes_bp)
@@ -198,6 +309,9 @@ def create_app(config_name: str = None) -> Flask:
 
     # Blueprints - Rendez-vous (Tunnel achat)
     app.register_blueprint(rdv_bp)
+
+    # Blueprints - Créneaux (Planification visite)
+    app.register_blueprint(creneaux_bp)
 
     # Blueprints - Chatbot
     app.register_blueprint(chatbot_bp)
@@ -226,8 +340,19 @@ def create_app(config_name: str = None) -> Flask:
     # Blueprints - Notaires Partenaires (Phase 3)
     app.register_blueprint(notaires_bp)
 
+    # Blueprints - Transactions de Vente (Phase 3 - Parcours de Vente)
+    app.register_blueprint(transactions_vente_bp)
+
+    # Blueprints - Paiements (Phase 3 - Parcours de Vente)
+    app.register_blueprint(paiements_vente_bp)
+
     # Blueprints - Dev Auth (Development mode - bypass authentication)
     app.register_blueprint(dev_auth_bp)
+
+    # Blueprints - Priority 3: Advanced Features
+    app.register_blueprint(pret_bp)  # Simulateur de prêt
+    app.register_blueprint(fcm_bp)   # Notifications push Firebase
+    app.register_blueprint(chat_bp)  # Chat temps réel avec WebSocket
 
     @app.errorhandler(404)
     def not_found(error):

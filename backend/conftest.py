@@ -10,7 +10,7 @@ from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
 
-from run_server import create_app
+from src.app import create_app
 from src.models import db as _db
 
 
@@ -20,7 +20,7 @@ def app():
     app = create_app()
     app.config['TESTING'] = True
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
-    app.config['SECRET_KEY'] = 'test-secret-key'
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'test-secret-key-dev')
 
     with app.app_context():
         _db.create_all()

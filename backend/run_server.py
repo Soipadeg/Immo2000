@@ -92,8 +92,9 @@ def main():
 
     # Démarrer le serveur
     try:
+        port = int(os.getenv("PORT", 8000))
         logger.info("🎯 Démarrage du serveur Flask...")
-        logger.info("   🌐 http://0.0.0.0:5000")
+        logger.info(f"   🌐 http://0.0.0.0:{port}")
         logger.info("   📊 /health - Health check")
         logger.info("   📚 /api/v1/... - API endpoints")
         logger.info("")
@@ -102,7 +103,7 @@ def main():
 
         app.run(
             host="0.0.0.0",
-            port=5000,
+            port=port,
             debug=True,
             use_reloader=True
         )

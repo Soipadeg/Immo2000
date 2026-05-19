@@ -65,7 +65,7 @@ class TestingConfig(Config):
     """Configuration de test."""
     TESTING = True
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
-    JWT_SECRET_KEY = "test-secret-key-very-secure-do-not-use-in-prod"
+    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'test-secret-key-very-secure-dev')
 
 
 class ProductionConfig(Config):

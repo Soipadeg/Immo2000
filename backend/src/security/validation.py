@@ -24,7 +24,7 @@ class SanitizedStr(str):
 
 class RoleChangeRequest(BaseModel):
     """Validation pour changement de rôle"""
-    new_role: str = Field(..., regex='^(user|admin)$')
+    new_role: str = Field(..., pattern='^(user|admin)$')
 
     class Config:
         schema_extra = {

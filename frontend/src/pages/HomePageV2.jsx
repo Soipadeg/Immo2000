@@ -552,9 +552,9 @@ export default function HomePageV2() {
               },
               transition: 'all 0.3s',
             }}
-            onClick={() => setShowForm(true)}
+            onClick={() => navigate('/creer-annonce/etape1')}
           >
-            Commencer →
+            🎉 Créer une annonce →
           </Button>
 
           <Typography

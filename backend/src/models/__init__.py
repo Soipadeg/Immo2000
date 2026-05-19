@@ -1,6 +1,7 @@
 """Modèles SQLAlchemy pour Immo2000."""
 
 from .annonces import Annonce
+from src.auth.models import db
 from .biens import Bien
 from .messages import Message
 from .documents import Document
@@ -20,8 +21,16 @@ from .notaires import (
     HistoriqueNotaire,
     DisponibiliteNotaire
 )
+from .paiements import (
+    Paiement,
+    FraisNotaire,
+    CommissionImmo2000,
+    TypePaiement,
+    StatutPaiement
+)
 
 __all__ = [
+    "db",
     "Annonce",
     "Bien",
     "Message",
@@ -41,5 +50,10 @@ __all__ = [
     "TransactionNotaire",
     "DocumentNotaire",
     "HistoriqueNotaire",
-    "DisponibiliteNotaire"
+    "DisponibiliteNotaire",
+    "Paiement",
+    "FraisNotaire",
+    "CommissionImmo2000",
+    "TypePaiement",
+    "StatutPaiement"
 ]

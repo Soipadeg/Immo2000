@@ -57,3 +57,9 @@ env/
 # Temporary files
 *.tmp
 *.log
+
+# Database files (local development only)
+*.db
+*.sqlite
+*.sqlite3
+instance/
