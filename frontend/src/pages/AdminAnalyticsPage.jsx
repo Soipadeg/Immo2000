@@ -1,19 +1,9 @@
-/**
- * TÂCHE 6: Analytics - Statistiques Avancées
- */
-
 import React, { useState, useEffect } from 'react';
-import {
-  Container, Typography, Box, CircularProgress, Alert, Grid, Card, CardContent,
-  Tabs, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
-} from '@mui/material';
-import {
-  BarChart, Bar, PieChart, Pie, LineChart, Line, XAxis, YAxis, CartesianGrid,
-  Tooltip, Legend, ResponsiveContainer, Cell
-} from 'recharts';
+import { Alert, Button } from '@/components';
 import { analyticsApi } from '../services/adminApi';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import '../styles/AdminAnalyticsPage.css';
 
 const AdminAnalyticsPage = () => {
   const { user, loading: authLoading } = useAuth();
@@ -62,138 +52,92 @@ const AdminAnalyticsPage = () => {
   const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7c7c', '#a4de6c', '#d084d0'];
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" gutterBottom>📊 Analytics</Typography>
+    <div className="admin-analytics-page">
+      <div className="page-header">
+        <h1>📊 Analytics - Statistiques Avancées</h1>
+      </div>
 
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      {error && <Alert type="error" title="Erreur" message={error} />}
 
       {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
-          <CircularProgress />
-        </Box>
+        <div className="admin-container">
+          <div className="loading-spinner">⏳ Chargement...</div>
+        </div>
       ) : (
         <>
           {/* KPIs */}
-          <Grid container spacing={2} sx={{ mb: 4 }}>
-            <Grid item xs={12} sm={6} lg={3}>
-              <Card>
-                <CardContent>
-                  <Typography color="textSecondary">👥 Utilisateurs</Typography>
-                  <Typography variant="h5">{summary?.utilisateurs?.total || 0}</Typography>
-                  <Typography variant="caption">Actifs (30j): {summary?.utilisateurs?.actifs_derniers_30_jours}</Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={12} sm={6} lg={3}>
-              <Card>
-                <CardContent>
-                  <Typography color="textSecondary">🏠 Annonces</Typography>
-                  <Typography variant="h5">{summary?.annonces?.total || 0}</Typography>
-                  <Typography variant="caption">Publiées: {summary?.annonces?.publiees}</Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={12} sm={6} lg={3}>
-              <Card>
-                <CardContent>
-                  <Typography color="textSecondary">💰 Offres</Typography>
-                  <Typography variant="h5">{summary?.offres?.total || 0}</Typography>
-                  <Typography variant="caption">Taux conv: {summary?.offres?.taux_conversion_pct}%</Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={12} sm={6} lg={3}>
-              <Card>
-                <CardContent>
-                  <Typography color="textSecondary">💵 Revenus</Typography>
-                  <Typography variant="h5">€{(summary?.revenus?.valeur_totale_offres || 0).toLocaleString()}</Typography>
-                  <Typography variant="caption">Moy: €{(summary?.revenus?.valeur_moyenne_offre || 0).toLocaleString()}</Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
+          <div className="kpi-grid">
+            <div className="kpi-card">
+              <div className="kpi-label">👥 Utilisateurs</div>
+              <div className="kpi-value">{summary?.utilisateurs?.total || 0}</div>
+              <div className="kpi-meta">Actifs (30j): {summary?.utilisateurs?.actifs_derniers_30_jours || 0}</div>
+            </div>
+            <div className="kpi-card">
+              <div className="kpi-label">🏠 Annonces</div>
+              <div className="kpi-value">{summary?.annonces?.total || 0}</div>
+              <div className="kpi-meta">Publiées: {summary?.annonces?.publiees || 0}</div>
+            </div>
+            <div className="kpi-card">
+              <div className="kpi-label">💰 Offres</div>
+              <div className="kpi-value">{summary?.offres?.total || 0}</div>
+              <div className="kpi-meta">Taux conv: {summary?.offres?.taux_conversion_pct || 0}%</div>
+            </div>
+            <div className="kpi-card">
+              <div className="kpi-label">💵 Revenus</div>
+              <div className="kpi-value">€{(summary?.revenus?.valeur_totale_offres || 0).toLocaleString()}</div>
+              <div className="kpi-meta">Moy: €{(summary?.revenus?.valeur_moyenne_offre || 0).toLocaleString()}</div>
+            </div>
+          </div>
 
           {/* Tabs */}
-          <Paper>
-            <Tabs value={tabValue} onChange={(e, v) => setTabValue(v)}>
-              <Tab label="Utilisateurs" />
-              <Tab label="Annonces" />
-              <Tab label="Transactions" />
-            </Tabs>
+          <div className="analytics-card">
+            <div className="tabs-nav">
+              {['Utilisateurs', 'Annonces', 'Transactions'].map((label, i) => (
+                <button
+                  key={i}
+                  className={`tab-btn ${tabValue === i ? 'active' : ''}`}
+                  onClick={() => setTabValue(i)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
 
-            <Box sx={{ p: 3 }}>
+            <div className="tab-content">
               {/* Tab 0: Utilisateurs */}
               {tabValue === 0 && users && (
                 <>
-                  <Grid container spacing={3}>
-                    {/* Rôles */}
-                    <Grid item xs={12} md={6}>
-                      <Typography variant="h6" gutterBottom>Répartition des rôles</Typography>
-                      <ResponsiveContainer width="100%" height={300}>
-                        <PieChart>
-                          <Pie
-                            data={Object.entries(users.repartition_roles || {}).map(([role, count]) => ({
-                              name: role,
-                              value: count,
-                            }))}
-                            cx="50%"
-                            cy="50%"
-                            outerRadius={80}
-                            fill="#8884d8"
-                            dataKey="value"
-                            label
-                          >
-                            {Object.values(users.repartition_roles || {}).map((_, index) => (
-                              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                            ))}
-                          </Pie>
-                          <Tooltip />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    </Grid>
+                  <div className="charts-grid">
+                    <div className="chart-box">
+                      <h3>Répartition des rôles</h3>
+                      <div className="chart-placeholder">[Graphique - Répartition des rôles]</div>
+                    </div>
+                    <div className="chart-box">
+                      <h3>Croissance</h3>
+                      <div className="chart-placeholder">[Graphique - Croissance]</div>
+                    </div>
+                  </div>
 
-                    {/* Croissance */}
-                    <Grid item xs={12} md={6}>
-                      <Typography variant="h6" gutterBottom>Croissance</Typography>
-                      <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={users.croissance_derniers_jours || []}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="date" />
-                          <YAxis />
-                          <Tooltip />
-                          <Bar dataKey="nouveaux" fill="#82ca9d" />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </Grid>
-                  </Grid>
-
-                  {/* Top vendeurs */}
                   {users.top_vendeurs && users.top_vendeurs.length > 0 && (
-                    <Box sx={{ mt: 4 }}>
-                      <Typography variant="h6" gutterBottom>Top vendeurs</Typography>
-                      <TableContainer component={Paper}>
-                        <Table size="small">
-                          <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
-                            <TableRow>
-                              <TableCell><strong>Nom</strong></TableCell>
-                              <TableCell><strong>Email</strong></TableCell>
-                              <TableCell><strong>Annonces</strong></TableCell>
-                              <TableCell><strong>Vendues</strong></TableCell>
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            {users.top_vendeurs.map((seller) => (
-                              <TableRow key={seller.user_id}>
-                                <TableCell>{seller.nom}</TableCell>
-                                <TableCell>{seller.email}</TableCell>
-                                <TableCell>{seller.nombre_annonces}</TableCell>
-                                <TableCell>{seller.annonces_vendues}</TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-                      </TableContainer>
-                    </Box>
+                    <div className="table-section">
+                      <h3>Top vendeurs</h3>
+                      <div className="table-wrapper">
+                        <div className="table-header">
+                          <div>Nom</div>
+                          <div>Email</div>
+                          <div>Annonces</div>
+                          <div>Vendues</div>
+                        </div>
+                        {users.top_vendeurs.map((seller) => (
+                          <div key={seller.user_id} className="table-row">
+                            <div>{seller.nom}</div>
+                            <div>{seller.email}</div>
+                            <div>{seller.nombre_annonces}</div>
+                            <div>{seller.annonces_vendues}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   )}
                 </>
               )}
@@ -201,49 +145,36 @@ const AdminAnalyticsPage = () => {
               {/* Tab 1: Annonces */}
               {tabValue === 1 && listings && (
                 <>
-                  <Grid container spacing={3}>
-                    {/* Par statut */}
-                    <Grid item xs={12} md={6}>
-                      <Typography variant="h6" gutterBottom>Par statut</Typography>
-                      <ResponsiveContainer width="100%" height={300}>
-                        <PieChart>
-                          <Pie
-                            data={Object.entries(listings.par_statut || {}).map(([status, count]) => ({
-                              name: status,
-                              value: count,
-                            }))}
-                            cx="50%"
-                            cy="50%"
-                            outerRadius={80}
-                            fill="#8884d8"
-                            dataKey="value"
-                            label
-                          >
-                            {Object.values(listings.par_statut || {}).map((_, index) => (
-                              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                            ))}
-                          </Pie>
-                          <Tooltip />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    </Grid>
+                  <div className="charts-grid">
+                    <div className="chart-box">
+                      <h3>Par statut</h3>
+                      <div className="chart-placeholder">[Graphique - Statuts]</div>
+                    </div>
+                    <div className="chart-box">
+                      <h3>Par type</h3>
+                      <div className="chart-placeholder">[Graphique - Types]</div>
+                    </div>
+                  </div>
+                </>
+              )}
 
-                    {/* Par type */}
-                    <Grid item xs={12} md={6}>
-                      <Typography variant="h6" gutterBottom>Par type</Typography>
-                      <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={Object.entries(listings.par_type || {}).map(([type, count]) => ({
-                          type,
-                          count,
-                        }))}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="type" />
-                          <YAxis />
-                          <Tooltip />
-                          <Bar dataKey="count" fill="#8884d8" />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </Grid>
+              {/* Tab 2: Transactions */}
+              {tabValue === 2 && transactions && (
+                <>
+                  <div className="charts-grid">
+                    <div className="chart-box">
+                      <h3>Évolution des transactions</h3>
+                      <div className="chart-placeholder">[Graphique - Transactions]</div>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
 
                     {/* Villes */}
                     <Grid item xs={12}>
@@ -265,66 +196,41 @@ const AdminAnalyticsPage = () => {
                                 <TableCell>€{city.prix_moyen.toLocaleString()}</TableCell>
                               </TableRow>
                             ))}
-                          </TableBody>
-                        </Table>
-                      </TableContainer>
-                    </Grid>
-                  </Grid>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </>
               )}
 
               {/* Tab 2: Transactions */}
               {tabValue === 2 && transactions && (
-                <Grid container spacing={3}>
-                  {/* Par statut */}
-                  <Grid item xs={12} md={6}>
-                    <Typography variant="h6" gutterBottom>Par statut</Typography>
-                    <ResponsiveContainer width="100%" height={300}>
-                      <PieChart>
-                        <Pie
-                          data={Object.entries(transactions.par_statut || {}).map(([status, count]) => ({
-                            name: status,
-                            value: count,
-                          }))}
-                          cx="50%"
-                          cy="50%"
-                          outerRadius={80}
-                          fill="#8884d8"
-                          dataKey="value"
-                          label
-                        >
-                          {Object.values(transactions.par_statut || {}).map((_, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                          ))}
-                        </Pie>
-                        <Tooltip />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </Grid>
-
-                  {/* Statistiques */}
-                  <Grid item xs={12} md={6}>
-                    <Card>
-                      <CardContent>
-                        <Typography variant="h6" gutterBottom>📊 Statistiques</Typography>
-                        <Box sx={{ mt: 2 }}>
-                          <Typography>Taux conversion: {transactions.taux_conversion_pct}%</Typography>
-                          <Typography>Taux négociation: {transactions.taux_negociation_pct}%</Typography>
-                          <Typography>Temps moyen (j): {transactions.temps_moyen_jours}</Typography>
-                          <Typography sx={{ mt: 2, fontWeight: 'bold' }}>Prix</Typography>
-                          <Typography>Moyen proposé: €{transactions.prix?.moyen_propose?.toLocaleString()}</Typography>
-                          <Typography>Total acceptées: €{transactions.prix?.total_acceptees?.toLocaleString()}</Typography>
-                        </Box>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                </Grid>
+                <>
+                  <div className="charts-grid">
+                    <div className="chart-box">
+                      <h3>Par statut</h3>
+                      <div className="chart-placeholder">[Graphique - Statuts Transactions]</div>
+                    </div>
+                    <div className="stats-box">
+                      <h3>📊 Statistiques</h3>
+                      <div className="stats-list">
+                        <div className="stat-line">Taux conversion: {transactions.taux_conversion_pct}%</div>
+                        <div className="stat-line">Taux négociation: {transactions.taux_negociation_pct}%</div>
+                        <div className="stat-line">Temps moyen (j): {transactions.temps_moyen_jours}</div>
+                        <div className="stat-divider"></div>
+                        <div className="stat-label">Prix</div>
+                        <div className="stat-line">Moyen proposé: €{transactions.prix?.moyen_propose?.toLocaleString()}</div>
+                        <div className="stat-line">Total acceptées: €{transactions.prix?.total_acceptees?.toLocaleString()}</div>
+                      </div>
+                    </div>
+                  </div>
+                </>
               )}
-            </Box>
-          </Paper>
+            </div>
+          </div>
         </>
       )}
-    </Container>
+    </div>
   );
 };
 
