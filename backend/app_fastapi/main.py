@@ -18,7 +18,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app_fastapi.config import settings
-from app_fastapi.routes import health, offres, transactions, notaires, paiements, documents
+from app_fastapi.routes import health, offres, transactions, notaires, paiements, documents, webhooks
 from app_fastapi.utils.startup import init_external_services, shutdown_external_services
 
 # Configuration du logging
@@ -72,7 +72,7 @@ app.add_middleware(
 # 2. Trusted Hosts (sécurité)
 app.add_middleware(
     TrustedHostMiddleware,
-    allowed_hosts=["localhost", "127.0.0.1", "*.immo2000.fr"],
+    allowed_hosts=["localhost", "127.0.0.1", "testserver", "*.immo2000.fr"],
 )
 
 
@@ -127,6 +127,7 @@ app.include_router(transactions.router, prefix="/api/v1/transactions", tags=["Tr
 app.include_router(notaires.router, prefix="/api/v1/notaires", tags=["Notaires"])
 app.include_router(paiements.router, prefix="/api/v1/paiements", tags=["Paiements"])
 app.include_router(documents.router, prefix="/api/v1/documents", tags=["Documents"])
+app.include_router(webhooks.router, prefix="/api/v1", tags=["Webhooks"])
 
 
 # === Logging des routes ===
