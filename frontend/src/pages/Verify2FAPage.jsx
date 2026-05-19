@@ -1,17 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Container,
-  Paper,
-  TextField,
-  Button,
-  Box,
-  Typography,
-  Alert,
-  Link,
-  Card,
-  CardContent,
-} from '@mui/material';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { Button, Input, Alert, FormContainer } from '@/components';
+import { authApi } from '../services/api';
+import './Verify2FAPage.css';
 import { authApi } from '../services/api';
 
 export default function Verify2FAPage() {
@@ -101,102 +92,106 @@ export default function Verify2FAPage() {
 
   if (!userId || !email) {
     return (
-      <Container maxWidth="sm">
-        <Box sx={{ py: 4 }}>
-          <Alert severity="error">
-            Accès non autorisé.
-            <Button href="/login" sx={{ ml: 1 }}>
-              Retourner à la connexion
-            </Button>
-          </Alert>
-        </Box>
-      </Container>
+      <FormContainer
+        title="Accès refusé"
+        subtitle="Authentification requise"
+        maxWidth="small"
+      >
+        <Alert
+          isOpen={true}
+          type="error"
+          title="Erreur"
+          message="Accès non autorisé. Veuillez vous connecter."
+          dismissible={false}
+        />
+        <Button
+          variant="primary"
+          size="medium"
+          fullWidth
+          onClick={() => window.location.href = '/login'}
+          style={{ marginTop: '16px' }}
+        >
+          Retourner à la connexion
+        </Button>
+      </FormContainer>
     );
   }
 
   return (
-    <Container maxWidth="sm">
-      <Box sx={{ py: 4 }}>
-        <Typography variant="h3" component="h1" gutterBottom sx={{ mb: 4, textAlign: 'center' }}>
-          🔐 Authentification à 2 facteurs
-        </Typography>
+    <FormContainer
+      title="🔐 Authentification 2FA"
+      subtitle={`Vérification pour ${email}`}
+      maxWidth="small"
+    >
+      {error && (
+        <Alert
+          isOpen={true}
+          type="error"
+          title="Erreur"
+          message={error}
+          dismissible={true}
+          onClose={() => setError('')}
+        />
+      )}
 
-        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      <form onSubmit={handleSubmit} className="verify-2fa-form">
+        <p className="form-description">
+          Pour sécuriser votre compte, entrez le code envoyé à <strong>{email}</strong>.
+        </p>
 
-        <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
-          <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
-            Pour sécuriser votre compte, entrez le code envoyé à:
-            <br />
-            <strong>{email}</strong>
-          </Typography>
+        <Input
+          label="Code à 6 chiffres"
+          name="code"
+          type="text"
+          value={formData.code}
+          onChange={handleChange}
+          placeholder="000000"
+          inputMode="numeric"
+          maxLength={6}
+          required
+          hint="Cherchez le code dans votre email ou application d'authentification"
+        />
 
-          <form onSubmit={handleSubmit}>
-            <TextField
-              fullWidth
-              label="Code à 6 chiffres"
-              name="code"
-              value={formData.code}
-              onChange={handleChange}
-              margin="normal"
-              placeholder="000000"
-              inputProps={{ maxLength: 6, pattern: '[0-9]*' }}
-              required
-              autoFocus
-            />
+        <Button
+          variant="primary"
+          size="medium"
+          fullWidth
+          disabled={loading || formData.code.length !== 6}
+          loading={loading}
+          type="submit"
+        >
+          {loading ? 'Vérification...' : 'Vérifier le code'}
+        </Button>
+      </form>
 
-            <Typography variant="caption" color="textSecondary" sx={{ display: 'block', mt: 1, mb: 2 }}>
-              Cherchez le code dans votre email ou votre application d'authentification.
-            </Typography>
+      <div className="resend-section">
+        <p className="resend-text">Vous n'avez pas reçu le code ?</p>
+        <Button
+          variant="ghost"
+          size="medium"
+          fullWidth
+          disabled={resendCountdown > 0}
+          onClick={handleResendCode}
+        >
+          {resendCountdown > 0
+            ? `Renvoyer dans ${resendCountdown}s`
+            : 'Renvoyer le code'}
+        </Button>
+      </div>
 
-            <Button
-              fullWidth
-              variant="contained"
-              color="primary"
-              size="large"
-              sx={{ mt: 3 }}
-              disabled={loading || formData.code.length !== 6}
-              type="submit"
-            >
-              {loading ? 'Vérification...' : 'Vérifier'}
-            </Button>
-          </form>
+      <div className="security-tip">
+        <strong>💡 Conseil de sécurité</strong>
+        <p>
+          L'authentification à 2 facteurs protège votre compte contre l'accès non
+          autorisé. Gardez votre téléphone et votre email sécurisés.
+        </p>
+      </div>
 
-          <Box sx={{ mt: 3, textAlign: 'center' }}>
-            <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
-              Vous n'avez pas reçu le code ?
-            </Typography>
-            <Button
-              size="small"
-              onClick={handleResendCode}
-              disabled={resendCountdown > 0}
-            >
-              {resendCountdown > 0 ? `Renvoyer dans ${resendCountdown}s` : 'Renvoyer le code'}
-            </Button>
-          </Box>
-        </Paper>
-
-        <Card sx={{ bgcolor: '#e3f2fd', mb: 2 }}>
-          <CardContent>
-            <Typography variant="body2" sx={{ fontWeight: 600, mb: 1 }}>
-              💡 Conseil de sécurité
-            </Typography>
-            <Typography variant="caption" color="textSecondary">
-              L'authentification à 2 facteurs protège votre compte contre l'accès non autorisé.
-              Gardez votre téléphone et votre email sécurisés.
-            </Typography>
-          </CardContent>
-        </Card>
-
-        <Box sx={{ textAlign: 'center' }}>
-          <Button
-            href="/login"
-            size="small"
-            color="secondary"
-          >
-            Utiliser un autre compte
-          </Button>
-        </Box>
-      </Box>
-    </Container>
+      <div className="form-link">
+        <Link to="/login">Utiliser un autre compte</Link>
+      </div>
+    </FormContainer>
+  );
+}
   );
 }

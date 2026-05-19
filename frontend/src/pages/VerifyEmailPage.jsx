@@ -1,16 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Container,
-  Paper,
-  TextField,
-  Button,
-  Box,
-  Typography,
-  Alert,
-  Link,
-  CircularProgress,
-} from '@mui/material';
-import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { useNavigate, useLocation, useSearchParams, Link } from 'react-router-dom';
+import { Button, Input, Alert, FormContainer } from '@/components';
+import { authApi } from '../services/api';
+import './VerifyEmailPage.css';
 import { authApi } from '../services/api';
 
 export default function VerifyEmailPage() {
@@ -127,137 +119,132 @@ export default function VerifyEmailPage() {
 
   if (verifying) {
     return (
-      <Container maxWidth="sm">
-        <Box sx={{ py: 8, textAlign: 'center' }}>
-          <CircularProgress sx={{ mb: 2 }} />
-          <Typography variant="h6">
-            Vérification de votre email...
-          </Typography>
-        </Box>
-      </Container>
+      <FormContainer
+        title="Vérification en cours..."
+        subtitle="Veuillez patienter"
+        maxWidth="small"
+      >
+        <div className="verifying-loader">
+          <div className="spinner"></div>
+          <p>Vérification de votre email...</p>
+        </div>
+      </FormContainer>
     );
   }
 
   return (
-    <Container maxWidth="sm">
-      <Box sx={{ py: 4 }}>
-        <Typography variant="h3" component="h1" gutterBottom sx={{ mb: 4, textAlign: 'center' }}>
-          Vérifier votre email
-        </Typography>
+    <FormContainer
+      title="Vérifier votre email"
+      subtitle={requiresVerification ? `Confirmez ${email}` : 'Vérifiez votre adresse email'}
+      maxWidth="small"
+    >
+      {successMessage && (
+        <Alert
+          isOpen={true}
+          type="success"
+          title="Succès"
+          message={successMessage}
+          dismissible={false}
+        />
+      )}
 
-        {successMessage && (
-          <Alert severity="success" sx={{ mb: 2 }}>
-            {successMessage}
-          </Alert>
-        )}
+      {error && (
+        <Alert
+          isOpen={true}
+          type="error"
+          title="Erreur"
+          message={error}
+          dismissible={true}
+          onClose={() => setError('')}
+        />
+      )}
 
-        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      {requiresVerification ? (
+        <div className="verify-email-form">
+          <p className="form-description">
+            Un email de vérification a été envoyé à <strong>{email}</strong>.<br />
+            Entrez le code ou cliquez sur le lien dans l'email.
+          </p>
 
-        <Paper elevation={3} sx={{ p: 3 }}>
-          {requiresVerification ? (
-            <>
-              <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
-                Pour activer votre compte, vérifiez votre adresse email.
-                <br />
-                <strong>{email}</strong>
-              </Typography>
+          <form onSubmit={handleVerify}>
+            <Input
+              label="Code de vérification"
+              name="verificationCode"
+              placeholder="Ex: abc123def456"
+              value={formData.verificationCode}
+              onChange={handleChange}
+              required
+              hint="Le code expire dans 24 heures"
+            />
 
-              <Alert severity="info" sx={{ mb: 2 }}>
-                📧 Un email de vérification a été envoyé. Cliquez sur le lien dans l'email ou entrez le code ci-dessous.
-              </Alert>
+            <Button
+              variant="primary"
+              size="medium"
+              fullWidth
+              disabled={loading}
+              loading={loading}
+              type="submit"
+            >
+              {loading ? 'Vérification...' : 'Vérifier mon email'}
+            </Button>
+          </form>
 
-              <form onSubmit={handleVerify}>
-                <TextField
-                  fullWidth
-                  label="Code de vérification"
-                  name="verificationCode"
-                  value={formData.verificationCode}
-                  onChange={handleChange}
-                  margin="normal"
-                  placeholder="Ex: abc123def456"
-                  required
-                />
+          <div className="resend-section">
+            <p className="resend-text">Vous n'avez pas reçu le code ?</p>
+            <Button
+              variant="ghost"
+              size="medium"
+              fullWidth
+              disabled={resendLoading || resendCountdown > 0}
+              onClick={handleResendEmail}
+            >
+              {resendCountdown > 0
+                ? `Renvoyer dans ${resendCountdown}s`
+                : 'Renvoyer le code'}
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div className="verify-email-form">
+          <p className="form-description">
+            Un lien de vérification a été envoyé à <strong>{email}</strong>.<br />
+            Cliquez sur le lien dans l'email pour continuer.
+          </p>
 
-                <Typography variant="caption" color="textSecondary" sx={{ display: 'block', mt: 1, mb: 2 }}>
-                  Vous devriez recevoir le code dans quelques minutes.
-                </Typography>
+          <Button
+            variant="primary"
+            size="medium"
+            fullWidth
+            onClick={() => window.location.href = 'mailto:'}
+          >
+            Ouvrir mon email
+          </Button>
 
-                <Button
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  sx={{ mt: 3 }}
-                  disabled={loading}
-                  type="submit"
-                >
-                  {loading ? 'Vérification...' : 'Vérifier mon email'}
-                </Button>
-              </form>
+          <Button
+            variant="secondary"
+            size="medium"
+            fullWidth
+            disabled={resendCountdown > 0}
+            onClick={handleResendEmail}
+          >
+            {resendCountdown > 0
+              ? `Renvoyer dans ${resendCountdown}s`
+              : 'Renvoyer l\'email'}
+          </Button>
 
-              <Box sx={{ mt: 3, textAlign: 'center' }}>
-                <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
-                  Vous n'avez pas reçu le code ?
-                </Typography>
-                <Button
-                  size="small"
-                  onClick={handleResendEmail}
-                  disabled={resendLoading || resendCountdown > 0}
-                >
-                  {resendCountdown > 0 ? `Renvoyer dans ${resendCountdown}s` : 'Renvoyer le code'}
-                </Button>
-              </Box>
-            </>
-          ) : (
-            <>
-              <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
-                Vérifiez votre email pour continuer.
-              </Typography>
+          <div className="form-link">
+            <Link to="/login">Retour à la connexion</Link>
+          </div>
+        </div>
+      )}
 
-              <Alert severity="info" sx={{ mb: 2 }}>
-                📧 Un lien de vérification a été envoyé à <strong>{email}</strong>
-              </Alert>
-
-              <Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                size="large"
-                sx={{ mt: 3 }}
-                onClick={() => window.location.href = 'mailto:'}
-              >
-                Ouvrir l'email
-              </Button>
-
-              <Button
-                fullWidth
-                variant="outlined"
-                color="primary"
-                size="large"
-                sx={{ mt: 2 }}
-                onClick={handleResendEmail}
-                disabled={resendCountdown > 0}
-              >
-                {resendCountdown > 0 ? `Renvoyer dans ${resendCountdown}s` : 'Renvoyer l\'email'}
-              </Button>
-
-              <Box sx={{ mt: 3, textAlign: 'center' }}>
-                <Link href="/login" underline="hover">
-                  Retour à la connexion
-                </Link>
-              </Box>
-            </>
-          )}
-        </Paper>
-
-        <Alert severity="info" sx={{ mt: 3 }}>
-          <Typography variant="caption">
-            <strong>Pourquoi vérifier l'email ?</strong>
-            <br />
-            Cela protège votre compte et nous permet de vous envoyer des notifications importantes.
-          </Typography>
-        </Alert>
-      </Box>
-    </Container>
+      <div className="verify-email-info">
+        <strong>Pourquoi vérifier l'email ?</strong>
+        <p>
+          Cela protège votre compte et nous permet de vous envoyer des notifications
+          importantes.
+        </p>
+      </div>
+    </FormContainer>
   );
 }
