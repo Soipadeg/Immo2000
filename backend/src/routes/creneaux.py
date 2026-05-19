@@ -11,7 +11,8 @@ Endpoints:
 
 from datetime import datetime
 from flask import Blueprint, request, jsonify
-from src.auth.models import db, User, token_required
+from src.auth.models import db, User
+from src.auth.decorators import token_required
 from src.models.creneaux import CreneauDisponible
 
 

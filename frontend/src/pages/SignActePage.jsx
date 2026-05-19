@@ -527,8 +527,6 @@ export default function SignActePage() {
     </Container>
   );
 }
-
-export default function SignActePage() {
   const navigate = useNavigate();
   const { transactionId } = useParams();
   const { user } = useAuth();
