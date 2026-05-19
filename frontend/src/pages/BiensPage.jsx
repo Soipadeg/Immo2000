@@ -4,44 +4,11 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  Container,
-  Paper,
-  Typography,
-  Box,
-  TextField,
-  Button,
-  Grid,
-  Card,
-  CardContent,
-  CardActions,
-  CircularProgress,
-  Alert,
-  Tabs,
-  Tab,
-  Chip,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Pagination,
-} from '@mui/material';
-import {
-  Add as AddIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  BarChart as BarChartIcon,
-  Image as ImageIcon,
-} from '@mui/icons-material';
+import { Button, Input, Card, Modal, Alert, FormContainer } from '@/components';
 import { biensApi } from '../services/api';
 import ImageUploadComponent from '../components/ImageUpload';
 import ImageGalleryComponent from '../components/ImageGallery';
+import '../styles/BiensPage.css';
 
 const LIMIT = 10;
 
@@ -276,428 +243,373 @@ const BiensPage = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" gutterBottom sx={{ mb: 3, fontWeight: 700 }}>
-        🏠 Gestion de mes Biens
-      </Typography>
+    <div className="biens-page-container">
+      <div className="biens-header">
+        <h1 className="biens-title">🏠 Gestion de mes Biens</h1>
+      </div>
 
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-      {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
+      {error && <Alert type="error" title="Erreur" message={error} />}
+      {success && <Alert type="success" title="Succès" message={success} />}
 
-      <Tabs value={tabValue} onChange={(e, v) => setTabValue(v)} sx={{ mb: 3 }}>
-        <Tab label="Mes propriétés" />
-        <Tab label="Statistiques" />
-      </Tabs>
+      {/* Tabs */}
+      <div className="biens-tabs">
+        <button
+          className={`tab-button ${tabValue === 0 ? 'active' : ''}`}
+          onClick={() => setTabValue(0)}
+        >
+          Mes propriétés
+        </button>
+        <button
+          className={`tab-button ${tabValue === 1 ? 'active' : ''}`}
+          onClick={() => setTabValue(1)}
+        >
+          Statistiques
+        </button>
+      </div>
 
       {/* Onglet 1: Mes propriétés */}
       {tabValue === 0 && (
-        <Box>
+        <div className="biens-content">
           <Button
-            variant="contained"
-            color="primary"
-            startIcon={<AddIcon />}
+            variant="primary"
             onClick={() => setCreateDialogOpen(true)}
-            sx={{ mb: 2 }}
+            className="create-button"
           >
-            Ajouter une propriété
+            ➕ Ajouter une propriété
           </Button>
 
           {loading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-              <CircularProgress />
-            </Box>
+            <div className="loading-container">
+              <div className="spinner"></div>
+            </div>
           ) : biens.length === 0 ? (
-            <Paper sx={{ p: 3, textAlign: 'center' }}>
-              <Typography color="text.secondary">
-                Aucune propriété pour le moment
-              </Typography>
-            </Paper>
+            <Card className="empty-state">
+              <p>Aucune propriété pour le moment</p>
+            </Card>
           ) : (
             <>
-              <Grid container spacing={2}>
+              <div className="biens-grid">
                 {biens.map((bien) => (
-                  <Grid item xs={12} sm={6} md={4} key={bien.bien_id}>
-                    <Card>
-                      {/* Galerie d'images */}
-                      <Box sx={{ maxHeight: 200, overflowY: 'auto', backgroundColor: '#f5f5f5' }}>
-                        <ImageGalleryComponent
-                          annonceId={bien.bien_id}
-                          onDelete={() => loadMyBiens()}
-                        />
-                      </Box>
+                  <Card key={bien.bien_id} className="bien-card">
+                    <div className="bien-image">
+                      <ImageGalleryComponent
+                        annonceId={bien.bien_id}
+                        onDelete={() => loadMyBiens()}
+                      />
+                    </div>
 
-                      <CardContent>
-                        <Typography variant="h6" gutterBottom>
-                          {bien.adresse}
-                        </Typography>
-                        <Typography color="text.secondary" variant="body2" gutterBottom>
-                          {bien.code_postal} {bien.ville}
-                        </Typography>
+                    <div className="bien-content">
+                      <h3 className="bien-address">{bien.adresse}</h3>
+                      <p className="bien-city">
+                        {bien.code_postal} {bien.ville}
+                      </p>
 
-                        <Chip
-                          label={bien.type_bien}
-                          size="small"
-                          sx={{ mt: 1, mb: 1 }}
-                        />
+                      <span className="bien-type-badge">{bien.type_bien}</span>
 
-                        <Typography variant="body2" sx={{ mt: 1 }}>
-                          <strong>{bien.surface}m²</strong>
-                          {bien.nombre_pieces && ` • ${bien.nombre_pieces} pièces`}
-                        </Typography>
+                      <p className="bien-specs">
+                        <strong>{bien.surface}m²</strong>
+                        {bien.nombre_pieces && ` • ${bien.nombre_pieces} pièces`}
+                      </p>
 
-                        {bien.prix && (
-                          <Typography
-                            variant="h6"
-                            sx={{
-                              mt: 1,
-                              color: '#1976d2',
-                              fontWeight: 700,
-                            }}
-                          >
-                            {formatPrice(bien.prix)}
-                          </Typography>
-                        )}
+                      {bien.prix && (
+                        <p className="bien-price">
+                          {formatPrice(bien.prix)}
+                        </p>
+                      )}
 
-                        {bien.description && (
-                          <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            sx={{ mt: 1 }}
-                          >
-                            {bien.description.substring(0, 100)}...
-                          </Typography>
-                        )}
-                      </CardContent>
-                      <CardActions>
-                        <Button
-                          size="small"
-                          startIcon={<ImageIcon />}
-                          onClick={() => {
-                            setSelectedBienId(bien.bien_id);
-                            setImageUploadDialogOpen(true);
-                          }}
-                        >
-                          Ajouter photos
-                        </Button>
-                        <Button
-                          size="small"
-                          startIcon={<EditIcon />}
-                          onClick={() => handleEditBien(bien)}
-                        >
-                          Modifier
-                        </Button>
-                        <Button
-                          size="small"
-                          color="error"
-                          startIcon={<DeleteIcon />}
-                          onClick={() => handleDeleteBien(bien.bien_id)}
-                        >
-                          Supprimer
-                        </Button>
-                      </CardActions>
-                    </Card>
-                  </Grid>
+                      {bien.description && (
+                        <p className="bien-description">
+                          {bien.description.substring(0, 100)}...
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="bien-actions">
+                      <Button
+                        size="small"
+                        variant="secondary"
+                        onClick={() => {
+                          setSelectedBienId(bien.bien_id);
+                          setImageUploadDialogOpen(true);
+                        }}
+                      >
+                        📸 Photos
+                      </Button>
+                      <Button
+                        size="small"
+                        variant="secondary"
+                        onClick={() => handleEditBien(bien)}
+                      >
+                        ✏️ Modifier
+                      </Button>
+                      <Button
+                        size="small"
+                        variant="danger"
+                        onClick={() => handleDeleteBien(bien.bien_id)}
+                      >
+                        🗑️ Supprimer
+                      </Button>
+                    </div>
+                  </Card>
                 ))}
-              </Grid>
+              </div>
 
               {/* Pagination */}
-              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
-                <Pagination
-                  count={Math.ceil((biens.length || 0) / LIMIT)}
-                  page={page}
-                  onChange={(e, value) => setPage(value)}
-                />
-              </Box>
+              <div className="pagination-container">
+                <div className="pagination">
+                  {page > 1 && (
+                    <button
+                      className="pagination-button"
+                      onClick={() => setPage(page - 1)}
+                    >
+                      ← Précédent
+                    </button>
+                  )}
+                  <span className="pagination-info">Page {page}</span>
+                  {biens.length === LIMIT && (
+                    <button
+                      className="pagination-button"
+                      onClick={() => setPage(page + 1)}
+                    >
+                      Suivant →
+                    </button>
+                  )}
+                </div>
+              </div>
             </>
           )}
-        </Box>
+        </div>
       )}
 
       {/* Onglet 2: Statistiques */}
       {tabValue === 1 && (
-        <Box>
+        <div className="stats-content">
           {loading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-              <CircularProgress />
-            </Box>
+            <div className="loading-container">
+              <div className="spinner"></div>
+            </div>
           ) : stats ? (
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6} md={3}>
-                <Paper sx={{ p: 2, textAlign: 'center' }}>
-                  <Typography variant="body2" color="text.secondary">
-                    Total de Biens
-                  </Typography>
-                  <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                    {stats.total_biens || 0}
-                  </Typography>
-                </Paper>
-              </Grid>
-              <Grid item xs={12} sm={6} md={3}>
-                <Paper sx={{ p: 2, textAlign: 'center' }}>
-                  <Typography variant="body2" color="text.secondary">
-                    Surface Totale
-                  </Typography>
-                  <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                    {stats.surface_totale || 0}m²
-                  </Typography>
-                </Paper>
-              </Grid>
-              <Grid item xs={12} sm={6} md={3}>
-                <Paper sx={{ p: 2, textAlign: 'center' }}>
-                  <Typography variant="body2" color="text.secondary">
-                    Valeur Totale
-                  </Typography>
-                  <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                    {formatPrice(stats.valeur_totale || 0)}
-                  </Typography>
-                </Paper>
-              </Grid>
-              <Grid item xs={12} sm={6} md={3}>
-                <Paper sx={{ p: 2, textAlign: 'center' }}>
-                  <Typography variant="body2" color="text.secondary">
-                    Prix Moyen/m²
-                  </Typography>
-                  <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                    {formatPrice(stats.prix_moyen_m2 || 0)}
-                  </Typography>
-                </Paper>
-              </Grid>
-            </Grid>
+            <div className="stats-grid">
+              <Card className="stat-card">
+                <p className="stat-label">Total de Biens</p>
+                <p className="stat-value">{stats.total_biens || 0}</p>
+              </Card>
+              <Card className="stat-card">
+                <p className="stat-label">Surface Totale</p>
+                <p className="stat-value">{stats.surface_totale || 0}m²</p>
+              </Card>
+              <Card className="stat-card">
+                <p className="stat-label">Valeur Totale</p>
+                <p className="stat-value">{formatPrice(stats.valeur_totale || 0)}</p>
+              </Card>
+              <Card className="stat-card">
+                <p className="stat-label">Prix Moyen/m²</p>
+                <p className="stat-value">{formatPrice(stats.prix_moyen_m2 || 0)}</p>
+              </Card>
+            </div>
           ) : (
-            <Paper sx={{ p: 3, textAlign: 'center' }}>
-              <Typography color="text.secondary">
-                Aucune données statistiques disponibles
-              </Typography>
-            </Paper>
+            <Card className="empty-state">
+              <p>Aucune données statistiques disponibles</p>
+            </Card>
           )}
-        </Box>
+        </div>
       )}
 
-      {/* Dialog de création */}
-      <Dialog
-        open={createDialogOpen}
-        onClose={() => setCreateDialogOpen(false)}
-        fullWidth
-        maxWidth="sm"
-      >
-        <DialogTitle>Créer une nouvelle propriété</DialogTitle>
-        <DialogContent>
-          <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <TextField
-              fullWidth
-              label="Adresse *"
-              name="adresse"
-              value={formData.adresse}
-              onChange={handleInputChange}
-              required
-            />
-            <TextField
-              fullWidth
-              label="Ville *"
-              name="ville"
-              value={formData.ville}
-              onChange={handleInputChange}
-              required
-            />
-            <TextField
-              fullWidth
-              label="Code postal"
-              name="code_postal"
-              value={formData.code_postal}
-              onChange={handleInputChange}
-            />
-            <TextField
-              fullWidth
-              label="Type de bien *"
-              name="type_bien"
-              select
-              SelectProps={{ native: true }}
-              value={formData.type_bien}
-              onChange={handleInputChange}
-            >
-              <option value="appartement">Appartement</option>
-              <option value="maison">Maison</option>
-              <option value="terrain">Terrain</option>
-              <option value="commerce">Commerce</option>
-              <option value="bureau">Bureau</option>
-            </TextField>
-            <TextField
-              fullWidth
-              label="Surface (m²) *"
-              name="surface"
-              type="number"
-              value={formData.surface}
-              onChange={handleInputChange}
-              required
-              inputProps={{ step: '0.1', min: '0' }}
-            />
-            <TextField
-              fullWidth
-              label="Nombre de pièces"
-              name="nombre_pieces"
-              type="number"
-              value={formData.nombre_pieces}
-              onChange={handleInputChange}
-              inputProps={{ min: '0' }}
-            />
-            <TextField
-              fullWidth
-              label="Prix"
-              name="prix"
-              type="number"
-              value={formData.prix}
-              onChange={handleInputChange}
-              inputProps={{ step: '1000', min: '0' }}
-            />
-            <TextField
-              fullWidth
-              label="Description"
-              name="description"
-              multiline
-              rows={3}
-              value={formData.description}
-              onChange={handleInputChange}
-            />
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setCreateDialogOpen(false)}>Annuler</Button>
-          <Button
-            onClick={handleCreateBien}
-            variant="contained"
-            color="primary"
-            disabled={createLoading}
-          >
-            {createLoading ? <CircularProgress size={24} /> : 'Créer'}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {/* Modal de création */}
+      {createDialogOpen && (
+        <Modal onClose={() => setCreateDialogOpen(false)}>
+          <div className="dialog-content">
+            <h2 className="dialog-title">Créer une nouvelle propriété</h2>
+            <div className="form-fields">
+              <Input
+                label="Adresse *"
+                name="adresse"
+                value={formData.adresse}
+                onChange={handleInputChange}
+                required
+              />
+              <Input
+                label="Ville *"
+                name="ville"
+                value={formData.ville}
+                onChange={handleInputChange}
+                required
+              />
+              <Input
+                label="Code postal"
+                name="code_postal"
+                value={formData.code_postal}
+                onChange={handleInputChange}
+              />
+              <select
+                name="type_bien"
+                value={formData.type_bien}
+                onChange={handleInputChange}
+                className="form-select"
+              >
+                <option value="appartement">Appartement</option>
+                <option value="maison">Maison</option>
+                <option value="terrain">Terrain</option>
+                <option value="commerce">Commerce</option>
+                <option value="bureau">Bureau</option>
+              </select>
+              <Input
+                label="Surface (m²) *"
+                name="surface"
+                type="number"
+                value={formData.surface}
+                onChange={handleInputChange}
+                required
+              />
+              <Input
+                label="Nombre de pièces"
+                name="nombre_pieces"
+                type="number"
+                value={formData.nombre_pieces}
+                onChange={handleInputChange}
+              />
+              <Input
+                label="Prix"
+                name="prix"
+                type="number"
+                value={formData.prix}
+                onChange={handleInputChange}
+              />
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                placeholder="Description"
+                className="form-textarea"
+              />
+            </div>
+            <div className="dialog-actions">
+              <Button onClick={() => setCreateDialogOpen(false)} variant="secondary">
+                Annuler
+              </Button>
+              <Button
+                onClick={handleCreateBien}
+                variant="primary"
+                disabled={createLoading}
+              >
+                {createLoading ? 'Création...' : 'Créer'}
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
 
-      {/* Dialog d'édition */}
-      <Dialog
-        open={editDialogOpen}
-        onClose={() => setEditDialogOpen(false)}
-        fullWidth
-        maxWidth="sm"
-      >
-        <DialogTitle>Modifier la propriété</DialogTitle>
-        <DialogContent>
-          <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <TextField
-              fullWidth
-              label="Adresse *"
-              name="adresse"
-              value={editFormData.adresse}
-              onChange={handleEditInputChange}
-              required
-            />
-            <TextField
-              fullWidth
-              label="Ville *"
-              name="ville"
-              value={editFormData.ville}
-              onChange={handleEditInputChange}
-              required
-            />
-            <TextField
-              fullWidth
-              label="Code postal"
-              name="code_postal"
-              value={editFormData.code_postal}
-              onChange={handleEditInputChange}
-            />
-            <TextField
-              fullWidth
-              label="Type de bien *"
-              name="type_bien"
-              select
-              SelectProps={{ native: true }}
-              value={editFormData.type_bien}
-              onChange={handleEditInputChange}
-            >
-              <option value="appartement">Appartement</option>
-              <option value="maison">Maison</option>
-              <option value="terrain">Terrain</option>
-              <option value="local_commercial">Local commercial</option>
-            </TextField>
-            <TextField
-              fullWidth
-              label="Surface (m²) *"
-              name="surface"
-              type="number"
-              value={editFormData.surface}
-              onChange={handleEditInputChange}
-              inputProps={{ step: '0.01', min: '0' }}
-              required
-            />
-            <TextField
-              fullWidth
-              label="Nombre de pièces"
-              name="nombre_pieces"
-              type="number"
-              value={editFormData.nombre_pieces}
-              onChange={handleEditInputChange}
-              inputProps={{ step: '1', min: '0' }}
-            />
-            <TextField
-              fullWidth
-              label="Prix (€)"
-              name="prix"
-              type="number"
-              value={editFormData.prix}
-              onChange={handleEditInputChange}
-              inputProps={{ step: '1000', min: '0' }}
-            />
-            <TextField
-              fullWidth
-              label="Description"
-              name="description"
-              multiline
-              rows={3}
-              value={editFormData.description}
-              onChange={handleEditInputChange}
-            />
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setEditDialogOpen(false)}>Annuler</Button>
-          <Button
-            onClick={handleSaveBien}
-            variant="contained"
-            color="primary"
-            disabled={editLoading}
-          >
-            {editLoading ? <CircularProgress size={24} /> : 'Enregistrer'}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {/* Modal d'édition */}
+      {editDialogOpen && (
+        <Modal onClose={() => setEditDialogOpen(false)}>
+          <div className="dialog-content">
+            <h2 className="dialog-title">Modifier la propriété</h2>
+            <div className="form-fields">
+              <Input
+                label="Adresse *"
+                name="adresse"
+                value={editFormData.adresse}
+                onChange={handleEditInputChange}
+                required
+              />
+              <Input
+                label="Ville *"
+                name="ville"
+                value={editFormData.ville}
+                onChange={handleEditInputChange}
+                required
+              />
+              <Input
+                label="Code postal"
+                name="code_postal"
+                value={editFormData.code_postal}
+                onChange={handleEditInputChange}
+              />
+              <select
+                name="type_bien"
+                value={editFormData.type_bien}
+                onChange={handleEditInputChange}
+                className="form-select"
+              >
+                <option value="appartement">Appartement</option>
+                <option value="maison">Maison</option>
+                <option value="terrain">Terrain</option>
+                <option value="local_commercial">Local commercial</option>
+              </select>
+              <Input
+                label="Surface (m²) *"
+                name="surface"
+                type="number"
+                value={editFormData.surface}
+                onChange={handleEditInputChange}
+                required
+              />
+              <Input
+                label="Nombre de pièces"
+                name="nombre_pieces"
+                type="number"
+                value={editFormData.nombre_pieces}
+                onChange={handleEditInputChange}
+              />
+              <Input
+                label="Prix (€)"
+                name="prix"
+                type="number"
+                value={editFormData.prix}
+                onChange={handleEditInputChange}
+              />
+              <textarea
+                name="description"
+                value={editFormData.description}
+                onChange={handleEditInputChange}
+                placeholder="Description"
+                className="form-textarea"
+              />
+            </div>
+            <div className="dialog-actions">
+              <Button onClick={() => setEditDialogOpen(false)} variant="secondary">
+                Annuler
+              </Button>
+              <Button
+                onClick={handleSaveBien}
+                variant="primary"
+                disabled={editLoading}
+              >
+                {editLoading ? 'Enregistrement...' : 'Enregistrer'}
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
 
-      {/* Dialog pour uploader les images */}
-      <Dialog
-        open={imageUploadDialogOpen}
-        onClose={() => setImageUploadDialogOpen(false)}
-        fullWidth
-        maxWidth="sm"
-      >
-        <DialogTitle>📸 Ajouter des photos à la propriété</DialogTitle>
-        <DialogContent>
-          {selectedBienId && (
-            <ImageUploadComponent
-              annonceId={selectedBienId}
-              onUploadSuccess={() => {
-                setSuccess('Images uploadées avec succès !');
-                setImageUploadDialogOpen(false);
-                loadMyBiens();
-                setTimeout(() => setSuccess(''), 3000);
-              }}
-            />
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setImageUploadDialogOpen(false)}>Fermer</Button>
-        </DialogActions>
-      </Dialog>
-    </Container>
+      {/* Modal pour uploader les images */}
+      {imageUploadDialogOpen && (
+        <Modal onClose={() => setImageUploadDialogOpen(false)}>
+          <div className="dialog-content">
+            <h2 className="dialog-title">📸 Ajouter des photos à la propriété</h2>
+            {selectedBienId && (
+              <ImageUploadComponent
+                annonceId={selectedBienId}
+                onUploadSuccess={() => {
+                  setSuccess('Images uploadées avec succès !');
+                  setImageUploadDialogOpen(false);
+                  loadMyBiens();
+                  setTimeout(() => setSuccess(''), 3000);
+                }}
+              />
+            )}
+            <div className="dialog-actions">
+              <Button
+                onClick={() => setImageUploadDialogOpen(false)}
+                variant="secondary"
+              >
+                Fermer
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
+    </div>
   );
 };
 
