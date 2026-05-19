@@ -1,0 +1,133 @@
+/* Textarea Component Styles */
+
+.textarea-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.textarea-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1F2937;
+  display: block;
+}
+
+.textarea-label__required {
+  color: #EF4444;
+  margin-left: 4px;
+}
+
+.textarea-wrapper {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  border: 1px solid #D1D5DB;
+  border-radius: 8px;
+  background-color: #FFFFFF;
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 12px;
+}
+
+.textarea-wrapper--focused {
+  border-color: #2563EB;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.textarea-wrapper--error {
+  border-color: #EF4444;
+}
+
+.textarea-wrapper--error.textarea-wrapper--focused {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.textarea-wrapper--disabled {
+  background-color: #F9FAFB;
+  border-color: #E5E7EB;
+}
+
+.textarea-control {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 1rem;
+  color: #1F2937;
+  outline: none;
+  width: 100%;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.textarea-control::placeholder {
+  color: #9CA3AF;
+}
+
+.textarea-control:disabled {
+  color: #9CA3AF;
+  cursor: not-allowed;
+}
+
+.textarea-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.textarea-error {
+  font-size: 0.75rem;
+  color: #EF4444;
+  font-weight: 500;
+  display: block;
+}
+
+.textarea-hint {
+  font-size: 0.75rem;
+  color: #6B7280;
+  display: block;
+}
+
+.textarea-counter {
+  font-size: 0.75rem;
+  color: #9CA3AF;
+  white-space: nowrap;
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .textarea-label {
+    color: #F3F4F6;
+  }
+
+  .textarea-wrapper {
+    background-color: #1F2937;
+    border-color: #374151;
+  }
+
+  .textarea-wrapper--focused {
+    border-color: #3B82F6;
+  }
+
+  .textarea-wrapper--disabled {
+    background-color: #111827;
+    border-color: #374151;
+  }
+
+  .textarea-control {
+    color: #F3F4F6;
+  }
+
+  .textarea-control::placeholder {
+    color: #6B7280;
+  }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .textarea-control {
+    font-size: 16px; /* Prevent auto zoom on iOS */
+  }
+}
