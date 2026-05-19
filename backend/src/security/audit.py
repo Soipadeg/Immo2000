@@ -1,13 +1,14 @@
 """
-Système d'audit et de logging pour les actions administrateur
+Audit et logging des actions sensibles pour conformité RGPD et sécurité
 """
 
-import logging
 import json
 from datetime import datetime
+from flask import request, current_app
 from functools import wraps
-from flask import request, g, current_app
-from src.models import db
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Logger structuré
 class StructuredLogger:
