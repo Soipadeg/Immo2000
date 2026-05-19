@@ -5,38 +5,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Container,
-  Typography,
-  Paper,
-  Grid,
-  Card,
-  CardContent,
-  CardMedia,
-  CardActions,
-  Button,
-  Chip,
-  TextField,
-  MenuItem,
-  Alert,
-  CircularProgress,
-  Pagination,
-  InputAdornment,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  FormControlLabel,
-  Checkbox,
-  Slider,
-} from '@mui/material';
-import {
-  Search as SearchIcon,
-  Favorite as FavoriteIcon,
-  FavoriteBorder as FavoriteBorderIcon,
-  Share as ShareIcon,
-  ExpandMore as ExpandMoreIcon,
-} from '@mui/icons-material';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { annoncesApi } from '../services/api';
@@ -76,31 +44,30 @@ const AnnonceBienCard = ({ annonce, isFavorite, onToggleFavorite, navigate }) =>
           height="200"
           image={annonce.photos[0]}
           alt={annonce.titre}
-          sx={{ objectFit: 'cover' }}
         />
       )}
 
-      <CardContent sx={{ flexGrow: 1 }}>
+      <CardContent>
         {/* Titre */}
-        <Typography gutterBottom variant="h6" component="div">
+        <p>
           {annonce.titre}
-        </Typography>
+        </p>
 
         {/* Prix */}
-        <Typography variant="h5" color="primary" sx={{ mb: 1 }}>
+        <p>
           {annonce.prix.toLocaleString('fr-FR', {
             style: 'currency',
             currency: 'EUR',
           })}
-        </Typography>
+        </p>
 
         {/* Localisation */}
-        <Typography variant="body2" color="text.secondary" gutterBottom>
+        <p>
           📍 {annonce.adresse}, {annonce.code_postal} {annonce.ville}
-        </Typography>
+        </p>
 
         {/* Caractéristiques */}
-        <Box sx={{ my: 2, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+        <div>
           <Chip
             label={`${annonce.surface}m²`}
             size="small"
@@ -116,7 +83,7 @@ const AnnonceBienCard = ({ annonce, isFavorite, onToggleFavorite, navigate }) =>
             size="small"
             variant="outlined"
           />
-        </Box>
+        </div>
 
         {/* Équipements */}
         {(annonce.ascenseur ||
@@ -125,19 +92,19 @@ const AnnonceBienCard = ({ annonce, isFavorite, onToggleFavorite, navigate }) =>
           annonce.jardin ||
           annonce.piscine ||
           annonce.parking) && (
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="caption" color="text.secondary" display="block">
+          <div>
+            <p>
               Équipements:
-            </Typography>
-            <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', mt: 0.5 }}>
+            </p>
+            <div>
               {annonce.ascenseur && <Chip label="🛗 Ascenseur" size="small" />}
               {annonce.balcon && <Chip label="🏠 Balcon" size="small" />}
               {annonce.terrasse && <Chip label="🪴 Terrasse" size="small" />}
               {annonce.jardin && <Chip label="🌳 Jardin" size="small" />}
               {annonce.piscine && <Chip label="🏊 Piscine" size="small" />}
               {annonce.parking && <Chip label="🚗 Parking" size="small" />}
-            </Box>
-          </Box>
+            </div>
+          </div>
         )}
 
         {/* DPE */}
@@ -145,36 +112,32 @@ const AnnonceBienCard = ({ annonce, isFavorite, onToggleFavorite, navigate }) =>
           <Chip
             label={`DPE: ${annonce.dpe}`}
             size="small"
-            sx={{ mb: 2 }}
           />
         )}
 
         {/* Description */}
-        <Typography variant="body2" color="text.secondary">
+        <p>
           {annonce.description.substring(0, 150)}...
-        </Typography>
+        </p>
 
         {/* Date création */}
-        <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+        <p>
           Annoncée le {format(new Date(annonce.date_creation), 'dd MMMM yyyy', { locale: fr })}
-        </Typography>
+        </p>
       </CardContent>
 
       {/* Actions */}
       <CardActions>
-        <Button
-          size="small"
+        <button size="small"
           startIcon={isFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
           onClick={(e) => {
             e.stopPropagation();
             onToggleFavorite();
           }}
-          color={isFavorite ? 'error' : 'inherit'}
         >
           {isFavorite ? 'Favoris' : 'Ajouter'}
-        </Button>
-        <Button
-          size="small"
+        </button>
+        <button size="small"
           startIcon={<ShareIcon />}
           onClick={(e) => {
             e.stopPropagation();
@@ -188,19 +151,17 @@ const AnnonceBienCard = ({ annonce, isFavorite, onToggleFavorite, navigate }) =>
           }}
         >
           Partager
-        </Button>
-        <Button
-          size="small"
+        </button>
+        <button size="small"
           variant="contained"
           color="primary"
           onClick={(e) => {
             e.stopPropagation();
             navigate(`/annonce/${annonce.annonce_id}`);
           }}
-          sx={{ ml: 'auto' }}
         >
           Voir
-        </Button>
+        </button>
       </CardActions>
     </Card>
   );
@@ -337,30 +298,30 @@ export const RechercheBiens = () => {
   const maxPages = Math.ceil(total / limit) || 1;
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <Container maxWidth="lg">
       {/* En-tête */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
+      <div>
+        <p>
           🔍 Rechercher des biens immobiliers
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
+        </p>
+        <p>
           Trouvez votre maison ou appartement idéal
-        </Typography>
-      </Box>
+        </p>
+      </div>
 
       {/* Messages */}
       {error && (
-        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError('')}>
+        <Alert severity="error" onClose={() => setError('')}>
           {error}
         </Alert>
       )}
 
       {/* Formulaire de recherche */}
-      <Paper sx={{ p: 3, mb: 4 }}>
-        <Typography variant="h6" gutterBottom>
+      <div className="card">
+        <p>
           🔎 Recherche
-        </Typography>
-        <Grid container spacing={2} sx={{ mb: 2 }}>
+        </p>
+        <Grid container spacing={2}>
           {/* Recherche texte principale */}
           <Grid item xs={12}>
             <TextField
@@ -403,44 +364,41 @@ export const RechercheBiens = () => {
 
           {/* Bouton rechercher */}
           <Grid item xs={12} sm={4}>
-            <Button
-              fullWidth
+            <button fullWidth
               variant="contained"
               color="primary"
               onClick={loadAnnonces}
               disabled={loading}
             >
               Rechercher
-            </Button>
+            </button>
           </Grid>
 
           <Grid item xs={12} sm={4}>
-            <Button
-              fullWidth
+            <button fullWidth
               variant="outlined"
               onClick={() => setOpenAlerteModal(true)}
             >
               🔔 Créer une alerte
-            </Button>
+            </button>
           </Grid>
 
           <Grid item xs={12} sm={4}>
-            <Button
-              fullWidth
+            <button fullWidth
               variant="outlined"
               onClick={handleResetFilters}
             >
               Réinitialiser
-            </Button>
+            </button>
           </Grid>
         </Grid>
 
         {/* Filtres avancés */}
         <Accordion>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="subtitle2">
+            <p>
               ⚙️ Filtres avancés
-            </Typography>
+            </p>
           </AccordionSummary>
 
           <AccordionDetails>
@@ -486,7 +444,7 @@ export const RechercheBiens = () => {
 
               {/* Nombre de pièces */}
               <Grid item xs={12} sm={6} md={4}>
-                <Box sx={{ display: 'flex', gap: 1 }}>
+                <div>
                   <TextField
                     fullWidth
                     type="number"
@@ -505,15 +463,15 @@ export const RechercheBiens = () => {
                     size="small"
                     inputProps={{ min: 1 }}
                   />
-                </Box>
+                </div>
               </Grid>
 
               {/* Prix */}
               <Grid item xs={12} sm={6} md={6}>
-                <Typography variant="caption" gutterBottom sx={{ display: 'block' }}>
+                <p>
                   Prix (€)
-                </Typography>
-                <Box sx={{ display: 'flex', gap: 1 }}>
+                </p>
+                <div>
                   <TextField
                     fullWidth
                     type="number"
@@ -532,15 +490,15 @@ export const RechercheBiens = () => {
                     size="small"
                     placeholder="1000000"
                   />
-                </Box>
+                </div>
               </Grid>
 
               {/* Surface */}
               <Grid item xs={12} sm={6} md={6}>
-                <Typography variant="caption" gutterBottom sx={{ display: 'block' }}>
+                <p>
                   Surface (m²)
-                </Typography>
-                <Box sx={{ display: 'flex', gap: 1 }}>
+                </p>
+                <div>
                   <TextField
                     fullWidth
                     type="number"
@@ -559,15 +517,15 @@ export const RechercheBiens = () => {
                     size="small"
                     placeholder="500"
                   />
-                </Box>
+                </div>
               </Grid>
 
               {/* Équipements */}
               <Grid item xs={12}>
-                <Typography variant="subtitle2" gutterBottom sx={{ mb: 1 }}>
+                <p>
                   ✨ Équipements
-                </Typography>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                </p>
+                <div>
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -622,18 +580,18 @@ export const RechercheBiens = () => {
                     }
                     label="Parking"
                   />
-                </Box>
+                </div>
               </Grid>
             </Grid>
           </AccordionDetails>
         </Accordion>
-      </Paper>
+      </div>
 
       {/* Chargement */}
       {loading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress />
-        </Box>
+        <div>
+          <div class="spinner"></div>
+        </div>
       )}
 
       {/* Aucun résultat */}
@@ -647,15 +605,15 @@ export const RechercheBiens = () => {
       {!loading && annonces.length > 0 && (
         <>
           {/* Statistiques */}
-          <Box sx={{ mb: 3 }}>
-            <Typography variant="body2" color="text.secondary">
+          <div>
+            <p>
               {total} bien{total > 1 ? 's' : ''} trouvé{total > 1 ? 's' : ''} •
               Affichage {(page - 1) * limit + 1} à {Math.min(page * limit, total)}
-            </Typography>
-          </Box>
+            </p>
+          </div>
 
           {/* Grille */}
-          <Grid container spacing={3} sx={{ mb: 4 }}>
+          <Grid container spacing={3}>
             {annonces.map((annonce) => (
               <Grid item xs={12} sm={6} md={4} key={annonce.annonce_id}>
                 <AnnonceBienCard
@@ -670,14 +628,14 @@ export const RechercheBiens = () => {
 
           {/* Pagination */}
           {maxPages > 1 && (
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+            <div>
               <Pagination
                 count={maxPages}
                 page={page}
                 onChange={(event, value) => setPage(value)}
                 color="primary"
               />
-            </Box>
+            </div>
           )}
         </>
       )}

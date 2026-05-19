@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, CircularProgress, Typography } from '@mui/material';
 
 /**
  * Wrapper pour accès direct à un rôle en mode développement
@@ -65,10 +64,10 @@ const DevRoleWrapper = ({ roleId, targetPath }) => {
 
   if (isProcessing) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column' }}>
-        <CircularProgress sx={{ mb: 2 }} />
-        <Typography>Activation du profil {roleId}...</Typography>
-      </Box>
+      <div>
+        <div class="spinner"></div>
+        <p>Activation du profil {roleId}...</p>
+      </div>
     );
   }
 

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Box, CircularProgress, Typography } from '@mui/material';
 
 /**
  * Wrapper that ensures dev_mode is properly established before rendering children
@@ -43,22 +42,25 @@ const DevModeWaitingWrapper = ({ children }) => {
 
   if (isWaiting) {
     return (
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '100vh',
-          flexDirection: 'column',
-          gap: 2,
-          bgcolor: '#f5f5f5',
-        }}
-      >
-        <CircularProgress />
-        <Typography variant="body1" color="textSecondary">
-          Initialisation...
-        </Typography>
-      </Box>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+        flexDirection: 'column',
+        gap: '1rem',
+        backgroundColor: '#f5f5f5',
+      }}>
+        <div style={{
+          width: '2rem',
+          height: '2rem',
+          border: '3px solid #e5e7eb',
+          borderTop: '3px solid #4f46e5',
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite',
+        }} />
+        <p style={{ color: '#666' }}>Initialisation...</p>
+      </div>
     );
   }
 

@@ -4,34 +4,6 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Container,
-  Typography,
-  Paper,
-  Grid,
-  Card,
-  CardContent,
-  CardActions,
-  Button,
-  Chip,
-  TextField,
-  MenuItem,
-  Alert,
-  CircularProgress,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Pagination,
-} from '@mui/material';
-import {
-  Edit as EditIcon,
-  Archive as ArchiveIcon,
-  Publish as PublishIcon,
-  Delete as DeleteIcon,
-  LocalDining as SellIcon,
-} from '@mui/icons-material';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import useAnnoncesStore from '../hooks/useAnnoncesStore';
@@ -57,7 +29,6 @@ const StatutChip = ({ statut }) => {
   return (
     <Chip
       label={labelMap[statut] || statut}
-      color={colorMap[statut]}
       size="small"
       variant="outlined"
     />
@@ -80,107 +51,101 @@ const AnnoncesCard = ({ annonce, onEdit, onPublish, onArchive, onSell, onDelete 
   };
 
   return (
-    <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <CardContent sx={{ flexGrow: 1 }}>
+    <Card>
+      <CardContent>
         {/* Titre */}
-        <Typography gutterBottom variant="h6" component="div">
+        <p>
           {annonce.titre}
-        </Typography>
+        </p>
 
         {/* Prix et surface */}
-        <Typography variant="body2" color="text.secondary" gutterBottom>
+        <p>
           {annonce.prix.toLocaleString('fr-FR', {
             style: 'currency',
             currency: 'EUR',
           })}{' '}
           • {annonce.surface}m²
-        </Typography>
+        </p>
 
         {/* Localisation */}
-        <Typography variant="body2" color="text.secondary" gutterBottom>
+        <p>
           {annonce.adresse}, {annonce.code_postal} {annonce.ville}
-        </Typography>
+        </p>
 
         {/* Type et pièces */}
-        <Box sx={{ my: 1 }}>
+        <div>
           <Chip
             label={annonce.type_bien}
             size="small"
-            sx={{ mr: 1 }}
           />
           <Chip
             label={`${annonce.nombre_pieces} pièces`}
             size="small"
           />
-        </Box>
+        </div>
 
         {/* Description courte */}
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+        <p>
           {annonce.description.substring(0, 100)}...
-        </Typography>
+        </p>
 
         {/* Statut */}
-        <Box sx={{ mt: 2 }}>
+        <div>
           <StatutChip statut={annonce.statut} />
-        </Box>
+        </div>
 
         {/* Dates */}
-        <Typography variant="caption" color="text.secondary" sx={{ mt: 2, display: 'block' }}>
+        <p>
           Créée le {format(new Date(annonce.date_creation), 'dd MMMM yyyy', { locale: fr })}
-        </Typography>
+        </p>
         {annonce.date_vente && (
-          <Typography variant="caption" color="text.secondary" display="block">
+          <p>
             Vendue le {format(new Date(annonce.date_vente), 'dd MMMM yyyy', { locale: fr })}
-          </Typography>
+          </p>
         )}
       </CardContent>
 
       {/* Actions */}
-      <CardActions sx={{ flexWrap: 'wrap', gap: 1 }}>
+      <CardActions>
         {canPublish && (
-          <Button
-            size="small"
+          <button size="small"
             color="success"
             startIcon={<PublishIcon />}
             onClick={() => onPublish(annonce.annonce_id)}
           >
             Publier
-          </Button>
+          </button>
         )}
 
         {canArchive && (
-          <Button
-            size="small"
+          <button size="small"
             color="warning"
             startIcon={<ArchiveIcon />}
             onClick={() => onArchive(annonce.annonce_id)}
           >
             Archiver
-          </Button>
+          </button>
         )}
 
         {canSell && (
-          <Button
-            size="small"
+          <button size="small"
             color="error"
             startIcon={<SellIcon />}
             onClick={handleSellClick}
           >
             Vendue
-          </Button>
+          </button>
         )}
 
-        <Button
-          size="small"
+        <button size="small"
           startIcon={<EditIcon />}
           onClick={() => onEdit(annonce.annonce_id)}
         >
           Éditer
-        </Button>
+        </button>
 
         {canDelete && (
-          <Button
-            size="small"
+          <button size="small"
             color="error"
             startIcon={<DeleteIcon />}
             onClick={() => {
@@ -190,7 +155,7 @@ const AnnoncesCard = ({ annonce, onEdit, onPublish, onArchive, onSell, onDelete 
             }}
           >
             Supprimer
-          </Button>
+          </button>
         )}
       </CardActions>
     </Card>
@@ -294,51 +259,48 @@ export const VendeurDashboard = () => {
   const maxPages = Math.ceil(total / limit) || 1;
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <Container maxWidth="lg">
       {/* En-tête */}
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div>
         <Box>
-          <Typography variant="h4" component="h1" gutterBottom>
+          <p>
             📊 Tableau de bord vendeur
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
+          </p>
+          <p>
             Gérez vos annonces immobilières
-          </Typography>
-        </Box>
-        <Button
-          variant="contained"
+          </p>
+        </div>
+        <button variant="contained"
           color="success"
           size="large"
           href="/annonces/create"
-          sx={{ whiteSpace: 'nowrap' }}
         >
           ➕ Créer une annonce
-        </Button>
-      </Box>
+        </button>
+      </div>
 
       {/* Messages */}
       {error && (
         <Alert
           severity="error"
           onClose={clearError}
-          sx={{ mb: 3 }}
         >
           {error}
         </Alert>
       )}
 
       {successMessage && (
-        <Alert severity="success" sx={{ mb: 3 }}>
+        <Alert severity="success">
           {successMessage}
         </Alert>
       )}
 
       {/* Filtres */}
-      <Paper sx={{ p: 3, mb: 4 }}>
-        <Typography variant="h6" gutterBottom>
+      <div className="card">
+        <p>
           Filtres
-        </Typography>
-        <Grid container spacing={2} sx={{ mb: 2 }}>
+        </p>
+        <Grid container spacing={2}>
           <Grid item xs={12} sm={6} md={3}>
             <TextField
               fullWidth
@@ -385,31 +347,29 @@ export const VendeurDashboard = () => {
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <Button
-                fullWidth
+            <div>
+              <button fullWidth
                 variant="contained"
                 onClick={handleApplyFilters}
               >
                 Filtrer
-              </Button>
-              <Button
-                fullWidth
+              </button>
+              <button fullWidth
                 variant="outlined"
                 onClick={handleResetFilters}
               >
                 Réinitialiser
-              </Button>
-            </Box>
+              </button>
+            </div>
           </Grid>
         </Grid>
-      </Paper>
+      </div>
 
       {/* Chargement */}
       {loading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress />
-        </Box>
+        <div>
+          <div class="spinner"></div>
+        </div>
       )}
 
       {/* Aucune annonce */}
@@ -423,14 +383,14 @@ export const VendeurDashboard = () => {
       {!loading && annonces.length > 0 && (
         <>
           {/* Statistiques */}
-          <Box sx={{ mb: 3 }}>
-            <Typography variant="body2" color="text.secondary">
+          <div>
+            <p>
               {total} annonce{total > 1 ? 's' : ''} au total • Affichage {skip + 1} à {Math.min(skip + limit, total)}
-            </Typography>
-          </Box>
+            </p>
+          </div>
 
           {/* Grille */}
-          <Grid container spacing={3} sx={{ mb: 4 }}>
+          <Grid container spacing={3}>
             {annonces.map((annonce) => (
               <Grid item xs={12} sm={6} md={4} key={annonce.annonce_id}>
                 <AnnoncesCard
@@ -447,14 +407,14 @@ export const VendeurDashboard = () => {
 
           {/* Pagination */}
           {maxPages > 1 && (
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+            <div>
               <Pagination
                 count={maxPages}
                 page={page}
                 onChange={(event, value) => setPage(value)}
                 color="primary"
               />
-            </Box>
+            </div>
           )}
         </>
       )}

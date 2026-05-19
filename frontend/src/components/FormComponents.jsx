@@ -6,13 +6,6 @@
  */
 
 import React from 'react';
-import {
-  TextField,
-  FormControlLabel,
-  Checkbox,
-  FormHelperText,
-  Box,
-} from '@mui/material';
 import { Controller } from 'react-hook-form';
 
 /**
@@ -109,7 +102,7 @@ export function FormCheckbox({
           {error?.message || helperText}
         </FormHelperText>
       )}
-    </Box>
+    </div>
   );
 }
 
@@ -163,14 +156,14 @@ export function FormNumberField({
  */
 export function FormSection({ title, children, sx = {} }) {
   return (
-    <Box sx={{ mb: 3, ...sx }}>
+    <div>
       {title && (
-        <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
+        <p>
           {title}
-        </Typography>
+        </p>
       )}
       {children}
-    </Box>
+    </div>
   );
 }
 

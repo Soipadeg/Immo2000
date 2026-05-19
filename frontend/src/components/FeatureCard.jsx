@@ -1,6 +1,4 @@
 import React from 'react';
-import { Card, CardContent, Box, Typography, Button, Chip, useTheme } from '@mui/material';
-import { ArrowForward } from '@mui/icons-material';
 
 /**
  * Composant FeatureCard - Carte fonctionnalité professionnelle
@@ -45,11 +43,10 @@ const FeatureCard = ({
         cursor: path || onClick ? 'pointer' : 'default',
       }}
     >
-      <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', pb: 2 }}>
+      <CardContent>
         {/* Header avec icône et badge */}
-        <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 2 }}>
-          <Box
-            sx={{
+        <div>
+          <div sx={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -67,92 +64,54 @@ const FeatureCard = ({
                 sx: { fontSize: 28, ...(icon.props?.sx || {}) },
               })
             )}
-          </Box>
+          </div>
 
           {badge && (
             <Chip
               label={badge}
               size="small"
-              color={badgeColor}
               variant="outlined"
-              sx={{
-                fontWeight: 600,
-                fontSize: '0.75rem',
-              }}
             />
           )}
-        </Box>
+        </div>
 
         {/* Titre et description */}
-        <Box sx={{ mb: 2, flex: 1 }}>
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: 700,
-              mb: 1,
-              color: 'textPrimary',
-            }}
-          >
+        <div>
+          <p>
             {title}
-          </Typography>
+          </p>
 
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            sx={{
-              lineHeight: 1.6,
-              mb: 1,
-            }}
-          >
+          <p>
             {description}
-          </Typography>
+          </p>
 
           {/* Stats optionnels */}
           {stats !== undefined && (
-            <Typography
-              variant="caption"
-              sx={{
-                display: 'block',
-                mt: 1,
-                fontWeight: 600,
-                color: theme.palette.primary.main,
-              }}
-            >
+            <p>
               {stats} élément{stats !== 1 ? 's' : ''}
-            </Typography>
+            </p>
           )}
-        </Box>
+        </div>
 
         {/* Contenu personnalisé */}
-        {children && <Box sx={{ mb: 2 }}>{children}</Box>}
+        {children && <div>{children}</div>}
       </CardContent>
 
       {/* Actions */}
-      <Box
-        sx={{
-          display: 'flex',
-          gap: 1,
-          pt: 0,
-          px: 3,
-          pb: 2,
-        }}
+      <div
       >
         {(path || onClick) && (
-          <Button
-            variant="contained"
+          <button variant="contained"
             color="primary"
             size="small"
             endIcon={<ArrowForward />}
             onClick={handleClick}
-            sx={{
-              fontWeight: 600,
-            }}
           >
             Accéder
-          </Button>
+          </button>
         )}
         {actions}
-      </Box>
+      </div>
     </Card>
   );
 };

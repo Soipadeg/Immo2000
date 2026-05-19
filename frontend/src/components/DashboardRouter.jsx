@@ -5,7 +5,6 @@
 import React from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { Navigate } from 'react-router-dom';
-import { Box, CircularProgress } from '@mui/material';
 import UserDashboardPage from '../pages/UserDashboardPage';
 import AdminDashboardPage from '../pages/AdminDashboardPage';
 
@@ -14,9 +13,9 @@ const DashboardRouter = () => {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <CircularProgress />
-      </Box>
+      <div>
+        <div class="spinner"></div>
+      </div>
     );
   }
 

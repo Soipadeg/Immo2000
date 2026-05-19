@@ -6,7 +6,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { Box, CircularProgress, Typography } from '@mui/material';
 
 /**
  * Composant qui initialise le mode dev et redirige vers la bonne page
@@ -78,24 +77,16 @@ const DevRoleInitializer = ({ role }) => {
   }, [role, navigate, initDevMode]);
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
-        bgcolor: 'background.default',
-      }}
+    <div
     >
-      <CircularProgress size={60} />
-      <Typography variant="h6" sx={{ mt: 3, color: 'text.secondary' }}>
+      <div class="spinner"></div>
+      <p>
         🚀 Initialisation du mode {role.toUpperCase()}...
-      </Typography>
-      <Typography variant="body2" sx={{ mt: 2, color: 'text.disabled' }}>
+      </p>
+      <p>
         Chargement des données...
-      </Typography>
-    </Box>
+      </p>
+    </div>
   );
 };
 

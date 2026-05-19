@@ -3,17 +3,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Typography,
-  Box,
-  LinearProgress,
-} from '@mui/material';
-import WarningIcon from '@mui/icons-material/Warning';
+
 
 export default function SessionTimeoutDialog({ timeRemaining, onExtend, onLogout }) {
   const [displayTime, setDisplayTime] = useState(timeRemaining);
@@ -33,37 +23,37 @@ export default function SessionTimeoutDialog({ timeRemaining, onExtend, onLogout
 
   return (
     <Dialog open={true} disableEscapeKeyDown={true} maxWidth="sm" fullWidth>
-      <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <WarningIcon sx={{ color: 'warning.main' }} />
+      <DialogTitle>
+        <WarningIcon />
         Session Expiring Soon
       </DialogTitle>
 
       <DialogContent>
-        <Box sx={{ my: 2 }}>
-          <Typography variant="body1" gutterBottom>
+        <div>
+          <p>
             Votre session expire dans{' '}
             <strong style={{ color: '#ff9800' }}>
               {formatTime(displayTime)}
             </strong>
-          </Typography>
+          </p>
 
-          <Typography variant="body2" color="textSecondary" sx={{ mt: 2 }}>
+          <p>
             Pour des raisons de sécurité, votre session expirera après 24 heures
             d'inactivité. Cliquez sur "Prolonger la session" pour continuer votre
             travail.
-          </Typography>
+          </p>
 
-          <LinearProgress variant="determinate" value={progress} sx={{ mt: 2 }} />
-        </Box>
+          <LinearProgress variant="determinate" value={progress} />
+        </div>
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onLogout} color="error">
+        <button onClick={onLogout} color="error">
           Déconnexion
-        </Button>
-        <Button onClick={onExtend} variant="contained" color="primary">
+        </button>
+        <button onClick={onExtend} variant="contained" color="primary">
           Prolonger la session
-        </Button>
+        </button>
       </DialogActions>
     </Dialog>
   );
