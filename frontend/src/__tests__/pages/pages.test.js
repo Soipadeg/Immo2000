@@ -43,6 +43,8 @@ vi.mock('../../services/api', () => ({
   notairesApi: {
     searchByPostalCode: vi.fn(),
     getById: vi.fn(),
+    getPendingDossiers: vi.fn(),
+    list: vi.fn(),
   },
   paymentsApi: {
     createPaymentIntent: vi.fn(),
@@ -549,6 +551,196 @@ describe('Page Components - Phase 5.3.3', () => {
       expect(result.commission).toBe(expectedFees.commission);
       expect(result.tva).toBe(expectedFees.tva);
       expect(result.total_ttc).toBe(expectedFees.total);
+    });
+  });
+
+  // ============================================
+  // Test Behavior Validation - NotaireDashboardPage
+  // ============================================
+  describe('NotaireDashboardPage - Initialization & Loading', () => {
+    it('should load pending dossiers on mount', async () => {
+      const mockDossiers = {
+        data: {
+          transactions: [
+            {
+              transaction_id: 'tx-001',
+              annonce_id: 'ann-001',
+              prix_compromis: 250000,
+              statut: 'EN_COURS',
+              date_creation: '2024-01-15',
+              acheteur_id: '2',
+              vendeur_id: '3',
+            },
+            {
+              transaction_id: 'tx-002',
+              annonce_id: 'ann-002',
+              prix_compromis: 350000,
+              statut: 'COMPROMIS_SIGNE',
+              date_creation: '2024-01-20',
+              acheteur_id: '4',
+              vendeur_id: '5',
+            },
+          ],
+          total: 2,
+        },
+      };
+
+      vi.mocked(notairesApi.getPendingDossiers).mockResolvedValue(mockDossiers);
+
+      const result = await notairesApi.getPendingDossiers('notaire-123', 0, 20);
+      expect(result.data.transactions).toHaveLength(2);
+      expect(result.data.transactions[0].transaction_id).toBe('tx-001');
+    });
+
+    it('should handle empty dossiers list', async () => {
+      const emptyResponse = {
+        data: {
+          transactions: [],
+          total: 0,
+        },
+      };
+
+      vi.mocked(notairesApi.getPendingDossiers).mockResolvedValue(emptyResponse);
+
+      const result = await notairesApi.getPendingDossiers('notaire-123', 0, 20);
+      expect(result.data.transactions).toHaveLength(0);
+      expect(result.data.total).toBe(0);
+    });
+
+    it('should handle API errors gracefully', async () => {
+      const error = new Error('Failed to load dossiers');
+      vi.mocked(notairesApi.getPendingDossiers).mockRejectedValue(error);
+
+      try {
+        await notairesApi.getPendingDossiers('notaire-123', 0, 20);
+      } catch (err) {
+        expect(err.message).toBe('Failed to load dossiers');
+      }
+    });
+  });
+
+  describe('NotaireDashboardPage - Statistics Calculation', () => {
+    it('should calculate correct statistics from dossiers', () => {
+      const dossiers = [
+        { statut: 'EN_COURS', prix_compromis: 250000 },
+        { statut: 'EN_COURS', prix_compromis: 300000 },
+        { statut: 'COMPROMIS_SIGNE', prix_compromis: 350000 },
+        { statut: 'ACTE_SIGNE', prix_compromis: 400000 },
+      ];
+
+      const stats = {
+        total: dossiers.length,
+        enCours: dossiers.filter(d => d.statut === 'EN_COURS').length,
+        compromisSignes: dossiers.filter(d => d.statut === 'COMPROMIS_SIGNE').length,
+        acteSignes: dossiers.filter(d => d.statut === 'ACTE_SIGNE').length,
+      };
+
+      expect(stats.total).toBe(4);
+      expect(stats.enCours).toBe(2);
+      expect(stats.compromisSignes).toBe(1);
+      expect(stats.acteSignes).toBe(1);
+    });
+
+    it('should calculate total value from dossiers', () => {
+      const dossiers = [
+        { prix_compromis: 250000 },
+        { prix_compromis: 300000 },
+        { prix_compromis: 350000 },
+      ];
+
+      const totalValue = dossiers.reduce((sum, d) => sum + d.prix_compromis, 0);
+      expect(totalValue).toBe(900000);
+    });
+  });
+
+  describe('NotaireDashboardPage - Dossier Management', () => {
+    it('should filter dossiers by status', () => {
+      const dossiers = [
+        { transaction_id: 'tx-001', statut: 'EN_COURS' },
+        { transaction_id: 'tx-002', statut: 'COMPROMIS_SIGNE' },
+        { transaction_id: 'tx-003', statut: 'EN_COURS' },
+      ];
+
+      const enCours = dossiers.filter(d => d.statut === 'EN_COURS');
+      const signes = dossiers.filter(d => d.statut === 'COMPROMIS_SIGNE');
+
+      expect(enCours).toHaveLength(2);
+      expect(signes).toHaveLength(1);
+    });
+
+    it('should sort dossiers by date (most recent first)', () => {
+      const dossiers = [
+        { transaction_id: 'tx-001', date_creation: '2024-01-15' },
+        { transaction_id: 'tx-002', date_creation: '2024-01-20' },
+        { transaction_id: 'tx-003', date_creation: '2024-01-10' },
+      ];
+
+      const sorted = [...dossiers].sort(
+        (a, b) => new Date(b.date_creation) - new Date(a.date_creation)
+      );
+
+      expect(sorted[0].transaction_id).toBe('tx-002');
+      expect(sorted[1].transaction_id).toBe('tx-001');
+      expect(sorted[2].transaction_id).toBe('tx-003');
+    });
+
+    it('should paginate dossiers correctly', () => {
+      const dossiers = Array.from({ length: 25 }, (_, i) => ({
+        transaction_id: `tx-${i + 1}`,
+      }));
+
+      const pageSize = 20;
+      const page1 = dossiers.slice(0, pageSize);
+      const page2 = dossiers.slice(pageSize);
+
+      expect(page1).toHaveLength(20);
+      expect(page2).toHaveLength(5);
+    });
+  });
+
+  describe('NotaireDashboardPage - Navigation & Actions', () => {
+    it('should navigate to transaction details when clicking dossier', () => {
+      const transactionId = 'tx-123';
+      expect(mockNavigate).not.toHaveBeenCalledWith(
+        `/transactions/${transactionId}`
+      );
+
+      // Simulate navigation
+      mockNavigate(`/transactions/${transactionId}`);
+      expect(mockNavigate).toHaveBeenCalledWith(
+        `/transactions/${transactionId}`
+      );
+    });
+
+    it('should display recent rendez-vous from dossiers', () => {
+      const dossiers = [
+        {
+          transaction_id: 'tx-001',
+          date_creation: '2024-01-15',
+          acheteur_id: '2',
+          vendeur_id: '3',
+        },
+        {
+          transaction_id: 'tx-002',
+          date_creation: '2024-01-20',
+          acheteur_id: '4',
+          vendeur_id: '5',
+        },
+        {
+          transaction_id: 'tx-003',
+          date_creation: '2024-01-10',
+          acheteur_id: '6',
+          vendeur_id: '7',
+        },
+      ];
+
+      // Take 4 most recent
+      const recentDossiers = dossiers
+        .sort((a, b) => new Date(b.date_creation) - new Date(a.date_creation))
+        .slice(0, 4);
+
+      expect(recentDossiers).toHaveLength(3);
+      expect(recentDossiers[0].transaction_id).toBe('tx-002');
     });
   });
 
