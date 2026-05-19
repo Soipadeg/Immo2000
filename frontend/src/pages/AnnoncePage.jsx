@@ -5,45 +5,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import {
-  Container,
-  Box,
-  Typography,
-  Paper,
-  Grid,
-  Chip,
-  Button,
-  CircularProgress,
-  Alert,
-  Divider,
-  Card,
-  CardContent,
-  ImageList,
-  ImageListItem,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Rating,
-} from '@mui/material';
-import {
-  Favorite as FavoriteIcon,
-  FavoriteBorder as FavoriteBorderIcon,
-  Share as ShareIcon,
-  Phone as PhoneIcon,
-  Email as EmailIcon,
-  LocationOn as MapPinIcon,
-  Home as HomeIcon,
-  Straighten as RulerIcon,
-  DoorSliding as DoorSlidingIcon,
-  Bolt as ZapIcon,
-  ArrowBack as ArrowBackIcon,
-} from '@mui/icons-material';
+import { Button, Input, Card, Modal, Alert, FormContainer } from '@/components';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { annoncesApi } from '../services/api';
 import SimilarAnnoncesCarousel from '../components/SimilarAnnoncesCarousel';
+import '../styles/AnnoncePage.css';
 
 const AnnoncePage = () => {
   const { id } = useParams();
@@ -147,383 +114,253 @@ const AnnoncePage = () => {
 
   if (loading) {
     return (
-      <Container maxWidth="lg" sx={{ py: 8 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-          <CircularProgress />
-        </Box>
-      </Container>
+      <div className="annonce-page-container">
+        <div className="annonce-loading">
+          <div className="spinner"></div>
+        </div>
+      </div>
     );
   }
 
   if (error || !annonce) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Alert severity="error">{error}</Alert>
-        <Button
-          startIcon={<ArrowBackIcon />}
-          onClick={() => navigate(-1)}
-          sx={{ mt: 2 }}
-        >
-          Retour
-        </Button>
-      </Container>
+      <div className="annonce-page-container">
+        <Alert type="error" title="Erreur" message={error} />
+        <div style={{ marginTop: '1rem' }}>
+          <Button onClick={() => navigate(-1)} size="small">
+            ← Retour
+          </Button>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <div className="annonce-page-container">
       {/* Header avec retour */}
-      <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
-        <Button
-          startIcon={<ArrowBackIcon />}
-          onClick={() => navigate(-1)}
-          variant="text"
-        >
-          Retour
+      <div className="annonce-header">
+        <Button onClick={() => navigate(-1)} variant="ghost" size="small">
+          ← Retour
         </Button>
-      </Box>
+      </div>
 
-      <Grid container spacing={4}>
+      <div className="annonce-content">
         {/* Colonne gauche: Images et détails */}
-        <Grid item xs={12} md={8}>
+        <div className="annonce-left">
           {/* Galerie d'images */}
           {annonce.photos && annonce.photos.length > 0 ? (
-            <Box sx={{ mb: 4 }}>
+            <div className="annonce-gallery">
               {/* Image principale */}
-              <Box
-                sx={{
-                  position: 'relative',
-                  mb: 2,
-                  borderRadius: 2,
-                  overflow: 'hidden',
-                  bgcolor: '#f0f0f0',
-                  aspectRatio: '16 / 9',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
+              <div className="gallery-main">
                 <img
                   src={annonce.photos[selectedImageIndex]}
                   alt={annonce.titre}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                  }}
+                  className="main-image"
                 />
 
                 {/* Badge favori */}
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    top: 16,
-                    right: 16,
-                    bgcolor: 'rgba(255, 255, 255, 0.9)',
-                    borderRadius: '50%',
-                    p: 1,
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                    '&:hover': { bgcolor: 'rgba(255, 255, 255, 1)' },
-                  }}
+                <button
+                  className="favorite-badge"
                   onClick={toggleFavorite}
+                  aria-label={isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
                 >
-                  {isFavorite ? (
-                    <FavoriteIcon sx={{ color: '#ff0000', fontSize: 28 }} />
-                  ) : (
-                    <FavoriteBorderIcon sx={{ fontSize: 28 }} />
-                  )}
-                </Box>
+                  {isFavorite ? '❤️' : '🤍'}
+                </button>
 
                 {/* Compteur photos */}
                 {annonce.photos.length > 1 && (
-                  <Typography
-                    sx={{
-                      position: 'absolute',
-                      bottom: 16,
-                      left: 16,
-                      bgcolor: 'rgba(0, 0, 0, 0.6)',
-                      color: 'white',
-                      px: 1.5,
-                      py: 0.5,
-                      borderRadius: 1,
-                      fontSize: '0.875rem',
-                    }}
-                  >
+                  <div className="photo-counter">
                     {selectedImageIndex + 1} / {annonce.photos.length}
-                  </Typography>
+                  </div>
                 )}
-              </Box>
+              </div>
 
               {/* Miniatures */}
               {annonce.photos.length > 1 && (
-                <ImageList sx={{ width: '100%' }} cols={6} rowHeight={80}>
+                <div className="gallery-thumbnails">
                   {annonce.photos.map((photo, idx) => (
-                    <ImageListItem
+                    <button
                       key={idx}
+                      className={`thumbnail ${selectedImageIndex === idx ? 'active' : ''}`}
                       onClick={() => setSelectedImageIndex(idx)}
-                      sx={{
-                        cursor: 'pointer',
-                        border:
-                          selectedImageIndex === idx
-                            ? '3px solid #1976d2'
-                            : '3px solid transparent',
-                        opacity: selectedImageIndex === idx ? 1 : 0.6,
-                        transition: 'all 0.2s',
-                        '&:hover': { opacity: 1 },
-                      }}
+                      aria-label={`Photo ${idx + 1}`}
                     >
-                      <img
-                        src={photo}
-                        alt={`Photo ${idx + 1}`}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
-                    </ImageListItem>
+                      <img src={photo} alt={`Miniature ${idx + 1}`} />
+                    </button>
                   ))}
-                </ImageList>
+                </div>
               )}
-            </Box>
+            </div>
           ) : (
-            <Box
-              sx={{
-                mb: 4,
-                height: 400,
-                bgcolor: '#f0f0f0',
-                borderRadius: 2,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#999',
-              }}
-            >
+            <div className="gallery-placeholder">
               Pas de photo disponible
-            </Box>
+            </div>
           )}
 
           {/* Détails principaux */}
-          <Paper sx={{ p: 3, mb: 4 }}>
-            {/* Titre et prix */}
-            <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>
-              {annonce.titre}
-            </Typography>
+          <Card className="annonce-details-card">
+            <div className="details-section">
+              <h2 className="details-title">{annonce.titre}</h2>
 
-            <Typography
-              variant="h5"
-              color="primary"
-              sx={{ mb: 2, fontWeight: 700 }}
-            >
-              {annonce.prix.toLocaleString('fr-FR', {
-                style: 'currency',
-                currency: 'EUR',
-              })}
-            </Typography>
-
-            <Typography variant="body2" color="text.secondary" gutterBottom>
-              Prix au m²:{' '}
-              {(annonce.prix / annonce.surface).toLocaleString('fr-FR', {
-                style: 'currency',
-                currency: 'EUR',
-              })}
-            </Typography>
-
-            <Divider sx={{ my: 2 }} />
-
-            {/* Caractéristiques principales */}
-            <Grid container spacing={2} sx={{ mb: 3 }}>
-              <Grid item xs={6} sm={3}>
-                <Box sx={{ textAlign: 'center' }}>
-                  <RulerIcon sx={{ fontSize: 32, mb: 1, color: 'primary.main' }} />
-                  <Typography variant="h6">{annonce.surface}m²</Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    Surface
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={6} sm={3}>
-                <Box sx={{ textAlign: 'center' }}>
-                  <DoorSlidingIcon sx={{ fontSize: 32, mb: 1, color: 'primary.main' }} />
-                  <Typography variant="h6">{annonce.nombre_pieces}</Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    Pièces
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={6} sm={3}>
-                <Box sx={{ textAlign: 'center' }}>
-                  <HomeIcon sx={{ fontSize: 32, mb: 1, color: 'primary.main' }} />
-                  <Typography variant="h6">{annonce.type_bien}</Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    Type
-                  </Typography>
-                </Box>
-              </Grid>
-              {annonce.dpe && (
-                <Grid item xs={6} sm={3}>
-                  <Box sx={{ textAlign: 'center' }}>
-                    <ZapIcon sx={{ fontSize: 32, mb: 1, color: 'primary.main' }} />
-                    <Typography variant="h6">{annonce.dpe}</Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      DPE
-                    </Typography>
-                  </Box>
-                </Grid>
-              )}
-            </Grid>
-
-            {/* Localisation */}
-            <Box sx={{ mb: 3 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                <MapPinIcon color="primary" />
-                <Typography variant="h6">Localisation</Typography>
-              </Box>
-              <Typography variant="body1">{annonce.adresse}</Typography>
-              <Typography variant="body2" color="text.secondary">
-                {annonce.code_postal} {annonce.ville}
-              </Typography>
-            </Box>
-
-            <Divider sx={{ my: 2 }} />
-
-            {/* Équipements */}
-            {(annonce.ascenseur ||
-              annonce.balcon ||
-              annonce.terrasse ||
-              annonce.jardin ||
-              annonce.piscine ||
-              annonce.parking) && (
-              <Box sx={{ mb: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                  Équipements
-                </Typography>
-                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                  {annonce.ascenseur && (
-                    <Chip label="🛗 Ascenseur" variant="outlined" />
-                  )}
-                  {annonce.balcon && <Chip label="🏠 Balcon" variant="outlined" />}
-                  {annonce.terrasse && (
-                    <Chip label="🪴 Terrasse" variant="outlined" />
-                  )}
-                  {annonce.jardin && <Chip label="🌳 Jardin" variant="outlined" />}
-                  {annonce.piscine && <Chip label="🏊 Piscine" variant="outlined" />}
-                  {annonce.parking && (
-                    <Chip label="🚗 Parking" variant="outlined" />
-                  )}
-                </Box>
-              </Box>
-            )}
-
-            {/* Informations supplémentaires */}
-            <Divider sx={{ my: 2 }} />
-
-            <Grid container spacing={2} sx={{ mb: 3 }}>
-              {annonce.annee_construction && (
-                <Grid item xs={6}>
-                  <Typography variant="body2" color="text.secondary">
-                    Année de construction
-                  </Typography>
-                  <Typography variant="body1">
-                    {annonce.annee_construction}
-                  </Typography>
-                </Grid>
-              )}
-              {annonce.etage !== undefined && annonce.etage !== null && (
-                <Grid item xs={6}>
-                  <Typography variant="body2" color="text.secondary">
-                    Étage
-                  </Typography>
-                  <Typography variant="body1">{annonce.etage}</Typography>
-                </Grid>
-              )}
-              <Grid item xs={6}>
-                <Typography variant="body2" color="text.secondary">
-                  Annoncée le
-                </Typography>
-                <Typography variant="body1">
-                  {format(new Date(annonce.date_creation), 'dd MMMM yyyy', {
-                    locale: fr,
+              <div className="price-section">
+                <div className="price-main">
+                  {annonce.prix.toLocaleString('fr-FR', {
+                    style: 'currency',
+                    currency: 'EUR',
                   })}
-                </Typography>
-              </Grid>
-            </Grid>
+                </div>
+                <div className="price-sqm">
+                  Prix au m²: {(annonce.prix / annonce.surface).toLocaleString('fr-FR', {
+                    style: 'currency',
+                    currency: 'EUR',
+                  })}
+                </div>
+              </div>
 
-            {/* Description */}
-            <Divider sx={{ my: 2 }} />
+              <hr className="divider" />
 
-            <Box sx={{ mt: 3 }}>
-              <Typography variant="h6" gutterBottom>
-                Description
-              </Typography>
-              <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
-                {annonce.description}
-              </Typography>
-            </Box>
-          </Paper>
-        </Grid>
+              {/* Caractéristiques principales */}
+              <div className="features-grid">
+                <div className="feature-item">
+                  <div className="feature-icon">📐</div>
+                  <div className="feature-value">{annonce.surface}m²</div>
+                  <div className="feature-label">Surface</div>
+                </div>
+                <div className="feature-item">
+                  <div className="feature-icon">🚪</div>
+                  <div className="feature-value">{annonce.nombre_pieces}</div>
+                  <div className="feature-label">Pièces</div>
+                </div>
+                <div className="feature-item">
+                  <div className="feature-icon">🏠</div>
+                  <div className="feature-value">{annonce.type_bien}</div>
+                  <div className="feature-label">Type</div>
+                </div>
+                {annonce.dpe && (
+                  <div className="feature-item">
+                    <div className="feature-icon">⚡</div>
+                    <div className="feature-value">{annonce.dpe}</div>
+                    <div className="feature-label">DPE</div>
+                  </div>
+                )}
+              </div>
+
+              {/* Localisation */}
+              <div className="location-section">
+                <div className="location-header">📍 Localisation</div>
+                <div className="location-address">{annonce.adresse}</div>
+                <div className="location-city">
+                  {annonce.code_postal} {annonce.ville}
+                </div>
+              </div>
+
+              <hr className="divider" />
+
+              {/* Équipements */}
+              {(annonce.ascenseur ||
+                annonce.balcon ||
+                annonce.terrasse ||
+                annonce.jardin ||
+                annonce.piscine ||
+                annonce.parking) && (
+                <div className="amenities-section">
+                  <h3 className="section-title">Équipements</h3>
+                  <div className="amenities-list">
+                    {annonce.ascenseur && <span className="amenity-badge">🛗 Ascenseur</span>}
+                    {annonce.balcon && <span className="amenity-badge">🏠 Balcon</span>}
+                    {annonce.terrasse && <span className="amenity-badge">🪴 Terrasse</span>}
+                    {annonce.jardin && <span className="amenity-badge">🌳 Jardin</span>}
+                    {annonce.piscine && <span className="amenity-badge">🏊 Piscine</span>}
+                    {annonce.parking && <span className="amenity-badge">🚗 Parking</span>}
+                  </div>
+                </div>
+              )}
+
+              {/* Informations supplémentaires */}
+              <hr className="divider" />
+
+              <div className="info-grid">
+                {annonce.annee_construction && (
+                  <div className="info-item">
+                    <div className="info-label">Année de construction</div>
+                    <div className="info-value">{annonce.annee_construction}</div>
+                  </div>
+                )}
+                {annonce.etage !== undefined && annonce.etage !== null && (
+                  <div className="info-item">
+                    <div className="info-label">Étage</div>
+                    <div className="info-value">{annonce.etage}</div>
+                  </div>
+                )}
+                <div className="info-item">
+                  <div className="info-label">Annoncée le</div>
+                  <div className="info-value">
+                    {format(new Date(annonce.date_creation), 'dd MMMM yyyy', { locale: fr })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Description */}
+              <hr className="divider" />
+
+              <div className="description-section">
+                <h3 className="section-title">Description</h3>
+                <p className="description-text">{annonce.description}</p>
+              </div>
+            </div>
+          </Card>
+        </div>
 
         {/* Colonne droite: Contact vendeur */}
-        <Grid item xs={12} md={4}>
-          <Paper sx={{ p: 3, mb: 4, position: 'sticky', top: 100 }}>
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: 700 }}>
-              👤 Vendeur
-            </Typography>
+        <div className="annonce-right">
+          <Card className="seller-card">
+            <div className="seller-section">
+              <h3 className="seller-title">👤 Vendeur</h3>
 
-            {/* Info vendeur */}
-            <Box sx={{ mb: 3 }}>
-              <Typography variant="body2" color="text.secondary">
-                Annonce publiée par
-              </Typography>
-              <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                {annonce.utilisateur?.prenom} {annonce.utilisateur?.nom}
-              </Typography>
-            </Box>
+              <div className="seller-info">
+                <div className="seller-label">Annonce publiée par</div>
+                <div className="seller-name">
+                  {annonce.utilisateur?.prenom} {annonce.utilisateur?.nom}
+                </div>
+              </div>
 
-            <Divider sx={{ my: 2 }} />
+              <hr className="divider" />
 
-            {/* Boutons d'action */}
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                size="large"
-                startIcon={<EmailIcon />}
-                onClick={() => setOpenContactModal(true)}
-              >
-                Envoyer un message
-              </Button>
+              {/* Boutons d'action */}
+              <div className="action-buttons">
+                <Button
+                  fullWidth
+                  variant="primary"
+                  onClick={() => setOpenContactModal(true)}
+                >
+                  ✉️ Envoyer un message
+                </Button>
 
-              <Button
-                fullWidth
-                variant="outlined"
-                startIcon={<ShareIcon />}
-                onClick={handleShare}
-              >
-                Partager
-              </Button>
+                <Button
+                  fullWidth
+                  variant="secondary"
+                  onClick={handleShare}
+                >
+                  📤 Partager
+                </Button>
 
-              <Button
-                fullWidth
-                variant="outlined"
-                color={isFavorite ? 'error' : 'inherit'}
-                startIcon={
-                  isFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />
-                }
-                onClick={toggleFavorite}
-              >
-                {isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
-              </Button>
-            </Box>
+                <Button
+                  fullWidth
+                  variant={isFavorite ? 'danger' : 'secondary'}
+                  onClick={toggleFavorite}
+                >
+                  {isFavorite ? '❤️ Retirer des favoris' : '🤍 Ajouter aux favoris'}
+                </Button>
+              </div>
 
-            {/* Info de contact */}
-            <Box sx={{ mt: 4, p: 2, bgcolor: '#f5f5f5', borderRadius: 1 }}>
-              <Typography variant="caption" color="text.secondary" display="block">
-                Vous avez des questions? Contactez le vendeur directement par email
-                ou téléphone.
-              </Typography>
-            </Box>
-          </Paper>
-        </Grid>
-      </Grid>
+              {/* Info de contact */}
+              <div className="contact-info">
+                Vous avez des questions? Contactez le vendeur directement par email ou téléphone.
+              </div>
+            </div>
+          </Card>
+        </div>
+      </div>
 
       {/* Annonces similaires */}
       <SimilarAnnoncesCarousel
@@ -532,59 +369,55 @@ const AnnoncePage = () => {
       />
 
       {/* Modal de contact */}
-      <Dialog open={openContactModal} onClose={() => setOpenContactModal(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>Contacter le vendeur</DialogTitle>
-        <DialogContent sx={{ pt: 2 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <TextField
-              fullWidth
-              label="Votre nom *"
-              name="nom"
-              value={contactForm.nom}
-              onChange={handleContactChange}
-              size="small"
-            />
-            <TextField
-              fullWidth
-              type="email"
-              label="Votre email *"
-              name="email"
-              value={contactForm.email}
-              onChange={handleContactChange}
-              size="small"
-            />
-            <TextField
-              fullWidth
-              label="Votre téléphone"
-              name="telephone"
-              value={contactForm.telephone}
-              onChange={handleContactChange}
-              size="small"
-            />
-            <TextField
-              fullWidth
-              multiline
-              rows={4}
-              label="Votre message *"
-              name="message"
-              value={contactForm.message}
-              onChange={handleContactChange}
-              placeholder="Décrivez votre intérêt pour ce bien..."
-            />
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenContactModal(false)}>Annuler</Button>
-          <Button
-            onClick={handleSendContact}
-            variant="contained"
-            color="primary"
-          >
-            Envoyer
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Container>
+      {openContactModal && (
+        <Modal onClose={() => setOpenContactModal(false)}>
+          <div className="contact-modal">
+            <h2 className="modal-title">Contacter le vendeur</h2>
+            <div className="modal-content">
+              <Input
+                label="Votre nom *"
+                name="nom"
+                value={contactForm.nom}
+                onChange={handleContactChange}
+                required
+              />
+              <Input
+                type="email"
+                label="Votre email *"
+                name="email"
+                value={contactForm.email}
+                onChange={handleContactChange}
+                required
+              />
+              <Input
+                label="Votre téléphone"
+                name="telephone"
+                value={contactForm.telephone}
+                onChange={handleContactChange}
+              />
+              <div className="textarea-wrapper">
+                <textarea
+                  name="message"
+                  value={contactForm.message}
+                  onChange={handleContactChange}
+                  placeholder="Décrivez votre intérêt pour ce bien... *"
+                  className="contact-textarea"
+                  required
+                />
+              </div>
+            </div>
+            <div className="modal-actions">
+              <Button onClick={() => setOpenContactModal(false)} variant="secondary">
+                Annuler
+              </Button>
+              <Button onClick={handleSendContact} variant="primary">
+                Envoyer
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
+    </div>
   );
 };
 
