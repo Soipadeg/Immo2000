@@ -48,6 +48,11 @@ from src.routes.dev_auth import dev_auth_bp
 from src.routes.transactions import transactions_vente_bp
 from src.routes.paiements import paiements_vente_bp
 
+# Import des nouvelles routes (Priority 3)
+from src.routes.pret import pret_bp
+from src.routes.fcm import fcm_bp
+from src.routes.chat import chat_bp
+
 # Import models pour que SQLAlchemy les reconnaisse
 from src.models.historique_rdv import HistoriqueRDV
 
@@ -90,6 +95,47 @@ def create_app(config_name: str = None) -> Flask:
 
     # Database
     db.init_app(app)
+
+    # Phase 3: Celery async tasks
+    try:
+        from src.tasks import celery_app
+        celery_app.conf.update(app.config)
+
+        class ContextTask(celery_app.Task):
+            def __call__(self, *args, **kwargs):
+                with app.app_context():
+                    return self.run(*args, **kwargs)
+
+        celery_app.Task = ContextTask
+        logger.info("✅ Celery initialized")
+    except Exception as e:
+        logger.warning(f"⚠️  Failed to initialize Celery: {e}")
+
+    # Phase 3: SocketIO for real-time chat
+    try:
+        from flask_socketio import SocketIO
+        socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
+
+        # Initialiser les événements WebSocket
+        from src.routes.chat import init_socketio
+        init_socketio(socketio, app)
+
+        app.socketio = socketio
+        logger.info("✅ SocketIO initialized")
+    except Exception as e:
+        logger.warning(f"⚠️  Failed to initialize SocketIO: {e}")
+        app.socketio = None
+
+    # Phase 3: Elasticsearch for advanced search
+    try:
+        from src.utils.search import init_search_engine
+        es_url = os.getenv('ELASTICSEARCH_URL', 'http://localhost:9200')
+        search_engine = init_search_engine(es_url)
+        app.search_engine = search_engine
+        logger.info(f"✅ Elasticsearch initialized at {es_url}")
+    except Exception as e:
+        logger.warning(f"⚠️  Failed to initialize Elasticsearch: {e}")
+        app.search_engine = None
 
     # Phase 3.2: Redis Cache Service
     try:
@@ -302,6 +348,11 @@ def create_app(config_name: str = None) -> Flask:
 
     # Blueprints - Dev Auth (Development mode - bypass authentication)
     app.register_blueprint(dev_auth_bp)
+
+    # Blueprints - Priority 3: Advanced Features
+    app.register_blueprint(pret_bp)  # Simulateur de prêt
+    app.register_blueprint(fcm_bp)   # Notifications push Firebase
+    app.register_blueprint(chat_bp)  # Chat temps réel avec WebSocket
 
     @app.errorhandler(404)
     def not_found(error):
