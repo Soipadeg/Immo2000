@@ -52,6 +52,29 @@ cryptography==41.0.7
 # Task Scheduling
 APScheduler==3.10.4
 
+# Priority 3: Backend Optimizations & Advanced Features
+# Async Tasks
+celery==5.3.4
+kombu==5.3.4
+
+# Advanced Search
+elasticsearch==8.11.0
+elasticsearch-dsl==8.11.0
+
+# Real-time Communication
+Flask-SocketIO==5.3.5
+python-socketio==5.10.0
+python-engineio==4.8.0
+
+# Async HTTP Clients
+httpx==0.25.2
+
+# Firebase Cloud Messaging (Push Notifications)
+firebase-admin==6.2.0
+
+# Error Tracking & Monitoring
+sentry-sdk==1.39.2
+
 # External Integrations (Parcours de Vente - Phase 3)
 docusign-esign==3.20.0
 stripe==7.0.0
