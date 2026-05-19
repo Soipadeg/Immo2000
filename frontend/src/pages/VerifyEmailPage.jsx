@@ -3,7 +3,6 @@ import { useNavigate, useLocation, useSearchParams, Link } from 'react-router-do
 import { Button, Input, Alert, FormContainer } from '@/components';
 import { authApi } from '../services/api';
 import './VerifyEmailPage.css';
-import { authApi } from '../services/api';
 
 export default function VerifyEmailPage() {
   const navigate = useNavigate();

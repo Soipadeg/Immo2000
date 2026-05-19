@@ -3,7 +3,6 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Button, Input, Alert, FormContainer } from '@/components';
 import { authApi } from '../services/api';
 import './Verify2FAPage.css';
-import { authApi } from '../services/api';
 
 export default function Verify2FAPage() {
   const navigate = useNavigate();
@@ -191,7 +190,5 @@ export default function Verify2FAPage() {
         <Link to="/login">Utiliser un autre compte</Link>
       </div>
     </FormContainer>
-  );
-}
   );
 }
