@@ -4,40 +4,9 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Container,
-  Typography,
-  Paper,
-  Grid,
-  Card,
-  CardContent,
-  CardActions,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  MenuItem,
-  Alert,
-  CircularProgress,
-  Chip,
-  FormControlLabel,
-  Checkbox,
-  Switch,
-  IconButton,
-} from '@mui/material';
-import {
-  Add as AddIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  Cancel as CloseIcon,
-  Check as CheckIcon,
-  NotificationsActive as NotificationsActiveIcon,
-  NotificationsOff as NotificationsOffIcon,
-} from '@mui/icons-material';
+import { Button, Input, Card, Modal, Alert } from '@/components';
 import { alertesApi } from '../services/api';
+import '../styles/AlertesPage.css';
 
 const AlertesAnnonces = () => {
   const [alertes, setAlertes] = useState([]);
@@ -212,452 +181,363 @@ const AlertesAnnonces = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <div className="alertes-page-container">
       {/* En-tête */}
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Box>
-          <Typography variant="h4" component="h1" gutterBottom>
-            🔔 Mes Alertes d'Annonces
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
+      <div className="alertes-header">
+        <div className="header-content">
+          <h1 className="alertes-title">🔔 Mes Alertes d'Annonces</h1>
+          <p className="alertes-subtitle">
             Recevez des notifications quand de nouvelles annonces correspondent à vos critères
-          </Typography>
-        </Box>
-        <Button
-          variant="contained"
-          color="success"
-          startIcon={<AddIcon />}
-          onClick={handleOpenModalCreate}
-          size="large"
-        >
-          Créer une alerte
+          </p>
+        </div>
+        <Button variant="primary" onClick={handleOpenModalCreate}>
+          ➕ Créer une alerte
         </Button>
-      </Box>
+      </div>
 
       {/* Messages */}
-      {error && (
-        <Alert severity="error" onClose={() => setError('')} sx={{ mb: 3 }}>
-          {error}
-        </Alert>
-      )}
-
+      {error && <Alert type="error" title="Erreur" message={error} />}
       {successMessage && (
-        <Alert severity="success" sx={{ mb: 3 }}>
-          {successMessage}
-        </Alert>
+        <Alert type="success" title="Succès" message={successMessage} />
       )}
 
       {/* Chargement */}
       {loading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress />
-        </Box>
+        <div className="loading-container">
+          <div className="spinner"></div>
+        </div>
       )}
 
       {/* Aucune alerte */}
       {!loading && alertes.length === 0 && (
-        <Paper sx={{ p: 4, textAlign: 'center' }}>
-          <Typography variant="h6" color="text.secondary" gutterBottom>
-            Aucune alerte créée
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            Créez une alerte pour être notifié quand de nouvelles annonces correspondent à vos critères
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<AddIcon />}
-            onClick={handleOpenModalCreate}
-          >
-            Créer votre première alerte
-          </Button>
-        </Paper>
+        <Card className="empty-state">
+          <div className="empty-content">
+            <h3>Aucune alerte créée</h3>
+            <p>
+              Créez une alerte pour être notifié quand de nouvelles annonces correspondent
+              à vos critères
+            </p>
+            <Button variant="primary" onClick={handleOpenModalCreate}>
+              ➕ Créer votre première alerte
+            </Button>
+          </div>
+        </Card>
       )}
 
       {/* Liste des alertes */}
       {!loading && alertes.length > 0 && (
-        <Grid container spacing={3}>
+        <div className="alertes-grid">
           {alertes.map((alerte) => (
-            <Grid item xs={12} md={6} key={alerte.alerte_id}>
-              <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <CardContent sx={{ flexGrow: 1 }}>
-                  {/* Titre et statut */}
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', mb: 2 }}>
-                    <Typography variant="h6" component="div">
-                      {alerte.nom}
-                    </Typography>
-                    <Chip
-                      label={alerte.actif ? 'Actif' : 'Inactif'}
-                      color={alerte.actif ? 'success' : 'default'}
-                      size="small"
-                    />
-                  </Box>
+            <Card key={alerte.alerte_id} className="alerte-card">
+              <div className="alerte-card-header">
+                <div>
+                  <h3 className="alerte-title">{alerte.nom}</h3>
+                  <span className={`alerte-status ${alerte.actif ? 'active' : 'inactive'}`}>
+                    {alerte.actif ? '✓ Actif' : '✗ Inactif'}
+                  </span>
+                </div>
+              </div>
 
-                  {/* Critères principaux */}
-                  <Box sx={{ mb: 2 }}>
-                    {alerte.type_bien && (
-                      <Chip label={alerte.type_bien} size="small" sx={{ mr: 1, mb: 1 }} />
-                    )}
-                    {alerte.ville && (
-                      <Chip label={`📍 ${alerte.ville}`} size="small" sx={{ mr: 1, mb: 1 }} />
-                    )}
-                    {alerte.prix_min || alerte.prix_max ? (
-                      <Chip
-                        label={`💰 ${alerte.prix_min || '0'} - ${alerte.prix_max || '∞'} €`}
-                        size="small"
-                        sx={{ mr: 1, mb: 1 }}
-                      />
-                    ) : null}
-                    {alerte.surface_min || alerte.surface_max ? (
-                      <Chip
-                        label={`📐 ${alerte.surface_min || '0'} - ${alerte.surface_max || '∞'} m²`}
-                        size="small"
-                        sx={{ mr: 1, mb: 1 }}
-                      />
-                    ) : null}
-                  </Box>
-
-                  {/* Équipements */}
-                  {(alerte.ascenseur || alerte.balcon || alerte.terrasse || alerte.jardin || alerte.piscine || alerte.parking) && (
-                    <Box sx={{ mb: 2 }}>
-                      <Typography variant="caption" display="block" gutterBottom>
-                        Équipements:
-                      </Typography>
-                      <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-                        {alerte.ascenseur && <Chip label="🛗 Ascenseur" size="small" />}
-                        {alerte.balcon && <Chip label="🏠 Balcon" size="small" />}
-                        {alerte.terrasse && <Chip label="🪴 Terrasse" size="small" />}
-                        {alerte.jardin && <Chip label="🌳 Jardin" size="small" />}
-                        {alerte.piscine && <Chip label="🏊 Piscine" size="small" />}
-                        {alerte.parking && <Chip label="🚗 Parking" size="small" />}
-                      </Box>
-                    </Box>
+              <div className="alerte-content">
+                {/* Critères principaux */}
+                <div className="alerte-criteria">
+                  {alerte.type_bien && <span className="badge">{alerte.type_bien}</span>}
+                  {alerte.ville && <span className="badge">📍 {alerte.ville}</span>}
+                  {(alerte.prix_min || alerte.prix_max) && (
+                    <span className="badge">
+                      💰 {alerte.prix_min || '0'} - {alerte.prix_max || '∞'} €
+                    </span>
                   )}
+                  {(alerte.surface_min || alerte.surface_max) && (
+                    <span className="badge">
+                      📐 {alerte.surface_min || '0'} - {alerte.surface_max || '∞'} m²
+                    </span>
+                  )}
+                </div>
 
-                  {/* Configuration */}
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 2, borderTop: 1, borderColor: 'divider' }}>
-                    <Box>
-                      <Typography variant="caption" display="block" color="text.secondary">
-                        Fréquence: <strong>{alerte.frequence}</strong>
-                      </Typography>
-                      {alerte.email_notification ? (
-                        <Typography variant="caption" display="block" color="success.main">
-                          ✅ Notifications email activées
-                        </Typography>
-                      ) : (
-                        <Typography variant="caption" display="block" color="text.secondary">
-                          Notifications email désactivées
-                        </Typography>
-                      )}
-                    </Box>
-                    <IconButton
-                      onClick={() => handleToggleAlerte(alerte.alerte_id)}
-                      color={alerte.actif ? 'primary' : 'default'}
-                      size="small"
-                    >
-                      {alerte.actif ? <NotificationsActiveIcon /> : <NotificationsOffIcon />}
-                    </IconButton>
-                  </Box>
-                </CardContent>
+                {/* Équipements */}
+                {(alerte.ascenseur ||
+                  alerte.balcon ||
+                  alerte.terrasse ||
+                  alerte.jardin ||
+                  alerte.piscine ||
+                  alerte.parking) && (
+                  <div className="alerte-amenities">
+                    <span className="amenities-label">Équipements:</span>
+                    <div className="amenities-list">
+                      {alerte.ascenseur && <span className="amenity">🛗</span>}
+                      {alerte.balcon && <span className="amenity">🏠</span>}
+                      {alerte.terrasse && <span className="amenity">🪴</span>}
+                      {alerte.jardin && <span className="amenity">🌳</span>}
+                      {alerte.piscine && <span className="amenity">🏊</span>}
+                      {alerte.parking && <span className="amenity">🚗</span>}
+                    </div>
+                  </div>
+                )}
 
-                {/* Actions */}
-                <CardActions>
-                  <Button
-                    size="small"
-                    startIcon={<EditIcon />}
-                    onClick={() => handleOpenModalEdit(alerte)}
-                  >
-                    Éditer
-                  </Button>
-                  <Button
-                    size="small"
-                    color="error"
-                    startIcon={<DeleteIcon />}
-                    onClick={() => handleDeleteAlerte(alerte.alerte_id)}
-                  >
-                    Supprimer
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
+                {/* Configuration */}
+                <div className="alerte-config">
+                  <div className="config-item">
+                    <span className="config-label">Fréquence:</span>
+                    <strong>{alerte.frequence}</strong>
+                  </div>
+                  {alerte.email_notification ? (
+                    <div className="config-email active">✅ Notifications email</div>
+                  ) : (
+                    <div className="config-email inactive">Notifications email désactivées</div>
+                  )}
+                </div>
+              </div>
+
+              <div className="alerte-actions">
+                <Button
+                  size="small"
+                  variant="secondary"
+                  onClick={() => handleOpenModalEdit(alerte)}
+                >
+                  ✏️ Éditer
+                </Button>
+                <Button
+                  size="small"
+                  variant={alerte.actif ? 'secondary' : 'primary'}
+                  onClick={() => handleToggleAlerte(alerte.alerte_id)}
+                >
+                  {alerte.actif ? '🔔 Désactiver' : '🔕 Activer'}
+                </Button>
+                <Button
+                  size="small"
+                  variant="danger"
+                  onClick={() => handleDeleteAlerte(alerte.alerte_id)}
+                >
+                  🗑️ Supprimer
+                </Button>
+              </div>
+            </Card>
           ))}
-        </Grid>
+        </div>
       )}
 
       {/* Modal de création/édition */}
-      <Dialog open={openModal} onClose={handleCloseModal} maxWidth="sm" fullWidth>
-        <DialogTitle>
-          {editingAlerte ? '✏️ Modifier l\'alerte' : '🔔 Créer une alerte'}
-        </DialogTitle>
+      {openModal && (
+        <Modal onClose={handleCloseModal}>
+          <div className="alerte-modal">
+            <h2 className="modal-title">
+              {editingAlerte ? '✏️ Modifier l\'alerte' : '🔔 Créer une alerte'}
+            </h2>
 
-        <DialogContent sx={{ pt: 2 }}>
-          <Grid container spacing={2}>
-            {/* Nom */}
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
+            <div className="modal-form">
+              {/* Nom */}
+              <Input
                 label="Nom de l'alerte"
                 name="nom"
                 value={formData.nom}
                 onChange={handleInputChange}
                 placeholder="Ex: Appartement Paris 3p"
               />
-            </Grid>
 
-            {/* Localisation */}
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Ville (optionnel)"
-                name="ville"
-                value={formData.ville}
-                onChange={handleInputChange}
-                size="small"
-              />
-            </Grid>
+              {/* Localisation */}
+              <div className="form-row">
+                <Input
+                  label="Ville (optionnel)"
+                  name="ville"
+                  value={formData.ville}
+                  onChange={handleInputChange}
+                />
+                <Input
+                  label="Code postal (optionnel)"
+                  name="code_postal"
+                  value={formData.code_postal}
+                  onChange={handleInputChange}
+                />
+              </div>
 
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Code postal (optionnel)"
-                name="code_postal"
-                value={formData.code_postal}
-                onChange={handleInputChange}
-                size="small"
-              />
-            </Grid>
-
-            {/* Type */}
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                select
-                label="Type de bien (optionnel)"
+              {/* Type */}
+              <select
                 name="type_bien"
                 value={formData.type_bien}
                 onChange={handleInputChange}
-                size="small"
+                className="form-select"
               >
-                <MenuItem value="">Tous types</MenuItem>
-                <MenuItem value="maison">Maison</MenuItem>
-                <MenuItem value="appartement">Appartement</MenuItem>
-                <MenuItem value="terrain">Terrain</MenuItem>
-                <MenuItem value="local commercial">Local commercial</MenuItem>
-              </TextField>
-            </Grid>
+                <option value="">Type de bien (optionnel)</option>
+                <option value="maison">Maison</option>
+                <option value="appartement">Appartement</option>
+                <option value="terrain">Terrain</option>
+                <option value="local commercial">Local commercial</option>
+              </select>
 
-            {/* Prix */}
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                type="number"
-                label="Prix min (€)"
-                name="prix_min"
-                value={formData.prix_min}
-                onChange={handleInputChange}
-                size="small"
-              />
-            </Grid>
+              {/* Prix */}
+              <div className="form-row">
+                <Input
+                  type="number"
+                  label="Prix min (€)"
+                  name="prix_min"
+                  value={formData.prix_min}
+                  onChange={handleInputChange}
+                />
+                <Input
+                  type="number"
+                  label="Prix max (€)"
+                  name="prix_max"
+                  value={formData.prix_max}
+                  onChange={handleInputChange}
+                />
+              </div>
 
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                type="number"
-                label="Prix max (€)"
-                name="prix_max"
-                value={formData.prix_max}
-                onChange={handleInputChange}
-                size="small"
-              />
-            </Grid>
+              {/* Surface */}
+              <div className="form-row">
+                <Input
+                  type="number"
+                  label="Surface min (m²)"
+                  name="surface_min"
+                  value={formData.surface_min}
+                  onChange={handleInputChange}
+                />
+                <Input
+                  type="number"
+                  label="Surface max (m²)"
+                  name="surface_max"
+                  value={formData.surface_max}
+                  onChange={handleInputChange}
+                />
+              </div>
 
-            {/* Surface */}
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                type="number"
-                label="Surface min (m²)"
-                name="surface_min"
-                value={formData.surface_min}
-                onChange={handleInputChange}
-                size="small"
-              />
-            </Grid>
+              {/* Pièces */}
+              <div className="form-row">
+                <Input
+                  type="number"
+                  label="Pièces min"
+                  name="nombre_pieces_min"
+                  value={formData.nombre_pieces_min}
+                  onChange={handleInputChange}
+                />
+                <Input
+                  type="number"
+                  label="Pièces max"
+                  name="nombre_pieces_max"
+                  value={formData.nombre_pieces_max}
+                  onChange={handleInputChange}
+                />
+              </div>
 
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                type="number"
-                label="Surface max (m²)"
-                name="surface_max"
-                value={formData.surface_max}
-                onChange={handleInputChange}
-                size="small"
-              />
-            </Grid>
-
-            {/* Pièces */}
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                type="number"
-                label="Pièces min"
-                name="nombre_pieces_min"
-                value={formData.nombre_pieces_min}
-                onChange={handleInputChange}
-                size="small"
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                type="number"
-                label="Pièces max"
-                name="nombre_pieces_max"
-                value={formData.nombre_pieces_max}
-                onChange={handleInputChange}
-                size="small"
-              />
-            </Grid>
-
-            {/* DPE */}
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                select
-                label="DPE (optionnel)"
+              {/* DPE */}
+              <select
                 name="dpe"
                 value={formData.dpe}
                 onChange={handleInputChange}
-                size="small"
+                className="form-select"
               >
-                <MenuItem value="">Tous les DPE</MenuItem>
-                <MenuItem value="A">A (Excellent)</MenuItem>
-                <MenuItem value="B">B (Très bon)</MenuItem>
-                <MenuItem value="C">C (Bon)</MenuItem>
-                <MenuItem value="D">D (Moyen)</MenuItem>
-                <MenuItem value="E">E (Médiocre)</MenuItem>
-                <MenuItem value="F">F (Très médiocre)</MenuItem>
-                <MenuItem value="G">G (Très mauvais)</MenuItem>
-              </TextField>
-            </Grid>
+                <option value="">DPE (optionnel)</option>
+                <option value="A">A (Excellent)</option>
+                <option value="B">B (Très bon)</option>
+                <option value="C">C (Bon)</option>
+                <option value="D">D (Moyen)</option>
+                <option value="E">E (Médiocre)</option>
+                <option value="F">F (Très médiocre)</option>
+                <option value="G">G (Très mauvais)</option>
+              </select>
 
-            {/* Équipements */}
-            <Grid item xs={12}>
-              <Typography variant="subtitle2" gutterBottom>
-                Équipements
-              </Typography>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
+              {/* Équipements */}
+              <div className="form-section">
+                <label className="form-label">Équipements</label>
+                <div className="checkbox-group">
+                  <label className="checkbox-label">
+                    <input
+                      type="checkbox"
                       name="ascenseur"
                       checked={formData.ascenseur}
                       onChange={handleInputChange}
                     />
-                  }
-                  label="Ascenseur"
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
+                    Ascenseur
+                  </label>
+                  <label className="checkbox-label">
+                    <input
+                      type="checkbox"
                       name="balcon"
                       checked={formData.balcon}
                       onChange={handleInputChange}
                     />
-                  }
-                  label="Balcon"
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
+                    Balcon
+                  </label>
+                  <label className="checkbox-label">
+                    <input
+                      type="checkbox"
                       name="terrasse"
                       checked={formData.terrasse}
                       onChange={handleInputChange}
                     />
-                  }
-                  label="Terrasse"
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
+                    Terrasse
+                  </label>
+                  <label className="checkbox-label">
+                    <input
+                      type="checkbox"
                       name="jardin"
                       checked={formData.jardin}
                       onChange={handleInputChange}
                     />
-                  }
-                  label="Jardin"
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
+                    Jardin
+                  </label>
+                  <label className="checkbox-label">
+                    <input
+                      type="checkbox"
                       name="piscine"
                       checked={formData.piscine}
                       onChange={handleInputChange}
                     />
-                  }
-                  label="Piscine"
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
+                    Piscine
+                  </label>
+                  <label className="checkbox-label">
+                    <input
+                      type="checkbox"
                       name="parking"
                       checked={formData.parking}
                       onChange={handleInputChange}
                     />
-                  }
-                  label="Parking"
-                />
-              </Box>
-            </Grid>
+                    Parking
+                  </label>
+                </div>
+              </div>
 
-            {/* Configuration */}
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                select
-                label="Fréquence"
-                name="frequence"
-                value={formData.frequence}
-                onChange={handleInputChange}
-                size="small"
-              >
-                <MenuItem value="immediatement">Immédiatement</MenuItem>
-                <MenuItem value="quotidienne">Quotidienne</MenuItem>
-                <MenuItem value="hebdomadaire">Hebdomadaire</MenuItem>
-              </TextField>
-            </Grid>
+              {/* Configuration */}
+              <div className="form-row">
+                <select
+                  name="frequence"
+                  value={formData.frequence}
+                  onChange={handleInputChange}
+                  className="form-select"
+                >
+                  <option value="immediatement">Immédiatement</option>
+                  <option value="quotidienne">Quotidienne</option>
+                  <option value="hebdomadaire">Hebdomadaire</option>
+                </select>
 
-            <Grid item xs={12} sm={6}>
-              <FormControlLabel
-                control={
-                  <Checkbox
+                <label className="checkbox-label full-width">
+                  <input
+                    type="checkbox"
                     name="email_notification"
                     checked={formData.email_notification}
                     onChange={handleInputChange}
                   />
-                }
-                label="Notifications email"
-              />
-            </Grid>
-          </Grid>
-        </DialogContent>
+                  Notifications email
+                </label>
+              </div>
+            </div>
 
-        <DialogActions>
-          <Button onClick={handleCloseModal}>Annuler</Button>
-          <Button
-            onClick={handleSaveAlerte}
-            variant="contained"
-            color="primary"
-            disabled={loading}
-            startIcon={<CheckIcon />}
-          >
-            {editingAlerte ? 'Mettre à jour' : 'Créer'}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Container>
+            <div className="modal-actions">
+              <Button onClick={handleCloseModal} variant="secondary">
+                Annuler
+              </Button>
+              <Button
+                onClick={handleSaveAlerte}
+                variant="primary"
+                disabled={loading}
+              >
+                {editingAlerte ? 'Mettre à jour' : 'Créer'}
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
+    </div>
   );
 };
 

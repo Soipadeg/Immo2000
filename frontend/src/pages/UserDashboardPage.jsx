@@ -3,44 +3,10 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Container,
-  Grid,
-  Card,
-  CardContent,
-  CardActions,
-  Typography,
-  Button,
-  Chip,
-  Tabs,
-  Tab,
-  CircularProgress,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
-  Alert,
-  LinearProgress,
-  Avatar,
-  AvatarGroup,
-  IconButton,
-  Tooltip,
-} from '@mui/material';
+import { Button, Card, Alert } from '@/components';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import StatCard from '../components/StatCard';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EyeIcon from '@mui/icons-material/Visibility';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import SearchIcon from '@mui/icons-material/Search';
-import AlertIcon from '@mui/icons-material/Notifications';
-import DownloadIcon from '@mui/icons-material/Download';
-import SettingsIcon from '@mui/icons-material/Settings';
-import BookIcon from '@mui/icons-material/Book';
-import FolderIcon from '@mui/icons-material/Folder';
+import '../styles/UserDashboardPage.css';
 
 const UserDashboardPage = () => {
   const { user, loading: authLoading } = useAuth();
@@ -58,32 +24,28 @@ const UserDashboardPage = () => {
     {
       label: 'Annonces actives',
       value: 12,
-      icon: <EditIcon />,
-      color: 'primary',
+      icon: '📝',
       trend: '+2 ce mois',
       trendUp: true
     },
     {
       label: 'Vues totales',
       value: 1245,
-      icon: <EyeIcon />,
-      color: 'info',
+      icon: '👁️',
       trend: '+340 cette semaine',
       trendUp: true
     },
     {
       label: 'Messages reçus',
       value: 47,
-      icon: <AlertIcon />,
-      color: 'warning',
+      icon: '💬',
       trend: '8 non lus',
       trendUp: false
     },
     {
       label: 'Alertes',
       value: 5,
-      icon: <TrendingUpIcon />,
-      color: 'success',
+      icon: '🔔',
       trend: '2 nouvelles',
       trendUp: false
     },
@@ -147,16 +109,16 @@ const UserDashboardPage = () => {
   ];
 
   const operations = [
-    { label: 'Consulter les guides', icon: <BookIcon />, color: 'primary' },
-    { label: 'Télécharger les modèles', icon: <FolderIcon />, color: 'secondary' },
-    { label: 'Utiliser le simulateur', icon: <TrendingUpIcon />, color: 'success' },
+    { label: 'Consulter les guides', icon: '📚' },
+    { label: 'Télécharger les modèles', icon: '📁' },
+    { label: 'Utiliser le simulateur', icon: '📊' },
   ];
 
   if (authLoading || loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <CircularProgress />
-      </Box>
+      <div className="loading-page">
+        <div className="spinner"></div>
+      </div>
     );
   }
 
@@ -164,242 +126,182 @@ const UserDashboardPage = () => {
     return null;
   }
 
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
-
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
+    <div className="user-dashboard-page-container">
       {/* En-tête */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Box>
-          <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
-            📊 Dashboard
-          </Typography>
-          <Typography color="textSecondary">
+      <div className="dashboard-header">
+        <div>
+          <h1 className="dashboard-title">📊 Dashboard</h1>
+          <p className="dashboard-subtitle">
             Bienvenue, <strong>{user.prenom} {user.nom}</strong> 👋
-          </Typography>
-        </Box>
+          </p>
+        </div>
         <Button
-          variant="contained"
-          color="success"
-          size="large"
-          startIcon={<AddIcon />}
+          variant="primary"
+          size="medium"
           onClick={() => navigate('/annonces/create')}
-          sx={{ fontWeight: 'bold' }}
         >
-          + Créer une annonce
+          ➕ Créer une annonce
         </Button>
-      </Box>
+      </div>
 
       {/* Statistiques principales */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
+      <div className="stats-grid">
         {stats.map((stat, index) => (
-          <Grid item xs={12} sm={6} lg={3} key={index}>
-            <StatCard
-              title={stat.label}
-              value={stat.value}
-              icon={stat.icon}
-              color={stat.color}
-              trend={stat.trend}
-              trendUp={stat.trendUp}
-            />
-          </Grid>
+          <Card key={index} className="stat-card">
+            <div className="stat-content">
+              <div className="stat-icon">{stat.icon}</div>
+              <div className="stat-text">
+                <p className="stat-label">{stat.label}</p>
+                <h3 className="stat-value">{stat.value.toLocaleString('fr-FR')}</h3>
+                <p className={`stat-trend ${stat.trendUp ? 'up' : 'down'}`}>
+                  {stat.trendUp ? '📈' : '📉'} {stat.trend}
+                </p>
+              </div>
+            </div>
+          </Card>
         ))}
-      </Grid>
+      </div>
 
       {/* Contenu principal - Onglets */}
-      <Card sx={{ mb: 4 }}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider', bgcolor: 'background.paper' }}>
-          <Tabs
-            value={tabValue}
-            onChange={handleTabChange}
-            variant="scrollable"
-
+      <Card className="tabs-card">
+        <div className="tabs-nav">
+          <button
+            className={`tab-button ${tabValue === 0 ? 'active' : ''}`}
+            onClick={() => setTabValue(0)}
           >
-            <Tab icon={<SearchIcon />} label="Mes annonces" iconPosition="start" />
-            <Tab icon={<AlertIcon />} label="Mes alertes" iconPosition="start" />
-          </Tabs>
-        </Box>
+            🔍 Mes annonces
+          </button>
+          <button
+            className={`tab-button ${tabValue === 1 ? 'active' : ''}`}
+            onClick={() => setTabValue(1)}
+          >
+            🔔 Mes alertes
+          </button>
+        </div>
 
-        {/* Onglet Annonces */}
-        {tabValue === 0 && (
-          <CardContent sx={{ pt: 3 }}>
-            {annonces.length === 0 ? (
-              <Alert severity="info">
-                Aucune annonce. <Button color="primary">Créer votre première annonce</Button>
-              </Alert>
-            ) : (
-              <Grid container spacing={3}>
-                {annonces.map((annonce) => (
-                  <Grid item xs={12} key={annonce.id}>
-                    <Card
-                      variant="outlined"
-                      sx={{
-                        p: 2.5,
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                          boxShadow: 4,
-                          transform: 'translateY(-4px)',
-                        }
-                      }}
-                    >
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', mb: 2 }}>
-                        <Box sx={{ flex: 1 }}>
-                          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-                            {annonce.titre}
-                          </Typography>
-                          <Typography variant="body2" color="textSecondary">
+        <div className="tabs-content">
+          {/* Onglet Annonces */}
+          {tabValue === 0 && (
+            <div className="tab-pane">
+              {annonces.length === 0 ? (
+                <Alert type="info" title="Aucune annonce" message="Créer votre première annonce" />
+              ) : (
+                <div className="annonces-list">
+                  {annonces.map((annonce) => (
+                    <Card key={annonce.id} className="annonce-item">
+                      <div className="annonce-header">
+                        <div>
+                          <h3 className="annonce-title">{annonce.titre}</h3>
+                          <p className="annonce-location">
                             📍 {annonce.ville} • Créée le {new Date(annonce.dateCreation).toLocaleDateString('fr-FR')}
-                          </Typography>
-                        </Box>
-                        <Chip
-                          label={annonce.statut}
-                          color={annonce.statut === 'Actif' ? 'success' : 'default'}
-                          size="small"
-                          sx={{ fontWeight: 'bold' }}
-                        />
-                      </Box>
+                          </p>
+                        </div>
+                        <span className={`status-chip ${annonce.statut === 'Actif' ? 'active' : 'draft'}`}>
+                          {annonce.statut}
+                        </span>
+                      </div>
 
-                      <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 1.5 }}>
-                        {annonce.prix.toLocaleString()} €
-                      </Typography>
+                      <h2 className="annonce-price">
+                        {annonce.prix.toLocaleString('fr-FR')} €
+                      </h2>
 
-                      <Box sx={{ mb: 2 }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                          <Typography variant="caption" color="textSecondary">
-                            Progression du profil
-                          </Typography>
-                          <Typography variant="caption" sx={{ fontWeight: 'bold' }}>
-                            {annonce.progression}%
-                          </Typography>
-                        </Box>
-                        <LinearProgress
-                          variant="determinate"
-                          value={annonce.progression}
-                          sx={{ height: 8, borderRadius: 1 }}
-                        />
-                      </Box>
+                      <div className="progression-section">
+                        <div className="progression-header">
+                          <span className="progression-label">Progression du profil</span>
+                          <span className="progression-value">{annonce.progression}%</span>
+                        </div>
+                        <div className="progression-bar">
+                          <div
+                            className="progression-fill"
+                            style={{ width: `${annonce.progression}%` }}
+                          ></div>
+                        </div>
+                      </div>
 
-                      <Box sx={{ display: 'flex', gap: 3, mb: 2, fontSize: '0.875rem' }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                          👁️ <Typography variant="body2">{annonce.vues} vues</Typography>
-                        </Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                          💬 <Typography variant="body2">{annonce.messages} messages</Typography>
-                        </Box>
-                      </Box>
+                      <div className="annonce-stats">
+                        <div className="stat-item">👁️ {annonce.vues} vues</div>
+                        <div className="stat-item">💬 {annonce.messages} messages</div>
+                      </div>
 
-                      <Box sx={{ display: 'flex', gap: 1 }}>
-                        <Tooltip title="Voir l'annonce">
-                          <Button size="small" variant="contained" startIcon={<EyeIcon />}>
-                            Voir
-                          </Button>
-                        </Tooltip>
-                        <Tooltip title="Éditer l'annonce">
-                          <Button size="small" variant="outlined" startIcon={<EditIcon />}>
-                            Éditer
-                          </Button>
-                        </Tooltip>
-                        <Tooltip title="Supprimer l'annonce">
-                          <Button size="small" variant="outlined" color="error" startIcon={<DeleteIcon />}>
-                            Supprimer
-                          </Button>
-                        </Tooltip>
-                      </Box>
+                      <div className="annonce-actions">
+                        <Button size="small" variant="primary">👁️ Voir</Button>
+                        <Button size="small" variant="secondary">✏️ Éditer</Button>
+                        <Button size="small" variant="danger">🗑️ Supprimer</Button>
+                      </div>
                     </Card>
-                  </Grid>
-                ))}
-              </Grid>
-            )}
-          </CardContent>
-        )}
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
-        {/* Onglet Alertes */}
-        {tabValue === 1 && (
-          <CardContent sx={{ pt: 3 }}>
-            {alertes.length === 0 ? (
-              <Alert severity="info">Aucune alerte pour le moment</Alert>
-            ) : (
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                {alertes.map((alerte) => (
-                  <Alert
-                    key={alerte.id}
-                    severity={alerte.type}
-                    sx={{ py: 1.5 }}
-                  >
-                    <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
-                      {alerte.titre}
-                    </Typography>
-                    <Typography variant="body2">
-                      {alerte.description}
-                    </Typography>
-                  </Alert>
-                ))}
-              </Box>
-            )}
-          </CardContent>
-        )}
+          {/* Onglet Alertes */}
+          {tabValue === 1 && (
+            <div className="tab-pane">
+              {alertes.length === 0 ? (
+                <Alert type="info" title="Aucune alerte" message="Aucune alerte pour le moment" />
+              ) : (
+                <div className="alertes-list">
+                  {alertes.map((alerte) => (
+                    <Alert
+                      key={alerte.id}
+                      type={alerte.type}
+                      title={alerte.titre}
+                      message={alerte.description}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </Card>
 
       {/* Sections rapides */}
-      <Grid container spacing={3}>
-        <Grid item xs={12} lg={8}>
+      <div className="dashboard-sections">
+        <div className="section-resources">
           <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
-                📚 Ressources utiles
-              </Typography>
-              <Divider sx={{ my: 2 }} />
-              <Grid container spacing={2}>
-                {operations.map((op, idx) => (
-                  <Grid item xs={12} sm={6} md={4} key={idx}>
-                    <Button
-                      variant="outlined"
-                      fullWidth
-                      color={op.color}
-                      startIcon={op.icon}
-                      sx={{ py: 1.5 }}
-                    >
-                      {op.label}
-                    </Button>
-                  </Grid>
-                ))}
-              </Grid>
-            </CardContent>
+            <div className="card-header">
+              <h2 className="card-title">📚 Ressources utiles</h2>
+            </div>
+            <div className="resources-grid">
+              {operations.map((op, idx) => (
+                <Button
+                  key={idx}
+                  variant="secondary"
+                  className="resource-button"
+                >
+                  {op.icon} {op.label}
+                </Button>
+              ))}
+            </div>
           </Card>
-        </Grid>
+        </div>
 
-        <Grid item xs={12} lg={4}>
+        <div className="section-settings">
           <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
-                ⚙️ Paramètres
-              </Typography>
-              <Divider sx={{ my: 2 }} />
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                <Button
-                  variant="outlined"
-                  fullWidth
-                  startIcon={<SettingsIcon />}
-                  onClick={() => navigate('/profile')}
-                >
-                  Profil
-                </Button>
-                <Button
-                  variant="outlined"
-                  fullWidth
-                  startIcon={<DownloadIcon />}
-                >
-                  Télécharger données
-                </Button>
-              </Box>
-            </CardContent>
+            <div className="card-header">
+              <h2 className="card-title">⚙️ Paramètres</h2>
+            </div>
+            <div className="settings-buttons">
+              <Button
+                variant="secondary"
+                onClick={() => navigate('/profile')}
+              >
+                ⚙️ Profil
+              </Button>
+              <Button variant="secondary">
+                📥 Télécharger données
+              </Button>
+            </div>
           </Card>
-        </Grid>
-      </Grid>
-    </Container>
+        </div>
+      </div>
+    </div>
   );
 };
+
+export default UserDashboardPage;
 
 export default UserDashboardPage;

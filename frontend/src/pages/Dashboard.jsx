@@ -5,40 +5,11 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  Container,
-  Box,
-  Typography,
-  Tabs,
-  Tab,
-  Alert,
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  Chip,
-  CircularProgress,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  Divider,
-} from '@mui/material';
-import {
-  ShoppingBag,
-  Home,
-  Message,
-  Add,
-  FavoriteBorder,
-  Favorite,
-  Edit,
-  Delete,
-  Eye,
-  MoreVert,
-} from '@mui/icons-material';
+import { Button, Card, Alert } from '@/components';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { getMesAnnonces } from '../services/api';
+import '../styles/Dashboard.css';
 
 /**
  * Composant Tab Panel
@@ -46,8 +17,8 @@ import { getMesAnnonces } from '../services/api';
 function TabPanel(props) {
   const { children, value, index } = props;
   return (
-    <div hidden={value !== index} role="tabpanel">
-      {value === index && <Box sx={{ py: 3 }}>{children}</Box>}
+    <div hidden={value !== index} role="tabpanel" className="tab-content">
+      {value === index && <div className="tab-pane">{children}</div>}
     </div>
   );
 }
@@ -57,24 +28,18 @@ function TabPanel(props) {
  */
 function AchatTab() {
   return (
-    <Box>
-      <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold' }}>
-        🔍 Rechercher un bien
-      </Typography>
+    <div className="tab-section">
+      <h2 className="section-title">🔍 Rechercher un bien</h2>
 
-      <Alert severity="info" sx={{ mb: 3 }}>
-        Les fonctionnalités de recherche et de favoris seront bientôt disponibles !
-      </Alert>
+      <Alert type="info" title="Fonctionnalité" message="Les fonctionnalités de recherche et de favoris seront bientôt disponibles !" />
 
-      <Card sx={{ p: 4, textAlign: 'center' }}>
-        <Typography variant="body1" sx={{ color: 'text.secondary', mb: 2 }}>
-          Cherchez votre bien idéal parmi nos annonces
-        </Typography>
-        <Button variant="contained" color="primary">
-          Consulter les annonces
-        </Button>
+      <Card className="empty-card">
+        <div className="card-content">
+          <p className="empty-text">Cherchez votre bien idéal parmi nos annonces</p>
+          <Button variant="primary">Consulter les annonces</Button>
+        </div>
       </Card>
-    </Box>
+    </div>
   );
 }
 
@@ -116,191 +81,165 @@ function VenteTab({ user }) {
 
   const handleDeleteAnnonce = async (annonceId) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?')) {
-      // TODO: Implémenter l'API de suppression
       console.log('Supprimer annonce:', annonceId);
     }
   };
 
   return (
-    <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-          📝 Mes annonces
-        </Typography>
+    <div className="tab-section">
+      <div className="section-header">
+        <h2 className="section-title">📝 Mes annonces</h2>
         <Button
-          variant="contained"
-          color="success"
-          startIcon={<Add />}
+          variant="primary"
           onClick={() => navigate('/creer-annonce/etape1')}
         >
-          Créer une annonce
+          ➕ Créer une annonce
         </Button>
-      </Box>
+      </div>
 
-      {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
+      {error && <Alert type="error" title="Erreur" message={error} />}
 
       {/* Filtres */}
-      <Box sx={{ mb: 3, display: 'flex', gap: 2 }}>
-        <Button
-          variant={filter === 'tous' ? 'contained' : 'outlined'}
+      <div className="filter-buttons">
+        <button
+          className={`filter-btn ${filter === 'tous' ? 'active' : ''}`}
           onClick={() => setFilter('tous')}
         >
           Toutes ({annonces.length})
-        </Button>
-        <Button
-          variant={filter === 'brouillons' ? 'contained' : 'outlined'}
+        </button>
+        <button
+          className={`filter-btn ${filter === 'brouillons' ? 'active' : ''}`}
           onClick={() => setFilter('brouillons')}
         >
           Brouillons
-        </Button>
-        <Button
-          variant={filter === 'publiees' ? 'contained' : 'outlined'}
+        </button>
+        <button
+          className={`filter-btn ${filter === 'publiees' ? 'active' : ''}`}
           onClick={() => setFilter('publiees')}
         >
           Publiées
-        </Button>
-      </Box>
+        </button>
+      </div>
 
       {/* Chargement */}
       {loading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 5 }}>
-          <CircularProgress />
-        </Box>
+        <div className="loading-container">
+          <div className="spinner"></div>
+        </div>
       )}
 
-      {/* Liste des annonces */}
+      {/* Liste vide */}
       {!loading && annonces.length === 0 && (
-        <Card sx={{ p: 4, textAlign: 'center' }}>
-          <Typography variant="body1" sx={{ color: 'text.secondary', mb: 2 }}>
-            Vous n'avez pas encore d'annonce {filter !== 'tous' ? `en ${filter}` : ''}
-          </Typography>
-          <Button
-            variant="contained"
-            color="success"
-            startIcon={<Add />}
-            onClick={() => navigate('/creer-annonce/etape1')}
-          >
-            Créer votre première annonce
-          </Button>
+        <Card className="empty-card">
+          <div className="card-content">
+            <p className="empty-text">
+              Vous n'avez pas encore d'annonce {filter !== 'tous' ? `en ${filter}` : ''}
+            </p>
+            <Button
+              variant="primary"
+              onClick={() => navigate('/creer-annonce/etape1')}
+            >
+              ➕ Créer votre première annonce
+            </Button>
+          </div>
         </Card>
       )}
 
       {/* Annonces */}
       {!loading && annonces.length > 0 && (
-        <Grid container spacing={3}>
+        <div className="announcements-grid">
           {annonces.map((annonce) => (
-            <Grid item xs={12} sm={6} md={4} key={annonce.annonce_id}>
-              <Card sx={{ h: '100%', display: 'flex', flexDirection: 'column' }}>
-                {/* Image */}
-                <Box
-                  sx={{
-                    height: 200,
-                    bgcolor: '#e0e0e0',
-                    backgroundImage: annonce.photos_list?.length
-                      ? `url(${annonce.photos_list[0]?.url})`
-                      : 'none',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    position: 'relative',
-                  }}
-                >
-                  <Chip
-                    label={annonce.statut.toUpperCase()}
-                    color={annonce.statut === 'publiée' ? 'success' : 'default'}
-                    sx={{ position: 'absolute', top: 8, right: 8 }}
-                  />
-                </Box>
+            <Card key={annonce.annonce_id} className="announcement-card">
+              {/* Image */}
+              <div
+                className="card-image"
+                style={{
+                  backgroundImage: annonce.photos_list?.length
+                    ? `url(${annonce.photos_list[0]?.url})`
+                    : 'none',
+                }}
+              >
+                <span className={`status-badge ${annonce.statut === 'publiée' ? 'published' : 'draft'}`}>
+                  {annonce.statut.toUpperCase()}
+                </span>
+              </div>
 
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography variant="h6" sx={{ mb: 1, fontWeight: 'bold' }}>
-                    {annonce.titre}
-                  </Typography>
+              <div className="card-body">
+                <h3 className="card-title">{annonce.titre}</h3>
 
-                  <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
-                    📍 {annonce.adresse}, {annonce.code_postal}
-                  </Typography>
+                <p className="card-location">📍 {annonce.adresse}, {annonce.code_postal}</p>
 
-                  {/* Détails */}
-                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
-                    {annonce.prix && (
-                      <Chip
-                        label={`${annonce.prix.toLocaleString('fr-FR')} €`}
-                        variant="outlined"
-                        color="primary"
-                      />
-                    )}
-                    {annonce.surface && (
-                      <Chip
-                        label={`${annonce.surface} m²`}
-                        variant="outlined"
-                      />
-                    )}
-                    {annonce.nombre_pieces && (
-                      <Chip
-                        label={`${annonce.nombre_pieces} pièces`}
-                        variant="outlined"
-                      />
-                    )}
-                  </Box>
+                {/* Détails */}
+                <div className="card-details">
+                  {annonce.prix && (
+                    <span className="detail-badge">
+                      💰 {annonce.prix.toLocaleString('fr-FR')} €
+                    </span>
+                  )}
+                  {annonce.surface && (
+                    <span className="detail-badge">
+                      📐 {annonce.surface} m²
+                    </span>
+                  )}
+                  {annonce.nombre_pieces && (
+                    <span className="detail-badge">
+                      🚪 {annonce.nombre_pieces} pièces
+                    </span>
+                  )}
+                </div>
 
-                  {/* Actions */}
-                  <Box sx={{ display: 'flex', gap: 1 }}>
-                    {annonce.statut === 'brouillon' && (
-                      <Button
-                        size="small"
-                        variant="contained"
-                        fullWidth
-                        onClick={() =>
-                          navigate(`/creer-annonce/etape4?annonce_id=${annonce.annonce_id}`)
-                        }
-                      >
-                        Continuer
-                      </Button>
-                    )}
-                    {annonce.statut === 'publiée' && (
-                      <Button
-                        size="small"
-                        variant="contained"
-                        color="info"
-                        fullWidth
-                        startIcon={<Eye />}
-                      >
-                        Voir
-                      </Button>
-                    )}
+                {/* Actions */}
+                <div className="card-actions">
+                  {annonce.statut === 'brouillon' && (
                     <Button
                       size="small"
-                      variant="outlined"
-                      onClick={() => handleDeleteAnnonce(annonce.annonce_id)}
-                      startIcon={<Delete />}
+                      variant="primary"
+                      onClick={() =>
+                        navigate(`/creer-annonce/etape4?annonce_id=${annonce.annonce_id}`)
+                      }
                     >
-                      Supprimer
+                      Continuer
                     </Button>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
+                  )}
+                  {annonce.statut === 'publiée' && (
+                    <Button
+                      size="small"
+                      variant="secondary"
+                    >
+                      👁️ Voir
+                    </Button>
+                  )}
+                  <Button
+                    size="small"
+                    variant="danger"
+                    onClick={() => handleDeleteAnnonce(annonce.annonce_id)}
+                  >
+                    🗑️ Supprimer
+                  </Button>
+                </div>
+              </div>
+            </Card>
           ))}
-        </Grid>
+        </div>
       )}
 
-      {/* Affichage du contrat d'exclusivité */}
+      {/* Contrat d'exclusivité */}
       {user?.has_exclusivity_contract && (
-        <Alert severity="success" sx={{ mt: 4 }}>
-          ✅ <strong>Contrat d'exclusivité signé !</strong> Vous avez accès aux outils IA futurs
-          pour optimiser la vente de vos biens. Une section dédiée aux outils IA sera bientôt
-          disponible.
-        </Alert>
+        <Alert
+          type="success"
+          title="✅ Contrat d'exclusivité signé !"
+          message="Vous avez accès aux outils IA futurs pour optimiser la vente de vos biens. Une section dédiée aux outils IA sera bientôt disponible."
+        />
       )}
 
       {!user?.has_exclusivity_contract && (
-        <Alert severity="info" sx={{ mt: 4 }}>
-          🤖 <strong>Boostez vos ventes !</strong> Signez un contrat d'exclusivité pour accéder à
-          nos outils IA futurs (matching intelligent, estimation automatique, gestion d'agenda, etc.).
-          Commission: 1.5% en cas de vente seulement.
-        </Alert>
+        <Alert
+          type="info"
+          title="🤖 Boostez vos ventes !"
+          message="Signez un contrat d'exclusivité pour accéder à nos outils IA futurs (matching intelligent, estimation automatique, gestion d'agenda, etc.). Commission: 1.5% en cas de vente seulement."
+        />
       )}
-    </Box>
+    </div>
   );
 }
 
@@ -328,54 +267,35 @@ function MessagerieTab() {
   ];
 
   return (
-    <Box>
-      <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold' }}>
-        💬 Messages
-      </Typography>
+    <div className="tab-section">
+      <h2 className="section-title">💬 Messages</h2>
 
-      <List sx={{ bgcolor: 'background.paper', borderRadius: 1 }}>
+      <div className="messages-list">
         {messages.map((msg, idx) => (
-          <React.Fragment key={msg.id}>
-            <ListItemButton
-              sx={{
-                bgcolor: msg.unread ? 'action.hover' : 'background.paper',
-                '&:hover': { bgcolor: 'action.hover' },
-              }}
-            >
-              <ListItemText
-                primary={
-                  <Typography sx={{ fontWeight: msg.unread ? 'bold' : 'normal' }}>
-                    {msg.from}
-                  </Typography>
-                }
-                secondary={
-                  <Box>
-                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                      {msg.subject}
-                    </Typography>
-                    <Typography variant="caption" color="textSecondary">
-                      {msg.preview}
-                    </Typography>
-                  </Box>
-                }
-              />
-              <Typography variant="caption" sx={{ color: 'text.secondary', ml: 2 }}>
-                {msg.date}
-              </Typography>
-            </ListItemButton>
-            {idx < messages.length - 1 && <Divider />}
-          </React.Fragment>
+          <div key={msg.id}>
+            <div className={`message-item ${msg.unread ? 'unread' : ''}`}>
+              <div className="message-content">
+                <div className="message-from" style={{ fontWeight: msg.unread ? 'bold' : 'normal' }}>
+                  {msg.from}
+                </div>
+                <div className="message-subject">{msg.subject}</div>
+                <div className="message-preview">{msg.preview}</div>
+              </div>
+              <div className="message-date">{msg.date}</div>
+            </div>
+            {idx < messages.length - 1 && <div className="divider"></div>}
+          </div>
         ))}
-      </List>
+      </div>
 
       {messages.length === 0 && (
-        <Card sx={{ p: 4, textAlign: 'center' }}>
-          <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-            Aucun message pour le moment
-          </Typography>
+        <Card className="empty-card">
+          <div className="card-content">
+            <p className="empty-text">Aucun message pour le moment</p>
+          </div>
         </Card>
       )}
-    </Box>
+    </div>
   );
 }
 
@@ -398,70 +318,58 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '70vh' }}>
-        <CircularProgress />
-      </Box>
+      <div className="loading-page">
+        <div className="spinner"></div>
+      </div>
     );
   }
 
   return (
-    <Container maxWidth="lg">
-      <Box sx={{ py: 4 }}>
-        {/* En-tête */}
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1 }}>
-            👋 Bienvenue, {user?.prenom} !
-          </Typography>
-          <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-            Gérez vos annonces, recherches et messages en un seul endroit.
-          </Typography>
-        </Box>
+    <div className="dashboard-page-container">
+      {/* En-tête */}
+      <div className="dashboard-header">
+        <h1 className="dashboard-title">👋 Bienvenue, {user?.prenom} !</h1>
+        <p className="dashboard-subtitle">
+          Gérez vos annonces, recherches et messages en un seul endroit.
+        </p>
+      </div>
 
-        {/* Onglets */}
-        <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-          <Tabs
-            value={tabValue}
-            onChange={(e, newValue) => setTabValue(newValue)}
-            variant="fullWidth"
-            sx={{
-              '& .MuiTab-root': {
-                fontSize: '1rem',
-                fontWeight: 500,
-                textTransform: 'none',
-              },
-            }}
+      {/* Onglets */}
+      <div className="dashboard-tabs">
+        <div className="tabs-nav">
+          <button
+            className={`tab-button ${tabValue === 0 ? 'active' : ''}`}
+            onClick={() => setTabValue(0)}
           >
-            <Tab
-              label="🛒 Achat"
-              icon={<ShoppingBag />}
-              iconPosition="start"
-            />
-            <Tab
-              label="🏠 Vente"
-              icon={<Home />}
-              iconPosition="start"
-            />
-            <Tab
-              label="💬 Messagerie"
-              icon={<Message />}
-              iconPosition="start"
-            />
-          </Tabs>
-        </Box>
+            🛒 Achat
+          </button>
+          <button
+            className={`tab-button ${tabValue === 1 ? 'active' : ''}`}
+            onClick={() => setTabValue(1)}
+          >
+            🏠 Vente
+          </button>
+          <button
+            className={`tab-button ${tabValue === 2 ? 'active' : ''}`}
+            onClick={() => setTabValue(2)}
+          >
+            💬 Messagerie
+          </button>
+        </div>
+      </div>
 
-        {/* Contenu des onglets */}
-        <TabPanel value={tabValue} index={0}>
-          <AchatTab />
-        </TabPanel>
+      {/* Contenu des onglets */}
+      <TabPanel value={tabValue} index={0}>
+        <AchatTab />
+      </TabPanel>
 
-        <TabPanel value={tabValue} index={1}>
-          <VenteTab user={user} />
-        </TabPanel>
+      <TabPanel value={tabValue} index={1}>
+        <VenteTab user={user} />
+      </TabPanel>
 
-        <TabPanel value={tabValue} index={2}>
-          <MessagerieTab />
-        </TabPanel>
-      </Box>
-    </Container>
+      <TabPanel value={tabValue} index={2}>
+        <MessagerieTab />
+      </TabPanel>
+    </div>
   );
 }
