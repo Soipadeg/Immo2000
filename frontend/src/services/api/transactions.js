@@ -118,4 +118,12 @@ export const notairesApi = {
     apiClient.get('/api/v1/notaires/search', {
       params: { code_postal: codePostal },
     }),
+
+  /**
+   * Récupérer les dossiers en attente pour le dashboard notaire
+   */
+  getPendingDossiers: (notaireId, skip = 0, limit = 20) =>
+    apiClient.get(`/api/v1/notaires/${notaireId}/dashboard/pending`, {
+      params: { skip, limit },
+    }),
 };

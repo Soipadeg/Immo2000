@@ -6,6 +6,7 @@
  */
 
 import { create } from 'zustand';
+import { transactionsApi } from '../services/api/transactions';
 
 export const useTransactionStore = create((set, get) => ({
   // État
@@ -22,9 +23,8 @@ export const useTransactionStore = create((set, get) => ({
   loadTransaction: async (transactionId) => {
     set({ loading: true, error: null });
     try {
-      // À importer depuis le contexte du composant ou passer comme paramètre
-      // const res = await transactionsApi.getById(transactionId);
-      // set({ transaction: res.data, loading: false });
+      const res = await transactionsApi.getById(transactionId);
+      set({ transaction: res.data, loading: false });
     } catch (err) {
       set({ error: err.message, loading: false });
     }
