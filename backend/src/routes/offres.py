@@ -8,6 +8,7 @@ from src.auth.decorators import token_required
 from src.auth.models import User, db
 from src.models.annonces import Annonce
 from src.crud import offres as crud_offres
+from src.crud import notaires as crud_notaires
 from src.schemas.offres import (
     OffreCreate, OffreResponse, OffreListResponse,
     OffreStatsResponse, OffreDetailResponse
@@ -165,17 +166,32 @@ def update_offer_status(current_user: User, offre_id: int):
 @handle_errors()
 def accept_offer(current_user: User, offre_id: int) -> Tuple[Dict[str, Any], int]:
     """
-    Accept an offer (vendor only)
+    Accept an offer (vendor only) and create TransactionNotaire
     """
     offre = crud_offres.accept_offer(db.session, offre_id, current_user.user_id)
 
     if not offre:
         raise ForbiddenError('Offer not found or unauthorized')
 
+    # Create TransactionNotaire for the accepted offer
+    try:
+        transaction = crud_notaires.create_transaction_notaire(
+            db=db.session,
+            offre_id=offre.offre_id,
+            annonce_id=offre.annonce_id,
+            vendeur_id=offre.vendeur_id,
+            acheteur_id=offre.acheteur_id,
+            prix_compromis=float(offre.prix_propose),
+            notaire_id=None  # Notaire will be selected later
+        )
+    except ValueError as e:
+        raise ValidationError(f"Erreur lors de la création de la transaction: {str(e)}")
+
     return {
         'offre_id': offre.offre_id,
         'statut': 'acceptee',
-        'message': 'Offer accepted'
+        'transaction_id': transaction.transaction_notaire_id,
+        'message': 'Offer accepted and transaction created'
     }
 
 

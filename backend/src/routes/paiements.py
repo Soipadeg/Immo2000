@@ -19,7 +19,7 @@ from src.models.notaires import TransactionNotaire
 from src.models.paiements import Paiement, TypePaiement, StatutPaiement
 from src.decorators.error_handling import handle_errors, ValidationError, NotFoundError, ForbiddenError
 
-paiements_bp = Blueprint('paiements', __name__, url_prefix='/api/v1/paiements')
+paiements_vente_bp = Blueprint('paiements', __name__, url_prefix='/api/v1/paiements')
 
 
 @paiements_vente_bp.route('', methods=['POST'])
