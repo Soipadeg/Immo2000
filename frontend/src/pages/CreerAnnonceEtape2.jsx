@@ -1,21 +1,9 @@
-import React, { useState } from 'react';
-import {
-  Container,
-  Paper,
-  TextField,
-  Button,
-  Box,
-  Typography,
-  Alert,
-  Stack,
-  Grid,
-  LinearProgress,
-  Link,
-  FormControlLabel,
-  Checkbox,
-} from '@mui/material';
+import React
+import { Button, Alert, Input } from '@/components';, { useState } from 'react';
+
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { register } from '../services/api';
+import '../styles/CreerAnnonceEtape2.css';
 
 /**
  * Page ÉTAPE 2 du tunnel : Création de compte
@@ -160,29 +148,29 @@ export default function CreerAnnonceEtape2() {
   };
 
   return (
-    <Container maxWidth="sm">
-      <Box sx={{ py: 4 }}>
+    <div maxWidth="sm">
+      <div sx={{ py: 4 }}>
         {/* Titre */}
-        <Box sx={{ mb: 4, textAlign: 'center' }}>
-          <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', mb: 1 }}>
+        <div sx={{ mb: 4, textAlign: 'center' }}>
+          <h1  component="h1" sx={{ fontWeight: 'bold', mb: 1 }}>
             👤 Créer votre compte
-          </Typography>
-          <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+          </h1>
+          <p  sx={{ color: 'text.secondary' }}>
             Étape 2 sur 4 : Profil de base
-          </Typography>
+          </h1>
           <LinearProgress variant="determinate" value={50} sx={{ mt: 2 }} />
-        </Box>
+        </div>
 
         {/* Erreurs */}
         {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
         {/* Formulaire */}
-        <Paper elevation={3} sx={{ p: 3 }}>
+        <div elevation={3} sx={{ p: 3 }}>
           <form onSubmit={handleSubmit}>
-            <Grid container spacing={2}>
+            <div container spacing={2}>
               {/* Email */}
-              <Grid item xs={12}>
-                <TextField
+              <div item xs={12}>
+                <Input
                   fullWidth
                   label="Email"
                   name="email"
@@ -191,12 +179,12 @@ export default function CreerAnnonceEtape2() {
                   onChange={handleChange}
                   placeholder="vous@exemple.com"
                   required
-                />
-              </Grid>
+                / />
+              </div>
 
               {/* Nom et Prénom */}
-              <Grid item xs={12} sm={6}>
-                <TextField
+              <div item xs={12} sm={6}>
+                <Input
                   fullWidth
                   label="Nom"
                   name="nom"
@@ -204,11 +192,11 @@ export default function CreerAnnonceEtape2() {
                   onChange={handleChange}
                   placeholder="Dupont"
                   required
-                />
-              </Grid>
+                / />
+              </div>
 
-              <Grid item xs={12} sm={6}>
-                <TextField
+              <div item xs={12} sm={6}>
+                <Input
                   fullWidth
                   label="Prénom"
                   name="prenom"
@@ -216,12 +204,12 @@ export default function CreerAnnonceEtape2() {
                   onChange={handleChange}
                   placeholder="Jean"
                   required
-                />
-              </Grid>
+                / />
+              </div>
 
               {/* Téléphone */}
-              <Grid item xs={12}>
-                <TextField
+              <div item xs={12}>
+                <Input
                   fullWidth
                   label="Téléphone"
                   name="telephone"
@@ -230,12 +218,12 @@ export default function CreerAnnonceEtape2() {
                   onChange={handleChange}
                   placeholder="+33 6 12 34 56 78"
                   required
-                />
-              </Grid>
+                / />
+              </div>
 
               {/* Mot de passe */}
-              <Grid item xs={12}>
-                <TextField
+              <div item xs={12}>
+                <Input
                   fullWidth
                   label="Mot de passe"
                   name="mot_de_passe"
@@ -244,20 +232,20 @@ export default function CreerAnnonceEtape2() {
                   onChange={handleChange}
                   required
                   helperText="Min 8 caractères, majuscule, minuscule, chiffre, caractère spécial"
-                />
+                / />
                 {formData.mot_de_passe && (
-                  <Box sx={{ mt: 1 }}>
+                  <div sx={{ mt: 1 }}>
                     <LinearProgress variant="determinate" value={passwordStrength} />
-                    <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                    <p  sx={{ color: 'text.secondary' }}>
                       Force du mot de passe: {passwordStrength}%
-                    </Typography>
-                  </Box>
+                    </h1>
+                  </div>
                 )}
-              </Grid>
+              </div>
 
               {/* Confirmation mot de passe */}
-              <Grid item xs={12}>
-                <TextField
+              <div item xs={12}>
+                <Input
                   fullWidth
                   label="Confirmer le mot de passe"
                   name="mot_de_passe_confirm"
@@ -265,11 +253,11 @@ export default function CreerAnnonceEtape2() {
                   value={formData.mot_de_passe_confirm}
                   onChange={handleChange}
                   required
-                />
-              </Grid>
+                / />
+              </div>
 
               {/* CGU / Politique */}
-              <Grid item xs={12}>
+              <div item xs={12}>
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -279,7 +267,7 @@ export default function CreerAnnonceEtape2() {
                     />
                   }
                   label={
-                    <Typography variant="body2">
+                    <span >
                       J'accepte les{' '}
                       <Link href="/cgu" target="_blank" underline="hover">
                         Conditions Générales d'Utilisation
@@ -288,11 +276,11 @@ export default function CreerAnnonceEtape2() {
                       <Link href="/politique-confidentialite" target="_blank" underline="hover">
                         Politique de Confidentialité
                       </Link>
-                    </Typography>
+                    </h1>
                   }
                 />
-              </Grid>
-            </Grid>
+              </div>
+            </div>
 
             {/* Boutons */}
             <Stack direction="row" spacing={2} sx={{ mt: 4, justifyContent: 'space-between' }}>
@@ -315,17 +303,17 @@ export default function CreerAnnonceEtape2() {
             </Stack>
 
             {/* Lien vers login */}
-            <Box sx={{ mt: 3, textAlign: 'center' }}>
-              <Typography variant="body2">
+            <div sx={{ mt: 3, textAlign: 'center' }}>
+              <span >
                 Vous avez déjà un compte ?{' '}
                 <Link href="/connexion" underline="hover">
                   Se connecter
                 </Link>
-              </Typography>
-            </Box>
+              </h1>
+            </div>
           </form>
-        </Paper>
-      </Box>
-    </Container>
+        </div>
+      </div>
+    </div>
   );
 }

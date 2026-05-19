@@ -1,24 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Container,
-  Paper,
-  TextField,
-  Button,
-  Box,
-  Typography,
-  Alert,
-  Stack,
-  Grid,
-  LinearProgress,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  FormControlLabel,
-  Checkbox,
-} from '@mui/material';
+import React
+import { Button, Alert, Input } from '@/components';, { useState, useEffect } from 'react';
+
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { completerAnnonce } from '../services/api';
+import '../styles/CreerAnnonceEtape4.css';
 
 /**
  * Page ÉTAPE 4 du tunnel : Informations complémentaires
@@ -113,18 +98,18 @@ export default function CreerAnnonceEtape4() {
   };
 
   return (
-    <Container maxWidth="md">
-      <Box sx={{ py: 4 }}>
+    <div maxWidth="md">
+      <div sx={{ py: 4 }}>
         {/* Titre */}
-        <Box sx={{ mb: 4, textAlign: 'center' }}>
-          <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', mb: 1 }}>
+        <div sx={{ mb: 4, textAlign: 'center' }}>
+          <h1  component="h1" sx={{ fontWeight: 'bold', mb: 1 }}>
             📝 Informations complètes
-          </Typography>
-          <Typography variant="body1" sx={{ color: 'text.secondary', mb: 2 }}>
+          </h1>
+          <p  sx={{ color: 'text.secondary', mb: 2 }}>
             Étape 4 sur 4 : Finalisation et publication
-          </Typography>
+          </h1>
           <LinearProgress variant="determinate" value={100} />
-        </Box>
+        </div>
 
         {/* Infos contrat */}
         {withContract && (
@@ -137,12 +122,12 @@ export default function CreerAnnonceEtape4() {
         {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
         {/* Formulaire */}
-        <Paper elevation={3} sx={{ p: 4 }}>
+        <div elevation={3} sx={{ p: 4 }}>
           <form onSubmit={handleSubmit}>
-            <Grid container spacing={3}>
+            <div container spacing={3}>
               {/* Description */}
-              <Grid item xs={12}>
-                <TextField
+              <div item xs={12}>
+                <Input
                   fullWidth
                   label="Description de l'annonce"
                   name="description"
@@ -154,12 +139,12 @@ export default function CreerAnnonceEtape4() {
                   required
                   inputProps={{ maxLength: 2000 }}
                   helperText={`${formData.description.length}/2000`}
-                />
-              </Grid>
+                / />
+              </div>
 
               {/* Prix et Surface */}
-              <Grid item xs={12} sm={6}>
-                <TextField
+              <div item xs={12} sm={6}>
+                <Input
                   fullWidth
                   label="Prix (€)"
                   name="prix"
@@ -169,11 +154,11 @@ export default function CreerAnnonceEtape4() {
                   placeholder="250000"
                   required
                   inputProps={{ step: '1000' }}
-                />
-              </Grid>
+                / />
+              </div>
 
-              <Grid item xs={12} sm={6}>
-                <TextField
+              <div item xs={12} sm={6}>
+                <Input
                   fullWidth
                   label="Surface (m²)"
                   name="surface"
@@ -183,12 +168,12 @@ export default function CreerAnnonceEtape4() {
                   placeholder="80"
                   required
                   inputProps={{ step: '0.1' }}
-                />
-              </Grid>
+                / />
+              </div>
 
               {/* Pièces et Type */}
-              <Grid item xs={12} sm={6}>
-                <TextField
+              <div item xs={12} sm={6}>
+                <Input
                   fullWidth
                   label="Nombre de pièces"
                   name="nombre_pieces"
@@ -198,10 +183,10 @@ export default function CreerAnnonceEtape4() {
                   placeholder="3"
                   required
                   inputProps={{ min: '1' }}
-                />
-              </Grid>
+                / />
+              </div>
 
-              <Grid item xs={12} sm={6}>
+              <div item xs={12} sm={6}>
                 <FormControl fullWidth required>
                   <InputLabel>Type de bien</InputLabel>
                   <Select
@@ -216,11 +201,11 @@ export default function CreerAnnonceEtape4() {
                     <MenuItem value="local commercial">Local commercial</MenuItem>
                   </Select>
                 </FormControl>
-              </Grid>
+              </div>
 
               {/* Étage et Année */}
-              <Grid item xs={12} sm={6}>
-                <TextField
+              <div item xs={12} sm={6}>
+                <Input
                   fullWidth
                   label="Étage (optionnel)"
                   name="etage"
@@ -229,11 +214,11 @@ export default function CreerAnnonceEtape4() {
                   onChange={handleChange}
                   placeholder="2"
                   inputProps={{ min: '0' }}
-                />
-              </Grid>
+                / />
+              </div>
 
-              <Grid item xs={12} sm={6}>
-                <TextField
+              <div item xs={12} sm={6}>
+                <Input
                   fullWidth
                   label="Année de construction (optionnel)"
                   name="annee_construction"
@@ -242,11 +227,11 @@ export default function CreerAnnonceEtape4() {
                   onChange={handleChange}
                   placeholder="2015"
                   inputProps={{ min: '1800' }}
-                />
-              </Grid>
+                / />
+              </div>
 
               {/* DPE */}
-              <Grid item xs={12}>
+              <div item xs={12}>
                 <FormControl fullWidth>
                   <InputLabel>Performance énergétique (DPE)</InputLabel>
                   <Select
@@ -264,15 +249,15 @@ export default function CreerAnnonceEtape4() {
                     <MenuItem value="G">G - À rénover</MenuItem>
                   </Select>
                 </FormControl>
-              </Grid>
+              </div>
 
               {/* Caractéristiques */}
-              <Grid item xs={12}>
-                <Typography variant="h6" sx={{ mb: 2 }}>
+              <div item xs={12}>
+                <h3  sx={{ mb: 2 }}>
                   Caractéristiques du bien
-                </Typography>
-                <Grid container spacing={1}>
-                  <Grid item xs={6} sm={4}>
+                </h1>
+                <div container spacing={1}>
+                  <div item xs={6} sm={4}>
                     <FormControlLabel
                       control={
                         <Checkbox
@@ -283,8 +268,8 @@ export default function CreerAnnonceEtape4() {
                       }
                       label="Ascenseur"
                     />
-                  </Grid>
-                  <Grid item xs={6} sm={4}>
+                  </div>
+                  <div item xs={6} sm={4}>
                     <FormControlLabel
                       control={
                         <Checkbox
@@ -295,8 +280,8 @@ export default function CreerAnnonceEtape4() {
                       }
                       label="Balcon"
                     />
-                  </Grid>
-                  <Grid item xs={6} sm={4}>
+                  </div>
+                  <div item xs={6} sm={4}>
                     <FormControlLabel
                       control={
                         <Checkbox
@@ -307,8 +292,8 @@ export default function CreerAnnonceEtape4() {
                       }
                       label="Terrasse"
                     />
-                  </Grid>
-                  <Grid item xs={6} sm={4}>
+                  </div>
+                  <div item xs={6} sm={4}>
                     <FormControlLabel
                       control={
                         <Checkbox
@@ -319,8 +304,8 @@ export default function CreerAnnonceEtape4() {
                       }
                       label="Jardin"
                     />
-                  </Grid>
-                  <Grid item xs={6} sm={4}>
+                  </div>
+                  <div item xs={6} sm={4}>
                     <FormControlLabel
                       control={
                         <Checkbox
@@ -331,8 +316,8 @@ export default function CreerAnnonceEtape4() {
                       }
                       label="Piscine"
                     />
-                  </Grid>
-                  <Grid item xs={6} sm={4}>
+                  </div>
+                  <div item xs={6} sm={4}>
                     <FormControlLabel
                       control={
                         <Checkbox
@@ -343,10 +328,10 @@ export default function CreerAnnonceEtape4() {
                       }
                       label="Parking"
                     />
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Grid>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             {/* Boutons */}
             <Stack direction="row" spacing={2} sx={{ mt: 4, justifyContent: 'center' }}>
@@ -369,16 +354,16 @@ export default function CreerAnnonceEtape4() {
               </Button>
             </Stack>
           </form>
-        </Paper>
+        </div>
 
         {/* Info */}
-        <Box sx={{ mt: 4, p: 2, backgroundColor: 'success.light', borderRadius: 1 }}>
-          <Typography variant="body2" sx={{ color: 'success.dark' }}>
+        <div sx={{ mt: 4, p: 2, backgroundColor: 'success.light', borderRadius: 1 }}>
+          <span  sx={{ color: 'success.dark' }}>
             ✅ <strong>Dernière étape !</strong> Une fois publiée, votre annonce sera visible aux acheteurs potentiels.
             Vous pourrez la gérer depuis votre dashboard.
-          </Typography>
-        </Box>
-      </Box>
-    </Container>
+          </h1>
+        </div>
+      </div>
+    </div>
   );
 }

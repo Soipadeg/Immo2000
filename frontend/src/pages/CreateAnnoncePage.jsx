@@ -3,36 +3,14 @@
  * Formulaire complet pour créer une nouvelle annonce
  */
 
-import React, { useState } from 'react';
+import React
+import { Button, Alert, Input } from '@/components';, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Container,
-  Typography,
-  Paper,
-  Grid,
-  TextField,
-  Button,
-  Select,
-  MenuItem,
-  FormControlLabel,
-  Checkbox,
-  Card,
-  CardContent,
-  Alert,
-  CircularProgress,
-  Stepper,
-  Step,
-  StepLabel,
-  FormHelperText,
-} from '@mui/material';
-import {
-  ArrowBack as ArrowBackIcon,
-  Save as SaveIcon,
-  Check as CheckIcon,
-} from '@mui/icons-material';
+
+
 import ImageUpload from '../components/ImageUpload';
 import { annoncesApi } from '../services/api';
+import '../styles/CreateAnnoncePage.css';
 
 const TYPES_BIEN = ['maison', 'appartement', 'terrain', 'local commercial'];
 const DPE_VALUES = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
@@ -195,9 +173,9 @@ export default function CreateAnnoncePage() {
   };
 
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
+    <div maxWidth="md" sx={{ py: 4 }}>
       {/* En-tête */}
-      <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', gap: 2 }}>
+      <div sx={{ mb: 4, display: 'flex', alignItems: 'center', gap: 2 }}>
         <Button
           startIcon={<ArrowBackIcon />}
           onClick={() => navigate('/dashboard')}
@@ -205,10 +183,10 @@ export default function CreateAnnoncePage() {
         >
           Retour
         </Button>
-        <Typography variant="h4" component="h1">
+        <h1  component="h1">
           Créer une annonce
-        </Typography>
-      </Box>
+        </h1>
+      </div>
 
       {/* Messages */}
       {error && (
@@ -233,16 +211,16 @@ export default function CreateAnnoncePage() {
       </Stepper>
 
       {/* Contenu des étapes */}
-      <Paper sx={{ p: 4, mb: 3 }}>
+      <div sx={{ p: 4, mb: 3 }}>
         {/* ÉTAPE 1: Informations */}
         {activeStep === 0 && (
-          <Box>
-            <Typography variant="h6" gutterBottom>
+          <div>
+            <h3  gutterBottom>
               📝 Informations générales
-            </Typography>
-            <Grid container spacing={3} sx={{ mt: 1 }}>
-              <Grid item xs={12}>
-                <TextField
+            </h1>
+            <div container spacing={3} sx={{ mt: 1 }}>
+              <div item xs={12}>
+                <Input
                   fullWidth
                   label="Titre de l'annonce"
                   name="titre"
@@ -253,11 +231,11 @@ export default function CreateAnnoncePage() {
                   helperText={errors.titre}
                   multiline
                   rows={2}
-                />
-              </Grid>
+                / />
+              </div>
 
-              <Grid item xs={12}>
-                <TextField
+              <div item xs={12}>
+                <Input
                   fullWidth
                   label="Description"
                   name="description"
@@ -268,11 +246,11 @@ export default function CreateAnnoncePage() {
                   helperText={errors.description}
                   multiline
                   rows={5}
-                />
-              </Grid>
+                / />
+              </div>
 
-              <Grid item xs={12} sm={6}>
-                <TextField
+              <div item xs={12} sm={6}>
+                <Input
                   fullWidth
                   type="number"
                   label="Prix (€)"
@@ -283,11 +261,11 @@ export default function CreateAnnoncePage() {
                   error={!!errors.prix}
                   helperText={errors.prix}
                   inputProps={{ min: 0, step: 1000 }}
-                />
-              </Grid>
+                / />
+              </div>
 
-              <Grid item xs={12} sm={6}>
-                <TextField
+              <div item xs={12} sm={6}>
+                <Input
                   fullWidth
                   type="number"
                   label="Surface (m²)"
@@ -298,21 +276,21 @@ export default function CreateAnnoncePage() {
                   error={!!errors.surface}
                   helperText={errors.surface}
                   inputProps={{ min: 0, step: 0.5 }}
-                />
-              </Grid>
-            </Grid>
-          </Box>
+                / />
+              </div>
+            </div>
+          </div>
         )}
 
         {/* ÉTAPE 2: Localisation */}
         {activeStep === 1 && (
-          <Box>
-            <Typography variant="h6" gutterBottom>
+          <div>
+            <h3  gutterBottom>
               📍 Localisation
-            </Typography>
-            <Grid container spacing={3} sx={{ mt: 1 }}>
-              <Grid item xs={12}>
-                <TextField
+            </h1>
+            <div container spacing={3} sx={{ mt: 1 }}>
+              <div item xs={12}>
+                <Input
                   fullWidth
                   label="Adresse"
                   name="adresse"
@@ -321,11 +299,11 @@ export default function CreateAnnoncePage() {
                   placeholder="Ex: 123 Rue de la Paix"
                   error={!!errors.adresse}
                   helperText={errors.adresse}
-                />
-              </Grid>
+                / />
+              </div>
 
-              <Grid item xs={12} sm={6}>
-                <TextField
+              <div item xs={12} sm={6}>
+                <Input
                   fullWidth
                   label="Code postal"
                   name="code_postal"
@@ -335,11 +313,11 @@ export default function CreateAnnoncePage() {
                   error={!!errors.code_postal}
                   helperText={errors.code_postal}
                   inputProps={{ maxLength: 5 }}
-                />
-              </Grid>
+                / />
+              </div>
 
-              <Grid item xs={12} sm={6}>
-                <TextField
+              <div item xs={12} sm={6}>
+                <Input
                   fullWidth
                   label="Ville"
                   name="ville"
@@ -348,38 +326,38 @@ export default function CreateAnnoncePage() {
                   placeholder="Ex: Paris"
                   error={!!errors.ville}
                   helperText={errors.ville}
-                />
-              </Grid>
-            </Grid>
-          </Box>
+                / />
+              </div>
+            </div>
+          </div>
         )}
 
         {/* ÉTAPE 3: Caractéristiques */}
         {activeStep === 2 && (
-          <Box>
-            <Typography variant="h6" gutterBottom>
+          <div>
+            <h3  gutterBottom>
               🏠 Caractéristiques du bien
-            </Typography>
-            <Grid container spacing={3} sx={{ mt: 1 }}>
-              <Grid item xs={12} sm={6}>
-                <TextField
+            </h1>
+            <div container spacing={3} sx={{ mt: 1 }}>
+              <div item xs={12} sm={6}>
+                <Input
                   fullWidth
                   select
                   label="Type de bien"
                   name="type_bien"
                   value={formData.type_bien}
                   onChange={handleInputChange}
-                >
+                 />
                   {TYPES_BIEN.map(type => (
                     <MenuItem key={type} value={type}>
                       {type.charAt(0).toUpperCase() + type.slice(1)}
                     </MenuItem>
                   ))}
-                </TextField>
-              </Grid>
+                </Input>
+              </div>
 
-              <Grid item xs={12} sm={6}>
-                <TextField
+              <div item xs={12} sm={6}>
+                <Input
                   fullWidth
                   type="number"
                   label="Nombre de pièces"
@@ -389,11 +367,11 @@ export default function CreateAnnoncePage() {
                   error={!!errors.nombre_pieces}
                   helperText={errors.nombre_pieces}
                   inputProps={{ min: 1 }}
-                />
-              </Grid>
+                / />
+              </div>
 
-              <Grid item xs={12} sm={6}>
-                <TextField
+              <div item xs={12} sm={6}>
+                <Input
                   fullWidth
                   type="number"
                   label="Étage (optionnel)"
@@ -402,11 +380,11 @@ export default function CreateAnnoncePage() {
                   onChange={handleInputChange}
                   placeholder="Ex: 3"
                   inputProps={{ min: 0 }}
-                />
-              </Grid>
+                / />
+              </div>
 
-              <Grid item xs={12} sm={6}>
-                <TextField
+              <div item xs={12} sm={6}>
+                <Input
                   fullWidth
                   type="number"
                   label="Année de construction (optionnel)"
@@ -415,31 +393,31 @@ export default function CreateAnnoncePage() {
                   onChange={handleInputChange}
                   placeholder="Ex: 2010"
                   inputProps={{ min: 1800, max: 2100 }}
-                />
-              </Grid>
+                / />
+              </div>
 
-              <Grid item xs={12} sm={6}>
-                <TextField
+              <div item xs={12} sm={6}>
+                <Input
                   fullWidth
                   select
                   label="DPE (optionnel)"
                   name="dpe"
                   value={formData.dpe}
                   onChange={handleInputChange}
-                >
+                 />
                   <MenuItem value="">Sélectionner...</MenuItem>
                   {DPE_VALUES.map(val => (
                     <MenuItem key={val} value={val}>{val}</MenuItem>
                   ))}
-                </TextField>
-              </Grid>
+                </Input>
+              </div>
 
               {/* Équipements */}
-              <Grid item xs={12}>
-                <Typography variant="subtitle2" gutterBottom sx={{ mt: 2 }}>
+              <div item xs={12}>
+                <p  gutterBottom sx={{ mt: 2 }}>
                   ✨ Équipements et caractéristiques
-                </Typography>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                </h1>
+                <div sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -500,18 +478,18 @@ export default function CreateAnnoncePage() {
                     }
                     label="Parking"
                   />
-                </Box>
-              </Grid>
-            </Grid>
-          </Box>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
 
         {/* ÉTAPE 4: Photos */}
         {activeStep === 3 && (
-          <Box>
-            <Typography variant="h6" gutterBottom>
+          <div>
+            <h3  gutterBottom>
               🖼️ Photos du bien
-            </Typography>
+            </h1>
             {annonceId && (
               <ImageUpload
                 annonceId={annonceId}
@@ -519,20 +497,20 @@ export default function CreateAnnoncePage() {
               />
             )}
             {photosUploaded.length > 0 && (
-              <Card sx={{ mt: 3 }}>
-                <CardContent>
-                  <Typography variant="subtitle2" gutterBottom>
+              <div sx={{ mt: 3 }}>
+                <div>
+                  <p  gutterBottom>
                     ✅ Photos uploadées: {photosUploaded.length}
-                  </Typography>
-                </CardContent>
-              </Card>
+                  </h1>
+                </div>
+              </div>
             )}
-          </Box>
+          </div>
         )}
-      </Paper>
+      </div>
 
       {/* Boutons de navigation */}
-      <Box sx={{ display: 'flex', gap: 2, justifyContent: 'space-between' }}>
+      <div sx={{ display: 'flex', gap: 2, justifyContent: 'space-between' }}>
         <Button
           variant="outlined"
           onClick={handlePrevStep}
@@ -561,7 +539,7 @@ export default function CreateAnnoncePage() {
             Terminer
           </Button>
         )}
-      </Box>
-    </Container>
+      </div>
+    </div>
   );
 }
