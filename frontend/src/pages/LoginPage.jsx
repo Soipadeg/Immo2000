@@ -1,22 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  Container,
-  Paper,
-  TextField,
-  Button,
-  Box,
-  Typography,
-  Alert,
-  Link,
-  FormControlLabel,
-  Checkbox,
-  Divider,
-  Card,
-  CardContent,
-} from '@mui/material';
+import { Button, Alert, Input } from '@/components';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { login as apiLogin } from '../services/api';
+import '../styles/LoginPage.css';
 
 const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes
 const MAX_LOGIN_ATTEMPTS = 5;
@@ -197,129 +184,104 @@ export default function LoginPage() {
   };
 
   return (
-    <Container maxWidth="sm">
-      <Box sx={{ py: 4 }}>
-        <Typography variant="h3" component="h1" sx={{ mb: 3, textAlign: 'center' }}>
-          Se connecter
-        </Typography>
+    <div className="login-page">
+      <div className="login-container">
+        <h1>Se connecter</h1>
 
         {successMessage && (
-          <Alert severity="success" sx={{ mb: 2 }}>
-            {successMessage}
-          </Alert>
+          <Alert type="success" title="Succès" message={successMessage} />
         )}
 
-        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+        {error && <Alert type="error" title="Erreur" message={error} />}
 
         {isLockedOut && (
-          <Alert severity="warning" sx={{ mb: 2 }}>
-            🔒 Votre compte est temporairement verrouillé pour des raisons de sécurité.
-            <br />
-            Réessayez dans <strong>{lockoutTimeLeft}s</strong>
-          </Alert>
+          <Alert type="warning" title="🔒 Compte verrouillé" message={`Votre compte est temporairement verrouillé pour des raisons de sécurité. Réessayez dans ${lockoutTimeLeft}s`} />
         )}
 
-        <Paper elevation={3} sx={{ p: 3 }}>
-          <form onSubmit={handleSubmit}>
-            <TextField
-              fullWidth
-              label="Email"
+        <form className="login-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <Input
+              id="email"
               name="email"
               type="email"
+              placeholder="votre@email.com"
               value={formData.email}
               onChange={handleChange}
-              margin="normal"
-              autoComplete="email"
-              required
               disabled={isLockedOut}
+              autoComplete="email"
             />
+          </div>
 
-            <TextField
-              fullWidth
-              label="Mot de passe"
+          <div className="form-group">
+            <label htmlFor="password">Mot de passe</label>
+            <Input
+              id="password"
               name="password"
               type="password"
+              placeholder="••••••••"
               value={formData.password}
               onChange={handleChange}
-              margin="normal"
+              disabled={isLockedOut}
               autoComplete="current-password"
-              required
+            />
+          </div>
+
+          <div className="remember-me">
+            <input
+              type="checkbox"
+              id="rememberMe"
+              name="rememberMe"
+              checked={formData.rememberMe}
+              onChange={handleChange}
               disabled={isLockedOut}
             />
+            <label htmlFor="rememberMe">Se souvenir de moi</label>
+          </div>
 
-            {/* Se souvenir de moi */}
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="rememberMe"
-                  checked={formData.rememberMe}
-                  onChange={handleChange}
-                  color="primary"
-                  disabled={isLockedOut}
-                />
-              }
-              label="Se souvenir de moi"
-              sx={{ mt: 2, mb: 1 }}
+          <a href="/forgot-password" className="forgot-password">
+            Mot de passe oublié ?
+          </a>
+
+          {/* ReCAPTCHA v3 (invisible) */}
+          <div className="recaptcha-container">
+            <ReCAPTCHA
+              ref={recaptchaRef}
+              size="invisible"
+              sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
             />
+          </div>
 
-            <Box sx={{ mt: 2, mb: 2 }}>
-              <Link href="/forgot-password" underline="hover" sx={{ fontSize: '0.9rem' }}>
-                Mot de passe oublié ?
-              </Link>
-            </Box>
+          <Button
+            fullWidth
+            variant="primary"
+            size="large"
+            disabled={loading || isLockedOut || captchaLoading}
+            type="submit"
+            className="submit-btn"
+          >
+            {captchaLoading ? 'Vérification de sécurité...' : loading ? 'Connexion en cours...' : 'Se connecter'}
+          </Button>
 
-            {/* ReCAPTCHA v3 (invisible) */}
-            <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
-              <ReCAPTCHA
-                ref={recaptchaRef}
-                size="invisible"
-                sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
-              />
-            </Box>
+          <div className="divider"></div>
 
-            <Button
-              fullWidth
-              variant="contained"
-              color="primary"
-              size="large"
-              sx={{ mt: 3 }}
-              disabled={loading || isLockedOut || captchaLoading}
-              type="submit"
-            >
-              {captchaLoading ? 'Vérification de sécurité...' : loading ? 'Connexion en cours...' : 'Se connecter'}
-            </Button>
-
-            <Divider sx={{ my: 2 }} />
-
-            <Box sx={{ mt: 2, textAlign: 'center' }}>
-              <Typography variant="body2">
-                Pas de compte ?{' '}
-                <Link href="/register" underline="hover">
-                  S'inscrire
-                </Link>
-              </Typography>
-            </Box>
-          </form>
-        </Paper>
+          <p className="signup-link">
+            Pas de compte ? <a href="/register">S'inscrire</a>
+          </p>
+        </form>
 
         {/* Infos de sécurité */}
-        <Card sx={{ mt: 3, bgcolor: '#f5f5f5' }}>
-          <CardContent>
-            <Typography variant="caption" sx={{ fontWeight: 600, mb: 1, display: 'block' }}>
-              🔐 Sécurité
-            </Typography>
-            <Typography variant="caption" color="textSecondary" component="div" sx={{ mb: 0.5 }}>
-              ✓ Chiffrement TLS/SSL pour toutes les connexions
-            </Typography>
-            <Typography variant="caption" color="textSecondary" component="div" sx={{ mb: 0.5 }}>
-              ✓ Verrouillage de compte après {MAX_LOGIN_ATTEMPTS} tentatives échouées
-            </Typography>
-            <Typography variant="caption" color="textSecondary" component="div">
-              ✓ Vérification email obligatoire
-            </Typography>
-          </CardContent>
-        </Card>
-      </Box>
-    </Container>
+        <div className="security-info">
+          <h4>🔐 Sécurité</h4>
+          <ul>
+            <li>✓ Chiffrement TLS/SSL pour toutes les connexions</li>
+            <li>✓ Verrouillage de compte après {MAX_LOGIN_ATTEMPTS} tentatives échouées</li>
+            <li>✓ Vérification email obligatoire</li>
+          </ul>
+        </div>
+      </div>
+    </div>
   );
 }
+
+export default LoginPage;

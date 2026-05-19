@@ -304,4 +304,3 @@ const UserDashboardPage = () => {
 
 export default UserDashboardPage;
 
-export default UserDashboardPage;

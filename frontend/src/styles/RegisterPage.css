@@ -1,0 +1,89 @@
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 80px);
+  padding: 2rem;
+  background-color: var(--background-secondary, #f8f9fa);
+}
+
+.register-card {
+  width: 100%;
+  max-width: 500px;
+  background-color: var(--surface-white, #ffffff);
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.register-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary, #111827);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.register-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 480px) {
+  .register-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.register-checkbox-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin: 0.5rem 0;
+}
+
+.register-checkbox-container input {
+  margin-top: 0.35rem;
+  cursor: pointer;
+}
+
+.register-checkbox-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary, #4b5563);
+  line-height: 1.5;
+}
+
+.register-checkbox-label a {
+  color: var(--primary-color, #2563eb);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.register-checkbox-label a:hover {
+  text-decoration: underline;
+}
+
+.register-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.9375rem;
+  color: var(--text-secondary, #4b5563);
+}
+
+.register-footer a {
+  color: var(--primary-color, #2563eb);
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+.register-footer a:hover {
+  text-decoration: underline;
+}

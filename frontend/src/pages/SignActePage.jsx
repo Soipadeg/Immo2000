@@ -42,7 +42,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import HourglassIcon from '@mui/icons-material/Hourglass';
+import HourglassIcon from '@mui/icons-material/HourglassEmpty';
 import TimelineIcon from '@mui/lab';
 import { transactionsApi, docusignApi } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
