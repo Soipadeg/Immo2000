@@ -1,3 +1,4 @@
+import '../styles/Conversations.css';
 /**
  * Conversations.jsx - Messagerie liée aux RDV acceptés
  *
@@ -6,24 +7,8 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  Box,
-  Container,
-  Paper,
-  TextField,
-  Button,
-  Typography,
-  CircularProgress,
-  Alert,
-  Divider,
-  Avatar,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Chip
-} from '@mui/material';
-import { Send as SendIcon } from '@mui/icons-material';
+import { Button, Alert, Input } from '@/components';
+// TODO: Replace MUI icons if used
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import api from '../services/api';
@@ -125,29 +110,29 @@ const Conversations = () => {
 
   if (loading) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4, display: 'flex', justifyContent: 'center' }}>
+      <div maxWidth="lg" sx={{ py: 4, display: 'flex', justifyContent: 'center' }}>
         <CircularProgress />
-      </Container>
+      </div>
     );
   }
 
   if (!conversation) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
+      <div maxWidth="lg" sx={{ py: 4 }}>
         <Alert severity="error">Conversation non trouvée</Alert>
-      </Container>
+      </div>
     );
   }
 
   return (
-    <Container maxWidth="md" sx={{ py: 4, display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <Box sx={{ mb: 2 }}>
+    <div maxWidth="md" sx={{ py: 4, display: 'flex', flexDirection: 'column', height: '100vh' }}>
+      <div sx={{ mb: 2 }}>
         <Button variant="text" onClick={() => navigate('/mes-rendez-vous')}>
           ← Retour aux RDV
         </Button>
         <h1>Conversation</h1>
         <p>RDV #{conversation.rdv_id}</p>
-      </Box>
+      </div>
 
       {error && (
         <Alert severity="error" onClose={() => setError(null)} sx={{ mb: 2 }}>
@@ -171,66 +156,57 @@ const Conversations = () => {
           backgroundColor: '#f9f9f9'
         }}
       >
-        <List>
+        <ul>
           {messages.length === 0 ? (
-            <Box sx={{ textAlign: 'center', py: 4 }}>
-              <Typography color="textSecondary">
+            <div sx={{ textAlign: 'center', py: 4 }}>
+              <p>
                 Aucun message pour le moment. Commencez la conversation!
-              </Typography>
-            </Box>
+              </p>
+            </div>
           ) : (
             messages.map((message) => (
               <React.Fragment key={message.message_id}>
-                <ListItem
+                <ulItem
                   sx={{
                     flexDirection: marquerCommeProprietaire(message) ? 'row-reverse' : 'row',
                     mb: 1,
                     p: 1
                   }}
                 >
-                  <ListItemAvatar>
+                  <ulItemAvatar>
                     <Avatar sx={{
                       bgcolor: marquerCommeProprietaire(message) ? '#2196F3' : '#4CAF50'
                     }}>
                       {message.sender_prenom?.[0]?.toUpperCase() || '?'}
                     </Avatar>
                   </ListItemAvatar>
-                  <ListItemText
+                  <ulItemText
                     primary={message.sender_prenom || 'Utilisateur'}
                     secondary={
-                      <Box>
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            backgroundColor: marquerCommeProprietaire(message) ? '#E3F2FD' : '#F1F8E9',
-                            p: 1,
-                            borderRadius: 1,
-                            mt: 0.5,
-                            maxWidth: '70%'
-                          }}
-                        >
+                      <div>
+                        <p>
                           {message.contenu}
-                        </Typography>
-                        <Typography variant="caption" color="textSecondary">
+                        </p>
+                        <p>
                           {format(new Date(message.date_creation), 'dd MMM yyyy HH:mm', { locale: fr })}
-                        </Typography>
-                      </Box>
+                        </p>
+                      </div>
                     }
                     sx={{
                       textAlign: marquerCommeProprietaire(message) ? 'right' : 'left'
                     }}
                   />
-                </ListItem>
+                </li>
               </React.Fragment>
             ))
           )}
           <div ref={messagesEndRef} />
-        </List>
+        </ul>
       </Paper>
 
       {/* Saisie message */}
-      <Box sx={{ display: 'flex', gap: 1 }}>
-        <TextField
+      <div sx={{ display: 'flex', gap: 1 }}>
+        <Input
           fullWidth
           multiline
           maxRows={3}
@@ -255,8 +231,8 @@ const Conversations = () => {
         >
           Envoyer
         </Button>
-      </Box>
-    </Container>
+      </div>
+    </div>
   );
 };
 
