@@ -188,12 +188,23 @@ class TransactionNotaire(db.Model):
     # Prix compromis
     prix_compromis = db.Column(db.Numeric(12, 2), nullable=False)
 
+    # Frais Phase 6f.notaire
+    frais_notaire = db.Column(db.Numeric(12, 2), nullable=True)
+    frais_immo2000 = db.Column(db.Numeric(12, 2), nullable=True)
+
+    # Compromis de vente Phase 6f.notaire
+    compromis_url = db.Column(db.String(500), nullable=True)
+    docusign_envelope_id = db.Column(db.String(100), nullable=True)
+
     # Dates clés
     date_creation = db.Column(db.DateTime, default=datetime.utcnow)
     date_assignation_notaire = db.Column(db.DateTime, nullable=True)
     date_envoi_notification = db.Column(db.DateTime, nullable=True)
     date_validation = db.Column(db.DateTime, nullable=True)
     date_completion = db.Column(db.DateTime, nullable=True)
+    date_validation_frais = db.Column(db.DateTime, nullable=True)
+    compromis_genere_le = db.Column(db.DateTime, nullable=True)
+    date_envoi_signature = db.Column(db.DateTime, nullable=True)
 
     # SLA
     delai_demande = db.Column(db.DateTime, nullable=True)  # Deadline pour répondre

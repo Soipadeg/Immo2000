@@ -106,6 +106,31 @@ class RendezVous(db.Model):
         Index("idx_creneau", "creneau_id"),
     )
 
+    # === RELATIONS ===
+    # Annonce concernée
+    annonce = db.relationship(
+        "Annonce",
+        foreign_keys=[annonce_id],
+        back_populates="rendez_vous",
+        lazy="joined"
+    )
+
+    # Utilisateur acheteur
+    acheteur = db.relationship(
+        "User",
+        foreign_keys=[acheteur_id],
+        back_populates="rdv_en_tant_que_acheteur",
+        lazy="joined"
+    )
+
+    # Utilisateur vendeur
+    vendeur = db.relationship(
+        "User",
+        foreign_keys=[vendeur_id],
+        back_populates="rdv_en_tant_que_vendeur",
+        lazy="joined"
+    )
+
     def __repr__(self) -> str:
         """Représentation lisible du RDV."""
         return f"<RendezVous {self.rdv_id}: Annonce {self.annonce_id} ({self.statut.value if isinstance(self.statut, StatutRDV) else self.statut})>"

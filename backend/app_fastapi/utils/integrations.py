@@ -68,31 +68,62 @@ class DocuSignIntegration:
 
     async def send_envelope(
         self,
-        document_url: str,
-        signer_email: str,
-        signer_name: str,
+        document_bytes: bytes,
+        signers: list,
         subject: str,
-        message: str
+        message: str,
+        document_name: str = "Compromis.pdf"
     ) -> Dict[str, Any]:
-        """Envoyer un document pour signature."""
+        """
+        Envoyer un document pour signature via DocuSign.
+
+        Args:
+            document_bytes: Bytes du document PDF
+            signers: Liste de dicts avec {'email', 'name', 'role', 'order'}
+            subject: Sujet de l'email
+            message: Message de l'email
+            document_name: Nom du document
+
+        Returns:
+            Dict avec envelope_id et autres infos
+        """
+        import base64
+
+        # Convertir le document en base64
+        document_base64 = base64.b64encode(document_bytes).decode('utf-8')
+
+        # Construire la liste des signataires
+        signers_list = []
+        for i, signer in enumerate(signers, start=1):
+            signers_list.append({
+                "email": signer['email'],
+                "name": signer['name'],
+                "recipientId": str(i),
+                "routingOrder": str(signer.get('order', i)),
+                "tabs": {
+                    "signHereTabs": [
+                        {
+                            "documentId": "1",
+                            "pageNumber": "1",
+                            "recipientId": str(i),
+                            "xPosition": "100",
+                            "yPosition": str(100 + (i * 80))
+                        }
+                    ]
+                }
+            })
+
         payload = {
             "emailSubject": subject,
             "emailBlurb": message,
             "status": "sent",
             "recipients": {
-                "signers": [
-                    {
-                        "email": signer_email,
-                        "name": signer_name,
-                        "recipientId": "1",
-                        "routingOrder": "1"
-                    }
-                ]
+                "signers": signers_list
             },
             "documents": [
                 {
-                    "documentBase64": "",  # À remplir avec le contenu du document
-                    "name": "Document",
+                    "documentBase64": document_base64,
+                    "name": document_name,
                     "fileExtension": "pdf",
                     "documentId": "1"
                 }
@@ -103,7 +134,9 @@ class DocuSignIntegration:
             url = f"{self.base_url}/restapi/v2.1/accounts/{self.account_id}/envelopes"
             response = await client.post(url, headers=self.headers, json=payload)
             response.raise_for_status()
-            return response.json()
+            result = response.json()
+            logger.info(f"✅ Envelope envoyé à DocuSign: {result.get('envelopeId')}")
+            return result
 
 
 class SendGridIntegration:
