@@ -6,7 +6,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { Box, CircularProgress, Typography } from '@mui/material';
 
 /**
  * Composant pour protéger les routes selon les rôles
@@ -31,19 +30,24 @@ export const ProtectedRoute = ({
   // Afficher un chargement pendant la vérification
   if (loading) {
     return (
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-          flexDirection: 'column',
-          gap: 2,
-        }}
-      >
-        <CircularProgress />
-        <Typography>Chargement...</Typography>
-      </Box>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        flexDirection: 'column',
+        gap: '1rem',
+      }}>
+        <div style={{
+          width: '2rem',
+          height: '2rem',
+          border: '3px solid #e5e7eb',
+          borderTop: '3px solid #4f46e5',
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite',
+        }} />
+        <p>Chargement...</p>
+      </div>
     );
   }
 
@@ -62,20 +66,16 @@ export const ProtectedRoute = ({
     // Vérifier si le rôle de l'utilisateur est autorisé
     if (!requiredRoles.includes(user?.role)) {
       return (
-        <Box sx={{ textAlign: 'center', py: 8 }}>
-          <Typography variant="h4" color="error" gutterBottom>
-            ❌ Accès refusé
-          </Typography>
-          <Typography variant="body1" gutterBottom>
-            Vous n'avez pas les droits d'accès à cette page.
-          </Typography>
-          <Typography variant="body2" color="textSecondary">
+        <div style={{ textAlign: 'center', padding: '2rem' }}>
+          <h2 style={{ color: '#ef4444', marginBottom: '1rem' }}>❌ Accès refusé</h2>
+          <p style={{ marginBottom: '0.5rem' }}>Vous n'avez pas les droits d'accès à cette page.</p>
+          <p style={{ color: '#666', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
             Votre rôle: <strong>{user?.role}</strong>
-          </Typography>
-          <Typography variant="body2" color="textSecondary">
+          </p>
+          <p style={{ color: '#666', fontSize: '0.875rem' }}>
             Rôles autorisés: <strong>{requiredRoles.join(', ')}</strong>
-          </Typography>
-        </Box>
+          </p>
+        </div>
       );
     }
   }

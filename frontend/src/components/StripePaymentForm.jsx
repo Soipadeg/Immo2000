@@ -5,15 +5,9 @@
 
 import React, { useState, useRef } from 'react';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Alert,
-  TextField,
-  Grid,
-} from '@mui/material';
+import { Button, Alert } from '@/components';
 import { STRIPE_CARD_ELEMENT_OPTIONS } from '../config/stripe-config';
+import './StripePaymentForm.css';
 
 export default function StripePaymentForm({
   clientSecret,
@@ -102,85 +96,69 @@ export default function StripePaymentForm({
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="stripe-payment-form">
       {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
-        </Alert>
+        <Alert type="error">{error}</Alert>
       )}
 
-      <Grid container spacing={2} sx={{ mb: 3 }}>
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="Nom du titulaire"
-            placeholder="Jean Dupont"
-            value={cardName}
-            onChange={(e) => setCardName(e.target.value)}
-            disabled={processing || isProcessing}
-            required
-          />
-        </Grid>
+      <div className="stripe-payment-form__input-group">
+        <label htmlFor="cardName">Nom du titulaire</label>
+        <input
+          id="cardName"
+          type="text"
+          className="stripe-payment-form__input"
+          placeholder="Jean Dupont"
+          value={cardName}
+          onChange={(e) => setCardName(e.target.value)}
+          disabled={processing || isProcessing}
+          required
+        />
+      </div>
 
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="Email"
-            type="email"
-            placeholder="jean@example.com"
-            value={cardEmail}
-            onChange={(e) => setCardEmail(e.target.value)}
-            disabled={processing || isProcessing}
-          />
-        </Grid>
+      <div className="stripe-payment-form__input-group">
+        <label htmlFor="cardEmail">Email</label>
+        <input
+          id="cardEmail"
+          type="email"
+          className="stripe-payment-form__input"
+          placeholder="jean@example.com"
+          value={cardEmail}
+          onChange={(e) => setCardEmail(e.target.value)}
+          disabled={processing || isProcessing}
+        />
+      </div>
 
-        <Grid item xs={12}>
-          <Box
-            sx={{
-              p: 2,
-              border: '1px solid',
-              borderColor: error ? 'error.main' : 'divider',
-              borderRadius: 1,
-              backgroundColor: '#fafafa',
-            }}
-          >
-            <CardElement
-              options={STRIPE_CARD_ELEMENT_OPTIONS}
-              onChange={(e) => {
-                if (e.error) {
-                  setError(e.error.message);
-                } else {
-                  setError('');
-                }
-              }}
-            />
-          </Box>
-        </Grid>
-      </Grid>
+      <div className={`stripe-payment-form__card-element ${error ? 'error' : ''}`}>
+        <CardElement
+          options={STRIPE_CARD_ELEMENT_OPTIONS}
+          onChange={(e) => {
+            if (e.error) {
+              setError(e.error.message);
+            } else {
+              setError('');
+            }
+          }}
+        />
+      </div>
 
       <Button
-        fullWidth
-        variant="contained"
-        color="success"
-        size="large"
         type="submit"
+        variant="contained"
         disabled={!stripe || processing || isProcessing || !cardName}
+        className="stripe-payment-form__button"
       >
         {processing || isProcessing ? (
-          <>
-            <CircularProgress size={20} sx={{ mr: 1 }} />
-            Traitement...
-          </>
+          <span>Traitement en cours...</span>
         ) : (
           `Payer ${amount?.toLocaleString('fr-FR')} €`
         )}
       </Button>
 
-      <Box sx={{ mt: 2, p: 1.5, bgcolor: 'info.lighter', borderRadius: 1 }}>
-        <p style={{ margin: 0, fontSize: '12px', color: '#666' }}>
+      <div className="stripe-payment-form__info">
+        <p>
           <strong>Test:</strong> Utilisez 4242 4242 4242 4242 pour un succès, 4000 0000 0000 0002 pour un échec.
         </p>
-      </Box>
-    </Box>
+      </div>
+    </form>
   );
 }
