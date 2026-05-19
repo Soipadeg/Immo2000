@@ -9,13 +9,13 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Box, Container, Paper, TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, Alert, CircularProgress, Chip } from '@mui/material';
-import { Add as AddIcon, Delete as DeleteIcon, Close as CloseIcon } from '@mui/icons-material';
+import { Button, Alert, Input, Modal } from '@/components';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import api from '../services/api';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import '../styles/MonCalendrier.css';
 
 const MonCalendrier = () => {
   const { user, token } = useAuth();
@@ -128,142 +128,125 @@ const MonCalendrier = () => {
 
   if (loading) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4, display: 'flex', justifyContent: 'center' }}>
-        <CircularProgress />
-      </Container>
+      <div className="mon-calendrier-container">
+        <div className="loading-spinner">⏳ Chargement...</div>
+      </div>
     );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box sx={{ mb: 4 }}>
+    <div className="mon-calendrier-page">
+      <div className="page-header">
         <h1>Mon Calendrier de Disponibilité</h1>
         <p>Gérez vos créneaux de visite disponibles</p>
-      </Box>
+      </div>
 
-      {error && (
-        <Alert severity="error" onClose={() => setError(null)} sx={{ mb: 2 }}>
-          {error}
-        </Alert>
-      )}
+      {error && <Alert type="error" title="Erreur" message={error} />}
+      {success && <Alert type="success" title="Succès" message={success} />}
 
-      {success && (
-        <Alert severity="success" onClose={() => setSuccess(null)} sx={{ mb: 2 }}>
-          {success}
-        </Alert>
-      )}
-
-      <Box sx={{ mb: 3 }}>
+      <div className="actions-bar">
         <Button
-          variant="contained"
-          color="primary"
-          startIcon={<AddIcon />}
+          variant="primary"
+          size="medium"
           onClick={handleOpenDialog}
         >
-          Ajouter un créneau
+          + Ajouter un créneau
         </Button>
-      </Box>
+      </div>
 
       {creneaux.length === 0 ? (
-        <Paper sx={{ p: 3, textAlign: 'center' }}>
+        <div className="empty-state">
           <p>Vous n'avez pas encore créé de créneaux. Ajoutez votre premier créneau pour commencer!</p>
-        </Paper>
+        </div>
       ) : (
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
-              <TableRow>
-                <TableCell>Date</TableCell>
-                <TableCell>Heure début</TableCell>
-                <TableCell>Heure fin</TableCell>
-                <TableCell>Statut</TableCell>
-                <TableCell align="right">Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {creneaux.map(creneau => (
-                <TableRow key={creneau.id}>
-                  <TableCell>
-                    {format(new Date(creneau.jour), 'dd MMMM yyyy', { locale: fr })}
-                  </TableCell>
-                  <TableCell>{creneau.heure_debut}</TableCell>
-                  <TableCell>{creneau.heure_fin}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={creneau.est_disponible ? 'Disponible' : 'Réservé'}
-                      color={creneau.est_disponible ? 'success' : 'default'}
-                      size="small"
-                    />
-                  </TableCell>
-                  <TableCell align="right">
-                    <IconButton
-                      size="small"
-                      color="error"
-                      onClick={() => supprimerCreneau(creneau.id)}
-                      title="Supprimer"
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <div className="creneaux-table">
+          <div className="table-header">
+            <div className="table-cell">Date</div>
+            <div className="table-cell">Heure début</div>
+            <div className="table-cell">Heure fin</div>
+            <div className="table-cell">Statut</div>
+            <div className="table-cell actions">Actions</div>
+          </div>
+
+          {creneaux.map(creneau => (
+            <div key={creneau.id} className="table-row">
+              <div className="table-cell">
+                {format(new Date(creneau.jour), 'dd MMMM yyyy', { locale: fr })}
+              </div>
+              <div className="table-cell">{creneau.heure_debut}</div>
+              <div className="table-cell">{creneau.heure_fin}</div>
+              <div className="table-cell">
+                <span className={`status-badge status-${creneau.est_disponible ? 'disponible' : 'reserve'}`}>
+                  {creneau.est_disponible ? '✓ Disponible' : '⊗ Réservé'}
+                </span>
+              </div>
+              <div className="table-cell actions">
+                <button
+                  className="delete-btn"
+                  onClick={() => supprimerCreneau(creneau.id)}
+                  title="Supprimer"
+                >
+                  🗑️
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
 
-      {/* Dialog Ajouter Créneau */}
-      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
-        <DialogTitle>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span>Ajouter un nouveau créneau</span>
-            <IconButton size="small" onClick={handleCloseDialog}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </DialogTitle>
-        <DialogContent sx={{ pt: 2 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <TextField
-              label="Date"
-              type="date"
-              name="jour"
-              value={formData.jour}
-              onChange={handleInputChange}
-              InputLabelProps={{ shrink: true }}
-              fullWidth
-              required
-            />
-            <TextField
-              label="Heure de début"
-              type="time"
-              name="heure_debut"
-              value={formData.heure_debut}
-              onChange={handleInputChange}
-              InputLabelProps={{ shrink: true }}
-              fullWidth
-              required
-            />
-            <TextField
-              label="Heure de fin"
-              type="time"
-              name="heure_fin"
-              value={formData.heure_fin}
-              onChange={handleInputChange}
-              InputLabelProps={{ shrink: true }}
-              fullWidth
-              required
-            />
-          </Box>
-        </DialogContent>
-        <DialogActions sx={{ p: 2 }}>
-          <Button onClick={handleCloseDialog}>Annuler</Button>
-          <Button onClick={ajouterCreneau} variant="contained" color="primary">
-            Ajouter
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Container>
+      {/* Modal Ajouter Créneau */}
+      {openDialog && (
+        <Modal
+          isOpen={openDialog}
+          title="Ajouter un nouveau créneau"
+          onClose={handleCloseDialog}
+        >
+          <div className="modal-form">
+            <div className="form-group">
+              <Input
+                type="date"
+                label="Date"
+                name="jour"
+                value={formData.jour}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <Input
+                type="time"
+                label="Heure de début"
+                name="heure_debut"
+                value={formData.heure_debut}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <Input
+                type="time"
+                label="Heure de fin"
+                name="heure_fin"
+                value={formData.heure_fin}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+
+            <div className="modal-actions">
+              <Button variant="secondary" onClick={handleCloseDialog}>
+                Annuler
+              </Button>
+              <Button variant="primary" onClick={ajouterCreneau}>
+                Ajouter
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
+    </div>
   );
 };
 
