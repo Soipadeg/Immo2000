@@ -1,40 +1,11 @@
+import '../styles/NotificationsPage.css';
 /**
  * Page de Notifications - Gestion des notifications et préférences
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  Container,
-  Paper,
-  Typography,
-  Box,
-  Button,
-  CircularProgress,
-  Alert,
-  Grid,
-  Card,
-  CardContent,
-  Divider,
-  Switch,
-  FormControlLabel,
-  TextField,
-  Tab,
-  Tabs,
-  Badge,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  Chip,
-} from '@mui/material';
-import {
-  Notifications as BellIcon,
-  Check as CheckIcon,
-  Cancel as CloseIcon,
-  Mail as MailIcon,
-  Settings as SettingsIcon,
-} from '@mui/icons-material';
+import { Button, Alert, Input } from '@/components';
+// TODO: Replace MUI icons if used
 import { notificationsApi } from '../services/api';
 
 const NotificationsPage = () => {
@@ -173,33 +144,33 @@ const NotificationsPage = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box sx={{ mb: 4 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+    <div maxWidth="lg" sx={{ py: 4 }}>
+      <div sx={{ mb: 4 }}>
+        <div sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
           <Badge badgeContent={unreadCount} color="error">
             <BellIcon sx={{ fontSize: '2rem', color: '#1976d2' }} />
           </Badge>
-          <Typography variant="h4" sx={{ fontWeight: 700 }}>
+          <h1>
             🔔 Notifications
-          </Typography>
-        </Box>
-        <Typography color="text.secondary">
+          </p>
+        </div>
+        <p>
           Gérez vos notifications et vos préférences de communication
-        </Typography>
-      </Box>
+        </p>
+      </div>
 
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
       {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
 
-      <Tabs value={tabValue} onChange={(e, val) => setTabValue(val)} sx={{ mb: 3 }}>
-        <Tab icon={<BellIcon />} label="Notifications" />
-        <Tab icon={<SettingsIcon />} label="Préférences" />
-        <Tab icon={<MailIcon />} label="Test Email" />
-      </Tabs>
+      <div className="tabs" value={tabValue} onChange={(e, val) => setTabValue(val)} sx={{ mb: 3 }}>
+        <div className="tab" icon={<BellIcon />} label="Notifications" />
+        <div className="tab" icon={<SettingsIcon />} label="Préférences" />
+        <div className="tab" icon={<MailIcon />} label="Test Email" />
+      </div>
 
       {/* Onglet 1: Notifications */}
       {tabValue === 0 && (
-        <Box>
+        <div>
           {notifications.length > 0 && (
             <Button
               variant="outlined"
@@ -213,21 +184,21 @@ const NotificationsPage = () => {
           )}
 
           {loading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+            <div sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
               <CircularProgress />
-            </Box>
+            </div>
           ) : notifications.length === 0 ? (
             <Paper sx={{ p: 3, textAlign: 'center' }}>
               <BellIcon sx={{ fontSize: '3rem', color: '#ccc', mb: 1 }} />
-              <Typography color="text.secondary">
+              <p>
                 Aucune notification pour le moment
-              </Typography>
+              </p>
             </Paper>
           ) : (
-            <List>
+            <ul>
               {notifications.map((notif) => (
                 <React.Fragment key={notif.id}>
-                  <ListItem
+                  <ulItem
                     sx={{
                       backgroundColor: notif.read ? 'transparent' : '#f0f7ff',
                       borderLeft: notif.read ? 'none' : '4px solid #1976d2',
@@ -235,7 +206,7 @@ const NotificationsPage = () => {
                       borderRadius: 1,
                     }}
                   >
-                    <ListItemIcon>
+                    <ulItemIcon>
                       {notif.read ? (
                         <CheckIcon color="success" />
                       ) : (
@@ -248,20 +219,20 @@ const NotificationsPage = () => {
                         </Badge>
                       )}
                     </ListItemIcon>
-                    <ListItemText
+                    <ulItemText
                       primary={notif.titre}
                       secondary={
-                        <Box sx={{ mt: 1 }}>
-                          <Typography variant="body2" color="text.secondary">
+                        <div sx={{ mt: 1 }}>
+                          <p>
                             {notif.message}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+                          </p>
+                          <p>
                             {new Date(notif.date).toLocaleString('fr-FR')}
-                          </Typography>
-                        </Box>
+                          </p>
+                        </div>
                       }
                     />
-                    <Box sx={{ display: 'flex', gap: 1 }}>
+                    <div sx={{ display: 'flex', gap: 1 }}>
                       {!notif.read && (
                         <Button
                           size="small"
@@ -277,30 +248,30 @@ const NotificationsPage = () => {
                       >
                         <CloseIcon />
                       </IconButton>
-                    </Box>
-                  </ListItem>
+                    </div>
+                  </li>
                   <Divider />
                 </React.Fragment>
               ))}
-            </List>
+            </ul>
           )}
-        </Box>
+        </div>
       )}
 
       {/* Onglet 2: Préférences */}
       {tabValue === 1 && (
-        <Box>
-          <Grid container spacing={3}>
+        <div>
+          <div className="grid-container">
             {/* Notifications par Email */}
-            <Grid item xs={12} md={6}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom sx={{ fontWeight: 700 }}>
+            <div className="grid-item">
+              <div className="card">
+                <div className="card"Content>
+                  <h1>
                     📧 Notifications par Email
-                  </Typography>
+                  </p>
                   <Divider sx={{ mb: 2 }} />
 
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <div sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                     <FormControlLabel
                       control={
                         <Switch
@@ -350,21 +321,21 @@ const NotificationsPage = () => {
                       }
                       label="Newsletter hebdomadaire"
                     />
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             {/* Fréquence des Notifications */}
-            <Grid item xs={12} md={6}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom sx={{ fontWeight: 700 }}>
+            <div className="grid-item">
+              <div className="card">
+                <div className="card"Content>
+                  <h1>
                     ⏰ Fréquence des Notifications
-                  </Typography>
+                  </p>
                   <Divider sx={{ mb: 2 }} />
 
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                  <div sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                     <Button
                       variant={
                         preferences.notification_frequency === 'immediate'
@@ -398,17 +369,17 @@ const NotificationsPage = () => {
                     >
                       Hebdomadaire
                     </Button>
-                  </Box>
+                  </div>
 
-                  <Typography variant="caption" color="text.secondary" sx={{ mt: 2, display: 'block' }}>
+                  <p>
                     Les notifications seront envoyées selon la fréquence sélectionnée.
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
+                  </p>
+                </div>
+              </div>
+            </div>
 
             {/* Bouton d'enregistrement */}
-            <Grid item xs={12}>
+            <div className="grid-item">
               <Button
                 variant="contained"
                 color="primary"
@@ -417,27 +388,27 @@ const NotificationsPage = () => {
               >
                 💾 Enregistrer les préférences
               </Button>
-            </Grid>
-          </Grid>
-        </Box>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Onglet 3: Test Email */}
       {tabValue === 2 && (
-        <Box>
+        <div>
           <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: 700 }}>
+            <h1>
               🧪 Tester l'Envoi d'Emails
-            </Typography>
+            </p>
             <Divider sx={{ mb: 2 }} />
 
-            <Typography color="text.secondary" paragraph>
+            <p>
               Envoyez un email de test à votre adresse pour vérifier que vous recevez
               bien les notifications.
-            </Typography>
+            </p>
 
-            <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
-              <TextField
+            <div sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
+              <Input
                 label="Adresse email"
                 type="email"
                 value={testEmail}
@@ -454,7 +425,7 @@ const NotificationsPage = () => {
               >
                 {loading ? <CircularProgress size={24} /> : '📨 Envoyer'}
               </Button>
-            </Box>
+            </div>
 
             <Alert severity="info" sx={{ mt: 3 }}>
               💡 Un email de test sera envoyé à l'adresse fournie. Vérifiez votre
@@ -462,9 +433,9 @@ const NotificationsPage = () => {
               secondes.
             </Alert>
           </Paper>
-        </Box>
+        </div>
       )}
-    </Container>
+    </div>
   );
 };
 

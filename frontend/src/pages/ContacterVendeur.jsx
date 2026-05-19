@@ -1,3 +1,4 @@
+import '../styles/ContacterVendeur.css';
 /**
  * ContacterVendeur.jsx - Formulaire de demande de visite
  *
@@ -8,32 +9,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Container,
-  Paper,
-  TextField,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Alert,
-  CircularProgress,
-  Card,
-  CardContent,
-  CardHeader,
-  Grid,
-  Typography,
-  Divider,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText
-} from '@mui/material';
+import { Button, Alert, Input } from '@/components';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import api from '../services/api';
@@ -145,28 +121,28 @@ const ContacterVendeur = () => {
 
   if (loading) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4, display: 'flex', justifyContent: 'center' }}>
+      <div maxWidth="lg" sx={{ py: 4, display: 'flex', justifyContent: 'center' }}>
         <CircularProgress />
-      </Container>
+      </div>
     );
   }
 
   if (!annonce) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
+      <div maxWidth="lg" sx={{ py: 4 }}>
         <Alert severity="error">Annonce non trouvée</Alert>
-      </Container>
+      </div>
     );
   }
 
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
-      <Box sx={{ mb: 4 }}>
+    <div maxWidth="md" sx={{ py: 4 }}>
+      <div sx={{ mb: 4 }}>
         <Button variant="text" onClick={() => navigate(-1)}>
           ← Retour
         </Button>
         <h1>Demander une visite</h1>
-      </Box>
+      </div>
 
       {error && (
         <Alert severity="error" onClose={() => setError(null)} sx={{ mb: 2 }}>
@@ -180,34 +156,34 @@ const ContacterVendeur = () => {
         </Alert>
       )}
 
-      <Grid container spacing={3}>
+      <div className="grid-container">
         {/* Détails annonce */}
-        <Grid item xs={12} md={4}>
-          <Card>
-            <CardHeader
+        <div className="grid-item">
+          <div className="card">
+            <div className="card"Header
               title={annonce.titre || 'Annonce'}
               subheader={`${annonce.prix}€`}
             />
-            <CardContent>
-              <Typography variant="body2" color="textSecondary">
+            <div className="card"Content>
+              <p>
                 <strong>{annonce.nombre_pieces} pièce(s)</strong> - {annonce.surface}m²
-              </Typography>
-              <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+              </p>
+              <p>
                 {annonce.adresse}
-              </Typography>
-              <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+              </p>
+              <p>
                 {annonce.ville} ({annonce.code_postal})
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
+              </p>
+            </div>
+          </div>
+        </div>
 
         {/* Formulaire demande */}
-        <Grid item xs={12} md={8}>
+        <div className="grid-item">
           <Paper sx={{ p: 3 }}>
             <h2>Sélectionnez votre créneau</h2>
 
-            <Box sx={{ mb: 3 }}>
+            <div sx={{ mb: 3 }}>
               <RadioGroup
                 value={selectedType}
                 onChange={(e) => setSelectedType(e.target.value)}
@@ -223,13 +199,13 @@ const ContacterVendeur = () => {
                   label="Proposer une date/heure"
                 />
               </RadioGroup>
-            </Box>
+            </div>
 
             <Divider sx={{ my: 3 }} />
 
             {/* Option 1: Choisir un créneau */}
             {selectedType === 'creneau' && (
-              <Box sx={{ mb: 3 }}>
+              <div sx={{ mb: 3 }}>
                 <h3>Créneaux disponibles</h3>
 
                 {creneaux.length === 0 ? (
@@ -238,14 +214,14 @@ const ContacterVendeur = () => {
                     Proposez une date/heure à la place.
                   </Alert>
                 ) : (
-                  <List>
+                  <ul>
                     {creneaux.map(creneau => (
-                      <ListItem key={creneau.id} disablePadding>
-                        <ListItemButton
+                      <ulItem key={creneau.id} disablePadding>
+                        <ulItemButton
                           selected={selectedCreneau === creneau.id}
                           onClick={() => setSelectedCreneau(creneau.id)}
                         >
-                          <ListItemText
+                          <ulItemText
                             primary={format(
                               new Date(creneau.jour),
                               'dddd dd MMMM',
@@ -254,17 +230,17 @@ const ContacterVendeur = () => {
                             secondary={`${creneau.heure_debut} - ${creneau.heure_fin}`}
                           />
                         </ListItemButton>
-                      </ListItem>
+                      </li>
                     ))}
-                  </List>
+                  </ul>
                 )}
-              </Box>
+              </div>
             )}
 
             {/* Option 2: Proposer une date */}
             {selectedType === 'proposer' && (
-              <Box sx={{ mb: 3, display: 'flex', gap: 2 }}>
-                <TextField
+              <div sx={{ mb: 3, display: 'flex', gap: 2 }}>
+                <Input
                   label="Date proposée"
                   type="date"
                   value={proposedDate}
@@ -273,7 +249,7 @@ const ContacterVendeur = () => {
                   fullWidth
                   required
                 />
-                <TextField
+                <Input
                   label="Heure proposée"
                   type="time"
                   value={proposedTime}
@@ -282,15 +258,15 @@ const ContacterVendeur = () => {
                   fullWidth
                   required
                 />
-              </Box>
+              </div>
             )}
 
             <Divider sx={{ my: 3 }} />
 
             {/* Message */}
-            <Box sx={{ mb: 3 }}>
+            <div sx={{ mb: 3 }}>
               <h3>Votre message</h3>
-              <TextField
+              <Input
                 fullWidth
                 multiline
                 rows={4}
@@ -298,10 +274,10 @@ const ContacterVendeur = () => {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
               />
-            </Box>
+            </div>
 
             {/* Bouton envoyer */}
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+            <div sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
               <Button
                 variant="outlined"
                 onClick={() => navigate(-1)}
@@ -319,20 +295,20 @@ const ContacterVendeur = () => {
               >
                 Envoyer la demande
               </Button>
-            </Box>
+            </div>
           </Paper>
-        </Grid>
-      </Grid>
+        </div>
+      </div>
 
       {/* Dialog confirmation */}
-      <Dialog open={showConfirm} onClose={() => setShowConfirm(false)}>
-        <DialogTitle>Confirmer votre demande</DialogTitle>
-        <DialogContent>
-          <Typography variant="body2">
+      <div className="modal" open={showConfirm} onClose={() => setShowConfirm(false)}>
+        <div className="modal"Title>Confirmer votre demande</DialogTitle>
+        <div className="modal"Content>
+          <p>
             Êtes-vous sûr de vouloir envoyer cette demande de visite au vendeur?
-          </Typography>
+          </p>
         </DialogContent>
-        <DialogActions>
+        <div className="modal"Actions>
           <Button onClick={() => setShowConfirm(false)}>Annuler</Button>
           <Button
             onClick={envoyerDemande}
@@ -343,8 +319,8 @@ const ContacterVendeur = () => {
             {sending ? 'Envoi...' : 'Confirmer'}
           </Button>
         </DialogActions>
-      </Dialog>
-    </Container>
+      </div>
+    </div>
   );
 };
 

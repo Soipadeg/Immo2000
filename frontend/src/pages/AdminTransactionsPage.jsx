@@ -3,14 +3,11 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Typography, Box, CircularProgress, Alert, Button, Dialog, DialogTitle, DialogContent,
-  DialogActions, TextField, Chip, Select, MenuItem, FormControl, InputLabel,
-} from '@mui/material';
+import { Button, Alert } from '@/components';
 import { transactionsApi } from '../services/adminApi';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import '../styles/AdminTransactionsPage.css';
 
 const AdminTransactionsPage = () => {
   const { user, loading: authLoading } = useAuth();
@@ -75,134 +72,86 @@ const AdminTransactionsPage = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" gutterBottom>💳 Gestion des Transactions</Typography>
+    <div className="admin-transactions-page">
+      <div className="page-header">
+        <h1>💳 Gestion des Transactions</h1>
+      </div>
 
-      <Box sx={{ mb: 3, display: 'flex', gap: 2 }}>
-        <FormControl sx={{ minWidth: 200 }}>
-          <InputLabel>Filtrer par statut</InputLabel>
-          <Select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            label="Filtrer par statut"
-          >
-            <MenuItem value="">Tous les statuts</MenuItem>
-            <MenuItem value="proposee">Proposée</MenuItem>
-            <MenuItem value="acceptee">Acceptée</MenuItem>
-            <MenuItem value="refusee">Refusée</MenuItem>
-            <MenuItem value="negociation">En négociation</MenuItem>
-            <MenuItem value="retiree">Retirée</MenuItem>
-            <MenuItem value="finalisee">Finalisée</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
+      <div className="filters-section">
+        <select value={status} onChange={(e) => setStatus(e.target.value)} className="filter-select">
+          <option value="">Tous les statuts</option>
+          <option value="proposee">Proposée</option>
+          <option value="acceptee">Acceptée</option>
+          <option value="refusee">Refusée</option>
+          <option value="negociation">En négociation</option>
+          <option value="retiree">Retirée</option>
+          <option value="finalisee">Finalisée</option>
+        </select>
+      </div>
 
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      {error && <Alert type="error" title="Erreur" message={error} />}
 
       {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress />
-        </Box>
+        <div className="loading-state">⏳ Chargement...</div>
       ) : transactions.length === 0 ? (
-        <Alert severity="info">Aucune transaction trouvée</Alert>
+        <Alert type="info" title="Info" message="Aucune transaction trouvée" />
       ) : (
-        <TableContainer component={Paper}>
-          <Table size="small">
-            <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
-              <TableRow>
-                <TableCell><strong>ID</strong></TableCell>
-                <TableCell><strong>Annonce ID</strong></TableCell>
-                <TableCell><strong>Prix proposé</strong></TableCell>
-                <TableCell><strong>Statut</strong></TableCell>
-                <TableCell><strong>Date</strong></TableCell>
-                <TableCell><strong>Actions</strong></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {transactions.map((tx) => (
-                <TableRow key={tx.offre_id}>
-                  <TableCell>{tx.offre_id}</TableCell>
-                  <TableCell>{tx.annonce_id}</TableCell>
-                  <TableCell>€{(tx.prix_propose || 0).toLocaleString()}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={tx.statut}
-                      size="small"
-                      color={tx.statut === 'acceptee' ? 'success' : tx.statut === 'refusee' ? 'error' : 'default'}
-                    />
-                  </TableCell>
-                  <TableCell>{new Date(tx.date_offre).toLocaleDateString()}</TableCell>
-                  <TableCell>
-                    {tx.statut === 'proposee' && (
-                      <>
-                        <Button
-                          size="small"
-                          variant="text"
-                          onClick={() => setDialog({ open: true, action: 'accept', transactionId: tx.offre_id })}
-                        >
-                          ✓
-                        </Button>
-                        <Button
-                          size="small"
-                          variant="text"
-                          color="error"
-                          onClick={() => setDialog({ open: true, action: 'decline', transactionId: tx.offre_id })}
-                        >
-                          ✗
-                        </Button>
-                      </>
-                    )}
-                    {(tx.statut === 'proposee' || tx.statut === 'negociation') && (
-                      <Button
-                        size="small"
-                        variant="text"
-                        color="warning"
-                        onClick={() => setDialog({ open: true, action: 'cancel', transactionId: tx.offre_id })}
-                      >
-                        Annuler
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <div className="table-wrapper">
+          <div className="table-header">
+            <div className="col-id">ID</div>
+            <div className="col-annonce">Annonce ID</div>
+            <div className="col-price">Prix proposé</div>
+            <div className="col-status">Statut</div>
+            <div className="col-date">Date</div>
+            <div className="col-actions">Actions</div>
+          </div>
+          {transactions.map((tx) => (
+            <div key={tx.offre_id} className="table-row">
+              <div className="col-id">{tx.offre_id}</div>
+              <div className="col-annonce">{tx.annonce_id}</div>
+              <div className="col-price">€{(tx.prix_propose || 0).toLocaleString()}</div>
+              <div className="col-status">
+                <span className={`status-badge status-${tx.statut}`}>{tx.statut}</span>
+              </div>
+              <div className="col-date">{new Date(tx.date_offre).toLocaleDateString()}</div>
+              <div className="col-actions">
+                {tx.statut === 'proposee' && (
+                  <>
+                    <Button variant="primary" size="small" onClick={() => setDialog({ open: true, action: 'accept', transactionId: tx.offre_id })}>✓</Button>
+                    <Button variant="danger" size="small" onClick={() => setDialog({ open: true, action: 'decline', transactionId: tx.offre_id })}>✗</Button>
+                  </>
+                )}
+                {(tx.statut === 'proposee' || tx.statut === 'negociation') && (
+                  <Button variant="secondary" size="small" onClick={() => setDialog({ open: true, action: 'cancel', transactionId: tx.offre_id })}>Annuler</Button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
       )}
 
-      {/* Dialog */}
-      <Dialog open={dialog.open} onClose={() => setDialog({ open: false, action: null, transactionId: null })}>
-        <DialogTitle>
-          {dialog.action === 'accept' && 'Accepter cette offre?'}
-          {dialog.action === 'decline' && 'Refuser cette offre?'}
-          {dialog.action === 'cancel' && 'Annuler cette offre?'}
-        </DialogTitle>
-        <DialogContent>
-          {(dialog.action === 'decline' || dialog.action === 'cancel') && (
-            <TextField
-              label="Raison"
-              multiline
-              rows={3}
-              fullWidth
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-              sx={{ mt: 2 }}
-            />
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDialog({ open: false, action: null, transactionId: null })}>Annuler</Button>
-          <Button
-            onClick={() => handleAction(dialog.action, dialog.transactionId)}
-            disabled={actionLoading || ((dialog.action === 'decline' || dialog.action === 'cancel') && !reason)}
-            variant="contained"
-            color={dialog.action === 'accept' ? 'success' : 'warning'}
-          >
-            {actionLoading ? <CircularProgress size={24} /> : 'Confirmer'}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Container>
+      {dialog.open && (
+        <div className="modal-overlay" onClick={() => setDialog({ open: false, action: null, transactionId: null })}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>{dialog.action === 'accept' ? 'Accepter' : dialog.action === 'decline' ? 'Refuser' : 'Annuler'} cette offre?</h2>
+              <button className="modal-close" onClick={() => setDialog({ open: false, action: null, transactionId: null })}>✕</button>
+            </div>
+            {(dialog.action === 'decline' || dialog.action === 'cancel') && (
+              <div className="modal-body">
+                <textarea value={reason} onChange={(e) => setReason(e.target.value)} className="modal-textarea" placeholder="Raison..."></textarea>
+              </div>
+            )}
+            <div className="modal-actions">
+              <Button variant="secondary" onClick={() => setDialog({ open: false, action: null, transactionId: null })}>Annuler</Button>
+              <Button variant={dialog.action === 'accept' ? 'primary' : 'danger'} onClick={() => handleAction(dialog.action, dialog.transactionId)} disabled={actionLoading || ((dialog.action === 'decline' || dialog.action === 'cancel') && !reason)}>
+                {actionLoading ? '⏳ ...' : 'Confirmer'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

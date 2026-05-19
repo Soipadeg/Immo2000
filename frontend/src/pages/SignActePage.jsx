@@ -5,47 +5,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import {
-  Box,
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  Button,
-  Alert,
-  CircularProgress,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Grid,
-  Divider,
-  Stepper,
-  Step,
-  StepLabel,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Timeline,
-  TimelineItem,
-  TimelineSeparator,
-  TimelineConnector,
-  TimelineContent,
-  TimelineDot,
-} from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import ErrorIcon from '@mui/icons-material/Error';
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import SecurityIcon from '@mui/icons-material/Security';
-import EditIcon from '@mui/icons-material/Edit';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import HourglassIcon from '@mui/icons-material/Hourglass';
 import TimelineIcon from '@mui/lab';
 import { transactionsApi, docusignApi } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
+import { Button, Alert, Input } from '@/components';
+import '../styles/SignActePage.css';
+
+
 
 const steps = ['Télécharger', 'Authentifier DocuSign', 'Signer', 'Finaliser'];
 
@@ -220,54 +186,54 @@ export default function SignActePage() {
             bgcolor: completed ? 'success.main' : pending ? 'warning.main' : 'action.disabled',
           }}
         >
-          {completed ? <CheckCircleIcon /> : pending ? <HourglassIcon /> : ''}
+          {completed ? <span className="icon-placeholder">CheckCircleIcon</span> : pending ? <span className="icon-placeholder">HourglassIcon</span> : ''}
         </TimelineDot>
         {index < 3 && <TimelineConnector />}
       </TimelineSeparator>
       <TimelineContent>
-        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+        <span>
           {label}
-        </Typography>
+        </p>
       </TimelineContent>
     </TimelineItem>
   );
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
-        <CircularProgress />
-      </Box>
+      <div>
+        <span>Loading...</span>
+      </div>
     );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <div className="container">
       {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
-      <Typography variant="h4" sx={{ mb: 1, fontWeight: 'bold' }}>
+      <h4>
         🔏 Signature de l'Acte Authentique
-      </Typography>
-      <Typography color="textSecondary" sx={{ mb: 4 }}>
+      </p>
+      <p>
         Étape finale de la transaction - Signature irrevocable de l'acte de vente
-      </Typography>
+      </p>
 
       {/* Avertissement Important */}
       <Alert severity="warning" sx={{ mb: 4 }}>
-        <Typography sx={{ fontWeight: 'bold', mb: 1 }}>
+        <p>
           ⚠️ Attention: Cette signature est irrevocable
-        </Typography>
-        <Typography variant="body2">
+        </p>
+        <span>
           Une fois l'acte signé par les deux parties (vendeur et acheteur), la transaction sera finalisée et
           irrevocable. Vérifiez tous les détails avant de procéder.
-        </Typography>
+        </p>
       </Alert>
 
       {/* Timeline des transactions */}
-      <Card sx={{ mb: 4, bgcolor: '#f5f5f5' }}>
-        <CardContent>
-          <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
+      <div className="card">
+        <div className="card">
+          <h4>
             📊 Progression de la Transaction
-          </Typography>
+          </p>
           <Timeline position="alternate">
             {getTimelineItem(0, 'Compromis Signé', true)}
             {getTimelineItem(1, 'Paiement Effectué', true)}
@@ -275,67 +241,67 @@ export default function SignActePage() {
             {getTimelineItem(3, 'Acte Signature', activeStep >= 3, activeStep >= 3)}
             {getTimelineItem(4, 'Finalisation', false, activeStep >= 4)}
           </Timeline>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Infos transaction */}
-      <Card sx={{ mb: 4 }}>
-        <CardContent>
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
-              <Typography color="textSecondary" gutterBottom>
+      <div className="card">
+        <div className="card">
+          <div className="grid-container">
+            <div className="grid-item">
+              <p>
                 Bien
-              </Typography>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+              </p>
+              <p>
                 {transaction?.annonce?.titre}
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography color="textSecondary" gutterBottom>
+              </p>
+            </div>
+            <div className="grid-item">
+              <p>
                 Prix de Vente
-              </Typography>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+              </p>
+              <p>
                 {transaction?.prix_compromis?.toLocaleString('fr-FR')} €
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography color="textSecondary" gutterBottom>
+              </p>
+            </div>
+            <div className="grid-item">
+              <p>
                 Notaire
-              </Typography>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+              </p>
+              <p>
                 {transaction?.notaire?.etude_notariale}
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography color="textSecondary" gutterBottom>
+              </p>
+            </div>
+            <div className="grid-item">
+              <p>
                 Statut Paiement
-              </Typography>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: 'success.main' }}>
+              </p>
+              <p>
                 ✅ Payé
-              </Typography>
-            </Grid>
-          </Grid>
-        </CardContent>
-      </Card>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <Divider sx={{ my: 4 }} />
 
       {/* Stepper */}
-      <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
+      <div className="stepper">
         {steps.map((label) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
+          <div className="step">
+            <div className="step">{label}</StepLabel>
+          </div>
         ))}
-      </Stepper>
+      </div>
 
       {/* Étape 1: Télécharger */}
       {activeStep === 0 && (
-        <Card sx={{ mb: 4 }}>
-          <CardContent>
-            <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold' }}>
+        <div className="card">
+          <div className="card">
+            <h4>
               📥 Étape 1: Télécharger l'Acte
-            </Typography>
+            </p>
 
             <Alert severity="info" sx={{ mb: 3 }}>
               L'acte authentique a été préparé par le notaire. Téléchargez-le pour le consulter attentivement.
@@ -343,9 +309,7 @@ export default function SignActePage() {
 
             <List>
               <ListItem>
-                <ListItemIcon>
-                  <FileDownloadIcon color="primary" />
-                </ListItemIcon>
+                <span className="icon-placeholder">ListItemIcon</span>
                 <ListItemText
                   primary="Acte de vente authentique"
                   secondary={`${transaction?.annonce?.titre} - ${transaction?.prix_compromis?.toLocaleString('fr-FR')} €`}
@@ -353,33 +317,33 @@ export default function SignActePage() {
               </ListItem>
             </List>
 
-            <Box sx={{ mt: 3, display: 'flex', gap: 2 }}>
+            <div>
               <Button
                 variant="outlined"
-                startIcon={<FileDownloadIcon />}
+                startIcon={<span className="icon-placeholder">FileDownloadIcon</span>}
                 onClick={handleDownloadDocument}
                 fullWidth
               >
                 Télécharger l'Acte (PDF)
               </Button>
-            </Box>
-          </CardContent>
-        </Card>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Étape 2: Authentifier DocuSign */}
       {activeStep === 1 && (
-        <Card sx={{ mb: 4 }}>
-          <CardContent>
-            <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold' }}>
+        <div className="card">
+          <div className="card">
+            <h4>
               🔐 Étape 2: S'authentifier avec DocuSign
-            </Typography>
+            </p>
 
             <Alert severity="info" sx={{ mb: 3 }}>
               Vous devez vous connecter à votre compte DocuSign pour signer électroniquement l'acte.
             </Alert>
 
-            <Box sx={{ mt: 4, display: 'flex', gap: 2 }}>
+            <div>
               <Button
                 variant="outlined"
                 onClick={() => setActiveStep(0)}
@@ -394,30 +358,30 @@ export default function SignActePage() {
                 disabled={submitting}
                 fullWidth
               >
-                {submitting ? <CircularProgress size={24} /> : 'Connecter DocuSign'}
+                {submitting ? <span>Loading...</span> : 'Connecter DocuSign'}
               </Button>
-            </Box>
-          </CardContent>
-        </Card>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Étape 3: Signer */}
       {activeStep === 2 && (
-        <Card sx={{ mb: 4 }}>
-          <CardContent>
-            <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold' }}>
+        <div className="card">
+          <div className="card">
+            <h4>
               ✍️ Étape 3: Signer l'Acte
-            </Typography>
+            </p>
 
             <Alert severity="error" sx={{ mb: 3 }}>
-              <Typography sx={{ fontWeight: 'bold', mb: 1 }}>
+              <p>
                 ⚠️ Avertissement: Cette signature est irrevocable
-              </Typography>
+              </p>
               Vous êtes sur le point de signer l'acte authentique. Cette signature engagera définitivement les deux
               parties. Vous avez un délai de 48 heures pour vous rétracter après cette signature.
             </Alert>
 
-            <Box sx={{ mt: 4, display: 'flex', gap: 2 }}>
+            <div>
               <Button
                 variant="outlined"
                 onClick={() => setActiveStep(1)}
@@ -431,59 +395,59 @@ export default function SignActePage() {
                 onClick={handleRedirectToDocuSign}
                 disabled={!signingUrl || submitting}
                 fullWidth
-                endIcon={<OpenInNewIcon />}
+                endIcon={<span className="icon-placeholder">OpenInNewIcon</span>}
               >
-                {submitting ? <CircularProgress size={24} /> : 'Accéder à DocuSign'}
+                {submitting ? <span>Loading...</span> : 'Accéder à DocuSign'}
               </Button>
-            </Box>
+            </div>
 
             <Alert severity="info" sx={{ mt: 3 }}>
               Une fenêtre DocuSign va s'ouvrir. Après avoir signé, revenez ici pour confirmer.
             </Alert>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       {/* Étape 4: Finaliser */}
       {activeStep === 3 && (
-        <Card sx={{ mb: 4 }}>
-          <CardContent>
-            <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold' }}>
+        <div className="card">
+          <div className="card">
+            <h4>
               ✅ Étape 4: Finaliser la Transaction
-            </Typography>
+            </p>
 
             <Alert severity="success" sx={{ mb: 3 }}>
               Votre signature a bien été enregistrée. La transaction peut maintenant être finalisée.
             </Alert>
 
-            <Card sx={{ bgcolor: '#f0f8ff', p: 2, mb: 3 }}>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <Typography color="textSecondary" gutterBottom>
+            <div className="card">
+              <div className="grid-container">
+                <div className="grid-item">
+                  <p>
                     Statut Signature
-                  </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <CheckCircleIcon sx={{ color: 'success.main' }} />
-                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: 'success.main' }}>
+                  </p>
+                  <div>
+                    <span className="icon-placeholder">CheckCircleIcon</span>
+                    <p>
                       Signée
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Typography color="textSecondary" gutterBottom>
+                    </p>
+                  </div>
+                </div>
+                <div className="grid-item">
+                  <p>
                     Enveloppe DocuSign
-                  </Typography>
-                  <Typography variant="body2">{envelopeId}</Typography>
-                </Grid>
-              </Grid>
-            </Card>
+                  </p>
+                  <span>{envelopeId}</p>
+                </div>
+              </div>
+            </div>
 
-            <Typography variant="body2" sx={{ mb: 3 }}>
+            <span>
               L'acte a été signé électroniquement par DocuSign. Le notaire validera la signature et finalisera
               l'enregistrement auprès des services du gouvernement.
-            </Typography>
+            </p>
 
-            <Box sx={{ mt: 4, display: 'flex', gap: 2 }}>
+            <div>
               <Button
                 variant="outlined"
                 onClick={() => setActiveStep(2)}
@@ -497,33 +461,33 @@ export default function SignActePage() {
                 onClick={handleFinalizeTransaction}
                 disabled={submitting}
                 fullWidth
-                startIcon={<CloudUploadIcon />}
+                startIcon={<span className="icon-placeholder">CloudUploadIcon</span>}
               >
-                {submitting ? <CircularProgress size={24} /> : 'Finaliser la Transaction'}
+                {submitting ? <span>Loading...</span> : 'Finaliser la Transaction'}
               </Button>
-            </Box>
-          </CardContent>
-        </Card>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Dialog Succès */}
-      <Dialog open={successOpen} onClose={() => setSuccessOpen(false)}>
-        <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <CheckCircleIcon sx={{ color: 'success.main' }} />
+      <div className="modal"> setSuccessOpen(false)}>
+        <div className="modal">
+          <span className="icon-placeholder">CheckCircleIcon</span>
           Transaction Finalisée
         </DialogTitle>
-        <DialogContent>
-          <Typography sx={{ mt: 2 }}>
+        <div className="modal">
+          <p>
             Félicitations! Votre transaction a été complètement finalisée. L'acte de vente a été signé par les deux
             parties et est maintenant en cours d'enregistrement auprès des autorités.
-          </Typography>
+          </p>
         </DialogContent>
-        <DialogActions>
+        <div className="modal">
           <Button onClick={() => setSuccessOpen(false)} variant="contained">
             OK
           </Button>
         </DialogActions>
-      </Dialog>
-    </Container>
+      </div>
+    </div>
   );
 }

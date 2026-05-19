@@ -1,0 +1,447 @@
+/* ========================================
+   ADMIN ANALYTICS PAGE - Analytics & Statistics
+   ======================================== */
+
+.admin-analytics-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  font-family: var(--font-family-base);
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+}
+
+/* KPI Grid */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.kpi-card {
+  padding: 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-background);
+}
+
+.kpi-label {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.kpi-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 0.5rem;
+}
+
+.kpi-meta {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}
+
+/* Analytics Card */
+.analytics-card {
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-background);
+  overflow: hidden;
+}
+
+/* Tabs */
+.tabs-nav {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--color-border);
+  padding: 0;
+}
+
+.tab-btn {
+  padding: 1rem;
+  border: none;
+  background: none;
+  font-family: var(--font-family-base);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+}
+
+.tab-btn:hover {
+  color: var(--color-text);
+}
+
+.tab-btn.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+/* Tab Content */
+.tab-content {
+  padding: 2rem;
+}
+
+/* Charts Grid */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+}
+
+.chart-box {
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  background-color: var(--color-background-secondary);
+}
+
+.chart-box h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 1rem 0;
+}
+
+.chart-placeholder {
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-background);
+  border-radius: 8px;
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+}
+
+/* Stats Box */
+.stats-box {
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  background-color: var(--color-background-secondary);
+}
+
+.stats-box h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 1rem 0;
+}
+
+.stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.stat-line {
+  font-size: 0.9375rem;
+  color: var(--color-text);
+  padding: 0.5rem 0;
+}
+
+.stat-divider {
+  height: 1px;
+  background-color: var(--color-border);
+  margin: 0.5rem 0;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-top: 0.5rem;
+}
+
+/* Table Section */
+.table-section {
+  margin-top: 2rem;
+}
+
+.table-section h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 1rem 0;
+}
+
+.table-wrapper {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table-header {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  padding: 1rem;
+  background-color: var(--color-background-secondary);
+  border-bottom: 2px solid var(--color-border);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text);
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.9375rem;
+  color: var(--color-text);
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (max-width: 1024px) {
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-analytics-page {
+    padding: 1.5rem 1rem;
+  }
+
+  .page-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .kpi-card {
+    padding: 1rem;
+  }
+
+  .kpi-value {
+    font-size: 1.5rem;
+  }
+
+  .tab-btn {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.8125rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .tab-content {
+    padding: 1rem;
+  }
+
+  .charts-grid {
+    gap: 1rem;
+  }
+
+  .chart-placeholder {
+    height: 250px;
+  }
+
+  .table-header,
+  .table-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .table-header {
+    padding: 0.75rem;
+  }
+
+  .table-row {
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-analytics-page {
+    padding: 1rem 0.75rem;
+  }
+
+  .page-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .kpi-card {
+    padding: 0.875rem;
+  }
+
+  .kpi-label {
+    font-size: 0.75rem;
+  }
+
+  .kpi-value {
+    font-size: 1.25rem;
+  }
+
+  .tab-btn {
+    padding: 0.5rem 0.35rem;
+    font-size: 0.7rem;
+  }
+
+  .tab-content {
+    padding: 0.75rem;
+  }
+
+  .chart-box,
+  .stats-box {
+    padding: 1rem;
+  }
+
+  .chart-placeholder {
+    height: 150px;
+  }
+
+  .table-header,
+  .table-row {
+    grid-template-columns: 1fr;
+  }
+
+  .table-header {
+    padding: 0.5rem;
+    font-size: 0.7rem;
+  }
+
+  .table-row {
+    padding: 0.5rem;
+    font-size: 0.8125rem;
+  }
+}
+
+/* ========================================
+   DARK MODE
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+  .page-header h1 {
+    color: var(--color-text);
+  }
+
+  .kpi-card {
+    border-color: var(--color-border);
+    background-color: var(--color-background);
+  }
+
+  .kpi-label {
+    color: var(--color-text-secondary);
+  }
+
+  .kpi-value {
+    color: var(--color-text);
+  }
+
+  .kpi-meta {
+    color: var(--color-text-secondary);
+  }
+
+  .analytics-card {
+    border-color: var(--color-border);
+    background-color: var(--color-background);
+  }
+
+  .tabs-nav {
+    border-bottom-color: var(--color-border);
+  }
+
+  .tab-btn {
+    color: var(--color-text-secondary);
+  }
+
+  .tab-btn:hover {
+    color: var(--color-text);
+  }
+
+  .tab-btn.active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+  }
+
+  .chart-box {
+    border-color: var(--color-border);
+    background-color: var(--color-background-secondary);
+  }
+
+  .chart-box h3 {
+    color: var(--color-text);
+  }
+
+  .chart-placeholder {
+    background-color: var(--color-background);
+    color: var(--color-text-secondary);
+  }
+
+  .stats-box {
+    border-color: var(--color-border);
+    background-color: var(--color-background-secondary);
+  }
+
+  .stats-box h3 {
+    color: var(--color-text);
+  }
+
+  .stat-line {
+    color: var(--color-text);
+  }
+
+  .stat-label {
+    color: var(--color-text);
+  }
+
+  .stat-divider {
+    background-color: var(--color-border);
+  }
+
+  .table-section h3 {
+    color: var(--color-text);
+  }
+
+  .table-wrapper {
+    border-color: var(--color-border);
+  }
+
+  .table-header {
+    background-color: var(--color-background-secondary);
+    border-bottom-color: var(--color-border);
+    color: var(--color-text);
+  }
+
+  .table-row {
+    border-bottom-color: var(--color-border);
+    color: var(--color-text);
+  }
+}

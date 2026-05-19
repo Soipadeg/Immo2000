@@ -1,0 +1,3 @@
+/* Styles for NotificationsPage */
+.grid-container { display: grid; }
+.card { border: 1px solid #ccc; padding: 1rem; }

@@ -1,39 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Card,
-  CardContent,
-  CardHeader,
-  Grid,
-  Typography,
-  Button,
-  LinearProgress,
-  Chip,
-  Alert,
-  CircularProgress,
-  Paper,
-  Stack,
-  Icon,
-} from '@mui/material';
-import {
-  Dashboard,
-  People,
-  Home,
-  ShoppingCart,
-  Settings,
-  Analytics,
-  History,
-  Security,
-  ArrowForward,
-  TrendingUp,
-  CheckCircle,
-  Warning,
-} from '@mui/icons-material';
+import { Button, Alert } from '@/components';
 import { dashboardApi } from '../services/adminApi';
 import { useAuth } from '../hooks/useAuth';
-import StatCard from '../components/StatCard';
-import FeatureCard from '../components/FeatureCard';
+import '../styles/AdminHomePage.css';
 
 const AdminHomePage = () => {
   const navigate = useNavigate();
@@ -128,95 +98,21 @@ const AdminHomePage = () => {
   };
 
   const features = [
-    {
-      title: 'Dashboard',
-      description: 'Vue d\'ensemble des statistiques principales',
-      icon: <Dashboard sx={{ fontSize: 40 }} />,
-      path: '/admin/dashboard',
-      color: '#1976d2',
-      badge: 'Vue',
-      badgeColor: 'info',
-    },
-    {
-      title: 'Utilisateurs',
-      description: 'Gestion des utilisateurs et rôles',
-      icon: <People sx={{ fontSize: 40 }} />,
-      path: '/admin/users',
-      color: '#f57c00',
-      badge: 'Gestion',
-      badgeColor: 'warning',
-      stats: dashboard?.utilisateurs_count,
-    },
-    {
-      title: 'Annonces',
-      description: 'Modération et gestion des annonces',
-      icon: <Home sx={{ fontSize: 40 }} />,
-      path: '/admin/listings',
-      color: '#388e3c',
-      badge: 'Modération',
-      badgeColor: 'success',
-      stats: dashboard?.annonces_count,
-    },
-    {
-      title: 'Transactions',
-      description: 'Suivi des offres et transactions',
-      icon: <ShoppingCart sx={{ fontSize: 40 }} />,
-      path: '/admin/transactions',
-      color: '#7b1fa2',
-      badge: 'Suivi',
-      badgeColor: 'primary',
-      stats: dashboard?.offres_count,
-    },
-    {
-      title: 'Analytics',
-      description: 'Statistiques détaillées et KPIs',
-      icon: <Analytics sx={{ fontSize: 40 }} />,
-      path: '/admin/analytics',
-      color: '#c62828',
-      badge: 'Data',
-      badgeColor: 'error',
-    },
-    {
-      title: 'Audit Trail',
-      description: 'Historique des actions administratives',
-      icon: <History sx={{ fontSize: 40 }} />,
-      path: '/admin/audit',
-      color: '#6a1b9a',
-      badge: 'Logs',
-      badgeColor: 'secondary',
-    },
-    {
-      title: 'Sécurité',
-      description: 'Monitoring et statut de sécurité',
-      icon: <Security sx={{ fontSize: 40 }} />,
-      path: '/admin/security',
-      color: '#d32f2f',
-      badge: 'Protection',
-      badgeColor: 'error',
-    },
-    {
-      title: 'Paramètres',
-      description: 'Configuration du système',
-      icon: <Settings sx={{ fontSize: 40 }} />,
-      path: '/admin/settings',
-      color: '#455a64',
-      badge: 'Config',
-      badgeColor: 'default',
-    },
+    { title: 'Dashboard', description: 'Vue d\'ensemble des statistiques principales', path: '/admin/dashboard', badge: 'Vue', stats: null },
+    { title: 'Utilisateurs', description: 'Gestion des utilisateurs et rôles', path: '/admin/users', badge: 'Gestion', stats: dashboard?.utilisateurs_count },
+    { title: 'Annonces', description: 'Modération et gestion des annonces', path: '/admin/listings', badge: 'Modération', stats: dashboard?.annonces_count },
+    { title: 'Transactions', description: 'Suivi des offres et transactions', path: '/admin/transactions', badge: 'Suivi', stats: dashboard?.offres_count },
+    { title: 'Analytics', description: 'Statistiques détaillées et KPIs', path: '/admin/analytics', badge: 'Data', stats: null },
+    { title: 'Audit Trail', description: 'Historique des actions administratives', path: '/admin/audit', badge: 'Logs', stats: null },
+    { title: 'Sécurité', description: 'Monitoring et statut de sécurité', path: '/admin/security', badge: 'Protection', stats: null },
+    { title: 'Paramètres', description: 'Configuration du système', path: '/admin/settings', badge: 'Config', stats: null },
   ];
 
   if (loading) {
     return (
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '400px',
-        }}
-      >
-        <CircularProgress />
-      </Box>
+      <div className="admin-container">
+        <div className="loading-spinner">⏳ Chargement...</div>
+      </div>
     );
   }
 
@@ -226,167 +122,116 @@ const AdminHomePage = () => {
   const activeUsers = dashboard?.utilisateurs_actifs || 0;
 
   return (
-    <Box sx={{ p: 3 }}>
+    <div className="admin-home-page">
       {/* Header */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
-          👋 Bienvenue, {user?.nom || 'Admin'}!
-        </Typography>
-        <Typography variant="body1" color="textSecondary">
-          Tableau de bord administrateur - {new Date().toLocaleDateString('fr-FR', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          })}
-        </Typography>
-      </Box>
+      <div className="page-header">
+        <h1>👋 Bienvenue, {user?.nom || 'Admin'}!</h1>
+        <p>Tableau de bord administrateur - {new Date().toLocaleDateString('fr-FR', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        })}</p>
+      </div>
 
       {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {error}
-        </Alert>
+        <Alert type="error" title="Erreur" message={error} />
       )}
 
       {/* KPI Summary Cards */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Utilisateurs Total"
-            value={totalUsers}
-            icon={<People />}
-            color="primary"
-          />
-        </Grid>
+      <div className="kpi-grid">
+        <div className="stat-card stat-primary">
+          <div className="stat-label">👥 Utilisateurs Total</div>
+          <div className="stat-value">{totalUsers}</div>
+        </div>
 
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Annonces Publiées"
-            value={totalListings}
-            icon={<Home />}
-            color="success"
-          />
-        </Grid>
+        <div className="stat-card stat-success">
+          <div className="stat-label">🏠 Annonces Publiées</div>
+          <div className="stat-value">{totalListings}</div>
+        </div>
 
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Offres/Transactions"
-            value={totalOffers}
-            icon={<ShoppingCart />}
-            color="secondary"
-          />
-        </Grid>
+        <div className="stat-card stat-secondary">
+          <div className="stat-label">🛒 Offres/Transactions</div>
+          <div className="stat-value">{totalOffers}</div>
+        </div>
 
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Utilisateurs Actifs"
-            value={activeUsers}
-            icon={<TrendingUp />}
-            color="info"
-          />
-        </Grid>
-      </Grid>
+        <div className="stat-card stat-info">
+          <div className="stat-label">📈 Utilisateurs Actifs</div>
+          <div className="stat-value">{activeUsers}</div>
+        </div>
+      </div>
 
       {/* Features Grid */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h5" sx={{ fontWeight: 700, mb: 3 }}>
-          📋 Fonctionnalités Disponibles
-        </Typography>
-        <Grid container spacing={3}>
+      <div className="features-section">
+        <h2>📋 Fonctionnalités Disponibles</h2>
+        <div className="features-grid">
           {features.map((feature, index) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-              <FeatureCard
-                title={feature.title}
-                description={feature.description}
-                icon={feature.icon}
-                badge={feature.badge}
-                badgeColor={feature.badgeColor}
-                path={feature.path}
-                stats={feature.stats}
+            <div key={index} className="feature-card">
+              <div className="feature-header">
+                <div className="feature-icon">{feature.title.charAt(0)}</div>
+                <span className="feature-badge">{feature.badge}</span>
+              </div>
+              <h3 className="feature-title">{feature.title}</h3>
+              <p className="feature-description">{feature.description}</p>
+              {feature.stats && (
+                <div className="feature-stats">
+                  ✓ {feature.stats} actifs
+                </div>
+              )}
+              <Button
+                variant="secondary"
+                className="feature-link"
+                onClick={() => navigate(feature.path)}
               >
-                {feature.stats && (
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 1,
-                      p: 1.5,
-                      backgroundColor: 'rgba(76, 175, 80, 0.08)',
-                      borderRadius: 1,
-                      border: '1px solid rgba(76, 175, 80, 0.2)',
-                    }}
-                  >
-                    <CheckCircle sx={{ fontSize: 18, color: 'success.main' }} />
-                    <Typography variant="caption" sx={{ fontWeight: 600 }}>
-                      {feature.stats} actifs
-                    </Typography>
-                  </Box>
-                )}
-              </FeatureCard>
-            </Grid>
+                Accéder →
+              </Button>
+            </div>
           ))}
-        </Grid>
-      </Box>
+        </div>
+      </div>
 
       {/* Upcoming Features */}
-      <Paper sx={{ p: 3, backgroundColor: '#fff3e0' }}>
-        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-          <Warning sx={{ mt: 0.5, color: '#f57c00' }} />
-          <Box>
-            <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
-              🚀 Prochaines Fonctionnalités
-            </Typography>
-            <Stack spacing={1}>
-              <Typography variant="body2">
-                ✨ <strong>Système Notaire</strong> - Gestion des profils notaires et documents
-              </Typography>
-              <Typography variant="body2">
-                💬 <strong>Chatbot IA</strong> - Assistant automatisé pour le support client
-              </Typography>
-              <Typography variant="body2">
-                ⚡ <strong>Optimisations Performance</strong> - Réduction du bundle et E2E tests
-              </Typography>
-              <Typography variant="body2">
-                🚀 <strong>Déploiement Production</strong> - Configuration docker et CI/CD
-              </Typography>
-            </Stack>
-          </Box>
-        </Box>
-      </Paper>
+      <div className="upcoming-card">
+        <div className="upcoming-header">
+          <span className="warning-icon">⚠️</span>
+          <h3>🚀 Prochaines Fonctionnalités</h3>
+        </div>
+        <div className="upcoming-list">
+          <div className="upcoming-item">✨ <strong>Système Notaire</strong> - Gestion des profils notaires et documents</div>
+          <div className="upcoming-item">💬 <strong>Chatbot IA</strong> - Assistant automatisé pour le support client</div>
+          <div className="upcoming-item">⚡ <strong>Optimisations Performance</strong> - Réduction du bundle et E2E tests</div>
+          <div className="upcoming-item">🚀 <strong>Déploiement Production</strong> - Configuration docker et CI/CD</div>
+        </div>
+      </div>
 
       {/* Quick Actions */}
-      <Box sx={{ mt: 4 }}>
-        <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-          ⚡ Actions Rapides
-        </Typography>
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+      <div className="quick-actions">
+        <h3>⚡ Actions Rapides</h3>
+        <div className="actions-grid">
           <Button
-            variant="contained"
-            color="primary"
+            variant="primary"
             onClick={() => navigate('/admin/users')}
-            sx={{ flex: 1 }}
+            className="action-btn"
           >
             Ajouter un Utilisateur
           </Button>
           <Button
-            variant="outlined"
-            color="primary"
+            variant="secondary"
             onClick={() => navigate('/admin/analytics')}
-            sx={{ flex: 1 }}
+            className="action-btn"
           >
             Voir les Statistiques
           </Button>
           <Button
-            variant="outlined"
-            color="secondary"
+            variant="secondary"
             onClick={() => navigate('/admin/audit')}
-            sx={{ flex: 1 }}
+            className="action-btn"
           >
             Historique des Actions
           </Button>
-        </Stack>
-      </Box>
-    </Box>
+        </div>
+      </div>
+    </div>
   );
 };
 

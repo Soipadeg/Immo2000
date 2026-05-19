@@ -1,0 +1,352 @@
+/* ========================================
+   ADMIN USERS PAGE - User Management
+   ======================================== */
+
+.admin-users-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  font-family: var(--font-family-base);
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 0.25rem 0;
+}
+
+.page-header p {
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* Filters */
+.filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.filter-select {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-family-base);
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-select:hover {
+  border-color: var(--color-primary);
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.1);
+}
+
+/* Table */
+.table-wrapper {
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-background);
+  overflow: hidden;
+}
+
+.table-header {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1fr 1fr 1.5fr 1.5fr;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: var(--color-background-secondary);
+  border-bottom: 2px solid var(--color-border);
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text);
+}
+
+.table-body {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1fr 1fr 1.5fr 1.5fr;
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-border);
+  align-items: center;
+  transition: background-color 0.2s ease;
+}
+
+.table-row:hover {
+  background-color: var(--color-background-secondary);
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
+.table-cell {
+  font-size: 0.9375rem;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.table-cell.actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Badges */
+.role-badge,
+.statut-badge {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.role-admin {
+  background-color: rgba(244, 67, 54, 0.15);
+  color: #c62828;
+  border: 1px solid rgba(244, 67, 54, 0.3);
+}
+
+.role-user {
+  background-color: rgba(63, 81, 181, 0.15);
+  color: #1f4788;
+  border: 1px solid rgba(63, 81, 181, 0.3);
+}
+
+.statut-actif {
+  background-color: rgba(76, 175, 80, 0.15);
+  color: #2e7d32;
+}
+
+.statut-suspendu {
+  background-color: rgba(255, 193, 7, 0.15);
+  color: #f57c00;
+}
+
+/* Action Buttons */
+.action-btn {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (max-width: 1024px) {
+  .table-header,
+  .table-row {
+    grid-template-columns: 1.5fr 1.2fr 1fr 1fr 1.2fr 1.2fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-users-page {
+    padding: 1.5rem 1rem;
+  }
+
+  .page-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .filters {
+    flex-direction: column;
+  }
+
+  .filter-select {
+    width: 100%;
+  }
+
+  .table-header,
+  .table-row {
+    grid-template-columns: 1fr 0.8fr 0.8fr 1fr;
+    gap: 0.5rem;
+    padding: 0.75rem;
+  }
+
+  .table-header {
+    font-size: 0.75rem;
+  }
+
+  .table-row {
+    font-size: 0.8125rem;
+  }
+
+  /* Hide some columns on tablet */
+  .table-header > :nth-child(2),
+  .table-row > :nth-child(2) {
+    display: none;
+  }
+
+  .table-header > :nth-child(5),
+  .table-row > :nth-child(5) {
+    display: none;
+  }
+
+  .table-header,
+  .table-row {
+    grid-template-columns: 1fr 0.8fr 1fr 1fr;
+  }
+
+  .table-cell.actions {
+    gap: 0.25rem;
+  }
+
+  .action-btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-users-page {
+    padding: 1rem 0.75rem;
+  }
+
+  .page-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .page-header p {
+    font-size: 0.8125rem;
+  }
+
+  .filters {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .filter-select {
+    width: 100%;
+    font-size: 0.875rem;
+  }
+
+  .table-header,
+  .table-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.35rem;
+    padding: 0.5rem;
+  }
+
+  .table-header {
+    font-size: 0.7rem;
+  }
+
+  .table-row {
+    font-size: 0.75rem;
+  }
+
+  .table-header > :nth-child(1),
+  .table-row > :nth-child(1) {
+    display: none;
+  }
+
+  .table-header > :nth-child(2),
+  .table-row > :nth-child(2) {
+    display: none;
+  }
+
+  .table-header > :nth-child(4),
+  .table-row > :nth-child(4) {
+    display: none;
+  }
+
+  .table-header > :nth-child(5),
+  .table-row > :nth-child(5) {
+    display: none;
+  }
+
+  .table-header,
+  .table-row {
+    grid-template-columns: 1fr;
+  }
+
+  .table-cell.actions {
+    gap: 0.25rem;
+  }
+
+  .action-btn {
+    width: 100%;
+    padding: 0.35rem 0.5rem;
+  }
+}
+
+/* ========================================
+   DARK MODE
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+  .page-header h1 {
+    color: var(--color-text);
+  }
+
+  .page-header p {
+    color: var(--color-text-secondary);
+  }
+
+  .filter-select {
+    border-color: var(--color-border);
+    background-color: var(--color-background);
+    color: var(--color-text);
+  }
+
+  .filter-select:hover {
+    border-color: var(--color-primary);
+  }
+
+  .filter-select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.1);
+  }
+
+  .table-wrapper {
+    border-color: var(--color-border);
+    background-color: var(--color-background);
+  }
+
+  .table-header {
+    background-color: var(--color-background-secondary);
+    border-bottom-color: var(--color-border);
+    color: var(--color-text);
+  }
+
+  .table-row {
+    border-bottom-color: var(--color-border);
+    color: var(--color-text);
+  }
+
+  .table-row:hover {
+    background-color: var(--color-background-secondary);
+  }
+
+  .table-cell {
+    color: var(--color-text);
+  }
+}

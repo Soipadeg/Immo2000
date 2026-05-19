@@ -1,25 +1,11 @@
-import React, { useState } from 'react';
-import {
-  Container,
-  Paper,
-  TextField,
-  Button,
-  Box,
-  Typography,
-  Alert,
-  Stack,
-  FormControlLabel,
-  Checkbox,
-  Grid,
-  Card,
-  CardMedia,
-  IconButton,
-  LinearProgress,
-} from '@mui/material';
+import React
+import { Button, Alert, Input } from '@/components';, { useState } from 'react';
+
 import { useNavigate } from 'react-router-dom';
-import CloseIcon from '@mui/icons-material/Close';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+
+
 import { createBrouillonAnnonce } from '../services/api';
+import '../styles/CreerAnnonceEtape1.css';
 
 /**
  * Page ÉTAPE 1 du tunnel : Adresse et Photos
@@ -178,29 +164,29 @@ export default function CreerAnnonceEtape1() {
   };
 
   return (
-    <Container maxWidth="md">
-      <Box sx={{ py: 4 }}>
+    <div maxWidth="md">
+      <div sx={{ py: 4 }}>
         {/* Titre */}
-        <Box sx={{ mb: 4, textAlign: 'center' }}>
-          <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', mb: 1 }}>
+        <div sx={{ mb: 4, textAlign: 'center' }}>
+          <h1  component="h1" sx={{ fontWeight: 'bold', mb: 1 }}>
             🏠 Créer une annonce
-          </Typography>
-          <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+          </h1>
+          <p  sx={{ color: 'text.secondary' }}>
             Étape 1 sur 4 : Adresse et photos
-          </Typography>
+          </h1>
           <LinearProgress variant="determinate" value={25} sx={{ mt: 2 }} />
-        </Box>
+        </div>
 
         {/* Erreurs */}
         {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
         {/* Formulaire */}
-        <Paper elevation={3} sx={{ p: 4 }}>
+        <div elevation={3} sx={{ p: 4 }}>
           <form onSubmit={handleSubmit}>
-            <Grid container spacing={3}>
+            <div container spacing={3}>
               {/* Titre */}
-              <Grid item xs={12}>
-                <TextField
+              <div item xs={12}>
+                <Input
                   fullWidth
                   label="Titre de l'annonce"
                   name="titre"
@@ -210,12 +196,12 @@ export default function CreerAnnonceEtape1() {
                   required
                   maxLength={100}
                   helperText={`${formData.titre.length}/100`}
-                />
-              </Grid>
+                / />
+              </div>
 
               {/* Adresse */}
-              <Grid item xs={12}>
-                <TextField
+              <div item xs={12}>
+                <Input
                   fullWidth
                   label="Adresse complète"
                   name="adresse"
@@ -223,12 +209,12 @@ export default function CreerAnnonceEtape1() {
                   onChange={handleChange}
                   placeholder="Ex: 123 Rue de Paris, Apt 4B"
                   required
-                />
-              </Grid>
+                / />
+              </div>
 
               {/* Code postal et Ville */}
-              <Grid item xs={12} sm={6}>
-                <TextField
+              <div item xs={12} sm={6}>
+                <Input
                   fullWidth
                   label="Code postal"
                   name="code_postal"
@@ -237,11 +223,11 @@ export default function CreerAnnonceEtape1() {
                   placeholder="75001"
                   required
                   inputProps={{ maxLength: 5 }}
-                />
-              </Grid>
+                / />
+              </div>
 
-              <Grid item xs={12} sm={6}>
-                <TextField
+              <div item xs={12} sm={6}>
+                <Input
                   fullWidth
                   label="Ville"
                   name="ville"
@@ -249,11 +235,11 @@ export default function CreerAnnonceEtape1() {
                   onChange={handleChange}
                   placeholder="Paris"
                   required
-                />
-              </Grid>
+                / />
+              </div>
 
               {/* Masquer adresse */}
-              <Grid item xs={12}>
+              <div item xs={12}>
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -264,16 +250,16 @@ export default function CreerAnnonceEtape1() {
                   }
                   label="Masquer l'adresse complète (seul le code postal et la ville seront visibles)"
                 />
-              </Grid>
+              </div>
 
               {/* Photos */}
-              <Grid item xs={12}>
-                <Typography variant="h6" sx={{ mb: 2 }}>
+              <div item xs={12}>
+                <h3  sx={{ mb: 2 }}>
                   📸 Photos ({photos.length}/{MAX_PHOTOS})
-                </Typography>
+                </h1>
 
                 {/* Upload Area */}
-                <Card
+                <div
                   sx={{
                     border: '2px dashed',
                     borderColor: 'primary.main',
@@ -297,19 +283,19 @@ export default function CreerAnnonceEtape1() {
                     disabled={photos.length >= MAX_PHOTOS}
                   />
                   <CloudUploadIcon sx={{ fontSize: 48, color: 'primary.main', mb: 1 }} />
-                  <Typography variant="h6">Déposer les photos ici</Typography>
-                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  <h3 >Déposer les photos ici</h1>
+                  <span  sx={{ color: 'text.secondary' }}>
                     ou cliquez pour sélectionner (jpg, png, webp, max 10MB chacune)
-                  </Typography>
-                </Card>
+                  </h1>
+                </div>
 
                 {/* Photos Previews */}
                 {photoPreviews.length > 0 && (
-                  <Grid container spacing={2}>
+                  <div container spacing={2}>
                     {photoPreviews.map((preview, index) => (
-                      <Grid item xs={6} sm={4} key={index}>
-                        <Box sx={{ position: 'relative' }}>
-                          <CardMedia
+                      <div item xs={6} sm={4} key={index}>
+                        <div sx={{ position: 'relative' }}>
+                          <divMedia
                             component="img"
                             height="140"
                             image={preview.url}
@@ -328,23 +314,23 @@ export default function CreerAnnonceEtape1() {
                           >
                             <CloseIcon fontSize="small" />
                           </IconButton>
-                          <Typography variant="caption" sx={{ mt: 0.5, display: 'block' }}>
+                          <p  sx={{ mt: 0.5, display: 'block' }}>
                             {preview.name}
-                          </Typography>
-                        </Box>
-                      </Grid>
+                          </h1>
+                        </div>
+                      </div>
                     ))}
-                  </Grid>
+                  </div>
                 )}
-              </Grid>
+              </div>
 
               {/* Progress */}
               {uploadProgress > 0 && uploadProgress < 100 && (
-                <Grid item xs={12}>
+                <div item xs={12}>
                   <LinearProgress variant="determinate" value={uploadProgress} />
-                </Grid>
+                </div>
               )}
-            </Grid>
+            </div>
 
             {/* Boutons */}
             <Stack direction="row" spacing={2} sx={{ mt: 4, justifyContent: 'center' }}>
@@ -367,16 +353,16 @@ export default function CreerAnnonceEtape1() {
               </Button>
             </Stack>
           </form>
-        </Paper>
+        </div>
 
         {/* Info */}
-        <Box sx={{ mt: 4, p: 2, backgroundColor: 'info.light', borderRadius: 1 }}>
-          <Typography variant="body2" sx={{ color: 'info.dark' }}>
+        <div sx={{ mt: 4, p: 2, backgroundColor: 'info.light', borderRadius: 1 }}>
+          <span  sx={{ color: 'info.dark' }}>
             💡 <strong>Conseil :</strong> Vous pouvez abandonner à tout moment. Votre brouillon sera sauvegardé
             et vous pourrez le continuer plus tard depuis votre dashboard.
-          </Typography>
-        </Box>
-      </Box>
-    </Container>
+          </h1>
+        </div>
+      </div>
+    </div>
   );
 }

@@ -1,29 +1,14 @@
-import React, { useState } from 'react';
-import {
-  Container,
-  Paper,
-  Button,
-  Box,
-  Typography,
-  Alert,
-  Stack,
-  FormControlLabel,
-  Checkbox,
-  Card,
-  CardContent,
-  LinearProgress,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-} from '@mui/material';
+import React
+import { Button, Alert, Input } from '@/components';, { useState } from 'react';
+
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import EmojiObjectsIcon from '@mui/icons-material/EmojiObjects';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import AssessmentIcon from '@mui/icons-material/Assessment';
+
+
+
+
+
 import { signContratExclusivite } from '../services/api';
+import '../styles/CreerAnnonceEtape3.css';
 
 /**
  * Page ÉTAPE 3 du tunnel : Contrat d'exclusivité
@@ -67,33 +52,33 @@ export default function CreerAnnonceEtape3() {
   };
 
   return (
-    <Container maxWidth="md">
-      <Box sx={{ py: 4 }}>
+    <div maxWidth="md">
+      <div sx={{ py: 4 }}>
         {/* Titre */}
-        <Box sx={{ mb: 4, textAlign: 'center' }}>
-          <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', mb: 1 }}>
+        <div sx={{ mb: 4, textAlign: 'center' }}>
+          <h1  component="h1" sx={{ fontWeight: 'bold', mb: 1 }}>
             🤖 Outils IA (Bientôt disponibles)
-          </Typography>
-          <Typography variant="body1" sx={{ color: 'text.secondary', mb: 2 }}>
+          </h1>
+          <p  sx={{ color: 'text.secondary', mb: 2 }}>
             Étape 3 sur 4 : Contrat d'exclusivité
-          </Typography>
+          </h1>
           <LinearProgress variant="determinate" value={75} sx={{ mt: 2 }} />
-        </Box>
+        </div>
 
         {/* Erreurs */}
         {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
         {/* Intro */}
-        <Box sx={{ mb: 4 }}>
+        <div sx={{ mb: 4 }}>
           <Alert severity="info">
             Vous pouvez choisir de signer un <strong>contrat d'exclusivité</strong> avec Immo2000 pour avoir accès à
             nos <strong>outils IA futurs</strong> qui accélèreront la vente de votre bien. Sinon, publiez votre annonce
             directement.
           </Alert>
-        </Box>
+        </div>
 
         {/* Option 1: Avec contrat */}
-        <Card
+        <div
           sx={{
             mb: 3,
             border: selectedOption === 'yes' ? '2px solid' : '1px solid',
@@ -103,15 +88,15 @@ export default function CreerAnnonceEtape3() {
           }}
           onClick={() => setSelectedOption('yes')}
         >
-          <CardContent>
-            <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+          <div>
+            <h3  sx={{ fontWeight: 'bold', mb: 2 }}>
               ✅ Signer le contrat d'exclusivité
-            </Typography>
+            </h1>
 
-            <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+            <span  sx={{ mb: 2, color: 'text.secondary' }}>
               En signant, Immo2000 devient votre partenaire exclusif pour la vente. Vous aurez accès à nos outils IA
               avancés pour maximiser vos chances de vente.
-            </Typography>
+            </h1>
 
             {/* Avantages */}
             <List sx={{ p: 0 }}>
@@ -167,7 +152,7 @@ export default function CreerAnnonceEtape3() {
             </List>
 
             {/* Tarif */}
-            <Box
+            <div
               sx={{
                 mt: 2,
                 p: 2,
@@ -177,15 +162,15 @@ export default function CreerAnnonceEtape3() {
                 borderColor: 'success.main',
               }}
             >
-              <Typography variant="body2" sx={{ color: 'success.dark', fontWeight: 'bold' }}>
+              <span  sx={{ color: 'success.dark', fontWeight: 'bold' }}>
                 💰 Commission: 1.5% du prix de vente (uniquement en cas de transaction réussie)
-              </Typography>
-            </Box>
-          </CardContent>
-        </Card>
+              </h1>
+            </div>
+          </div>
+        </div>
 
         {/* Option 2: Sans contrat */}
-        <Card
+        <div
           sx={{
             mb: 4,
             border: selectedOption === 'no' ? '2px solid' : '1px solid',
@@ -195,14 +180,14 @@ export default function CreerAnnonceEtape3() {
           }}
           onClick={() => setSelectedOption('no')}
         >
-          <CardContent>
-            <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+          <div>
+            <h3  sx={{ fontWeight: 'bold', mb: 2 }}>
               ⏭️ Publier sans contrat
-            </Typography>
+            </h1>
 
-            <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+            <span  sx={{ mb: 2, color: 'text.secondary' }}>
               Publiez votre annonce directement sans contrat. Vous aurez accès aux fonctionnalités de base.
-            </Typography>
+            </h1>
 
             {/* Avantages basiques */}
             <List sx={{ p: 0 }}>
@@ -223,17 +208,17 @@ export default function CreerAnnonceEtape3() {
               </ListItem>
             </List>
 
-            <Box sx={{ mt: 2, p: 2, backgroundColor: 'warning.light', borderRadius: 1 }}>
-              <Typography variant="body2" sx={{ color: 'warning.dark' }}>
+            <div sx={{ mt: 2, p: 2, backgroundColor: 'warning.light', borderRadius: 1 }}>
+              <span  sx={{ color: 'warning.dark' }}>
                 📝 <strong>Vous pouvez toujours signer le contrat plus tard</strong> depuis votre dashboard.
-              </Typography>
-            </Box>
-          </CardContent>
-        </Card>
+              </h1>
+            </div>
+          </div>
+        </div>
 
         {/* Formulaire si "Oui" sélectionné */}
         {selectedOption === 'yes' && (
-          <Paper elevation={2} sx={{ p: 3, mb: 3, backgroundColor: 'action.hover' }}>
+          <div elevation={2} sx={{ p: 3, mb: 3, backgroundColor: 'action.hover' }}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -242,12 +227,12 @@ export default function CreerAnnonceEtape3() {
                 />
               }
               label={
-                <Typography variant="body2">
+                <span >
                   J'accepte les conditions du contrat d'exclusivité et la commission de 1.5% en cas de vente
-                </Typography>
+                </h1>
               }
             />
-          </Paper>
+          </div>
         )}
 
         {/* Boutons */}
@@ -283,13 +268,13 @@ export default function CreerAnnonceEtape3() {
         </Stack>
 
         {/* Info */}
-        <Box sx={{ mt: 4, p: 2, backgroundColor: 'info.light', borderRadius: 1 }}>
-          <Typography variant="body2" sx={{ color: 'info.dark' }}>
+        <div sx={{ mt: 4, p: 2, backgroundColor: 'info.light', borderRadius: 1 }}>
+          <span  sx={{ color: 'info.dark' }}>
             💡 <strong>À savoir :</strong> Le contrat d'exclusivité vous engage uniquement pour les ventes conclues
             via Immo2000. Les outils IA vous feront gagner du temps et augmenteront vos chances de vente.
-          </Typography>
-        </Box>
-      </Box>
-    </Container>
+          </h1>
+        </div>
+      </div>
+    </div>
   );
 }

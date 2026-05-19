@@ -3,36 +3,10 @@
  */
 
 import React, { useState } from 'react';
-import {
-  Box,
-  Container,
-  Card,
-  CardContent,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-  Button,
-  Chip,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
-  CircularProgress,
-  Typography,
-} from '@mui/material';
+import { Button, Input } from '@/components';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import BlockIcon from '@mui/icons-material/Block';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
+import '../styles/AdminUsersPage.css';
 
 const AdminUsersPage = () => {
   const { user, loading } = useAuth();
@@ -50,9 +24,9 @@ const AdminUsersPage = () => {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <CircularProgress />
-      </Box>
+      <div className="admin-container">
+        <div className="loading-spinner">⏳ Chargement...</div>
+      </div>
     );
   }
 
@@ -100,90 +74,68 @@ const AdminUsersPage = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
-        👥 Gestion des Utilisateurs
-      </Typography>
-      <Typography color="textSecondary" sx={{ mb: 4 }}>
-        Total: {users.length} utilisateurs | Actifs: {users.filter((u) => u.statut === 'actif').length}
-      </Typography>
+    <div className="admin-users-page">
+      <div className="page-header">
+        <h1>👥 Gestion des Utilisateurs</h1>
+        <p>Total: {users.length} utilisateurs | Actifs: {users.filter((u) => u.statut === 'actif').length}</p>
+      </div>
 
       {/* Filtres */}
-      <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
-        <FormControl sx={{ minWidth: 150 }}>
-          <InputLabel>Rôle</InputLabel>
-          <Select value={filterRole} onChange={(e) => setFilterRole(e.target.value)} label="Rôle">
-            <MenuItem value="">Tous</MenuItem>
-            <MenuItem value="user">Utilisateur</MenuItem>
-            <MenuItem value="admin">Administrateur</MenuItem>
-          </Select>
-        </FormControl>
+      <div className="filters">
+        <select className="filter-select" value={filterRole} onChange={(e) => setFilterRole(e.target.value)}>
+          <option value="">Rôle: Tous</option>
+          <option value="user">Rôle: Utilisateur</option>
+          <option value="admin">Rôle: Administrateur</option>
+        </select>
 
-        <FormControl sx={{ minWidth: 150 }}>
-          <InputLabel>Statut</InputLabel>
-          <Select value={filterStatut} onChange={(e) => setFilterStatut(e.target.value)} label="Statut">
-            <MenuItem value="">Tous</MenuItem>
-            <MenuItem value="actif">Actif</MenuItem>
-            <MenuItem value="suspendu">Suspendu</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
+        <select className="filter-select" value={filterStatut} onChange={(e) => setFilterStatut(e.target.value)}>
+          <option value="">Statut: Tous</option>
+          <option value="actif">Statut: Actif</option>
+          <option value="suspendu">Statut: Suspendu</option>
+        </select>
+      </div>
 
       {/* Tableau */}
-      <TableContainer component={Card}>
-        <Table>
-          <TableHead sx={{ bgcolor: 'grey.100' }}>
-            <TableRow>
-              <TableCell>Email</TableCell>
-              <TableCell>Nom</TableCell>
-              <TableCell>Rôle</TableCell>
-              <TableCell>Statut</TableCell>
-              <TableCell>Date d'inscription</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredUsers.map((u) => (
-              <TableRow key={u.id}>
-                <TableCell>{u.email}</TableCell>
-                <TableCell>
-                  {u.prenom} {u.nom}
-                </TableCell>
-                <TableCell>
-                  <Chip
-                    label={u.role === 'admin' ? 'Admin' : 'Utilisateur'}
-                    size="small"
-                    color={getRoleColor(u.role)}
-                    variant="outlined"
-                  />
-                </TableCell>
-                <TableCell>
-                  <Chip
-                    label={u.statut === 'actif' ? 'Actif' : 'Suspendu'}
-                    size="small"
-                    color={getStatutColor(u.statut)}
-                  />
-                </TableCell>
-                <TableCell>{new Date(u.dateInscription).toLocaleDateString('fr-FR')}</TableCell>
-                <TableCell>
-                  <Button
-                    size="small"
-                    startIcon={u.statut === 'actif' ? <BlockIcon /> : <></>}
-                    onClick={() => handleSuspendUser(u.id)}
-                    color={u.statut === 'actif' ? 'warning' : 'success'}
-                  >
-                    {u.statut === 'actif' ? 'Suspendre' : 'Activer'}
-                  </Button>
-                  <Button size="small" startIcon={<DeleteIcon />} onClick={() => handleDeleteUser(u.id)} color="error">
-                    Supprimer
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Container>
+      <div className="table-wrapper">
+        <div className="table-header">
+          <div>Email</div>
+          <div>Nom</div>
+          <div>Rôle</div>
+          <div>Statut</div>
+          <div>Date d'inscription</div>
+          <div>Actions</div>
+        </div>
+        <div className="table-body">
+          {filteredUsers.map((u) => (
+            <div key={u.id} className="table-row">
+              <div className="table-cell">{u.email}</div>
+              <div className="table-cell">{u.prenom} {u.nom}</div>
+              <div className="table-cell"><span className={`role-badge role-${u.role}`}>{u.role === 'admin' ? 'Admin' : 'Utilisateur'}</span></div>
+              <div className="table-cell"><span className={`statut-badge statut-${u.statut}`}>{u.statut === 'actif' ? 'Actif' : 'Suspendu'}</span></div>
+              <div className="table-cell">{new Date(u.dateInscription).toLocaleDateString('fr-FR')}</div>
+              <div className="table-cell actions">
+                <Button
+                  variant="secondary"
+                  size="small"
+                  onClick={() => handleSuspendUser(u.id)}
+                  className="action-btn"
+                >
+                  {u.statut === 'actif' ? '🔒 Suspendre' : '✓ Activer'}
+                </Button>
+                <Button
+                  variant="danger"
+                  size="small"
+                  onClick={() => handleDeleteUser(u.id)}
+                  className="action-btn"
+                >
+                  🗑️ Supprimer
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -1,22 +1,11 @@
 import React, { useState, useRef } from 'react';
-import {
-  Container,
-  Paper,
-  TextField,
-  Button,
-  Box,
-  Typography,
-  Alert,
-  Link,
-  FormControlLabel,
-  Checkbox,
-  Stack,
-} from '@mui/material';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { Button, Alert, Input } from '@/components';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { register as apiRegister } from '../services/api';
+import '../styles/RegisterPage.css';
 
-export default function RegisterPage() {
+const RegisterPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const recaptchaRef = useRef();
@@ -55,14 +44,13 @@ export default function RegisterPage() {
     e.preventDefault();
     setError('');
 
-    // Validation
     if (!formData.email || !formData.password || !formData.nom || !formData.prenom || !formData.telephone) {
       setError('Tous les champs sont requis');
       return;
     }
 
     if (!formData.acceptCGU) {
-      setError('Vous devez accepter les Conditions Générales d\'Utilisation et la Politique de Confidentialité');
+      setError('Vous devez accepter les Conditions Générales d\'Utilisation');
       return;
     }
 
@@ -76,7 +64,6 @@ export default function RegisterPage() {
       return;
     }
 
-    // Validation du téléphone (format basique)
     const phoneRegex = /^[+]?[0-9\s\-()]{9,}$/;
     if (!phoneRegex.test(formData.telephone.replace(/\s/g, ''))) {
       setError('Numéro de téléphone invalide');
@@ -86,7 +73,6 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      // Récupérer le token ReCAPTCHA
       setCaptchaLoading(true);
       const captchaToken = await recaptchaRef.current.executeAsync();
       setCaptchaLoading(false);
@@ -97,13 +83,11 @@ export default function RegisterPage() {
         return;
       }
 
-      const response = await apiRegister({
+      await apiRegister({
         ...formData,
         captchaToken,
       });
 
-      // Redirection vers l'étape 2 (profil acheteur)
-      // Passer les infos nécessaires via query params si l'utilisateur venait d'une annonce
       const searchParams = new URLSearchParams(location.search);
       const from = searchParams.get('from');
       const annonceId = searchParams.get('annonce_id');
@@ -124,139 +108,103 @@ export default function RegisterPage() {
   };
 
   return (
-    <Container maxWidth="sm">
-      <Box sx={{ py: 4 }}>
-        <Typography variant="h3" component="h1" sx={{ mb: 3, textAlign: 'center' }}>
-          Créer un compte
-        </Typography>
+    <div className="register-container">
+      <div className="register-card">
+        <h1 className="register-title">Créer un compte</h1>
 
-        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+        {error && <Alert variant="error" className="mb-4">{error}</Alert>}
 
-        <Paper elevation={3} sx={{ p: 3 }}>
-          <form onSubmit={handleSubmit}>
-            <TextField
-              fullWidth
-              label="Email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              margin="normal"
-              required
-            />
-
-            <TextField
-              fullWidth
+        <form className="register-form" onSubmit={handleSubmit}>
+          <div className="register-row">
+            <Input
               label="Prénom"
               name="prenom"
               value={formData.prenom}
               onChange={handleChange}
-              margin="normal"
               required
             />
-
-            <TextField
-              fullWidth
+            <Input
               label="Nom"
               name="nom"
               value={formData.nom}
               onChange={handleChange}
-              margin="normal"
               required
             />
+          </div>
 
-            <TextField
-              fullWidth
-              label="Téléphone"
-              name="telephone"
-              type="tel"
-              value={formData.telephone}
-              onChange={handleChange}
-              margin="normal"
-              placeholder="+33 6 12 34 56 78"
-              required
+          <Input
+            label="Email"
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+
+          <Input
+            label="Téléphone"
+            name="telephone"
+            type="tel"
+            value={formData.telephone}
+            onChange={handleChange}
+            placeholder="+33 6 12 34 56 78"
+            required
+          />
+
+          <Input
+            label="Mot de passe"
+            name="password"
+            type="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+
+          <Input
+            label="Confirmer le mot de passe"
+            name="passwordConfirm"
+            type="password"
+            value={formData.passwordConfirm}
+            onChange={handleChange}
+            required
+          />
+
+          <div className="register-checkbox-container">
+            <input
+              type="checkbox"
+              id="acceptCGU"
+              name="acceptCGU"
+              checked={formData.acceptCGU}
+              onChange={handleCheckboxChange}
             />
+            <label htmlFor="acceptCGU" className="register-checkbox-label">
+              J'accepte les <Link to="/cgu">Conditions Générales d'Utilisation</Link> et la <Link to="/politique-confidentialite">Politique de Confidentialité</Link>
+            </label>
+          </div>
 
-            <TextField
-              fullWidth
-              label="Mot de passe"
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-              margin="normal"
-              required
+          <div style={{ display: 'none' }}>
+            <ReCAPTCHA
+              ref={recaptchaRef}
+              size="invisible"
+              sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
             />
+          </div>
 
-            <TextField
-              fullWidth
-              label="Confirmer le mot de passe"
-              name="passwordConfirm"
-              type="password"
-              value={formData.passwordConfirm}
-              onChange={handleChange}
-              margin="normal"
-              required
-            />
+          <Button
+            type="submit"
+            isLoading={loading || captchaLoading}
+            className="w-full"
+          >
+            {captchaLoading ? 'Vérification...' : loading ? 'Inscription...' : "S'inscrire"}
+          </Button>
 
-            {/* Acceptation CGU/RGPD */}
-            <Stack sx={{ mt: 3, mb: 2 }}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    name="acceptCGU"
-                    checked={formData.acceptCGU}
-                    onChange={handleCheckboxChange}
-                    color="primary"
-                  />
-                }
-                label={
-                  <Typography variant="body2">
-                    J'accepte les{' '}
-                    <Link href="/cgu" target="_blank" underline="hover">
-                      Conditions Générales d'Utilisation
-                    </Link>
-                    {' '}et la{' '}
-                    <Link href="/politique-confidentialite" target="_blank" underline="hover">
-                      Politique de Confidentialité (RGPD)
-                    </Link>
-                  </Typography>
-                }
-              />
-            </Stack>
-
-            {/* ReCAPTCHA v3 (invisible) */}
-            <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
-              <ReCAPTCHA
-                ref={recaptchaRef}
-                size="invisible"
-                sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
-              />
-            </Box>
-
-            <Button
-              fullWidth
-              variant="contained"
-              color="primary"
-              size="large"
-              sx={{ mt: 3 }}
-              disabled={loading || captchaLoading}
-              type="submit"
-            >
-              {captchaLoading ? 'Vérification de sécurité...' : loading ? 'Inscription en cours...' : 'S\'inscrire'}
-            </Button>
-
-            <Box sx={{ mt: 2, textAlign: 'center' }}>
-              <Typography variant="body2">
-                Vous avez déjà un compte ?{' '}
-                <Link href="/login" underline="hover">
-                  Se connecter
-                </Link>
-              </Typography>
-            </Box>
-          </form>
-        </Paper>
-      </Box>
-    </Container>
+          <p className="register-footer">
+            Vous avez déjà un compte ? <Link to="/login">Se connecter</Link>
+          </p>
+        </form>
+      </div>
+    </div>
   );
-}
+};
+
+export default RegisterPage;

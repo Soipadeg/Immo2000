@@ -3,34 +3,11 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Container,
-  Grid,
-  Card,
-  CardContent,
-  CardActions,
-  Typography,
-  Button,
-  Chip,
-  Tabs,
-  Tab,
-  CircularProgress,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
-  Alert,
-} from '@mui/material';
+import { Button, Alert } from '@/components';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import PeopleIcon from '@mui/icons-material/People';
-import HomeIcon from '@mui/icons-material/Home';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import WarningIcon from '@mui/icons-material/Warning';
-import SecurityIcon from '@mui/icons-material/Security';
-import AnalyticsIcon from '@mui/icons-material/Analytics';
 import { dashboardApi, analyticsApi } from '../services/adminApi';
+import '../styles/AdminDashboardPage.css';
 
 const AdminDashboardPage = () => {
   const { user, loading: authLoading } = useAuth();
@@ -95,15 +72,24 @@ const AdminDashboardPage = () => {
 
   if (authLoading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <CircularProgress />
-      </Box>
+      <div className="admin-container">
+        <div className="loading-spinner">⏳ Chargement...</div>
+      </div>
     );
   }
 
   if (!user || user.role !== 'admin') {
     return null;
   }
+
+  // Données hardcodées
+  const recentUsers = [
+    { id: 1, prenom: 'Jean', nom: 'Dupont', email: 'jean.dupont@email.com', date: new Date().toISOString() },
+    { id: 2, prenom: 'Marie', nom: 'Martin', email: 'marie.martin@email.com', date: new Date().toISOString() },
+    { id: 3, prenom: 'Pierre', nom: 'Bernard', email: 'pierre.bernard@email.com', date: new Date().toISOString() },
+  ];
+
+  const suspiciousAccounts = [];
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -117,219 +103,151 @@ const AdminDashboardPage = () => {
   ];
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
-          🔐 Dashboard Admin
-        </Typography>
-        <Typography color="textSecondary">
-          Bienvenue, Admin {user.nom}
-        </Typography>
-      </Box>
+    <div className="admin-dashboard-page">
+      <div className="page-header">
+        <h1>🔐 Dashboard Admin</h1>
+        <p>Bienvenue, Admin {user.nom}</p>
+      </div>
 
       {/* Statistiques principales */}
-      <Grid container spacing={2} sx={{ mb: 4 }}>
+      <div className="stats-grid">
         {stats.map((stat, index) => (
-          <Grid item xs={12} sm={6} lg={3} key={index}>
-            <Card sx={{ py: 2, textAlign: 'center' }}>
-              <Box sx={{ color: 'primary.main', mb: 1 }}>{stat.icon}</Box>
-              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                {stat.value}
-              </Typography>
-              <Typography variant="caption" color="textSecondary">
-                {stat.label}
-              </Typography>
-            </Card>
-          </Grid>
+          <div key={index} className="stat-card">
+            <div className="stat-label">{stat.label}</div>
+            <div className="stat-value">{stat.value}</div>
+          </div>
         ))}
-      </Grid>
+      </div>
 
       {/* Alertes de sécurité */}
       {suspiciousAccounts.length > 0 && (
-        <Alert severity="warning" sx={{ mb: 3 }}>
-          🚨 {suspiciousAccounts.length} compte{suspiciousAccounts.length > 1 ? 's' : ''} suspect{suspiciousAccounts.length > 1 ? 's' : ''} détecté{suspiciousAccounts.length > 1 ? 's' : ''}. Veuillez vérifier l'onglet Sécurité.
-        </Alert>
+        <Alert type="warning" title="Alerte sécurité" message={`🚨 ${suspiciousAccounts.length} compte${suspiciousAccounts.length > 1 ? 's' : ''} suspect${suspiciousAccounts.length > 1 ? 's' : ''} détecté${suspiciousAccounts.length > 1 ? 's' : ''}. Veuillez vérifier l'onglet Sécurité.`} />
       )}
 
       {/* Onglets */}
-      <Card>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs value={tabValue} onChange={handleTabChange}>
-            <Tab label="Aperçu" />
-            <Tab label="Utilisateurs récents" />
-            <Tab label="Sécurité" />
-            <Tab label="Gestion" />
-          </Tabs>
-        </Box>
+      <div className="dashboard-card">
+        <div className="tabs-nav">
+          {['Aperçu', 'Utilisateurs récents', 'Sécurité', 'Gestion'].map((label, index) => (
+            <button
+              key={index}
+              className={`tab-btn ${tabValue === index ? 'active' : ''}`}
+              onClick={() => setTabValue(index)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
 
-        <CardContent>
+        <div className="tab-content">
           {/* Onglet Aperçu */}
           {tabValue === 0 && (
-            <Grid container spacing={3}>
-              <Grid item xs={12} lg={6}>
-                <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
-                  📈 Activité utilisateurs
-                </Typography>
-                <Box sx={{ height: 300, bgcolor: 'grey.100', borderRadius: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Typography color="textSecondary">[Graphique d'activité]</Typography>
-                </Box>
-              </Grid>
+            <div className="overview-grid">
+              <div className="chart-box">
+                <h3>📈 Activité utilisateurs</h3>
+                <div className="chart-placeholder">[Graphique d'activité]</div>
+              </div>
 
-              <Grid item xs={12} lg={6}>
-                <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
-                  📊 Distribution des rôles
-                </Typography>
-                <Box sx={{ height: 300, bgcolor: 'grey.100', borderRadius: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Typography color="textSecondary">[Graphique circulaire]</Typography>
-                </Box>
-              </Grid>
+              <div className="chart-box">
+                <h3>📊 Distribution des rôles</h3>
+                <div className="chart-placeholder">[Graphique circulaire]</div>
+              </div>
 
-              <Grid item xs={12}>
-                <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
-                  🎯 Métriques clés
-                </Typography>
-                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 2 }}>
-                  <Box sx={{ p: 2, bgcolor: 'primary.light', borderRadius: 1 }}>
-                    <Typography variant="caption">Taux de croissance</Typography>
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-                      +12.5%
-                    </Typography>
-                  </Box>
-                  <Box sx={{ p: 2, bgcolor: 'success.light', borderRadius: 1 }}>
-                    <Typography variant="caption">Utilisateurs actifs</Typography>
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'success.main' }}>
-                      856
-                    </Typography>
-                  </Box>
-                  <Box sx={{ p: 2, bgcolor: 'warning.light', borderRadius: 1 }}>
-                    <Typography variant="caption">Annonces en attente</Typography>
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'warning.main' }}>
-                      23
-                    </Typography>
-                  </Box>
-                  <Box sx={{ p: 2, bgcolor: 'error.light', borderRadius: 1 }}>
-                    <Typography variant="caption">Incidents signalés</Typography>
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'error.main' }}>
-                      5
-                    </Typography>
-                  </Box>
-                </Box>
-              </Grid>
-            </Grid>
+              <div className="metrics-box">
+                <h3>🎯 Métriques clés</h3>
+                <div className="metrics-grid">
+                  <div className="metric-item metric-primary">
+                    <div className="metric-label">Taux de croissance</div>
+                    <div className="metric-value">+12.5%</div>
+                  </div>
+                  <div className="metric-item metric-success">
+                    <div className="metric-label">Utilisateurs actifs</div>
+                    <div className="metric-value">856</div>
+                  </div>
+                  <div className="metric-item metric-warning">
+                    <div className="metric-label">Annonces en attente</div>
+                    <div className="metric-value">23</div>
+                  </div>
+                  <div className="metric-item metric-error">
+                    <div className="metric-label">Incidents signalés</div>
+                    <div className="metric-value">5</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
 
           {/* Onglet Utilisateurs récents */}
           {tabValue === 1 && (
-            <Box>
-              <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
-                👥 Nouveaux utilisateurs
-              </Typography>
-              <Divider sx={{ my: 2 }} />
-              <List>
+            <div className="users-section">
+              <h3>👥 Nouveaux utilisateurs</h3>
+              <div className="divider"></div>
+              <div className="users-list">
                 {recentUsers.map((u) => (
-                  <Box key={u.id}>
-                    <ListItem>
-                      <ListItemText
-                        primary={`${u.prenom} ${u.nom}`}
-                        secondary={`${u.email} • ${new Date(u.date).toLocaleDateString('fr-FR')}`}
-                      />
-                    </ListItem>
-                    <Divider />
-                  </Box>
+                  <div key={u.id} className="user-item">
+                    <div>
+                      <div className="user-name">{u.prenom} {u.nom}</div>
+                      <div className="user-meta">{u.email} • {new Date(u.date).toLocaleDateString('fr-FR')}</div>
+                    </div>
+                  </div>
                 ))}
-              </List>
-              <Button fullWidth sx={{ mt: 2 }} variant="outlined">
+              </div>
+              <Button variant="secondary" className="view-all-btn">
                 Voir tous les utilisateurs
               </Button>
-            </Box>
+            </div>
           )}
 
           {/* Onglet Sécurité */}
           {tabValue === 2 && (
-            <Box>
-              <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
-                🛡️ Comptes suspects
-              </Typography>
-              <Divider sx={{ my: 2 }} />
+            <div className="security-section">
+              <h3>🛡️ Comptes suspects</h3>
+              <div className="divider"></div>
               {suspiciousAccounts.length === 0 ? (
-                <Alert severity="success">✅ Aucun compte suspect détecté</Alert>
+                <Alert type="success" title="Aucun problème" message="✅ Aucun compte suspect détecté" />
               ) : (
-                <List>
+                <div className="suspicious-list">
                   {suspiciousAccounts.map((account) => (
-                    <Box key={account.id}>
-                      <ListItem>
-                        <Box sx={{ width: '100%' }}>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                              {account.email}
-                            </Typography>
-                            <Chip
-                              label={account.severity === 'high' ? 'Critique' : 'Moyen'}
-                              color={account.severity === 'high' ? 'error' : 'warning'}
-                              size="small"
-                            />
-                          </Box>
-                          <Typography variant="caption" color="textSecondary">
-                            {account.raison}
-                          </Typography>
-                        </Box>
-                      </ListItem>
-                      <Divider />
-                    </Box>
+                    <div key={account.id} className="suspicious-item">
+                      <div className="suspicious-header">
+                        <div className="suspicious-email">{account.email}</div>
+                        <span className={`severity-badge severity-${account.severity}`}>
+                          {account.severity === 'high' ? 'Critique' : 'Moyen'}
+                        </span>
+                      </div>
+                      <div className="suspicious-reason">{account.raison}</div>
+                    </div>
                   ))}
-                </List>
+                </div>
               )}
-            </Box>
+            </div>
           )}
 
           {/* Onglet Gestion */}
           {tabValue === 3 && (
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  onClick={() => navigate('/admin/users')}
-                >
-                  👥 Gérer les utilisateurs
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  onClick={() => navigate('/admin/moderation')}
-                >
-                  🛡️ Modérer les annonces
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Button fullWidth variant="outlined" color="primary">
-                  📊 Rapport mensuel
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Button fullWidth variant="outlined" color="primary">
-                  ⚙️ Paramètres système
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Button fullWidth variant="outlined" color="primary">
-                  📧 Gestion des emails
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Button fullWidth variant="outlined" color="primary">
-                  🔑 Clés API
-                </Button>
-              </Grid>
-            </Grid>
+            <div className="management-grid">
+              <Button variant="primary" className="mgmt-btn" onClick={() => navigate('/admin/users')}>
+                👥 Gérer les utilisateurs
+              </Button>
+              <Button variant="primary" className="mgmt-btn" onClick={() => navigate('/admin/moderation')}>
+                🛡️ Modérer les annonces
+              </Button>
+              <Button variant="secondary" className="mgmt-btn">
+                📊 Rapport mensuel
+              </Button>
+              <Button variant="secondary" className="mgmt-btn">
+                ⚙️ Paramètres système
+              </Button>
+              <Button variant="secondary" className="mgmt-btn">
+                📧 Gestion des emails
+              </Button>
+              <Button variant="secondary" className="mgmt-btn">
+                🔑 Clés API
+              </Button>
+            </div>
           )}
-        </CardContent>
-      </Card>
-    </Container>
+        </div>
+      </div>
+    </div>
   );
 };
 
