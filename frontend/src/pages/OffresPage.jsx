@@ -4,34 +4,10 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Container,
-  Typography,
-  Tabs,
-  Tab,
-  Card,
-  CardContent,
-  CardActions,
-  Button,
-  Chip,
-  Grid,
-  CircularProgress,
-  Alert,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-} from '@mui/material';
-import {
-  Edit as EditIcon,
-  Check as CheckIcon,
-  Close as CloseIcon,
-  Reply as ReplyIcon,
-} from '@mui/icons-material';
+import { Button, Alert, Input, Modal } from '@/components';
 import { useAuth } from '../hooks/useAuth';
 import { offresApi } from '../services/api';
+import '../styles/OffresPage.css';
 
 /**
  * Composant pour afficher une offre
@@ -106,159 +82,145 @@ const OfferCard = ({ offre, isVendor, onUpdate }) => {
   };
 
   return (
-    <Card sx={{ mb: 2 }}>
-      <CardContent>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-          <Box>
-            <Typography variant="h6">
-              Offre #{offre.offre_id}
-            </Typography>
-            <Typography color="textSecondary">
-              {isVendor ? `De: ${offre.acheteur_nom}` : `Pour: ${offre.annonce_titre}`}
-            </Typography>
-          </Box>
-          <Chip
-            label={getStatusLabel(offre.statut)}
-            color={getStatusColor(offre.statut)}
-            variant="outlined"
-          />
-        </Box>
+    <div className="offer-card">
+      <div className="offer-header">
+        <div className="offer-title-section">
+          <h3 className="offer-id">Offre #{offre.offre_id}</h3>
+          <p className="offer-party">
+            {isVendor ? `De: ${offre.acheteur_nom}` : `Pour: ${offre.annonce_titre}`}
+          </p>
+        </div>
+        <span className={`offer-status status-${offre.statut}`}>
+          {getStatusLabel(offre.statut)}
+        </span>
+      </div>
 
-        <Grid container spacing={2} sx={{ mb: 2 }}>
-          <Grid item xs={6} sm={3}>
-            <Typography variant="caption" color="textSecondary">
-              Prix proposé
-            </Typography>
-            <Typography variant="h6">
+      <div className="offer-content">
+        <div className="price-grid">
+          <div className="price-item">
+            <span className="price-label">Prix proposé</span>
+            <span className="price-value">
               {new Intl.NumberFormat('fr-FR', {
                 style: 'currency',
                 currency: 'EUR',
               }).format(offre.prix_propose)}
-            </Typography>
-          </Grid>
+            </span>
+          </div>
           {offre.prix_contre_propose && (
-            <Grid item xs={6} sm={3}>
-              <Typography variant="caption" color="textSecondary">
-                Contre-proposition
-              </Typography>
-              <Typography variant="h6">
+            <div className="price-item">
+              <span className="price-label">Contre-proposition</span>
+              <span className="price-value">
                 {new Intl.NumberFormat('fr-FR', {
                   style: 'currency',
                   currency: 'EUR',
                 }).format(offre.prix_contre_propose)}
-              </Typography>
-            </Grid>
+              </span>
+            </div>
           )}
-          <Grid item xs={6} sm={3}>
-            <Typography variant="caption" color="textSecondary">
-              Date
-            </Typography>
-            <Typography variant="body2">
+          <div className="price-item">
+            <span className="price-label">Date</span>
+            <span className="date-value">
               {new Date(offre.date_offre).toLocaleDateString('fr-FR')}
-            </Typography>
-          </Grid>
-        </Grid>
+            </span>
+          </div>
+        </div>
 
         {offre.message && (
-          <Box sx={{ mb: 2, p: 1, bgcolor: 'background.secondary', borderRadius: 1 }}>
-            <Typography variant="caption" color="textSecondary">
-              Message
-            </Typography>
-            <Typography variant="body2">{offre.message}</Typography>
-          </Box>
+          <div className="offer-message">
+            <span className="message-label">Message</span>
+            <p className="message-text">{offre.message}</p>
+          </div>
         )}
-      </CardContent>
+      </div>
 
-      {isVendor && offre.statut === 'proposee' && (
-        <CardActions>
-          <Button
-            size="small"
-            color="success"
-            startIcon={<CheckIcon />}
-            onClick={handleAccept}
-            disabled={loading}
-          >
-            Accepter
-          </Button>
-          <Button
-            size="small"
-            color="error"
-            startIcon={<CloseIcon />}
-            onClick={handleReject}
-            disabled={loading}
-          >
-            Refuser
-          </Button>
-          <Button
-            size="small"
-            color="info"
-            startIcon={<ReplyIcon />}
-            onClick={() => setOpenCounterDialog(true)}
-            disabled={loading}
-          >
-            Contre-offre
-          </Button>
-        </CardActions>
+      <div className="offer-actions">
+        {isVendor && offre.statut === 'proposee' && (
+          <>
+            <Button
+              variant="secondary"
+              size="small"
+              onClick={handleAccept}
+              disabled={loading}
+            >
+              ✓ Accepter
+            </Button>
+            <Button
+              variant="danger"
+              size="small"
+              onClick={handleReject}
+              disabled={loading}
+            >
+              ✗ Refuser
+            </Button>
+            <Button
+              variant="primary"
+              size="small"
+              onClick={() => setOpenCounterDialog(true)}
+              disabled={loading}
+            >
+              ↔ Contre-offre
+            </Button>
+          </>
+        )}
+
+        {!isVendor && offre.statut === 'negociation' && (
+          <>
+            <Button
+              variant="secondary"
+              size="small"
+              onClick={handleAccept}
+              disabled={loading}
+            >
+              ✓ Accepter
+            </Button>
+            <Button
+              variant="danger"
+              size="small"
+              onClick={handleReject}
+              disabled={loading}
+            >
+              ✗ Refuser
+            </Button>
+          </>
+        )}
+      </div>
+
+      {openCounterDialog && (
+        <Modal
+          isOpen={openCounterDialog}
+          title="Faire une contre-offre"
+          onClose={() => setOpenCounterDialog(false)}
+        >
+          <div className="counter-offer-form">
+            <p className="current-price">
+              Montant actuel: {new Intl.NumberFormat('fr-FR', {
+                style: 'currency',
+                currency: 'EUR',
+              }).format(offre.prix_propose)}
+            </p>
+            <Input
+              type="number"
+              label="Nouveau prix proposé"
+              value={counterPrice}
+              onChange={(e) => setCounterPrice(e.target.value)}
+              inputProps={{ step: '1000' }}
+            />
+            <div className="modal-actions">
+              <Button variant="secondary" onClick={() => setOpenCounterDialog(false)}>
+                Annuler
+              </Button>
+              <Button
+                variant="primary"
+                onClick={handleCounter}
+                disabled={loading || !counterPrice}
+              >
+                Proposer
+              </Button>
+            </div>
+          </div>
+        </Modal>
       )}
-
-      {!isVendor && offre.statut === 'negociation' && (
-        <CardActions>
-          <Button
-            size="small"
-            color="success"
-            startIcon={<CheckIcon />}
-            onClick={handleAccept}
-            disabled={loading}
-          >
-            Accepter contre-offre
-          </Button>
-          <Button
-            size="small"
-            color="error"
-            startIcon={<CloseIcon />}
-            onClick={handleReject}
-            disabled={loading}
-          >
-            Refuser
-          </Button>
-        </CardActions>
-      )}
-
-      {/* Dialog pour contre-offre */}
-      <Dialog
-        open={openCounterDialog}
-        onClose={() => setOpenCounterDialog(false)}
-        maxWidth="xs"
-        fullWidth
-      >
-        <DialogTitle>Faire une contre-offre</DialogTitle>
-        <DialogContent>
-          <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
-            Montant actuel : {new Intl.NumberFormat('fr-FR', {
-              style: 'currency',
-              currency: 'EUR',
-            }).format(offre.prix_propose)}
-          </Typography>
-          <TextField
-            autoFocus
-            fullWidth
-            label="Nouveau prix proposé"
-            type="number"
-            value={counterPrice}
-            onChange={(e) => setCounterPrice(e.target.value)}
-            inputProps={{ step: '1000' }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenCounterDialog(false)}>
-            Annuler
-          </Button>
-          <Button onClick={handleCounter} variant="contained" disabled={loading || !counterPrice}>
-            Proposer
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Card>
+    </div>
   );
 };
 
@@ -300,68 +262,70 @@ export default function OffresPage() {
 
   if (loading) {
     return (
-      <Container>
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress />
-        </Box>
-      </Container>
+      <div className="offres-container">
+        <div className="loading-spinner">⏳ Chargement...</div>
+      </div>
     );
   }
 
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Gestion des offres
-      </Typography>
+    <div className="offres-page">
+      <div className="page-header">
+        <h1>Gestion des offres</h1>
+      </div>
 
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      {error && <Alert type="error" title="Erreur" message={error} />}
 
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-        <Tabs
-          value={tabValue}
-          onChange={handleTabChange}
-          aria-label="Tabs offres"
-        >
-          <Tab label={`Offres faites (${buyerOffers.length})`} />
-          <Tab label={`Offres reçues (${vendorOffers.length})`} />
-        </Tabs>
-      </Box>
+      <div className="tabs-nav">
+        {[
+          { label: `Offres faites (${buyerOffers.length})`, index: 0 },
+          { label: `Offres reçues (${vendorOffers.length})`, index: 1 },
+        ].map((tab) => (
+          <button
+            key={tab.index}
+            className={`tab-btn ${tabValue === tab.index ? 'active' : ''}`}
+            onClick={() => setTabValue(tab.index)}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
 
-      {/* Onglet: Offres faites */}
-      {tabValue === 0 && (
-        <Box>
-          {buyerOffers.length === 0 ? (
-            <Alert severity="info">Vous n'avez pas encore fait d'offre</Alert>
-          ) : (
-            buyerOffers.map((offre) => (
-              <OfferCard
-                key={offre.offre_id}
-                offre={offre}
-                isVendor={false}
-                onUpdate={loadOffers}
-              />
-            ))
-          )}
-        </Box>
-      )}
+      <div className="tab-content">
+        {tabValue === 0 && (
+          <div>
+            {buyerOffers.length === 0 ? (
+              <Alert type="info" title="Info" message="Vous n'avez pas encore fait d'offre" />
+            ) : (
+              buyerOffers.map((offre) => (
+                <OfferCard
+                  key={offre.offre_id}
+                  offre={offre}
+                  isVendor={false}
+                  onUpdate={loadOffers}
+                />
+              ))
+            )}
+          </div>
+        )}
 
-      {/* Onglet: Offres reçues */}
-      {tabValue === 1 && (
-        <Box>
-          {vendorOffers.length === 0 ? (
-            <Alert severity="info">Vous n'avez pas reçu d'offre</Alert>
-          ) : (
-            vendorOffers.map((offre) => (
-              <OfferCard
-                key={offre.offre_id}
-                offre={offre}
-                isVendor={true}
-                onUpdate={loadOffers}
-              />
-            ))
-          )}
-        </Box>
-      )}
-    </Container>
+        {tabValue === 1 && (
+          <div>
+            {vendorOffers.length === 0 ? (
+              <Alert type="info" title="Info" message="Vous n'avez pas reçu d'offre" />
+            ) : (
+              vendorOffers.map((offre) => (
+                <OfferCard
+                  key={offre.offre_id}
+                  offre={offre}
+                  isVendor={true}
+                  onUpdate={loadOffers}
+                />
+              ))
+            )}
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
