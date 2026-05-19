@@ -1,6 +1,7 @@
 """Modèles SQLAlchemy pour Immo2000."""
 
 from .annonces import Annonce
+from src.auth.models import db
 from .biens import Bien
 from .messages import Message
 from .documents import Document
@@ -29,6 +30,7 @@ from .paiements import (
 )
 
 __all__ = [
+    "db",
     "Annonce",
     "Bien",
     "Message",

@@ -496,10 +496,6 @@ export default function SignCompromisPage() {
     </Container>
   );
 }
-
-const steps = ['Télécharger', 'Signer', 'Vérifier'];
-
-export default function SignCompromisPage() {
   const navigate = useNavigate();
   const { transactionId } = useParams();
   const { user } = useAuth();

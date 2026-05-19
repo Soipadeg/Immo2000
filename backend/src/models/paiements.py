@@ -90,7 +90,7 @@ class Paiement(db.Model):
 
     # Description et métadonnées
     description = db.Column(db.String(500), nullable=True)
-    metadata = db.Column(JSON, nullable=True, default={})
+    paiement_metadata = db.Column(JSON, nullable=True, default={})
 
     # Dates clés
     date_creation = db.Column(db.DateTime(timezone=True), default=datetime.utcnow, nullable=False)

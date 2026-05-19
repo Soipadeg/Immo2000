@@ -1,22 +1,12 @@
-"""
-Modèle CreneauDisponible pour la gestion des créneaux de disponibilité des vendeurs.
-
-Un créneauDisponible représente une plage horaire où un vendeur est disponible pour une visite.
-Les acheteurs peuvent choisir parmi ces créneaux pour envoyer une demande de RDV.
-"""
-
 from sqlalchemy import Column, Integer, DateTime, String, Boolean, ForeignKey, Index
 from sqlalchemy.orm import relationship
 from src.auth.models import db
 from datetime import datetime
 
-
 class CreneauDisponible(db.Model):
-        est_disponible (bool): True si le créneau est encore disponible, False s'il est réservé.
-        date_creation (datetime): Quand le créneau a été créé.
-        utilisateur (relationship): Relation vers le vendeur.
     """
-
+    Représente un créneau de disponibilité d'un vendeur.
+    """
     __tablename__ = "creneaux_disponibles"
 
     id = Column(Integer, primary_key=True)
