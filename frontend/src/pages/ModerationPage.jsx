@@ -7,9 +7,6 @@ import '../styles/ModerationPage.css';
 import { Button, Alert, Input } from '@/components';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
-import FlagIcon from '@mui/icons-material/Flag';
 
 const ModerationPage = () => {
   const { user, loading } = useAuth();
@@ -90,8 +87,8 @@ const ModerationPage = () => {
       </div>
 
       {pendingAnnonces.length === 0 ? (
-        div sx={{ textAlign: 'center', py: 8 }}>
-          <CheckIcon sx={{ fontSize: 48, color: 'success.main', mb: 2 }} />
+        <div style={{textAlign: 'center', padding: '32px 0'}}>
+          <div style={{fontSize: '48px', marginBottom: '16px'}}>✅</div>
           <div>
             ✅ Toutes les annonces ont été modérées!
           </div>
@@ -112,12 +109,11 @@ const ModerationPage = () => {
                     <div>
                       {annonce.titre}
                     </div>
-                    <div
-                      icon={<FlagIcon />}
-                      label={`${annonce.signalements} signalement${annonce.signalements > 1 ? 's' : ''}`}
-                      size="small"
-                      color="warning"
-                    />
+                    <span
+                      style={{display: 'inline-block', padding: '4px 8px', backgroundColor: '#fff3cd', color: '#856404', borderRadius: '4px', fontSize: '12px'}}
+                    >
+                      🚩 {`${annonce.signalements} signalement${annonce.signalements > 1 ? 's' : ''}`}
+                    </span>
                   </div>
 
                   <div>
@@ -141,19 +137,17 @@ const ModerationPage = () => {
                     size="small"
                     color="success"
                     variant="contained"
-                    startIcon={<CheckIcon />}
                     onClick={() => handleApprove(annonce.id)}
                   >
-                    Approuver
+                    ✅ Approuver
                   </Button>
                   <Button
                     size="small"
                     color="error"
                     variant="outlined"
-                    startIcon={<CloseIcon />}
                     onClick={() => handleReject(annonce.id)}
                   >
-                    Rejeter
+                    ❌ Rejeter
                   </Button>
                 </div>
               </div>
