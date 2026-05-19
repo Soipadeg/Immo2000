@@ -3,24 +3,8 @@
  */
 
 import React, { useState } from 'react';
-import {
-  Box,
-  Container,
-  Card,
-  CardContent,
-  CardMedia,
-  CardActions,
-  Grid,
-  Typography,
-  Button,
-  Chip,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  CircularProgress,
-} from '@mui/material';
+import '../styles/ModerationPage.css';
+import { Button, Alert, Input } from '@/components';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import CheckIcon from '@mui/icons-material/Check';
@@ -60,9 +44,9 @@ const ModerationPage = () => {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      div sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <CircularProgress />
-      </Box>
+      </div>
     );
   }
 
@@ -97,62 +81,62 @@ const ModerationPage = () => {
   const pendingAnnonces = annonces.filter((a) => a.statut === 'sous_revue');
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
+    div maxWidth="lg" sx={{ py: 4 }}>
+      <div>
         🛡️ Modération des Annonces
-      </Typography>
-      <Typography color="textSecondary" sx={{ mb: 4 }}>
+      </div>
+      <div>
         {pendingAnnonces.length} annonce{pendingAnnonces.length !== 1 ? 's' : ''} en attente de modération
-      </Typography>
+      </div>
 
       {pendingAnnonces.length === 0 ? (
-        <Card sx={{ textAlign: 'center', py: 8 }}>
+        div sx={{ textAlign: 'center', py: 8 }}>
           <CheckIcon sx={{ fontSize: 48, color: 'success.main', mb: 2 }} />
-          <Typography variant="h6" gutterBottom>
+          <div>
             ✅ Toutes les annonces ont été modérées!
-          </Typography>
-        </Card>
+          </div>
+        </div>
       ) : (
-        <Grid container spacing={3}>
+        div container spacing={3}>
           {pendingAnnonces.map((annonce) => (
-            <Grid item xs={12} sm={6} lg={4} key={annonce.id}>
-              <Card>
-                <CardMedia
+            div item xs={12} sm={6} lg={4} key={annonce.id}>
+              div>
+                divMedia
                   component="img"
                   height="200"
                   image={annonce.image}
                   alt={annonce.titre}
                 />
-                <CardContent>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', mb: 1 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                divContent>
+                  div sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', mb: 1 }}>
+                    <div>
                       {annonce.titre}
-                    </Typography>
-                    <Chip
+                    </div>
+                    <div
                       icon={<FlagIcon />}
                       label={`${annonce.signalements} signalement${annonce.signalements > 1 ? 's' : ''}`}
                       size="small"
                       color="warning"
                     />
-                  </Box>
+                  </div>
 
-                  <Typography color="textSecondary" variant="body2" sx={{ mb: 1 }}>
+                  <div>
                     📍 {annonce.ville}
-                  </Typography>
+                  </div>
 
-                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 2 }}>
+                  <div>
                     {annonce.prix.toLocaleString()}€
-                  </Typography>
+                  </div>
 
                   {annonce.raison && (
-                    <Box sx={{ p: 1, bgcolor: 'warning.light', borderRadius: 1, mb: 2 }}>
-                      <Typography variant="caption" color="error.main">
+                    div sx={{ p: 1, bgcolor: 'warning.light', borderRadius: 1, mb: 2 }}>
+                      <div>
                         ⚠️ {annonce.raison}
-                      </Typography>
-                    </Box>
+                      </div>
+                    </div>
                   )}
-                </CardContent>
-                <CardActions>
+                </div>
+                divActions>
                   <Button
                     size="small"
                     color="success"
@@ -171,21 +155,21 @@ const ModerationPage = () => {
                   >
                     Rejeter
                   </Button>
-                </CardActions>
-              </Card>
-            </Grid>
+                </div>
+              </div>
+            </div>
           ))}
-        </Grid>
+        </div>
       )}
 
       {/* Dialog Rejet */}
-      <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>Rejeter l'annonce</DialogTitle>
-        <DialogContent>
-          <Typography variant="body2" sx={{ mb: 2 }}>
+      div open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
+        div>Rejeter l'annonce</div>
+        div>
+          <div>
             Merci de spécifier la raison du rejet:
-          </Typography>
-          <TextField
+          </div>
+          <Input
             fullWidth
             multiline
             rows={4}
@@ -193,8 +177,8 @@ const ModerationPage = () => {
             value={rejectReason}
             onChange={(e) => setRejectReason(e.target.value)}
           />
-        </DialogContent>
-        <DialogActions>
+        </div>
+        div>
           <Button onClick={() => setOpenDialog(false)}>Annuler</Button>
           <Button
             variant="contained"
@@ -204,9 +188,9 @@ const ModerationPage = () => {
           >
             Rejeter
           </Button>
-        </DialogActions>
-      </Dialog>
-    </Container>
+        </div>
+      </div>
+    </div>
   );
 };
 
