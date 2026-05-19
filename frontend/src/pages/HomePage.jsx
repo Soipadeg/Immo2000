@@ -1,5 +1,4 @@
 import React from 'react';
-import Navbar from '@/components/Navbar/Navbar';
 import Footer from '@/components/Footer/Footer';
 import SearchBar from '@/components/SearchBar/SearchBar';
 import Button from '@/components/Button/Button';
@@ -12,14 +11,6 @@ import './HomePage.css';
  * Example page demonstrating all design system components
  */
 const HomePage = () => {
-  // Sample navbar links
-  const navLinks = [
-    { href: '#', label: 'Acheter', active: false },
-    { href: '#', label: 'Vendre', active: false },
-    { href: '#', label: 'Louer', active: false },
-    { href: '#', label: 'À propos', active: false },
-  ];
-
   // Sample listings
   const listings = [
     {
@@ -105,17 +96,6 @@ const HomePage = () => {
 
   return (
     <div className="home-page">
-      {/* Navigation */}
-      <Navbar
-        logo="Immo2000"
-        navLinks={navLinks}
-        rightContent={
-          <Button variant="primary" size="small">
-            Connexion
-          </Button>
-        }
-      />
-
       {/* Hero Section */}
       <section className="hero">
         <div className="hero-content">
