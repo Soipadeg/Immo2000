@@ -3,44 +3,11 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Container,
-  Grid,
-  Card,
-  CardContent,
-  CardActions,
-  Typography,
-  Button,
-  Chip,
-  Tabs,
-  Tab,
-  CircularProgress,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
-  Alert,
-  LinearProgress,
-  Badge,
-  AvatarGroup,
-  Avatar,
-  Tooltip,
-  IconButton,
-} from '@mui/material';
+import { Button, Alert, Card } from '@/components';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import StatCard from '../components/StatCard';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
-import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import AddIcon from '@mui/icons-material/Add';
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import PersonIcon from '@mui/icons-material/Person';
-import DescriptionIcon from '@mui/icons-material/Description';
-import ClockIcon from '@mui/icons-material/Schedule';
 import { notairesApi } from '../services/api/transactions';
+import '../styles/NotaireDashboardPage.css';
 
 const NotaireDashboardPage = () => {
   const { user, loading: authLoading } = useAuth();
@@ -128,9 +95,9 @@ const NotaireDashboardPage = () => {
 
   if (authLoading || loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <CircularProgress />
-      </Box>
+      <div className="notaire-dashboard-page">
+        <div className="loading-state">⏳ Chargement du dashboard...</div>
+      </div>
     );
   }
 
@@ -138,12 +105,151 @@ const NotaireDashboardPage = () => {
     return null;
   }
 
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
+  const handleTabChange = (newTab) => {
+    setTabValue(newTab);
   };
 
+  const stats = [
+    { label: 'Dossiers en cours', value: dossiers.length, icon: '📄', trend: `${dossiers.length} en attente` },
+    { label: 'En attente validation', value: dossiers.filter(d => d.statut === 'en_attente_validation').length, icon: '✓', trend: 'Action requise' },
+    { label: 'Modifications demandées', value: dossiers.filter(d => d.statut === 'modifications_demandees').length, icon: '⚠', trend: 'À réviser' },
+  ];
+
+  const rendezVous = dossiers.slice(0, 4).map((dossier, idx) => ({
+    id: idx + 1,
+    temps: `${9 + idx * 2}:00`,
+    client: dossier.vendeur_nom || 'Client',
+    dossier: dossier.annonce_titre || 'Dossier',
+    lieu: 'Bureau'
+  }));
+
+  const notifications = [
+    ...dossiers.slice(0, 2).map((d, idx) => ({
+      id: idx + 1,
+      texte: `Dossier #${d.transaction_notaire_id}: ${d.statut}`,
+      type: d.statut === 'modifications_demandees' ? 'warning' : 'info'
+    })),
+    { id: 3, texte: 'Vérifiez les documents en attente', type: 'warning' },
+  ].slice(0, 4);
+
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
+    <div className="notaire-dashboard-page">
+      <div className="page-header">
+        <div>
+          <h1>👨‍⚖️ Dashboard Notaire</h1>
+          <p className="page-header-subtitle">Bienvenue, <strong>{user.prenom} {user.nom}</strong> 👋</p>
+        </div>
+        <Button variant="primary" size="medium" onClick={() => navigate('/notaire/new-dossier')}>+ Nouveau dossier</Button>
+      </div>
+
+      <div className="stats-grid">
+        {stats.map((stat, idx) => (
+          <div key={idx} className="stat-card">
+            <div className="stat-icon">{stat.icon}</div>
+            <div className="stat-label">{stat.label}</div>
+            <div className="stat-value">{stat.value}</div>
+            <div className="stat-trend">{stat.trend}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="content-grid">
+        <div className="dossiers-card">
+          <div className="tabs-container">
+            <button className={`tab ${tabValue === 0 ? 'active' : ''}`} onClick={() => handleTabChange(0)}>📋 Dossiers en cours</button>
+            <button className={`tab ${tabValue === 1 ? 'active' : ''}`} onClick={() => handleTabChange(1)}>🕐 Rendez-vous</button>
+          </div>
+
+          {tabValue === 0 && (
+            <div>
+              {dossiers.length === 0 ? (
+                <div className="empty-state">
+                  <Alert type="info" title="Info" message="Aucun dossier. Créer un nouveau dossier pour commencer." />
+                </div>
+              ) : (
+                <div className="dossiers-list">
+                  {dossiers.map((dossier) => (
+                    <div key={dossier.id || dossier.transaction_notaire_id} className="dossier-card">
+                      <div className="dossier-header">
+                        <h3 className="dossier-title">{dossier.titre || dossier.annonce_titre || 'Dossier sans titre'}</h3>
+                        <span className={`status-badge status-badge.${(dossier.statut || '').toLowerCase().replace(/\s/g, '-')}`}>{dossier.statut || 'N/A'}</span>
+                      </div>
+
+                      <div className="dossier-meta">
+                        <span className="dossier-meta-item">👤 {dossier.client || dossier.vendeur_nom || 'Client inconnu'}</span>
+                        <span className="dossier-meta-item">💰 {dossier.montant || 'N/A'}</span>
+                        <span className="dossier-meta-item">📄 {dossier.docs || 0} docs</span>
+                      </div>
+
+                      <div className="progress-section">
+                        <div className="progress-label">
+                          <span>Progression du dossier</span>
+                          <span>{dossier.progression || 0}%</span>
+                        </div>
+                        <div className="progress-bar">
+                          <div className="progress-fill" style={{ width: `${dossier.progression || 0}%` }}></div>
+                        </div>
+                      </div>
+
+                      <div className="dossier-date">📅 Créé le {new Date(dossier.date || Date.now()).toLocaleDateString('fr-FR')}</div>
+
+                      <div className="dossier-actions">
+                        <Button size="small" variant="primary">Voir détails</Button>
+                        <Button size="small" variant="secondary">📥 Documents</Button>
+                        <Button size="small" variant="secondary">Modifier</Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {tabValue === 1 && (
+            <div className="rdv-list">
+              {rendezVous.map((rdv, idx) => (
+                <div key={rdv.id} className={`rdv-card ${idx === 0 ? 'first' : ''}`}>
+                  <div className="rdv-info">
+                    <div className="rdv-time">🕐 {rdv.temps}</div>
+                    <div className="rdv-client">{rdv.client} - {rdv.dossier}</div>
+                    <div className="rdv-location">📍 {rdv.lieu}</div>
+                  </div>
+                  <Button size="small" variant="secondary">Détails</Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="sidebar-right">
+          <div className="notifications-card">
+            <div className="notifications-header">
+              <span>🔔 Notifications</span>
+              <span className="notification-badge">{notifications.length}</span>
+            </div>
+            <div className="notifications-list">
+              {notifications.map((notif) => (
+                <Alert key={notif.id} type={notif.type} title={notif.type === 'warning' ? '⚠' : 'ℹ'} message={notif.texte} />
+              ))}
+            </div>
+          </div>
+
+          <div className="quick-actions-card">
+            <div className="quick-actions-header">⚡ Actions rapides</div>
+            <div className="quick-actions-list">
+              <Button fullWidth variant="primary" onClick={() => navigate('/notaire/new-dossier')}>+ Nouveau dossier</Button>
+              <Button fullWidth variant="secondary">📥 Upload documents</Button>
+              <Button fullWidth variant="secondary">📅 Calendrier</Button>
+              <Button fullWidth variant="secondary">👥 Clients</Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default NotaireDashboardPage;
       {/* En-tête */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Box>
