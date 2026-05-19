@@ -7,7 +7,6 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
-import { Box, CircularProgress, Link } from '@mui/material';
 
 import { loginSchema, loginDefaultValues } from './schemas';
 import { FormField, FormCheckbox, FormContainer } from './FormField';
@@ -57,7 +56,7 @@ export function LoginForm() {
   };
 
   return (
-    <Box sx={{ maxWidth: 400, margin: '0 auto', padding: 3 }}>
+    <div>
       <h2>Connexion</h2>
 
       <FormContainer
@@ -96,16 +95,16 @@ export function LoginForm() {
         />
 
         {/* Links */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
-          <Link href="/forgot-password" variant="body2">
+        <div>
+          <a href="/forgot-password" variant="body2">
             Mot de passe oublié?
-          </Link>
-          <Link href="/register" variant="body2">
+          </a>
+          <a href="/register" variant="body2">
             Créer un compte
-          </Link>
-        </Box>
+          </a>
+        </div>
       </FormContainer>
-    </Box>
+    </div>
   );
 }
 
