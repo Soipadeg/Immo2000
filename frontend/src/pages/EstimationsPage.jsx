@@ -4,33 +4,19 @@
  */
 
 import React, { useState } from 'react';
-import {
-  Container,
-  Paper,
-  Typography,
-  Box,
-  TextField,
-  Button,
-  Grid,
-  Card,
-  CardContent,
-  CircularProgress,
-  Alert,
-  Divider,
-  Chip,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-} from '@mui/material';
-import { TrendingUp as TrendingUpIcon, CompareArrows as CompareArrowsIcon } from '@mui/icons-material';
 import { estimationsApi } from '../services/api';
+import { Button, Alert, Input } from '@/components';
+import '../styles/EstimationsPage.css';
+import { Button, Alert, Input } from '@/components';
+import '../styles/EstimationsPage.css';
+import { Button, Alert, Input } from '@/components';
+import '../styles/EstimationsPage.css';
+import { Button, Alert, Input } from '@/components';
+import '../styles/EstimationsPage.css';
+
+
+
+
 
 const EstimationsPage = () => {
   const [formData, setFormData] = useState({
@@ -140,31 +126,31 @@ const EstimationsPage = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>
+    <div maxWidth="lg">
+      <div>
+        <h4 variant="h4" gutterBottom>
           💎 Estimation de Propriété - Melo API
-        </Typography>
-        <Typography color="text.secondary">
+        </h4>
+        <p color="text.secondary">
           Estimez la valeur de votre bien immobilier basée sur les données du marché
-        </Typography>
-      </Box>
+        </h4>
+      </div>
 
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      {error && <Alert severity="error">{error}</Alert>}
 
-      <Grid container spacing={3}>
+      <div container spacing={3}>
         {/* Formulaire d'estimation */}
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
+        <div item xs={12} md={6}>
+          <div>
+            <h6 variant="h6" gutterBottom>
               📋 Paramètres de la Propriété
-            </Typography>
-            <Divider sx={{ mb: 2 }} />
+            </h6>
+            <hr />
 
-            <Box component="form" onSubmit={handleEstimate}>
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <TextField
+            <div component="form" onSubmit={handleEstimate}>
+              <div container spacing={2}>
+                <div item xs={12}>
+                  <Input
                     fullWidth
                     label="Adresse"
                     name="adresse"
@@ -173,10 +159,10 @@ const EstimationsPage = () => {
                     placeholder="Ex: 123 Rue de Paris, 75001 Paris"
                     required
                   />
-                </Grid>
+                </div>
 
-                <Grid item xs={12} sm={6}>
-                  <TextField
+                <div item xs={12} sm={6}>
+                  <Input
                     fullWidth
                     label="Type de bien"
                     name="type_bien"
@@ -190,11 +176,11 @@ const EstimationsPage = () => {
                     <option value="terrain">Terrain</option>
                     <option value="commerce">Commerce</option>
                     <option value="bureau">Bureau</option>
-                  </TextField>
-                </Grid>
+                  </Input>
+                </div>
 
-                <Grid item xs={12} sm={6}>
-                  <TextField
+                <div item xs={12} sm={6}>
+                  <Input
                     fullWidth
                     label="Surface (m²)"
                     name="surface"
@@ -204,10 +190,10 @@ const EstimationsPage = () => {
                     inputProps={{ min: 1, step: 0.1 }}
                     required
                   />
-                </Grid>
+                </div>
 
-                <Grid item xs={12} sm={6}>
-                  <TextField
+                <div item xs={12} sm={6}>
+                  <Input
                     fullWidth
                     label="Nombre de pièces"
                     name="nombre_pieces"
@@ -216,10 +202,10 @@ const EstimationsPage = () => {
                     onChange={handleInputChange}
                     inputProps={{ min: 0 }}
                   />
-                </Grid>
+                </div>
 
-                <Grid item xs={12} sm={6}>
-                  <TextField
+                <div item xs={12} sm={6}>
+                  <Input
                     fullWidth
                     label="Année de construction"
                     name="annee_construction"
@@ -228,9 +214,9 @@ const EstimationsPage = () => {
                     onChange={handleInputChange}
                     inputProps={{ min: 1800, max: new Date().getFullYear() }}
                   />
-                </Grid>
+                </div>
 
-                <Grid item xs={12}>
+                <div item xs={12}>
                   <Button
                     fullWidth
                     type="submit"
@@ -238,103 +224,98 @@ const EstimationsPage = () => {
                     color="primary"
                     disabled={loading}
                     size="large"
-                    startIcon={loading ? <CircularProgress size={24} /> : <TrendingUpIcon />}
+                    startIcon={loading ? <div size={24} /> : <TrendingUpIcon />}
                   >
                     {loading ? 'Estimation en cours...' : 'Estimer la valeur'}
                   </Button>
-                </Grid>
-              </Grid>
-            </Box>
-          </Paper>
-        </Grid>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Résultat d'estimation */}
         {estimation && (
-          <Grid item xs={12} md={6}>
-            <Paper
-              sx={{
-                p: 3,
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                color: 'white',
-              }}
+          <div item xs={12} md={6}>
+            <div
             >
-              <Typography variant="h6" gutterBottom>
+              <h6 variant="h6" gutterBottom>
                 📊 Résultat de l'Estimation
-              </Typography>
-              <Divider sx={{ mb: 2, borderColor: 'rgba(255, 255, 255, 0.2)' }} />
+              </h6>
+              <hr />
 
-              <Box sx={{ mb: 3 }}>
-                <Typography variant="body2" sx={{ opacity: 0.9, mb: 0.5 }}>
+              <div>
+                <p variant="body2">
                   Valeur Estimée
-                </Typography>
-                <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                </h6>
+                <h4 variant="h4">
                   {formatPrice(estimation.prix_estime || estimation.valeur)}
-                </Typography>
-              </Box>
+                </h4>
+              </div>
 
               {estimation.prix_min && estimation.prix_max && (
-                <Box sx={{ mb: 3, p: 2, backgroundColor: 'rgba(0, 0, 0, 0.2)', borderRadius: 1 }}>
-                  <Typography variant="body2" sx={{ opacity: 0.9, mb: 1 }}>
+                <div>
+                  <p variant="body2">
                     Fourchette de Prix
-                  </Typography>
-                  <Typography variant="body1">
+                  </h4>
+                  <p variant="body1">
                     {formatPrice(estimation.prix_min)} à {formatPrice(estimation.prix_max)}
-                  </Typography>
-                </Box>
+                  </h4>
+                </div>
               )}
 
-              <Grid container spacing={1}>
-                <Grid item xs={6}>
-                  <Box>
-                    <Typography variant="caption" sx={{ opacity: 0.8 }}>
+              <div container spacing={1}>
+                <div item xs={6}>
+                  <div>
+                    <p variant="caption">
                       Surface
-                    </Typography>
-                    <Typography variant="body2">
+                    </h6>
+                    <p variant="body2">
                       {formData.surface}m²
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={6}>
-                  <Box>
-                    <Typography variant="caption" sx={{ opacity: 0.8 }}>
+                    </h4>
+                  </div>
+                </div>
+                <div item xs={6}>
+                  <div>
+                    <p variant="caption">
                       Prix par m²
-                    </Typography>
-                    <Typography variant="body2">
+                    </h6>
+                    <p variant="body2">
                       {formatPrice((estimation.prix_estime || estimation.valeur) / formData.surface)}
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={6}>
-                  <Box>
-                    <Typography variant="caption" sx={{ opacity: 0.8 }}>
+                    </p>
+                  </div>
+                </div>
+                <div item xs={6}>
+                  <div>
+                    <p variant="caption">
                       Type de Bien
-                    </Typography>
-                    <Typography variant="body2" sx={{ textTransform: 'capitalize' }}>
+                    </p>
+                    <p variant="body2">
                       {formData.type_bien}
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={6}>
-                  <Box>
-                    <Typography variant="caption" sx={{ opacity: 0.8 }}>
+                    </p>
+                  </div>
+                </div>
+                <div item xs={6}>
+                  <div>
+                    <p variant="caption">
                       Source
-                    </Typography>
-                    <Typography variant="body2">
+                    </p>
+                    <p variant="body2">
                       {estimation.source || 'Melo API'}
-                    </Typography>
-                  </Box>
-                </Grid>
-              </Grid>
+                    </p>
+                  </div>
+                </div>
+              </div>
 
               {estimation.details && (
-                <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid rgba(255, 255, 255, 0.2)' }}>
-                  <Typography variant="caption" sx={{ opacity: 0.8 }}>
+                <div>
+                  <p variant="caption">
                     📌 Détails supplémentaires
-                  </Typography>
-                  <Typography variant="body2" sx={{ mt: 1, whiteSpace: 'pre-wrap' }}>
+                  </p>
+                  <p variant="body2">
                     {estimation.details}
-                  </Typography>
-                </Box>
+                  </p>
+                </div>
               )}
 
               <Button
@@ -343,50 +324,49 @@ const EstimationsPage = () => {
                 color="inherit"
                 startIcon={<CompareArrowsIcon />}
                 onClick={() => setCompareDialogOpen(true)}
-                sx={{ mt: 2 }}
               >
                 Comparer avec une autre propriété
               </Button>
-            </Paper>
-          </Grid>
+            </div>
+          </div>
         )}
-      </Grid>
+      </div>
 
       {/* Informations supplémentaires */}
       {!estimation && (
-        <Box sx={{ mt: 4 }}>
-          <Paper sx={{ p: 3, backgroundColor: '#f5f5f5' }}>
-            <Typography variant="h6" gutterBottom>
+        <div>
+          <div>
+            <h6 variant="h6" gutterBottom>
               ℹ️ À propos de l'Estimation
-            </Typography>
-            <Typography variant="body2" color="text.secondary" paragraph>
+            </h6>
+            <p variant="body2" color="text.secondary" paragraph>
               Notre outil utilise l'API Melo pour estimer la valeur de votre propriété en fonction
               des données du marché immobilier français. L'estimation est basée sur :
-            </Typography>
+            </h6>
             <ul style={{ color: '#666', marginTop: '10px' }}>
               <li>La localisation de la propriété</li>
               <li>Les caractéristiques du bien (surface, type, nombre de pièces)</li>
               <li>Les données de marché récentes</li>
               <li>Les transactions comparables</li>
             </ul>
-          </Paper>
-        </Box>
+          </div>
+        </div>
       )}
 
       {/* Dialog de Comparaison */}
-      <Dialog
+      <div
         open={compareDialogOpen}
         onClose={() => setCompareDialogOpen(false)}
         fullWidth
         maxWidth="sm"
       >
-        <DialogTitle>🔀 Comparer deux propriétés</DialogTitle>
-        <DialogContent>
-          <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#1976d2' }}>
+        <div>🔀 Comparer deux propriétés</div>
+        <div>
+          <div>
+            <p variant="subtitle2">
               Propriété 1
-            </Typography>
-            <TextField
+            </h6>
+            <Input
               fullWidth
               label="Adresse 1 *"
               name="adresse1"
@@ -394,7 +374,7 @@ const EstimationsPage = () => {
               onChange={handleCompareInputChange}
               required
             />
-            <TextField
+            <Input
               fullWidth
               label="Surface 1 (m²) *"
               name="surface1"
@@ -404,7 +384,7 @@ const EstimationsPage = () => {
               inputProps={{ step: '0.01', min: '0' }}
               required
             />
-            <TextField
+            <Input
               fullWidth
               label="Type de bien 1"
               name="type_bien1"
@@ -417,14 +397,14 @@ const EstimationsPage = () => {
               <option value="maison">Maison</option>
               <option value="terrain">Terrain</option>
               <option value="local_commercial">Local commercial</option>
-            </TextField>
+            </Input>
 
-            <Divider sx={{ my: 1 }} />
+            <hr />
 
-            <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#764ba2' }}>
+            <p variant="subtitle2">
               Propriété 2
-            </Typography>
-            <TextField
+            </h6>
+            <Input
               fullWidth
               label="Adresse 2 *"
               name="adresse2"
@@ -432,7 +412,7 @@ const EstimationsPage = () => {
               onChange={handleCompareInputChange}
               required
             />
-            <TextField
+            <Input
               fullWidth
               label="Surface 2 (m²) *"
               name="surface2"
@@ -442,7 +422,7 @@ const EstimationsPage = () => {
               inputProps={{ step: '0.01', min: '0' }}
               required
             />
-            <TextField
+            <Input
               fullWidth
               label="Type de bien 2"
               name="type_bien2"
@@ -455,10 +435,10 @@ const EstimationsPage = () => {
               <option value="maison">Maison</option>
               <option value="terrain">Terrain</option>
               <option value="local_commercial">Local commercial</option>
-            </TextField>
-          </Box>
-        </DialogContent>
-        <DialogActions>
+            </Input>
+          </div>
+        </div>
+        <div>
           <Button onClick={() => setCompareDialogOpen(false)}>Annuler</Button>
           <Button
             onClick={handleCompare}
@@ -466,114 +446,114 @@ const EstimationsPage = () => {
             color="primary"
             disabled={compareLoading}
           >
-            {compareLoading ? <CircularProgress size={24} /> : 'Comparer'}
+            {compareLoading ? <div size={24} /> : 'Comparer'}
           </Button>
-        </DialogActions>
-      </Dialog>
+        </div>
+      </div>
 
       {/* Résultats de Comparaison */}
       {compareResults && (
-        <Box sx={{ mt: 4 }}>
-          <Paper sx={{ p: 3, backgroundColor: '#f9f9f9', border: '2px solid #667eea' }}>
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: 700 }}>
+        <div>
+          <div>
+            <h6 variant="h6" gutterBottom>
               📊 Résultats de la Comparaison
-            </Typography>
-            <Divider sx={{ mb: 2 }} />
+            </h6>
+            <hr />
 
-            <Grid container spacing={3}>
+            <div container spacing={3}>
               {/* Propriété 1 */}
-              <Grid item xs={12} sm={6}>
-                <Card variant="outlined">
-                  <CardContent>
-                    <Typography color="primary" variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>
+              <div item xs={12} sm={6}>
+                <div variant="outlined">
+                  <div>
+                    <p color="primary" variant="subtitle2">
                       {compareFormData.adresse1}
-                    </Typography>
-                    <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
-                      <Chip label={`${compareFormData.surface1} m²`} size="small" />
-                      <Chip
+                    </h6>
+                    <div>
+                      <span label={`${compareFormData.surface1} m²`} size="small" />
+                      <span
                         label={compareFormData.type_bien1}
                         size="small"
                         variant="outlined"
                       />
-                    </Box>
+                    </div>
                     {compareResults.propriete1 && (
                       <>
-                        <Typography variant="caption" color="text.secondary">
+                        <p variant="caption" color="text.secondary">
                           Valeur Estimée
-                        </Typography>
-                        <Typography variant="h6" sx={{ color: '#667eea', fontWeight: 700 }}>
+                        </h6>
+                        <h6 variant="h6">
                           {formatPrice(
                             compareResults.propriete1.prix_estime ||
                             compareResults.propriete1.valeur
                           )}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
+                        </h6>
+                        <p variant="caption" color="text.secondary">
                           Prix par m²
-                        </Typography>
-                        <Typography variant="body2">
+                        </h6>
+                        <p variant="body2">
                           {formatPrice(
                             (compareResults.propriete1.prix_estime ||
                               compareResults.propriete1.valeur) / compareFormData.surface1
                           )}
-                        </Typography>
+                        </h6>
                       </>
                     )}
-                  </CardContent>
-                </Card>
-              </Grid>
+                  </div>
+                </div>
+              </div>
 
               {/* Propriété 2 */}
-              <Grid item xs={12} sm={6}>
-                <Card variant="outlined">
-                  <CardContent>
-                    <Typography color="secondary" variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>
+              <div item xs={12} sm={6}>
+                <div variant="outlined">
+                  <div>
+                    <p color="secondary" variant="subtitle2">
                       {compareFormData.adresse2}
-                    </Typography>
-                    <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
-                      <Chip label={`${compareFormData.surface2} m²`} size="small" />
-                      <Chip
+                    </h6>
+                    <div>
+                      <span label={`${compareFormData.surface2} m²`} size="small" />
+                      <span
                         label={compareFormData.type_bien2}
                         size="small"
                         variant="outlined"
                       />
-                    </Box>
+                    </div>
                     {compareResults.propriete2 && (
                       <>
-                        <Typography variant="caption" color="text.secondary">
+                        <p variant="caption" color="text.secondary">
                           Valeur Estimée
-                        </Typography>
-                        <Typography variant="h6" sx={{ color: '#764ba2', fontWeight: 700 }}>
+                        </p>
+                        <h6 variant="h6">
                           {formatPrice(
                             compareResults.propriete2.prix_estime ||
                             compareResults.propriete2.valeur
                           )}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
+                        </h6>
+                        <p variant="caption" color="text.secondary">
                           Prix par m²
-                        </Typography>
-                        <Typography variant="body2">
+                        </h6>
+                        <p variant="body2">
                           {formatPrice(
                             (compareResults.propriete2.prix_estime ||
                               compareResults.propriete2.valeur) / compareFormData.surface2
                           )}
-                        </Typography>
+                        </h6>
                       </>
                     )}
-                  </CardContent>
-                </Card>
-              </Grid>
-            </Grid>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             {compareResults.difference && (
-              <Box sx={{ mt: 2, p: 2, backgroundColor: 'white', borderRadius: 1, border: '1px solid #e0e0e0' }}>
-                <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>
+              <div>
+                <p variant="subtitle2">
                   Différence
-                </Typography>
-                <Typography variant="body2">
+                </h6>
+                <p variant="body2">
                   Écart de prix: {formatPrice(compareResults.difference)} (
                   {compareResults.pourcentage_difference?.toFixed(1)}%)
-                </Typography>
-              </Box>
+                </p>
+              </div>
             )}
 
             <Button
@@ -584,14 +564,13 @@ const EstimationsPage = () => {
                 setCompareResults(null);
                 setCompareDialogOpen(false);
               }}
-              sx={{ mt: 2 }}
             >
               Fermer la comparaison
             </Button>
-          </Paper>
-        </Box>
+          </div>
+        </div>
       )}
-    </Container>
+    </div>
   );
 };
 

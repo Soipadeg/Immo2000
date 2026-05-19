@@ -1,32 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Container,
-  Paper,
-  TextField,
-  Button,
-  Box,
-  Typography,
-  Alert,
-  Card,
-  CardMedia,
-  CardContent,
-  CardActions,
-  Grid,
-  CircularProgress,
-  Rating,
-  Chip,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import SearchIcon from '@mui/icons-material/Search';
-import HomeIcon from '@mui/icons-material/Home';
 import axios from 'axios';
 import './MatchingPage.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
+import { Button, Alert, Input } from '@/components';
+import '../styles/MatchingPage.css';
+import { Button, Alert, Input } from '@/components';
+import '../styles/MatchingPage.css';
+import { Button, Alert, Input } from '@/components';
+import '../styles/MatchingPage.css';
+import { Button, Alert, Input } from '@/components';
+import '../styles/MatchingPage.css';
+
+
+
+
 
 const MatchingPage = () => {
   const navigate = useNavigate();
@@ -131,38 +120,38 @@ const MatchingPage = () => {
   };
 
   return (
-    <Container maxWidth="lg" className="matching-page">
-      <Box className="page-header" sx={{ mb: 4, mt: 4 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-          <HomeIcon sx={{ fontSize: 40, color: 'primary.main' }} />
-          <Typography variant="h3" component="h1" sx={{ fontWeight: 'bold' }}>
+    <div maxWidth="lg" className="matching-page">
+      <div className="page-header">
+        <div>
+          <HomeIcon />
+          <h3 variant="h3" component="h1">
             Trouvez votre bien idéal
-          </Typography>
-        </Box>
-        <Typography variant="subtitle1" color="textSecondary">
+          </h3>
+        </div>
+        <p variant="subtitle1" color="textSecondary">
           Utilisez les filtres ci-dessous pour découvrir les annonces les plus adaptées à vos
           critères.
-        </Typography>
-      </Box>
+        </h3>
+      </div>
 
       {/* Messages d'alerte */}
       {error && (
-        <Alert severity="error" onClose={() => setError(null)} sx={{ mb: 3 }}>
+        <Alert severity="error" onClose={() => setError(null)}>
           {error}
         </Alert>
       )}
       {success && annonces.length > 0 && (
-        <Alert severity="success" onClose={() => setSuccess(false)} sx={{ mb: 3 }}>
+        <Alert severity="success" onClose={() => setSuccess(false)}>
           Recherche effectuée ! {annonces.length} annonce(s) trouvée(s).
         </Alert>
       )}
 
       {/* Formulaire de filtres */}
-      <Paper elevation={3} sx={{ p: 3, mb: 4, backgroundColor: '#f5f5f5' }}>
+      <div elevation={3}>
         <form onSubmit={handleSubmit}>
-          <Grid container spacing={2} sx={{ mb: 3 }}>
-            <Grid item xs={12} sm={6} md={3}>
-              <TextField
+          <div container spacing={2}>
+            <div item xs={12} sm={6} md={3}>
+              <Input
                 fullWidth
                 label="Ville"
                 name="ville"
@@ -171,9 +160,9 @@ const MatchingPage = () => {
                 placeholder="Ex: Paris, Lyon..."
                 variant="outlined"
               />
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <TextField
+            </div>
+            <div item xs={12} sm={6} md={3}>
+              <Input
                 fullWidth
                 label="Budget maximum (€)"
                 name="budget_max"
@@ -183,9 +172,9 @@ const MatchingPage = () => {
                 placeholder="Ex: 300000"
                 variant="outlined"
               />
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <TextField
+            </div>
+            <div item xs={12} sm={6} md={3}>
+              <Input
                 fullWidth
                 label="Surface minimum (m²)"
                 name="surface_min"
@@ -195,8 +184,8 @@ const MatchingPage = () => {
                 placeholder="Ex: 80"
                 variant="outlined"
               />
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
+            </div>
+            <div item xs={12} sm={6} md={3}>
               <FormControl fullWidth variant="outlined">
                 <InputLabel>Type de bien</InputLabel>
                 <Select
@@ -213,11 +202,11 @@ const MatchingPage = () => {
                   <MenuItem value="Loft">Loft</MenuItem>
                 </Select>
               </FormControl>
-            </Grid>
-          </Grid>
+            </div>
+          </div>
 
           {/* Boutons d'action */}
-          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+          <div>
             <Button
               variant="outlined"
               color="secondary"
@@ -232,43 +221,36 @@ const MatchingPage = () => {
               color="primary"
               startIcon={<SearchIcon />}
               disabled={loading}
-              sx={{ minWidth: '150px' }}
             >
-              {loading ? <CircularProgress size={24} /> : 'Rechercher'}
+              {loading ? <div size={24} /> : 'Rechercher'}
             </Button>
-          </Box>
+          </div>
         </form>
-      </Paper>
+      </div>
 
       {/* Résultats */}
-      <Box className="results-section">
-        <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold' }}>
+      <div className="results-section">
+        <h5 variant="h5">
           Résultats ({annonces.length})
-        </Typography>
+        </h5>
 
         {annonces.length === 0 && !loading ? (
-          <Paper
+          <div
             elevation={0}
-            sx={{
-              p: 4,
-              textAlign: 'center',
-              backgroundColor: '#f9f9f9',
-              border: '1px dashed #ccc',
-            }}
           >
-            <HomeIcon sx={{ fontSize: 60, color: 'lightgray', mb: 2 }} />
-            <Typography variant="h6" color="textSecondary">
+            <HomeIcon />
+            <h6 variant="h6" color="textSecondary">
               Aucune annonce ne correspond à vos critères.
-            </Typography>
-            <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+            </h6>
+            <p variant="body2" color="textSecondary">
               Essayez d'élargir vos critères de recherche.
-            </Typography>
-          </Paper>
+            </h5>
+          </div>
         ) : (
-          <Grid container spacing={3} className="annonces-grid">
+          <div container spacing={3} className="annonces-grid">
             {annonces.map((annonce) => (
-              <Grid item xs={12} sm={6} md={4} key={annonce.id}>
-                <Card className="annonce-card" elevation={2}>
+              <div item xs={12} sm={6} md={4} key={annonce.id}>
+                <div className="annonce-card" elevation={2}>
                   {/* Image */}
                   <CardMedia
                     component="img"
@@ -279,7 +261,6 @@ const MatchingPage = () => {
                       'https://via.placeholder.com/400x200?text=Pas+d%27image'
                     }
                     alt={annonce.adresse || 'Annonce immobilière'}
-                    sx={{ objectFit: 'cover' }}
                     onError={(e) => {
                       e.target.src =
                         'https://via.placeholder.com/400x200?text=Image+indisponible';
@@ -287,60 +268,58 @@ const MatchingPage = () => {
                   />
 
                   {/* Contenu principal */}
-                  <CardContent>
-                    <Box sx={{ mb: 2 }}>
-                      <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold', mb: 1 }}>
+                  <div>
+                    <div>
+                      <h6 variant="h6" component="h3">
                         {annonce.adresse || 'Adresse non disponible'}
-                      </Typography>
+                      </h6>
 
                       {/* Prix et caractéristiques */}
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2, flexWrap: 'wrap' }}>
-                        <Chip
+                      <div>
+                        <span
                           label={`${formatPrice(annonce.prix || 0)}`}
                           color="primary"
                           variant="outlined"
-                          sx={{ fontWeight: 'bold' }}
                         />
                         {annonce.surface && (
-                          <Chip label={`${annonce.surface} m²`} variant="outlined" />
+                          <span label={`${annonce.surface} m²`} variant="outlined" />
                         )}
                         {annonce.type_bien && (
-                          <Chip label={annonce.type_bien} variant="outlined" />
+                          <span label={annonce.type_bien} variant="outlined" />
                         )}
-                      </Box>
+                      </div>
 
                       {/* Score */}
                       {annonce.score !== undefined && (
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                        <div>
                           <Rating
                             value={renderScoreStars(annonce.score)}
                             readOnly
                             precision={0.5}
                             size="small"
                           />
-                          <Typography variant="body2" color="textSecondary">
+                          <p variant="body2" color="textSecondary">
                             ({annonce.score}/100)
-                          </Typography>
-                        </Box>
+                          </h6>
+                        </div>
                       )}
 
                       {/* Détails supplémentaires */}
                       {annonce.description && (
-                        <Typography variant="body2" color="textSecondary" sx={{ mb: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <p variant="body2" color="textSecondary">
                           {annonce.description}
-                        </Typography>
+                        </h3>
                       )}
-                    </Box>
-                  </CardContent>
+                    </div>
+                  </div>
 
                   {/* Boutons d'action */}
-                  <CardActions sx={{ pt: 0 }}>
+                  <div>
                     <Button
                       fullWidth
                       variant="contained"
                       color="primary"
                       onClick={() => navigate(`/annonces/${annonce.id}`)}
-                      sx={{ mb: 1 }}
                     >
                       Voir l'annonce
                     </Button>
@@ -352,14 +331,14 @@ const MatchingPage = () => {
                     >
                       Prendre RDV
                     </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
+                  </div>
+                </div>
+              </div>
             ))}
-          </Grid>
+          </div>
         )}
-      </Box>
-    </Container>
+      </div>
+    </div>
   );
 };
 

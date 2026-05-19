@@ -5,50 +5,20 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  Box,
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  CardActions,
-  Button,
-  Alert,
-  CircularProgress,
-  Grid,
-  Divider,
-  Chip,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableRow,
-  Paper,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Tabs,
-  Tab,
-} from '@mui/material';
-import {
-  Timeline,
-  TimelineItem,
-  TimelineSeparator,
-  TimelineConnector,
-  TimelineContent,
-  TimelineDot,
-} from '@mui/lab';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
-import ErrorIcon from '@mui/icons-material/Error';
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import PaymentIcon from '@mui/icons-material/Payment';
-import PersonIcon from '@mui/icons-material/Person';
-import HomeIcon from '@mui/icons-material/Home';
 import { transactionsApi } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
+import { Button, Alert, Input } from '@/components';
+import '../styles/TransactionDetailsPage.css';
+import { Button, Alert, Input } from '@/components';
+import '../styles/TransactionDetailsPage.css';
+import { Button, Alert, Input } from '@/components';
+import '../styles/TransactionDetailsPage.css';
+import { Button, Alert, Input } from '@/components';
+import '../styles/TransactionDetailsPage.css';
+
+
+
+
 
 const getStatusColor = (status) => {
   switch (status) {
@@ -93,7 +63,7 @@ function TabPanel(props) {
       aria-labelledby={`tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ py: 3 }}>{children}</Box>}
+      {value === index && <div>{children}</div>}
     </div>
   );
 }
@@ -129,100 +99,100 @@ export default function TransactionDetailsPage() {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
-        <CircularProgress />
-      </Box>
+      <div>
+        <div />
+      </div>
     );
   }
 
   if (!transaction) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
+      <div maxWidth="lg">
         <Alert severity="error">Transaction introuvable</Alert>
-      </Container>
+      </div>
     );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
+    <div maxWidth="lg">
+      {error && <Alert severity="error">{error}</Alert>}
 
       {/* En-tête */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" sx={{ mb: 2, fontWeight: 'bold' }}>
+      <div>
+        <h4 variant="h4">
           Détails de la Transaction
-        </Typography>
-        <Chip
+        </h4>
+        <span
           label={getStatusLabel(transaction?.statut)}
           color={getStatusColor(transaction?.statut)}
           variant="filled"
         />
-      </Box>
+      </div>
 
       {/* Cards résumé */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
+      <div container spacing={3}>
         {/* Bien */}
-        <Grid item xs={12} sm={6} md={4}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+        <div item xs={12} sm={6} md={4}>
+          <div>
+            <div>
+              <div>
                 <HomeIcon color="primary" />
-                <Typography color="textSecondary" variant="caption">
+                <p color="textSecondary" variant="caption">
                   BIEN
-                </Typography>
-              </Box>
-              <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+                </h4>
+              </div>
+              <p variant="subtitle2">
                 {transaction?.annonce?.titre}
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
+              </h4>
+              <p variant="body2" color="textSecondary">
                 {transaction?.annonce?.code_postal} {transaction?.annonce?.ville}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
+              </h4>
+            </div>
+          </div>
+        </div>
 
         {/* Prix */}
-        <Grid item xs={12} sm={6} md={4}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+        <div item xs={12} sm={6} md={4}>
+          <div>
+            <div>
+              <div>
                 <PaymentIcon color="success" />
-                <Typography color="textSecondary" variant="caption">
+                <p color="textSecondary" variant="caption">
                   PRIX VENTE
-                </Typography>
-              </Box>
-              <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'success.main' }}>
+                </p>
+              </div>
+              <h5 variant="h5">
                 {transaction?.prix_compromis?.toLocaleString('fr-FR')} €
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
+              </h5>
+            </div>
+          </div>
+        </div>
 
         {/* Notaire */}
-        <Grid item xs={12} sm={6} md={4}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+        <div item xs={12} sm={6} md={4}>
+          <div>
+            <div>
+              <div>
                 <PersonIcon color="primary" />
-                <Typography color="textSecondary" variant="caption">
+                <p color="textSecondary" variant="caption">
                   NOTAIRE
-                </Typography>
-              </Box>
-              <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+                </h5>
+              </div>
+              <p variant="subtitle2">
                 {transaction?.notaire?.etude_notariale || 'À sélectionner'}
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
+              </h5>
+              <p variant="body2" color="textSecondary">
                 {transaction?.notaire?.email}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+              </h5>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <Divider sx={{ my: 4 }} />
+      <hr />
 
       {/* Tabs */}
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+      <div>
         <Tabs value={tabValue} onChange={(e, newValue) => setTabValue(newValue)}>
           <Tab label="📅 Timeline" id="tab-0" aria-controls="tabpanel-0" />
           <Tab label="💳 Paiements" id="tab-1" aria-controls="tabpanel-1" />
@@ -230,109 +200,109 @@ export default function TransactionDetailsPage() {
           <Tab label="📄 Documents" id="tab-3" aria-controls="tabpanel-3" />
           <Tab label="👥 Parties" id="tab-4" aria-controls="tabpanel-4" />
         </Tabs>
-      </Box>
+      </div>
 
       {/* Tab 0: Timeline */}
       <TabPanel value={tabValue} index={0}>
         <Timeline position="left">
           <TimelineItem>
             <TimelineSeparator>
-              <TimelineDot sx={{ bgcolor: 'success.main' }}>
+              <TimelineDot>
                 <CheckCircleIcon />
               </TimelineDot>
               <TimelineConnector />
             </TimelineSeparator>
             <TimelineContent>
-              <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+              <p variant="subtitle2">
                 Offre créée
-              </Typography>
-              <Typography variant="caption" color="textSecondary">
+              </p>
+              <p variant="caption" color="textSecondary">
                 Offre acceptée par le vendeur
-              </Typography>
+              </p>
             </TimelineContent>
           </TimelineItem>
 
           <TimelineItem>
             <TimelineSeparator>
-              <TimelineDot sx={{ bgcolor: transaction?.notaire ? 'success.main' : 'warning.main' }}>
+              <TimelineDot>
                 {transaction?.notaire ? <CheckCircleIcon /> : <HourglassEmptyIcon />}
               </TimelineDot>
               <TimelineConnector />
             </TimelineSeparator>
             <TimelineContent>
-              <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+              <p variant="subtitle2">
                 Notaire sélectionné
-              </Typography>
-              <Typography variant="caption" color="textSecondary">
+              </p>
+              <p variant="caption" color="textSecondary">
                 {transaction?.notaire?.etude_notariale || 'En attente'}
-              </Typography>
+              </p>
             </TimelineContent>
           </TimelineItem>
 
           <TimelineItem>
             <TimelineSeparator>
-              <TimelineDot sx={{ bgcolor: transaction?.frais_valides ? 'success.main' : 'warning.main' }}>
+              <TimelineDot>
                 {transaction?.frais_valides ? <CheckCircleIcon /> : <HourglassEmptyIcon />}
               </TimelineDot>
               <TimelineConnector />
             </TimelineSeparator>
             <TimelineContent>
-              <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+              <p variant="subtitle2">
                 Frais validés
-              </Typography>
-              <Typography variant="caption" color="textSecondary">
+              </p>
+              <p variant="caption" color="textSecondary">
                 {transaction?.frais_valides ? 'Frais et commissions approuvés' : 'En attente'}
-              </Typography>
+              </p>
             </TimelineContent>
           </TimelineItem>
 
           <TimelineItem>
             <TimelineSeparator>
-              <TimelineDot sx={{ bgcolor: transaction?.compromis_signe ? 'success.main' : 'warning.main' }}>
+              <TimelineDot>
                 {transaction?.compromis_signe ? <CheckCircleIcon /> : <HourglassEmptyIcon />}
               </TimelineDot>
               <TimelineConnector />
             </TimelineSeparator>
             <TimelineContent>
-              <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+              <p variant="subtitle2">
                 Compromis signé
-              </Typography>
-              <Typography variant="caption" color="textSecondary">
+              </p>
+              <p variant="caption" color="textSecondary">
                 {transaction?.compromis_signe ? 'Signature électronique complétée' : 'En attente'}
-              </Typography>
+              </p>
             </TimelineContent>
           </TimelineItem>
 
           <TimelineItem>
             <TimelineSeparator>
-              <TimelineDot sx={{ bgcolor: transaction?.depot_paye ? 'success.main' : 'warning.main' }}>
+              <TimelineDot>
                 {transaction?.depot_paye ? <CheckCircleIcon /> : <HourglassEmptyIcon />}
               </TimelineDot>
               <TimelineConnector />
             </TimelineSeparator>
             <TimelineContent>
-              <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+              <p variant="subtitle2">
                 Dépôt de garantie payé
-              </Typography>
-              <Typography variant="caption" color="textSecondary">
+              </p>
+              <p variant="caption" color="textSecondary">
                 {transaction?.depot_paye ? '15% versé' : 'En attente'}
-              </Typography>
+              </p>
             </TimelineContent>
           </TimelineItem>
 
           <TimelineItem>
             <TimelineSeparator>
-              <TimelineDot sx={{ bgcolor: transaction?.statut === 'finalisee' ? 'success.main' : 'warning.main' }}>
+              <TimelineDot>
                 {transaction?.statut === 'finalisee' ? <CheckCircleIcon /> : <HourglassEmptyIcon />}
               </TimelineDot>
             </TimelineSeparator>
             <TimelineContent>
-              <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+              <p variant="subtitle2">
                 Acte authentique signé
-              </Typography>
-              <Typography variant="caption" color="textSecondary">
+              </p>
+              <p variant="caption" color="textSecondary">
                 {transaction?.statut === 'finalisee' ? 'Vente finalisée ✅' : 'En attente'}
-              </Typography>
+              </p>
             </TimelineContent>
           </TimelineItem>
         </Timeline>
@@ -340,105 +310,105 @@ export default function TransactionDetailsPage() {
 
       {/* Tab 1: Paiements */}
       <TabPanel value={tabValue} index={1}>
-        <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold' }}>
+        <h6 variant="h6">
           Historique des Paiements
-        </Typography>
+        </h6>
 
-        <TableContainer component={Paper}>
-          <Table>
-            <TableBody>
-              <TableRow>
-                <TableCell sx={{ fontWeight: 'bold' }}>Dépôt de garantie (15%)</TableCell>
-                <TableCell align="right">
+        <div component={Paper}>
+          <table>
+            <tbody>
+              <tr>
+                <td>Dépôt de garantie (15%)</td>
+                <td align="right">
                   {(transaction?.prix_compromis * 0.15)?.toLocaleString('fr-FR')} €
-                </TableCell>
-                <TableCell align="right">
-                  <Chip
+                </td>
+                <td align="right">
+                  <span
                     label={transaction?.depot_paye ? 'Payé' : 'En attente'}
                     color={transaction?.depot_paye ? 'success' : 'warning'}
                     size="small"
                   />
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell sx={{ fontWeight: 'bold' }}>Solde (85%)</TableCell>
-                <TableCell align="right">
+                </td>
+              </tr>
+              <tr>
+                <td>Solde (85%)</td>
+                <td align="right">
                   {(transaction?.prix_compromis * 0.85)?.toLocaleString('fr-FR')} €
-                </TableCell>
-                <TableCell align="right">
-                  <Chip
+                </td>
+                <td align="right">
+                  <span
                     label={transaction?.statut === 'finalisee' ? 'Payé' : 'En attente'}
                     color={transaction?.statut === 'finalisee' ? 'success' : 'warning'}
                     size="small"
                   />
-                </TableCell>
-              </TableRow>
-              <TableRow sx={{ bgcolor: '#f5f5f5', fontWeight: 'bold' }}>
-                <TableCell sx={{ fontWeight: 'bold' }}>TOTAL</TableCell>
-                <TableCell align="right" sx={{ fontWeight: 'bold' }}>
+                </td>
+              </tr>
+              <tr>
+                <td>TOTAL</td>
+                <td align="right">
                   {transaction?.prix_compromis?.toLocaleString('fr-FR')} €
-                </TableCell>
-                <TableCell align="right">
-                  <Chip
+                </td>
+                <td align="right">
+                  <span
                     label={transaction?.statut === 'finalisee' ? 'PAYÉ' : 'PARTIEL'}
                     color={transaction?.statut === 'finalisee' ? 'success' : 'warning'}
                   />
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </TabPanel>
 
       {/* Tab 2: Frais & Commissions */}
       <TabPanel value={tabValue} index={2}>
-        <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold' }}>
+        <h6 variant="h6">
           Décomposition des Frais
-        </Typography>
+        </h6>
 
-        <TableContainer component={Paper}>
-          <Table>
-            <TableBody>
-              <TableRow>
-                <TableCell sx={{ fontWeight: 'bold' }}>Prix de vente (HT)</TableCell>
-                <TableCell align="right">{transaction?.prix_compromis?.toLocaleString('fr-FR')} €</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell sx={{ pl: 4 }}>
-                  <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+        <div component={Paper}>
+          <table>
+            <tbody>
+              <tr>
+                <td>Prix de vente (HT)</td>
+                <td align="right">{transaction?.prix_compromis?.toLocaleString('fr-FR')} €</td>
+              </tr>
+              <tr>
+                <td>
+                  <p variant="body2">
                     Frais de notaire (~{transaction?.pourcentage_frais || '7.5'}%)
-                  </Typography>
-                </TableCell>
-                <TableCell align="right">{transaction?.montant_frais?.toLocaleString('fr-FR')} €</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell sx={{ pl: 4 }}>TVA sur frais (20%)</TableCell>
-                <TableCell align="right">{transaction?.tva_frais?.toLocaleString('fr-FR')} €</TableCell>
-              </TableRow>
-              <TableRow sx={{ bgcolor: '#e3f2fd' }}>
-                <TableCell sx={{ fontWeight: 'bold' }}>Commission Immo2000 (2%)</TableCell>
-                <TableCell align="right" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+                  </h6>
+                </td>
+                <td align="right">{transaction?.montant_frais?.toLocaleString('fr-FR')} €</td>
+              </tr>
+              <tr>
+                <td>TVA sur frais (20%)</td>
+                <td align="right">{transaction?.tva_frais?.toLocaleString('fr-FR')} €</td>
+              </tr>
+              <tr>
+                <td>Commission Immo2000 (2%)</td>
+                <td align="right">
                   {transaction?.commission_immo2000?.toLocaleString('fr-FR')} €
-                </TableCell>
-              </TableRow>
-              <TableRow sx={{ bgcolor: '#fff3e0' }}>
-                <TableCell sx={{ fontWeight: 'bold' }}>TOTAL À PAYER (TTC)</TableCell>
-                <TableCell align="right" sx={{ fontWeight: 'bold', color: 'warning.main' }}>
+                </td>
+              </tr>
+              <tr>
+                <td>TOTAL À PAYER (TTC)</td>
+                <td align="right">
                   {transaction?.montant_total_frais?.toLocaleString('fr-FR')} €
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </TabPanel>
 
       {/* Tab 3: Documents */}
       <TabPanel value={tabValue} index={3}>
-        <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold' }}>
+        <h6 variant="h6">
           Documents et Fichiers
-        </Typography>
+        </h6>
 
-        <List>
+        <ul>
           {[
             { name: 'Compromis de vente (signé)', icon: AssignmentIcon, available: transaction?.compromis_signe },
             { name: 'Acte authentique (signé)', icon: AssignmentIcon, available: transaction?.statut === 'finalisee' },
@@ -449,11 +419,11 @@ export default function TransactionDetailsPage() {
             },
             { name: 'Proof of payment (dépôt)', icon: PaymentIcon, available: transaction?.depot_paye },
           ].map((doc, idx) => (
-            <ListItem key={idx} sx={{ bgcolor: idx % 2 === 0 ? '#f5f5f5' : 'white', mb: 1, borderRadius: 1 }}>
-              <ListItemIcon>
+            <li key={idx}>
+              <span>
                 <doc.icon color={doc.available ? 'success' : 'disabled'} />
-              </ListItemIcon>
-              <ListItemText
+              </span>
+              <span
                 primary={doc.name}
                 secondary={doc.available ? 'Disponible au téléchargement' : 'Indisponible'}
               />
@@ -462,84 +432,84 @@ export default function TransactionDetailsPage() {
                   Télécharger
                 </Button>
               )}
-            </ListItem>
+            </li>
           ))}
-        </List>
+        </ul>
       </TabPanel>
 
       {/* Tab 4: Parties */}
       <TabPanel value={tabValue} index={4}>
-        <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold' }}>
+        <h6 variant="h6">
           Informations des Parties
-        </Typography>
+        </h6>
 
-        <Grid container spacing={3}>
+        <div container spacing={3}>
           {/* Vendeur */}
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 2 }}>
+          <div item xs={12} md={6}>
+            <div>
+              <div>
+                <p variant="subtitle1">
                   👨 Vendeur
-                </Typography>
-                <Typography variant="body2" sx={{ mb: 1 }}>
+                </h6>
+                <p variant="body2">
                   <strong>Nom:</strong> {transaction?.vendeur?.full_name}
-                </Typography>
-                <Typography variant="body2" sx={{ mb: 1 }}>
+                </h6>
+                <p variant="body2">
                   <strong>Email:</strong> {transaction?.vendeur?.email}
-                </Typography>
-                <Typography variant="body2" sx={{ mb: 1 }}>
+                </h6>
+                <p variant="body2">
                   <strong>Téléphone:</strong> {transaction?.vendeur?.phone}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
+                </p>
+              </div>
+            </div>
+          </div>
 
           {/* Acheteur */}
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 2 }}>
+          <div item xs={12} md={6}>
+            <div>
+              <div>
+                <p variant="subtitle1">
                   👩 Acheteur
-                </Typography>
-                <Typography variant="body2" sx={{ mb: 1 }}>
+                </p>
+                <p variant="body2">
                   <strong>Nom:</strong> {transaction?.acheteur?.full_name}
-                </Typography>
-                <Typography variant="body2" sx={{ mb: 1 }}>
+                </p>
+                <p variant="body2">
                   <strong>Email:</strong> {transaction?.acheteur?.email}
-                </Typography>
-                <Typography variant="body2" sx={{ mb: 1 }}>
+                </p>
+                <p variant="body2">
                   <strong>Téléphone:</strong> {transaction?.acheteur?.phone}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
+                </p>
+              </div>
+            </div>
+          </div>
 
           {/* Notaire */}
           {transaction?.notaire && (
-            <Grid item xs={12} md={6}>
-              <Card>
-                <CardContent>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 2 }}>
+            <div item xs={12} md={6}>
+              <div>
+                <div>
+                  <p variant="subtitle1">
                     ⚖️ Notaire
-                  </Typography>
-                  <Typography variant="body2" sx={{ mb: 1 }}>
+                  </p>
+                  <p variant="body2">
                     <strong>Étude:</strong> {transaction?.notaire?.etude_notariale}
-                  </Typography>
-                  <Typography variant="body2" sx={{ mb: 1 }}>
+                  </p>
+                  <p variant="body2">
                     <strong>Email:</strong> {transaction?.notaire?.email}
-                  </Typography>
-                  <Typography variant="body2" sx={{ mb: 1 }}>
+                  </p>
+                  <p variant="body2">
                     <strong>Téléphone:</strong> {transaction?.notaire?.phone}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
+                  </p>
+                </div>
+              </div>
+            </div>
           )}
-        </Grid>
+        </div>
       </TabPanel>
 
       {/* Boutons d'action */}
-      <Box sx={{ mt: 4, display: 'flex', gap: 2 }}>
+      <div>
         <Button variant="outlined" onClick={() => navigate(-1)}>
           Retour
         </Button>
@@ -548,7 +518,7 @@ export default function TransactionDetailsPage() {
             📄 Télécharger les Documents Finaux
           </Button>
         )}
-      </Box>
-    </Container>
+      </div>
+    </div>
   );
 }
