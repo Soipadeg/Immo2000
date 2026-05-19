@@ -20,6 +20,13 @@ from .notaires import (
     HistoriqueNotaire,
     DisponibiliteNotaire
 )
+from .paiements import (
+    Paiement,
+    FraisNotaire,
+    CommissionImmo2000,
+    TypePaiement,
+    StatutPaiement
+)
 
 __all__ = [
     "Annonce",
@@ -41,5 +48,10 @@ __all__ = [
     "TransactionNotaire",
     "DocumentNotaire",
     "HistoriqueNotaire",
-    "DisponibiliteNotaire"
+    "DisponibiliteNotaire",
+    "Paiement",
+    "FraisNotaire",
+    "CommissionImmo2000",
+    "TypePaiement",
+    "StatutPaiement"
 ]

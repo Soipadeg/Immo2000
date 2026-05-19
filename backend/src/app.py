@@ -45,6 +45,8 @@ from src.routes.favoris import favoris_bp
 from src.routes.offres import offres_bp
 from src.routes.notaires import notaires_bp
 from src.routes.dev_auth import dev_auth_bp
+from src.routes.transactions import transactions_vente_bp
+from src.routes.paiements import paiements_vente_bp
 
 # Import models pour que SQLAlchemy les reconnaisse
 from src.models.historique_rdv import HistoriqueRDV
@@ -291,6 +293,12 @@ def create_app(config_name: str = None) -> Flask:
 
     # Blueprints - Notaires Partenaires (Phase 3)
     app.register_blueprint(notaires_bp)
+
+    # Blueprints - Transactions de Vente (Phase 3 - Parcours de Vente)
+    app.register_blueprint(transactions_vente_bp)
+
+    # Blueprints - Paiements (Phase 3 - Parcours de Vente)
+    app.register_blueprint(paiements_vente_bp)
 
     # Blueprints - Dev Auth (Development mode - bypass authentication)
     app.register_blueprint(dev_auth_bp)
