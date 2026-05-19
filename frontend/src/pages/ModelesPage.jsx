@@ -3,10 +3,8 @@
  */
 
 import React, { useState } from 'react';
-import { Box, Container, Typography, Grid, Card, CardContent, CardActions, Button, Chip, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
-import DownloadIcon from '@mui/icons-material/Download';
-import DescriptionIcon from '@mui/icons-material/Description';
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import { Button, Card, Modal } from '@/components';
+import '../styles/ModelesPage.css';
 
 const ModelesPage = () => {
   const [openDialog, setOpenDialog] = useState(null);
@@ -76,112 +74,84 @@ const ModelesPage = () => {
     setOpenDialog(null);
   };
 
-  const getCategoryColor = (category) => {
-    const colors = { Achat: 'primary', Vente: 'success', Financement: 'info' };
-    return colors[category] || 'default';
-  };
-
   return (
-    <Container maxWidth="lg" sx={{ py: 8 }}>
-      <Box sx={{ mb: 6, textAlign: 'center' }}>
-        <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
-          📄 Modèles de Documents
-        </Typography>
-        <Typography variant="h6" color="textSecondary">
+    <div className="modeles-page-container">
+      <div className="modeles-header">
+        <h1 className="modeles-title">📄 Modèles de Documents</h1>
+        <p className="modeles-subtitle">
           Téléchargez les modèles de documents dont vous avez besoin
-        </Typography>
-      </Box>
+        </p>
+      </div>
 
-      <Grid container spacing={3}>
+      <div className="modeles-grid">
         {modeles.map((modele) => (
-          <Grid item xs={12} sm={6} lg={4} key={modele.id}>
-            <Card
-              sx={{
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  transform: 'translateY(-8px)',
-                  boxShadow: 6,
-                },
-              }}
-            >
-              <CardContent sx={{ flexGrow: 1 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <DescriptionIcon sx={{ mr: 1, color: 'primary.main', fontSize: 32 }} />
-                </Box>
-                <Typography gutterBottom variant="h6" component="h3">
-                  {modele.title}
-                </Typography>
-                <Typography color="textSecondary" sx={{ mb: 2 }}>
-                  {modele.description}
-                </Typography>
-                <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
-                  <Chip label={modele.format} size="small" variant="outlined" />
-                  <Chip
-                    label={modele.category}
-                    size="small"
-                    color={getCategoryColor(modele.category)}
-                    variant="outlined"
-                  />
-                </Box>
-                <Typography variant="caption" color="textSecondary">
-                  ⬇️ {modele.downloads.toLocaleString()} téléchargements
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button
-                  size="small"
-                  color="primary"
-                  onClick={() => handleOpenDialog(modele)}
-                  startIcon={<DownloadIcon />}
-                >
-                  Télécharger
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+          <Card key={modele.id} className="modele-card">
+            <div className="modele-header">
+              <span className="modele-icon">📋</span>
+            </div>
 
-      <Box sx={{ mt: 8, p: 4, bgcolor: 'primary.light', borderRadius: 2, textAlign: 'center' }}>
-        <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
-          ⚖️ Avis légal important
-        </Typography>
-        <Typography color="textSecondary" sx={{ maxWidth: 600, mx: 'auto' }}>
+            <div className="modele-content">
+              <h3 className="modele-title">{modele.title}</h3>
+              <p className="modele-description">{modele.description}</p>
+
+              <div className="modele-meta">
+                <span className="meta-badge">{modele.format}</span>
+                <span className={`category-badge category-${modele.category.toLowerCase()}`}>
+                  {modele.category}
+                </span>
+              </div>
+
+              <p className="modele-downloads">
+                ⬇️ {modele.downloads.toLocaleString()} téléchargements
+              </p>
+            </div>
+
+            <div className="modele-actions">
+              <Button
+                size="small"
+                variant="primary"
+                onClick={() => handleOpenDialog(modele)}
+              >
+                ⬇️ Télécharger
+              </Button>
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      <div className="legal-section">
+        <h3 className="legal-title">⚖️ Avis légal important</h3>
+        <p className="legal-text">
           Ces modèles sont fournis à titre informatif. Pour une transaction immobilière, nous
           recommandons de consulter un notaire ou un avocat spécialisé en droit immobilier.
-        </Typography>
-      </Box>
+        </p>
+      </div>
 
-      {/* Dialog pour téléchargement */}
-      <Dialog open={!!openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
-        <DialogTitle>📥 {openDialog?.title}</DialogTitle>
-        <DialogContent>
-          <Typography variant="body2" gutterBottom>
-            Vous êtes sur le point de télécharger:
-          </Typography>
-          <Box sx={{ p: 2, bgcolor: 'grey.100', borderRadius: 1, my: 2 }}>
-            <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-              {openDialog?.title}
-            </Typography>
-            <Typography variant="caption" color="textSecondary">
-              Format: {openDialog?.format}
-            </Typography>
-          </Box>
-          <Typography variant="body2">
-            ℹ️ {openDialog?.preview}
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>Annuler</Button>
-          <Button variant="contained" color="primary" startIcon={<FileDownloadIcon />}>
-            Télécharger
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Container>
+      {/* Modal de téléchargement */}
+      {openDialog && (
+        <Modal onClose={handleCloseDialog}>
+          <div className="download-modal">
+            <h2 className="modal-title">📥 {openDialog.title}</h2>
+            <div className="modal-content">
+              <p>Vous êtes sur le point de télécharger:</p>
+              <div className="modele-preview">
+                <p className="preview-title">{openDialog.title}</p>
+                <p className="preview-format">Format: {openDialog.format}</p>
+              </div>
+              <p className="preview-info">ℹ️ {openDialog.preview}</p>
+            </div>
+            <div className="modal-actions">
+              <Button onClick={handleCloseDialog} variant="secondary">
+                Annuler
+              </Button>
+              <Button variant="primary">
+                ⬇️ Télécharger
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
+    </div>
   );
 };
 
