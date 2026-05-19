@@ -1,0 +1,124 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:14-alpine
+    container_name: immo2000-postgres
+    environment:
+      POSTGRES_DB: ${DATABASE_DB:-immo2000}
+      POSTGRES_USER: ${DATABASE_USER:-postgres}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/immo2000_schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    ports:
+      - "${DATABASE_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - immo2000-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: immo2000-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - immo2000-network
+
+  # FastAPI Backend
+  backend-fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: immo2000-backend-fastapi
+    environment:
+      DATABASE_URL: postgresql://${DATABASE_USER:-postgres}:${DATABASE_PASSWORD:-postgres}@postgres:5432/${DATABASE_DB:-immo2000}
+      REDIS_URL: redis://redis:6379/0
+      PORT: 8000
+      FLASK_ENV: ${FLASK_ENV:-production}
+      SECRET_KEY: ${SECRET_KEY:-dev-key-change-in-prod}
+      DOCUSIGN_CLIENT_ID: ${DOCUSIGN_CLIENT_ID}
+      DOCUSIGN_USER_ID: ${DOCUSIGN_USER_ID}
+      DOCUSIGN_ACCOUNT_ID: ${DOCUSIGN_ACCOUNT_ID}
+      DOCUSIGN_PRIVATE_KEY: ${DOCUSIGN_PRIVATE_KEY}
+      DOCUSIGN_BASE_URL: ${DOCUSIGN_BASE_URL:-demo.docusign.com}
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY}
+      SENDGRID_FROM_EMAIL: ${SENDGRID_FROM_EMAIL}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET}
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    networks:
+      - immo2000-network
+    volumes:
+      - ./backend:/app
+    command: python run_server.py
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: immo2000-frontend
+    environment:
+      REACT_APP_API_URL: http://localhost:8000/api/v1
+      REACT_APP_FASTAPI_URL: http://localhost:8000/api/v1
+    ports:
+      - "3001:3000"
+    depends_on:
+      - backend-fastapi
+    networks:
+      - immo2000-network
+    environment:
+      - REACT_APP_API_URL=http://backend-fastapi:8000/api/v1
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: immo2000-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./devops/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./devops/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - backend-fastapi
+      - frontend
+    networks:
+      - immo2000-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  immo2000-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
