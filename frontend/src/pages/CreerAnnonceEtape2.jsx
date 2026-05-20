@@ -1,7 +1,7 @@
 import '../styles/CreerAnnonceEtape2.css';
 import React, { useState } from 'react';
 import { Button, Alert, Input } from '@/components';
-
+import { LinearProgress, Stack } from '@mui/material';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { register } from '../services/api';
 

@@ -2,6 +2,8 @@ import '../styles/CreerAnnonceEtape1.css';
 import React, { useState } from 'react';
 import { Button, Alert, Input } from '@/components';
 import { useNavigate } from 'react-router-dom';
+import { LinearProgress, Stack } from '@mui/material';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 /**
  * Page ÉTAPE 1 du tunnel : Adresse et Photos

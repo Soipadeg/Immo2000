@@ -8,6 +8,8 @@ import { usersApi } from '../services/adminApi';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { Button, Alert, Input } from '@/components';
+import { Paper, Tooltip, Pagination, Chip, Dialog, DialogTitle, DialogContent, DialogActions, Typography, CircularProgress } from '@mui/material';
+import { Edit, Block, Check, Delete } from '@mui/icons-material';
 
 
 
@@ -111,7 +113,7 @@ const AdminUsersPage = () => {
         </div>
       ) : (
         <>
-          <div component={Paper}>
+          <Paper>
             <table>
               <thead>
                 <tr>
@@ -135,7 +137,7 @@ const AdminUsersPage = () => {
                       <td>{u.email}</td>
                       <td>{u.nom || '-'}</td>
                       <td>
-                        <span
+                        <Chip
                           label={u.role}
                           size="small"
                           color={u.role === 'admin' ? 'error' : 'default'}
@@ -143,7 +145,7 @@ const AdminUsersPage = () => {
                         />
                       </td>
                       <td>
-                        <span
+                        <Chip
                           label={u.actif ? 'Actif' : 'Suspendu'}
                           size="small"
                           color={u.actif ? 'success' : 'warning'}
@@ -191,7 +193,7 @@ const AdminUsersPage = () => {
                 )}
               </tbody>
             </table>
-          </div>
+          </Paper>
 
           <div>
             <Pagination count={10} page={page} onChange={(e, p) => setPage(p)} />
@@ -200,14 +202,14 @@ const AdminUsersPage = () => {
       )}
 
       {/* Dialogs */}
-      <div open={dialog.open} onClose={() => setDialog({ open: false, action: null, userId: null })}>
-        <div>
+      <Dialog open={dialog.open} onClose={() => setDialog({ open: false, action: null, userId: null })}>
+        <DialogTitle>
           {dialog.action === 'changeRole' && 'Changer le rôle?'}
           {dialog.action === 'suspend' && 'Suspendre l\'utilisateur?'}
           {dialog.action === 'reactivate' && 'Réactiver l\'utilisateur?'}
           {dialog.action === 'delete' && 'Supprimer l\'utilisateur?'}
-        </div>
-        <div>
+        </DialogTitle>
+        <DialogContent>
           {dialog.action === 'suspend' && (
             <Input
               label="Durée de suspension (heures)"
@@ -220,8 +222,8 @@ const AdminUsersPage = () => {
           {dialog.action === 'delete' && (
             <Typography color="error">Cette action est irréversible!</Typography>
           )}
-        </div>
-        <div>
+        </DialogContent>
+        <DialogActions>
           <Button onClick={() => setDialog({ open: false, action: null, userId: null })}>
             Annuler
           </Button>
@@ -231,10 +233,10 @@ const AdminUsersPage = () => {
             variant="primary"
             color={dialog.action === 'delete' ? 'error' : 'primary'}
           >
-            {actionLoading ? <div size={24} /> : 'Confirmer'}
+            {actionLoading ? <CircularProgress size={24} /> : 'Confirmer'}
           </Button>
-        </div>
-      </div>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
