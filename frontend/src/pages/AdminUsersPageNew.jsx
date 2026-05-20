@@ -99,7 +99,6 @@ const AdminUsersPage = () => {
               setPage(1);
             }}
             size="small"
-            InputProps={{ startAdornment: <Search /> }}
           />
         </div>
       </div>

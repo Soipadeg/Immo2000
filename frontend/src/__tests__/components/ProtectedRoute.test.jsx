@@ -58,3 +58,5 @@ describe('ProtectedRoute Component', () => {
       </AuthContext.Provider>
     );
     expect(container).toBeInTheDocument();
+  });
+});

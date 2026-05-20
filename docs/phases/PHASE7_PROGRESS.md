@@ -13,33 +13,33 @@
 1. **Select.test.jsx** - 10 tests for Select component
    - Options rendering, onChange, disabled state, error states
    - Required field indicator, custom className
-   
+
 2. **Textarea.test.jsx** - 10 tests for Textarea component
    - Value binding, placeholder, error states
    - Disabled state, required indicator, rows prop
-   
+
 3. **SearchBar.test.jsx** - 11 tests for SearchBar component
    - Input rendering, onChange callback
    - onSearch trigger on Enter key, disabled state
-   
+
 4. **Card.test.jsx** - 10 tests for Card component (refactored)
    - Variant prop (elevated/outlined)
    - Interactive mode, custom className, children rendering
-   
+
 5. **LoginPage.test.jsx** - 3 tests for LoginPage
    - Renders without crashing
    - Displays form structure
    - Renders with proper HTML
-   
+
 6. **Dashboard.test.jsx** - 4 tests for Dashboard page
    - Page rendering, content display
    - Responsive layout verification
-   
+
 7. **useAuth.test.js** - 10 tests for authentication
    - localStorage persistence
    - Token storage and retrieval
    - User data management
-   
+
 8. **notifications.test.js** - 10 tests for notification system
    - Notification types (success/error/warning/info)
    - Add/remove/clear operations

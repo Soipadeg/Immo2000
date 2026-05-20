@@ -40,6 +40,11 @@ describe('Navbar Component', () => {
 
     // Check that something changed (menu opened)
     expect(toggleButton).toBeInTheDocument();
+  });
+
+  it('displays right content when provided', () => {
+    const rightContent = <span>User Menu</span>;
+    render(
       <Navbar logo="MyApp" navLinks={mockNavLinks} rightContent={rightContent} />
     );
     expect(screen.getByText('User Menu')).toBeInTheDocument();

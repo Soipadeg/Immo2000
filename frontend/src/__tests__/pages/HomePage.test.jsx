@@ -41,6 +41,3 @@ describe('HomePage', () => {
     expect(container.innerHTML.length).toBeGreaterThan(0);
   });
 });
-    expect(container.firstChild).toBeInTheDocument();
-  });
-});

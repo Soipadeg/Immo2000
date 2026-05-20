@@ -104,4 +104,5 @@ describe('useAuth Hook - localStorage persistence', () => {
     expect(localStorage.getItem('field1')).toBe('value1');
     expect(localStorage.getItem('field2')).toBe('value2');
     expect(localStorage.getItem('field3')).toBe('value3');
+  });
 });

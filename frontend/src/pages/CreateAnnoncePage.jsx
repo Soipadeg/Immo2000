@@ -217,7 +217,7 @@ export default function CreateAnnoncePage() {
           <div>
             <h3  gutterBottom>
               📝 Informations générales
-            </h1>
+            </h3>
             <div container spacing={3} sx={{ mt: 1 }}>
               <div item xs={12}>
                 <Input
@@ -231,7 +231,7 @@ export default function CreateAnnoncePage() {
                   helperText={errors.titre}
                   multiline
                   rows={2}
-                / />
+                />
               </div>
 
               <div item xs={12}>
@@ -246,7 +246,7 @@ export default function CreateAnnoncePage() {
                   helperText={errors.description}
                   multiline
                   rows={5}
-                / />
+                />
               </div>
 
               <div item xs={12} sm={6}>
@@ -261,7 +261,7 @@ export default function CreateAnnoncePage() {
                   error={!!errors.prix}
                   helperText={errors.prix}
                   inputProps={{ min: 0, step: 1000 }}
-                / />
+                />
               </div>
 
               <div item xs={12} sm={6}>
@@ -276,7 +276,7 @@ export default function CreateAnnoncePage() {
                   error={!!errors.surface}
                   helperText={errors.surface}
                   inputProps={{ min: 0, step: 0.5 }}
-                / />
+                />
               </div>
             </div>
           </div>
@@ -287,7 +287,7 @@ export default function CreateAnnoncePage() {
           <div>
             <h3  gutterBottom>
               📍 Localisation
-            </h1>
+            </h3>
             <div container spacing={3} sx={{ mt: 1 }}>
               <div item xs={12}>
                 <Input
@@ -299,7 +299,7 @@ export default function CreateAnnoncePage() {
                   placeholder="Ex: 123 Rue de la Paix"
                   error={!!errors.adresse}
                   helperText={errors.adresse}
-                / />
+                />
               </div>
 
               <div item xs={12} sm={6}>
@@ -313,7 +313,7 @@ export default function CreateAnnoncePage() {
                   error={!!errors.code_postal}
                   helperText={errors.code_postal}
                   inputProps={{ maxLength: 5 }}
-                / />
+                />
               </div>
 
               <div item xs={12} sm={6}>
@@ -326,7 +326,7 @@ export default function CreateAnnoncePage() {
                   placeholder="Ex: Paris"
                   error={!!errors.ville}
                   helperText={errors.ville}
-                / />
+                />
               </div>
             </div>
           </div>
@@ -337,7 +337,7 @@ export default function CreateAnnoncePage() {
           <div>
             <h3  gutterBottom>
               🏠 Caractéristiques du bien
-            </h1>
+            </h3>
             <div container spacing={3} sx={{ mt: 1 }}>
               <div item xs={12} sm={6}>
                 <Input
@@ -367,7 +367,7 @@ export default function CreateAnnoncePage() {
                   error={!!errors.nombre_pieces}
                   helperText={errors.nombre_pieces}
                   inputProps={{ min: 1 }}
-                / />
+                />
               </div>
 
               <div item xs={12} sm={6}>
@@ -380,7 +380,7 @@ export default function CreateAnnoncePage() {
                   onChange={handleInputChange}
                   placeholder="Ex: 3"
                   inputProps={{ min: 0 }}
-                / />
+                />
               </div>
 
               <div item xs={12} sm={6}>
@@ -393,7 +393,7 @@ export default function CreateAnnoncePage() {
                   onChange={handleInputChange}
                   placeholder="Ex: 2010"
                   inputProps={{ min: 1800, max: 2100 }}
-                / />
+                />
               </div>
 
               <div item xs={12} sm={6}>
@@ -416,7 +416,7 @@ export default function CreateAnnoncePage() {
               <div item xs={12}>
                 <p  gutterBottom sx={{ mt: 2 }}>
                   ✨ Équipements et caractéristiques
-                </h1>
+                </p>
                 <div sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
                   <FormControlLabel
                     control={
@@ -489,7 +489,7 @@ export default function CreateAnnoncePage() {
           <div>
             <h3  gutterBottom>
               🖼️ Photos du bien
-            </h1>
+            </h3>
             {annonceId && (
               <ImageUpload
                 annonceId={annonceId}
@@ -501,7 +501,7 @@ export default function CreateAnnoncePage() {
                 <div>
                   <p  gutterBottom>
                     ✅ Photos uploadées: {photosUploaded.length}
-                  </h1>
+                  </p>
                 </div>
               </div>
             )}

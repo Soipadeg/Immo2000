@@ -1,7 +1,6 @@
 import '../styles/CreerAnnonceEtape1.css';
-import React
-import { Button, Alert, Input } from '@/components';, { useState } from 'react';
-
+import React, { useState } from 'react';
+import { Button, Alert, Input } from '@/components';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -173,7 +172,7 @@ export default function CreerAnnonceEtape1() {
           </h1>
           <p  sx={{ color: 'text.secondary' }}>
             Étape 1 sur 4 : Adresse et photos
-          </h1>
+          </p>
           <LinearProgress variant="determinate" value={25} sx={{ mt: 2 }} />
         </div>
 
@@ -196,7 +195,7 @@ export default function CreerAnnonceEtape1() {
                   required
                   maxLength={100}
                   helperText={`${formData.titre.length}/100`}
-                / />
+                />
               </div>
 
               {/* Adresse */}
@@ -209,7 +208,7 @@ export default function CreerAnnonceEtape1() {
                   onChange={handleChange}
                   placeholder="Ex: 123 Rue de Paris, Apt 4B"
                   required
-                / />
+                />
               </div>
 
               {/* Code postal et Ville */}
@@ -223,7 +222,7 @@ export default function CreerAnnonceEtape1() {
                   placeholder="75001"
                   required
                   inputProps={{ maxLength: 5 }}
-                / />
+                />
               </div>
 
               <div item xs={12} sm={6}>
@@ -235,7 +234,7 @@ export default function CreerAnnonceEtape1() {
                   onChange={handleChange}
                   placeholder="Paris"
                   required
-                / />
+                />
               </div>
 
               {/* Masquer adresse */}
@@ -256,7 +255,7 @@ export default function CreerAnnonceEtape1() {
               <div item xs={12}>
                 <h3  sx={{ mb: 2 }}>
                   📸 Photos ({photos.length}/{MAX_PHOTOS})
-                </h1>
+                </h3>
 
                 {/* Upload Area */}
                 <div
@@ -283,10 +282,10 @@ export default function CreerAnnonceEtape1() {
                     disabled={photos.length >= MAX_PHOTOS}
                   />
                   <CloudUploadIcon sx={{ fontSize: 48, color: 'primary.main', mb: 1 }} />
-                  <h3 >Déposer les photos ici</h1>
+                  <h3>Déposer les photos ici</h3>
                   <span  sx={{ color: 'text.secondary' }}>
                     ou cliquez pour sélectionner (jpg, png, webp, max 10MB chacune)
-                  </h1>
+                  </span>
                 </div>
 
                 {/* Photos Previews */}
@@ -316,7 +315,7 @@ export default function CreerAnnonceEtape1() {
                           </IconButton>
                           <p  sx={{ mt: 0.5, display: 'block' }}>
                             {preview.name}
-                          </h1>
+                          </p>
                         </div>
                       </div>
                     ))}
@@ -360,7 +359,7 @@ export default function CreerAnnonceEtape1() {
           <span  sx={{ color: 'info.dark' }}>
             💡 <strong>Conseil :</strong> Vous pouvez abandonner à tout moment. Votre brouillon sera sauvegardé
             et vous pourrez le continuer plus tard depuis votre dashboard.
-          </h1>
+          </span>
         </div>
       </div>
     </div>

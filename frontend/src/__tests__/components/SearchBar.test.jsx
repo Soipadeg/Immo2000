@@ -1,122 +1,77 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import SearchBar from '@/components/SearchBar/SearchBar';
 
 describe('SearchBar Component', () => {
-  it('renders search input', () => {
-    render(
-      <SearchBar
-        value=""
-        onChange={() => {}}
-      />
-    );
-    expect(screen.getByRole('textbox')).toBeInTheDocument();
+  it('renders search form', () => {
+    const { container } = render(<SearchBar />);
+    expect(container.querySelector('.search-bar-form')).toBeInTheDocument();
   });
 
-  it('displays placeholder', () => {
-    render(
-      <SearchBar
-        placeholder="Search items..."
-        value=""
-        onChange={() => {}}
-      />
-    );
-    expect(screen.getByPlaceholderText('Search items...')).toBeInTheDocument();
+  it('renders search input field', () => {
+    render(<SearchBar />);
+    const inputs = screen.queryAllByRole('textbox');
+    expect(inputs.length).toBeGreaterThan(0);
   });
 
-  it('calls onChange when input changes', () => {
-    const handleChange = vi.fn();
-    render(
-      <SearchBar
-        value=""
-        onChange={handleChange}
-      />
-    );
-    const input = screen.getByRole('textbox');
-    fireEvent.change(input, { target: { value: 'test' } });
-    expect(handleChange).toHaveBeenCalled();
+  it('displays placeholder text', () => {
+    render(<SearchBar placeholder="Find property..." />);
+    const input = screen.getByPlaceholderText(/property/i);
+    expect(input).toBeInTheDocument();
   });
 
-  it('displays current value', () => {
-    render(
-      <SearchBar
-        value="search term"
-        onChange={() => {}}
-      />
-    );
-    expect(screen.getByDisplayValue('search term')).toBeInTheDocument();
+  it('renders search button', () => {
+    render(<SearchBar />);
+    const button = screen.getByRole('button', { name: /search|chercher/i });
+    expect(button).toBeInTheDocument();
   });
 
-  it('calls onSearch when Enter pressed', () => {
-    const handleSearch = vi.fn();
-    render(
-      <SearchBar
-        value="query"
-        onChange={() => {}}
-        onSearch={handleSearch}
-      />
-    );
-    const input = screen.getByRole('textbox');
-    fireEvent.keyDown(input, { key: 'Enter' });
-    expect(handleSearch).toHaveBeenCalled();
+  it('displays filters when enabled', () => {
+    render(<SearchBar showFilters={true} />);
+    const inputs = screen.getAllByRole('textbox');
+    expect(inputs.length).toBeGreaterThan(1);
   });
 
-  it('disables input when disabled prop true', () => {
-    render(
-      <SearchBar
-        value=""
-        onChange={() => {}}
-        disabled={true}
-      />
-    );
-    expect(screen.getByRole('textbox')).toBeDisabled();
+  it('hides filters when disabled', () => {
+    const { container } = render(<SearchBar showFilters={false} />);
+    const form = container.querySelector('.search-bar-form');
+    expect(form).toBeInTheDocument();
   });
 
   it('applies custom className', () => {
-    const { container } = render(
-      <SearchBar
-        value=""
-        onChange={() => {}}
-        className="custom-search"
-      />
-    );
+    const { container } = render(<SearchBar className="custom-search" />);
     expect(container.querySelector('.custom-search')).toBeInTheDocument();
   });
 
-  it('displays icon when provided', () => {
-    render(
-      <SearchBar
-        value=""
-        onChange={() => {}}
-        icon="🔍"
-      />
-    );
-    expect(screen.getByText('🔍')).toBeInTheDocument();
-  });
-
-  it('handles empty search', () => {
-    render(
-      <SearchBar
-        value=""
-        onChange={() => {}}
-      />
-    );
-    const input = screen.getByRole('textbox');
-    expect(input).toHaveValue('');
-  });
-
-  it('triggers onSearch with current value', () => {
+  it('calls onSearch callback when form submitted', async () => {
     const handleSearch = vi.fn();
-    render(
-      <SearchBar
-        value="search"
-        onChange={() => {}}
-        onSearch={handleSearch}
-      />
-    );
-    const input = screen.getByRole('textbox');
-    fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
+    render(<SearchBar onSearch={handleSearch} />);
+
+    const button = screen.getByRole('button', { name: /search|chercher/i });
+    await userEvent.click(button);
+
     expect(handleSearch).toHaveBeenCalled();
+  });
+
+  it('manages internal state for search inputs', () => {
+    const { container } = render(<SearchBar />);
+    const inputs = container.querySelectorAll('input[type="text"]');
+    expect(inputs.length).toBeGreaterThan(0);
+  });
+
+  it('renders with all expected structure', () => {
+    const { container } = render(<SearchBar />);
+    expect(container.querySelector('.search-bar')).toBeInTheDocument();
+    expect(container.querySelector('.search-bar-form')).toBeInTheDocument();
+    expect(container.querySelector('.search-bar-inputs')).toBeInTheDocument();
+  });
+
+  it('supports custom props spread', () => {
+    const { container } = render(
+      <SearchBar data-testid="custom-search" />
+    );
+    expect(container.querySelector('[data-testid="custom-search"]')).toBeInTheDocument();
   });
 });

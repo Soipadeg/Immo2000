@@ -67,7 +67,9 @@ describe('Select Component', () => {
         onChange={() => {}}
       />
     );
-    expect(screen.getByDisplayValue('opt2')).toBeInTheDocument();
+    // Select displays the label of the selected option
+    const select = screen.getByRole('combobox');
+    expect(select.value).toBe('opt2');
   });
 
   it('disables select when disabled prop true', () => {

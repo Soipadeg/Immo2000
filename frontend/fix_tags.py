@@ -1,56 +1,71 @@
-#!/usr/bin/env python3
 import os
 import re
-from pathlib import Path
 
-def fix_file_tags(filepath):
-    """Fix common tag mismatches in JSX files"""
+def fix_file(filepath):
     with open(filepath, 'r', encoding='utf-8') as f:
         content = f.read()
 
-    original = content
+    original_content = content
+    
+    # 1. Fix mismatched tags: find <(tag) ... > ... </h1> and replace </h1> with </(tag)>
+    # This is a bit tricky with regex. Let's look for tags that are definitely NOT h1
+    # but are closed by </h1>.
+    
+    # Regex for finding opening tags that are not h1 but followed by </h1>
+    # We'll look for <(p|h3|span|div|h2|h4|h5|h6|li)\b[^>]*>(?:(?!<\1).)*?</h1>
+    # Actually, it's safer to find occurrences of </h1> and look backwards for the nearest opening tag.
+    
+    def replace_mismatched_h1(match):
+        full_match = match.group(0)
+        open_tag_name = match.group(1)
+        # If open tag is not h1, change the closing tag
+        if open_tag_name.lower() != 'h1':
+            return full_match[:-5] + f'</{open_tag_name}>'
+        return full_match
 
-    # Fix Box tags replaced with div but closing with </Box>
-    content = re.sub(r'</Box>', '</div>', content)
-
-    # Fix Table component tags
-    content = re.sub(r'</Table>', '</div>', content)
-    content = re.sub(r'</TableBody>', '</div>', content)
-    content = re.sub(r'</TableRow>', '</div>', content)
-    content = re.sub(r'</TableCell>', '</div>', content)
-    content = re.sub(r'</TableHead>', '</div>', content)
-    content = re.sub(r'</TableContainer>', '</div>', content)
-
-    # Fix Grid component tags
-    content = re.sub(r'</Grid>', '</div>', content)
-
-    # Fix other MUI component closing tags
-    content = re.sub(r'</(Paper|Card|Container|Stack|Collapse)>', '</div>', content)
-
-    # Fix h3/h5 tags replaced with p but closing with header tags
-    content = re.sub(r'<p>([^<]*)</h[1-6]>', r'<p>\1</p>', content)
-
-    # Fix span/p tag mismatches
-    content = re.sub(r'<span>([^<]*)</p>', r'<span>\1</span>', content)
-    content = re.sub(r'<p>([^<]*)</span>', r'<p>\1</p>', content)
-
-    # Remove variant props from p tags
-    content = re.sub(r'<p\s+variant="[^"]*">', '<p>', content)
-
-    if content != original:
+    # This regex looks for an open tag (not h1) and then some content that doesn't include other tags, then </h1>
+    # It might be better to just find all </h1> and check what preceded them.
+    
+    parts = re.split(r'(</h1>)', content)
+    new_parts = []
+    fixes_count = 0
+    
+    for i in range(len(parts)):
+        if parts[i] == '</h1>':
+            # Look back in new_parts (concatenated) to find the nearest previous <TAG
+            preceding_text = "".join(new_parts)
+            # Find the last unclosed tag
+            # Simple approach: find last <tag... but not </tag
+            matches = list(re.finditer(r'<([a-zA-Z0-9]+)\b[^>]*>', preceding_text))
+            if matches:
+                last_tag = matches[-1].group(1)
+                if last_tag.lower() != 'h1' and last_tag.lower() not in ['img', 'br', 'hr', 'input']:
+                    # Mismatch found
+                    new_parts.append(f'</{last_tag}>')
+                    fixes_count += 1
+                    continue
+        new_parts.append(parts[i])
+    
+    content = "".join(new_parts)
+    
+    # 4. Fix / /> patterns
+    content, slash_fixes = re.subn(r'/ />', r'/>', content)
+    
+    if content != original_content:
         with open(filepath, 'w', encoding='utf-8') as f:
             f.write(content)
-        return True
-    return False
+        return True, fixes_count, slash_fixes
+    return False, 0, 0
 
-# Fix all pages and components
-pages_dir = Path('src/pages')
-components_dir = Path('src/components')
+pages_dir = 'src/pages'
+files_to_check = [f for f in os.listdir(pages_dir) if f.endswith('.jsx')]
 
-fixed_count = 0
-for jsx_file in list(pages_dir.glob('*.jsx')) + list(components_dir.glob('*.jsx')):
-    if fix_file_tags(str(jsx_file)):
-        fixed_count += 1
-        print(f"✓ Fixed {jsx_file.relative_to('.')}")
+report = []
+for filename in files_to_check:
+    filepath = os.path.join(pages_dir, filename)
+    changed, mismatches, slashes = fix_file(filepath)
+    if changed:
+        report.append(f"{filename}: {mismatches} mismatches, {slashes} slash fixes")
 
-print(f"\nTotal files fixed: {fixed_count}")
+for line in report:
+    print(line)

@@ -175,63 +175,6 @@ const AdminAnalyticsPage = () => {
       )}
     </div>
   );
-
-                    {/* Villes */}
-                    <Grid item xs={12}>
-                      <Typography variant="h6" gutterBottom>Top 15 villes</Typography>
-                      <TableContainer component={Paper}>
-                        <Table size="small">
-                          <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
-                            <TableRow>
-                              <TableCell><strong>Ville</strong></TableCell>
-                              <TableCell><strong>Annonces</strong></TableCell>
-                              <TableCell><strong>Prix moyen</strong></TableCell>
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            {(listings.annonces_par_ville || []).map((city) => (
-                              <TableRow key={city.ville}>
-                                <TableCell>{city.ville}</TableCell>
-                                <TableCell>{city.count}</TableCell>
-                                <TableCell>€{city.prix_moyen.toLocaleString()}</TableCell>
-                              </TableRow>
-                            ))}
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </>
-              )}
-
-              {/* Tab 2: Transactions */}
-              {tabValue === 2 && transactions && (
-                <>
-                  <div className="charts-grid">
-                    <div className="chart-box">
-                      <h3>Par statut</h3>
-                      <div className="chart-placeholder">[Graphique - Statuts Transactions]</div>
-                    </div>
-                    <div className="stats-box">
-                      <h3>📊 Statistiques</h3>
-                      <div className="stats-list">
-                        <div className="stat-line">Taux conversion: {transactions.taux_conversion_pct}%</div>
-                        <div className="stat-line">Taux négociation: {transactions.taux_negociation_pct}%</div>
-                        <div className="stat-line">Temps moyen (j): {transactions.temps_moyen_jours}</div>
-                        <div className="stat-divider"></div>
-                        <div className="stat-label">Prix</div>
-                        <div className="stat-line">Moyen proposé: €{transactions.prix?.moyen_propose?.toLocaleString()}</div>
-                        <div className="stat-line">Total acceptées: €{transactions.prix?.total_acceptees?.toLocaleString()}</div>
-                      </div>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        </>
-      )}
-    </div>
-  );
-};
+}
 
 export default AdminAnalyticsPage;

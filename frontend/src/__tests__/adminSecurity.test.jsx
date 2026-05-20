@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import AdminAuditPage from '../pages/AdminAuditPage';
 import AdminSecurityPage from '../pages/AdminSecurityPage';
 import { auditApi } from '../services/adminApi';
-import { AuthProvider } from '../context/AuthContext';
+import { AuthProvider } from '../contexts/AuthContext';
 
 // Mock the auditApi
 vi.mock('../services/adminApi', () => ({
