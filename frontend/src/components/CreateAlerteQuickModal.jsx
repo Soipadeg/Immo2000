@@ -3,22 +3,6 @@
  */
 
 import React, { useState } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Button,
-  Box,
-  Typography,
-  FormControlLabel,
-  Checkbox,
-  MenuItem,
-  Alert,
-  CircularProgress,
-} from '@mui/material';
-import { Check as CheckIcon } from '@mui/icons-material';
 import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
@@ -114,21 +98,21 @@ const CreateAlerteQuickModal = ({ open, onClose, initialFilters = {} }) => {
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <DialogTitle>🔔 Créer une alerte d'annonce</DialogTitle>
 
-      <DialogContent sx={{ pt: 2 }}>
+      <DialogContent>
         {success && (
-          <Alert severity="success" sx={{ mb: 2 }}>
+          <Alert severity="success">
             ✅ Alerte créée avec succès! Vous recevrez les notifications par email.
           </Alert>
         )}
 
         {error && (
-          <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError('')}>
+          <Alert severity="error" onClose={() => setError('')}>
             {error}
           </Alert>
         )}
 
         {!success && (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <div>
             {/* Nom obligatoire */}
             <TextField
               fullWidth
@@ -143,9 +127,9 @@ const CreateAlerteQuickModal = ({ open, onClose, initialFilters = {} }) => {
 
             {/* Rappel des critères actuels */}
             {(formData.ville || formData.type_bien || formData.prix_min || formData.surface_min) && (
-              <Typography variant="caption" color="text.secondary">
+              <p>
                 Les critères de votre recherche actuelle seront utilisés pour cette alerte.
-              </Typography>
+              </p>
             )}
 
             {/* Configuration */}
@@ -174,27 +158,26 @@ const CreateAlerteQuickModal = ({ open, onClose, initialFilters = {} }) => {
               label="Me notifier par email"
             />
 
-            <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
+            <p>
               💡 Conseil: Donnez un nom explicite à votre alerte pour la retrouver facilement
-            </Typography>
-          </Box>
+            </p>
+          </div>
         )}
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={handleClose} disabled={loading}>
+        <button onClick={handleClose} disabled={loading}>
           {success ? 'Fermer' : 'Annuler'}
-        </Button>
+        </button>
         {!success && (
-          <Button
-            onClick={handleCreateAlerte}
+          <button onClick={handleCreateAlerte}
             variant="contained"
             color="primary"
             disabled={loading || !formData.nom.trim()}
-            startIcon={loading ? <CircularProgress size={20} /> : <CheckIcon />}
+            startIcon={loading ? <div class="spinner"></div> : <CheckIcon />}
           >
             Créer l'alerte
-          </Button>
+          </button>
         )}
       </DialogActions>
     </Dialog>

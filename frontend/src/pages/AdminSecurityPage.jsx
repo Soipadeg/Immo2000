@@ -1,9 +1,9 @@
+import '../styles/AdminSecurityPage.css';
 import React, { useState, useEffect } from 'react';
 import { Button, Alert } from '@/components';
 import { auditApi } from '../services/adminApi';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import '../styles/AdminSecurityPage.css';
 
 const AdminSecurityPage = () => {
   const { user, loading: authLoading } = useAuth();

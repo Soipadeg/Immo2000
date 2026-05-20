@@ -1,3 +1,5 @@
+import '../styles/DashboardRedirectPage.css';
+import { Alert,Button,Input } from '@/components';
 /**
  * Page de redirection intelligente du dashboard
  * Redirige vers le dashboard approprié selon le rôle de l'utilisateur
@@ -6,7 +8,10 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { Box, CircularProgress, Typography } from '@mui/material';
+
+
+
+
 
 const DashboardRedirectPage = () => {
   const { user, loading } = useAuth();
@@ -37,19 +42,11 @@ const DashboardRedirectPage = () => {
   }, [user, loading, navigate]);
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        gap: 2,
-      }}
+    <div
     >
-      <CircularProgress size={60} />
-      <Typography variant="h6">Redirection vers votre tableau de bord...</Typography>
-    </Box>
+      <div size={60} />
+      <h6 variant="h6">Redirection vers votre tableau de bord...</h6>
+    </div>
   );
 };
 

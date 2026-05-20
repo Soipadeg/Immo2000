@@ -1,6 +1,11 @@
+import '../styles/DevTransitionPage.css';
+import { Alert,Button,Input } from '@/components';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Box, CircularProgress, Typography, Alert } from '@mui/material';
+
+
+
+
 
 /**
  * Page de transition pour activer le mode dev
@@ -94,23 +99,14 @@ const DevTransitionPage = () => {
   }, [navigate, location.search]);
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        flexDirection: 'column',
-        bgcolor: '#f5f5f5',
-        gap: 2,
-      }}
+    <div
     >
-      <CircularProgress />
-      <Typography variant="body1">{status}</Typography>
-      <Alert severity="info" sx={{ maxWidth: 400 }}>
+      <div />
+      <p variant="body1">{status}</p>
+      <Alert severity="info">
         ℹ️ Ne fermez pas cette page, elle se fermera automatiquement dans quelques secondes
       </Alert>
-    </Box>
+    </div>
   );
 };
 

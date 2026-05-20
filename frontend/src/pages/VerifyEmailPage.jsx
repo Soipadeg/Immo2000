@@ -1,8 +1,8 @@
+import './VerifyEmailPage.css';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, useSearchParams, Link } from 'react-router-dom';
 import { Button, Input, Alert, FormContainer } from '@/components';
 import { authApi } from '../services/api';
-import './VerifyEmailPage.css';
 
 export default function VerifyEmailPage() {
   const navigate = useNavigate();

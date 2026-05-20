@@ -1,9 +1,9 @@
+import '../styles/RegisterPage.css';
 import React, { useState, useRef } from 'react';
 import { Button, Alert, Input } from '@/components';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { register as apiRegister } from '../services/api';
-import '../styles/RegisterPage.css';
 
 const RegisterPage = () => {
   const navigate = useNavigate();

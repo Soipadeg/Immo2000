@@ -70,7 +70,9 @@ const Input = React.forwardRef(({
 
       <div className={inputClass}>
         {Icon && (
-          <Icon className="input-icon" aria-hidden="true" />
+          <div className="input-icon" aria-hidden="true">
+            {typeof Icon === 'string' ? Icon : <Icon />}
+          </div>
         )}
 
         <input

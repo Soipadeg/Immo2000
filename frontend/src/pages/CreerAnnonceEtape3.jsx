@@ -1,6 +1,8 @@
-import React
-import { Button, Alert, Input } from '@/components';, { useState } from 'react';
-
+import '../styles/CreerAnnonceEtape3.css';
+import React, { useState } from 'react';
+import { Button, Alert, Input } from '@/components';
+import { LinearProgress, Stack } from '@mui/material';
+import { List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 
@@ -8,7 +10,6 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 
 import { signContratExclusivite } from '../services/api';
-import '../styles/CreerAnnonceEtape3.css';
 
 /**
  * Page ÉTAPE 3 du tunnel : Contrat d'exclusivité
@@ -61,7 +62,7 @@ export default function CreerAnnonceEtape3() {
           </h1>
           <p  sx={{ color: 'text.secondary', mb: 2 }}>
             Étape 3 sur 4 : Contrat d'exclusivité
-          </h1>
+          </p>
           <LinearProgress variant="determinate" value={75} sx={{ mt: 2 }} />
         </div>
 
@@ -91,12 +92,12 @@ export default function CreerAnnonceEtape3() {
           <div>
             <h3  sx={{ fontWeight: 'bold', mb: 2 }}>
               ✅ Signer le contrat d'exclusivité
-            </h1>
+            </h3>
 
             <span  sx={{ mb: 2, color: 'text.secondary' }}>
               En signant, Immo2000 devient votre partenaire exclusif pour la vente. Vous aurez accès à nos outils IA
               avancés pour maximiser vos chances de vente.
-            </h1>
+            </span>
 
             {/* Avantages */}
             <List sx={{ p: 0 }}>
@@ -164,7 +165,7 @@ export default function CreerAnnonceEtape3() {
             >
               <span  sx={{ color: 'success.dark', fontWeight: 'bold' }}>
                 💰 Commission: 1.5% du prix de vente (uniquement en cas de transaction réussie)
-              </h1>
+              </span>
             </div>
           </div>
         </div>
@@ -183,11 +184,11 @@ export default function CreerAnnonceEtape3() {
           <div>
             <h3  sx={{ fontWeight: 'bold', mb: 2 }}>
               ⏭️ Publier sans contrat
-            </h1>
+            </h3>
 
             <span  sx={{ mb: 2, color: 'text.secondary' }}>
               Publiez votre annonce directement sans contrat. Vous aurez accès aux fonctionnalités de base.
-            </h1>
+            </span>
 
             {/* Avantages basiques */}
             <List sx={{ p: 0 }}>
@@ -211,7 +212,7 @@ export default function CreerAnnonceEtape3() {
             <div sx={{ mt: 2, p: 2, backgroundColor: 'warning.light', borderRadius: 1 }}>
               <span  sx={{ color: 'warning.dark' }}>
                 📝 <strong>Vous pouvez toujours signer le contrat plus tard</strong> depuis votre dashboard.
-              </h1>
+              </span>
             </div>
           </div>
         </div>
@@ -229,7 +230,7 @@ export default function CreerAnnonceEtape3() {
               label={
                 <span >
                   J'accepte les conditions du contrat d'exclusivité et la commission de 1.5% en cas de vente
-                </h1>
+                </span>
               }
             />
           </div>
@@ -272,7 +273,7 @@ export default function CreerAnnonceEtape3() {
           <span  sx={{ color: 'info.dark' }}>
             💡 <strong>À savoir :</strong> Le contrat d'exclusivité vous engage uniquement pour les ventes conclues
             via Immo2000. Les outils IA vous feront gagner du temps et augmenteront vos chances de vente.
-          </h1>
+          </span>
         </div>
       </div>
     </div>

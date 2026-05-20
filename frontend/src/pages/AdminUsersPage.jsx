@@ -1,3 +1,4 @@
+import '../styles/AdminUsersPage.css';
 /**
  * Page Gestion des Utilisateurs (Admin)
  */
@@ -6,7 +7,6 @@ import React, { useState } from 'react';
 import { Button, Input } from '@/components';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import '../styles/AdminUsersPage.css';
 
 const AdminUsersPage = () => {
   const { user, loading } = useAuth();

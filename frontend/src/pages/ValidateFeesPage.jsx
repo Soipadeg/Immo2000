@@ -1,3 +1,4 @@
+import '../styles/ValidateFeesPage.css';
 /**
  * Page de validation des frais notaire
  * Affiche les frais calculés, commission Immo2000, et permet de valider
@@ -8,7 +9,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { transactionsApi } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import { Button, Alert, Input } from '@/components';
-import '../styles/ValidateFeesPage.css';
 
 
 
@@ -85,7 +85,7 @@ export default function ValidateFeesPage() {
 
       <h4>
         Validation des Frais Notaire
-      </p>
+      </h4>
 
       {/* Infos transaction */}
       <div className="card">
@@ -97,7 +97,7 @@ export default function ValidateFeesPage() {
               </p>
               <h4>
                 {transaction?.annonce?.titre}
-              </p>
+              </h4>
             </div>
 
             <div className="grid-item">
@@ -106,7 +106,7 @@ export default function ValidateFeesPage() {
               </p>
               <h4>
                 {transaction?.prix_compromis?.toLocaleString('fr-FR')} €
-              </p>
+              </h4>
             </div>
 
             <div className="grid-item">
@@ -135,7 +135,7 @@ export default function ValidateFeesPage() {
       {/* Détail des frais */}
       <h4>
         Détail des Frais
-      </p>
+      </h4>
 
       {fees && (
         <TableContainer component={Paper} sx={{ mb: 4 }}>
@@ -155,7 +155,7 @@ export default function ValidateFeesPage() {
                   <div>
                     <span>
                       Frais de notaire
-                    </p>
+                    </span>
                     <p>
                       {fees.pourcentage_frais}% selon tarif légal
                     </p>
@@ -164,7 +164,7 @@ export default function ValidateFeesPage() {
                 <TableCell align="right">
                   <span>
                     {fees.montant_frais?.toLocaleString('fr-FR')} €
-                  </p>
+                  </span>
                 </TableCell>
               </TableRow>
 
@@ -225,7 +225,7 @@ export default function ValidateFeesPage() {
                 </p>
                 <h4>
                   {fees?.montant_frais?.toLocaleString('fr-FR')} €
-                </p>
+                </h4>
               </div>
             </div>
 
@@ -236,7 +236,7 @@ export default function ValidateFeesPage() {
                 </p>
                 <h4>
                   {fees?.commission_immo2000?.toLocaleString('fr-FR')} €
-                </p>
+                </h4>
               </div>
             </div>
 
@@ -247,7 +247,7 @@ export default function ValidateFeesPage() {
                 </p>
                 <h4>
                   {fees?.montant_total?.toLocaleString('fr-FR')} €
-                </p>
+                </h4>
               </div>
             </div>
           </div>
@@ -281,23 +281,26 @@ export default function ValidateFeesPage() {
         </Button>
       </div>
 
-      {/* Dialog Succès */}
-      <div className="modal"> setSuccessOpen(false)}>
-        <div className="modal">
-          <span className="icon-placeholder">CheckCircleIcon</span>
-          Frais Validés
-        </DialogTitle>
-        <div className="modal">
-          <p>
-            Les frais ont été validés avec succès. Vous pouvez maintenant procéder à la signature du compromis.
-          </p>
-        </DialogContent>
-        <div className="modal">
-          <Button onClick={() => setSuccessOpen(false)} variant="contained">
-            OK
-          </Button>
-        </DialogActions>
-      </div>
+      {/* Modal de Succès */}
+      {successOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="modal-header">
+              <h2>✓ Frais Validés</h2>
+            </div>
+            <div className="modal-body">
+              <p>
+                Les frais ont été validés avec succès. Vous pouvez maintenant procéder à la signature du compromis.
+              </p>
+            </div>
+            <div className="modal-footer">
+              <Button onClick={() => setSuccessOpen(false)} variant="contained">
+                OK
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

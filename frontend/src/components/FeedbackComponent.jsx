@@ -4,31 +4,6 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Card,
-  CardContent,
-  CardActions,
-  Typography,
-  Button,
-  Rating,
-  TextField,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Alert,
-  CircularProgress,
-  Paper,
-  Avatar,
-  Grid,
-} from '@mui/material';
-import {
-  Favorite as FavoriteIcon,
-  FavoriteBorder as FavoriteBorderIcon,
-  Reply as ReplyIcon,
-  Edit as EditIcon,
-} from '@mui/icons-material';
 import { feedbacksApi } from '../services/api';
 
 /**
@@ -67,23 +42,23 @@ export const FeedbackSubmitForm = ({ visiteId, onSuccess }) => {
   };
 
   return (
-    <Paper sx={{ p: 2, mb: 2, backgroundColor: '#f9f9f9' }}>
-      <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 600 }}>
+    <div className="card">
+      <p>
         📝 Donner votre avis sur la visite
-      </Typography>
+      </p>
 
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      {error && <Alert severity="error">{error}</Alert>}
 
-      <Box sx={{ mb: 2 }}>
-        <Typography component="legend" variant="body2" sx={{ mb: 1 }}>
+      <div>
+        <p>
           Votre note
-        </Typography>
+        </p>
         <Rating
           value={formData.rating}
           onChange={(e, value) => setFormData({ ...formData, rating: value })}
           size="large"
         />
-      </Box>
+      </div>
 
       <TextField
         fullWidth
@@ -93,19 +68,17 @@ export const FeedbackSubmitForm = ({ visiteId, onSuccess }) => {
         value={formData.commentaire}
         onChange={(e) => setFormData({ ...formData, commentaire: e.target.value })}
         placeholder="Partager votre expérience avec cette propriété..."
-        sx={{ mb: 2 }}
       />
 
-      <Button
-        variant="contained"
+      <button variant="contained"
         color="primary"
         disabled={loading}
         onClick={handleSubmit}
         fullWidth
       >
-        {loading ? <CircularProgress size={24} /> : 'Envoyer mon avis'}
-      </Button>
-    </Paper>
+        {loading ? <div class="spinner"></div> : 'Envoyer mon avis'}
+      </button>
+    </div>
   );
 };
 
@@ -140,75 +113,61 @@ export const FeedbackCard = ({ feedback, onReply }) => {
 
   return (
     <>
-      <Card sx={{ mb: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+      <Card>
         <CardContent>
           {/* En-tête avec avatar et infos */}
-          <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
+          <div>
             <Avatar
-              sx={{
-                backgroundColor: '#1976d2',
-                mr: 2,
-                width: 40,
-                height: 40,
-              }}
             >
               {feedback.acheteur_nom?.[0]?.toUpperCase() || 'A'}
             </Avatar>
-            <Box sx={{ flex: 1 }}>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+            <div>
+              <p>
                 {feedback.acheteur_nom || 'Utilisateur anonyme'}
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
+              </p>
+              <p>
                 {new Date(feedback.date_creation).toLocaleDateString('fr-FR')}
-              </Typography>
-            </Box>
-          </Box>
+              </p>
+            </div>
+          </div>
 
           {/* Note */}
-          <Box sx={{ mb: 2 }}>
+          <div>
             <Rating value={feedback.rating} readOnly size="small" />
-            <Typography variant="body2" sx={{ mt: 1, color: '#666' }}>
+            <p>
               {['Très mauvais', 'Mauvais', 'Acceptable', 'Bon', 'Excellent'][feedback.rating - 1]}
-            </Typography>
-          </Box>
+            </p>
+          </div>
 
           {/* Commentaire */}
           {feedback.commentaire && (
-            <Typography variant="body2" sx={{ mb: 2, color: '#333' }}>
+            <p>
               {feedback.commentaire}
-            </Typography>
+            </p>
           )}
 
           {/* Réponse du vendeur */}
           {feedback.reponse_vendeur && (
-            <Box
-              sx={{
-                mt: 2,
-                p: 1.5,
-                backgroundColor: '#f5f5f5',
-                borderLeft: '3px solid #4caf50',
-                borderRadius: '4px',
-              }}
+            <div
             >
-              <Typography variant="caption" sx={{ fontWeight: 600, color: '#4caf50' }}>
+              <p>
                 ✓ Réponse du vendeur
-              </Typography>
-              <Typography variant="body2" sx={{ mt: 0.5, color: '#555' }}>
+              </p>
+              <p>
                 {feedback.reponse_vendeur}
-              </Typography>
-            </Box>
+              </p>
+            </div>
           )}
         </CardContent>
 
         <CardActions>
           {!feedback.reponse_vendeur && (
-            <Button
-              size="small"
+            <button size="small"
               startIcon={<ReplyIcon />}
               onClick={() => setReplyDialogOpen(true)}
             >
               Répondre
-            </Button>
+            </button>
           )}
         </CardActions>
       </Card>
@@ -217,9 +176,9 @@ export const FeedbackCard = ({ feedback, onReply }) => {
       <Dialog open={replyDialogOpen} onClose={() => setReplyDialogOpen(false)} fullWidth>
         <DialogTitle>Répondre au feedback</DialogTitle>
         <DialogContent>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          <p>
             Feedback de {feedback.acheteur_nom}: "{feedback.commentaire}"
-          </Typography>
+          </p>
           <TextField
             fullWidth
             label="Votre réponse"
@@ -228,19 +187,17 @@ export const FeedbackCard = ({ feedback, onReply }) => {
             value={replyText}
             onChange={(e) => setReplyText(e.target.value)}
             placeholder="Répondez au feedback du visiteur..."
-            sx={{ mt: 2 }}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setReplyDialogOpen(false)}>Annuler</Button>
-          <Button
-            onClick={handleReply}
+          <button onClick={() => setReplyDialogOpen(false)}>Annuler</button>
+          <button onClick={handleReply}
             variant="contained"
             color="primary"
             disabled={!replyText.trim() || loading}
           >
-            {loading ? <CircularProgress size={24} /> : 'Envoyer'}
-          </Button>
+            {loading ? <div class="spinner"></div> : 'Envoyer'}
+          </button>
         </DialogActions>
       </Dialog>
     </>
@@ -274,9 +231,9 @@ export const FeedbacksList = () => {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-        <CircularProgress />
-      </Box>
+      <div>
+        <div class="spinner"></div>
+      </div>
     );
   }
 
@@ -286,11 +243,11 @@ export const FeedbacksList = () => {
 
   if (feedbacks.length === 0) {
     return (
-      <Paper sx={{ p: 3, textAlign: 'center' }}>
-        <Typography color="text.secondary">
+      <div className="card">
+        <p>
           Aucun feedback reçu pour le moment
-        </Typography>
-      </Paper>
+        </p>
+      </div>
     );
   }
 
@@ -310,57 +267,57 @@ export const FeedbacksList = () => {
   return (
     <Box>
       {/* Statistiques */}
-      <Paper sx={{ p: 3, mb: 3, backgroundColor: '#f9f9f9' }}>
+      <div className="card">
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6} md={3}>
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="body2" color="text.secondary">
+            <div>
+              <p>
                 Note Moyenne
-              </Typography>
-              <Typography variant="h4" sx={{ fontWeight: 700, color: '#1976d2' }}>
+              </p>
+              <p>
                 {avgRating}
-              </Typography>
-              <Rating value={Math.round(avgRating)} readOnly size="small" sx={{ mt: 1 }} />
-            </Box>
+              </p>
+              <Rating value={Math.round(avgRating)} readOnly size="small" />
+            </div>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="body2" color="text.secondary">
+            <div>
+              <p>
                 Total de Feedbacks
-              </Typography>
-              <Typography variant="h4" sx={{ fontWeight: 700, color: '#4caf50' }}>
+              </p>
+              <p>
                 {feedbacks.length}
-              </Typography>
-            </Box>
+              </p>
+            </div>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="body2" color="text.secondary">
+            <div>
+              <p>
                 Positifs (4-5★)
-              </Typography>
-              <Typography variant="h4" sx={{ fontWeight: 700, color: '#8bc34a' }}>
+              </p>
+              <p>
                 {ratingDistribution[5] + ratingDistribution[4]}
-              </Typography>
-            </Box>
+              </p>
+            </div>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="body2" color="text.secondary">
+            <div>
+              <p>
                 À améliorer (1-2★)
-              </Typography>
-              <Typography variant="h4" sx={{ fontWeight: 700, color: '#ff9800' }}>
+              </p>
+              <p>
                 {ratingDistribution[1] + ratingDistribution[2]}
-              </Typography>
-            </Box>
+              </p>
+            </div>
           </Grid>
         </Grid>
-      </Paper>
+      </div>
 
       {/* Liste des feedbacks */}
       <Box>
-        <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
+        <p>
           📋 Feedbacks Reçus
-        </Typography>
+        </p>
         {feedbacks.map((feedback) => (
           <FeedbackCard
             key={feedback.feedback_id}
@@ -368,8 +325,8 @@ export const FeedbacksList = () => {
             onReply={loadFeedbacks}
           />
         ))}
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 };
 

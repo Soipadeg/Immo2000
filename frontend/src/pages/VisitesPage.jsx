@@ -1,35 +1,11 @@
+import '../styles/VisitesPage.css';
+import { Alert,Button,Input } from '@/components';
 /**
  * Page de gestion des visites
  * Permettre de planifier une visite et voir l'historique
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  Container,
-  Paper,
-  Typography,
-  Box,
-  TextField,
-  Button,
-  CircularProgress,
-  Alert,
-  Grid,
-  Card,
-  CardContent,
-  CardActions,
-  Chip,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Tabs,
-  Tab,
-} from '@mui/material';
-import {
-  Delete as DeleteIcon,
-  Download as DownloadIcon,
-  Edit as EditIcon,
-} from '@mui/icons-material';
 import { visitesApi } from '../services/api';
 import {
   FeedbackSubmitForm,
@@ -37,6 +13,10 @@ import {
 } from '../components/FeedbackComponent';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
+
+
+
+
 
 const VisitesPage = () => {
   const [tabValue, setTabValue] = useState(0);
@@ -159,30 +139,30 @@ const VisitesPage = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" gutterBottom sx={{ mb: 3 }}>
+    <div maxWidth="lg">
+      <h4 variant="h4" gutterBottom>
         📅 Gestion des Visites
-      </Typography>
+      </h4>
 
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-      {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
+      {error && <Alert severity="error">{error}</Alert>}
+      {success && <Alert severity="success">{success}</Alert>}
 
-      <Tabs value={tabValue} onChange={(e, v) => setTabValue(v)} sx={{ mb: 3 }}>
+      <Tabs value={tabValue} onChange={(e, v) => setTabValue(v)}>
         <Tab label="Planifier une visite" />
         <Tab label="Mes visites" />
         <Tab label="Feedbacks" />
       </Tabs>
 
       {tabValue === 0 && (
-        <Paper sx={{ p: 3 }}>
-          <Typography variant="h6" gutterBottom>
+        <div>
+          <h6 variant="h6" gutterBottom>
             Planifier une nouvelle visite
-          </Typography>
+          </h6>
 
-          <Box component="form" onSubmit={handleScheduleVisite} sx={{ mt: 2 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
+          <div component="form" onSubmit={handleScheduleVisite}>
+            <div container spacing={2}>
+              <div item xs={12} sm={6}>
+                <Input
                   fullWidth
                   label="ID de l'annonce"
                   type="number"
@@ -191,9 +171,9 @@ const VisitesPage = () => {
                   required
                   inputProps={{ min: 1 }}
                 />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
+              </div>
+              <div item xs={12} sm={6}>
+                <Input
                   fullWidth
                   label="Date et heure"
                   type="datetime-local"
@@ -202,9 +182,9 @@ const VisitesPage = () => {
                   required
                   InputLabelProps={{ shrink: true }}
                 />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
+              </div>
+              <div item xs={12}>
+                <Input
                   fullWidth
                   label="Notes (optionnel)"
                   multiline
@@ -213,60 +193,58 @@ const VisitesPage = () => {
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Ajoutez des notes sur la visite..."
                 />
-              </Grid>
-              <Grid item xs={12}>
+              </div>
+              <div item xs={12}>
                 <Button
                   type="submit"
                   variant="contained"
                   color="primary"
                   disabled={planning}
-                  sx={{ mt: 1 }}
                 >
-                  {planning ? <CircularProgress size={24} /> : 'Planifier la visite'}
+                  {planning ? <div size={24} /> : 'Planifier la visite'}
                 </Button>
-              </Grid>
-            </Grid>
-          </Box>
-        </Paper>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {tabValue === 1 && (
-        <Box>
+        <div>
           {loading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-              <CircularProgress />
-            </Box>
+            <div>
+              <div />
+            </div>
           ) : visites.length === 0 ? (
-            <Paper sx={{ p: 3, textAlign: 'center' }}>
-              <Typography color="text.secondary">
+            <div>
+              <p color="text.secondary">
                 Aucune visite planifiée pour le moment
-              </Typography>
-            </Paper>
+              </h4>
+            </div>
           ) : (
-            <Grid container spacing={2}>
+            <div container spacing={2}>
               {visites.map((visite) => (
-                <Grid item xs={12} sm={6} md={4} key={visite.visite_id}>
-                  <Card>
-                    <CardContent>
-                      <Typography variant="h6" gutterBottom>
+                <div item xs={12} sm={6} md={4} key={visite.visite_id}>
+                  <div>
+                    <div>
+                      <h6 variant="h6" gutterBottom>
                         Annonce #{visite.annonce_id}
-                      </Typography>
-                      <Typography color="text.secondary" gutterBottom>
+                      </h6>
+                      <p color="text.secondary" gutterBottom>
                         📅 {new Date(visite.date_heure).toLocaleString('fr-FR')}
-                      </Typography>
-                      <Chip
+                      </h6>
+                      <span
                         label={visite.statut}
                         color={getStatutColor(visite.statut)}
                         size="small"
-                        sx={{ mt: 1 }}
                       />
                       {visite.notes && (
-                        <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary' }}>
+                        <p variant="body2">
                           <strong>Notes:</strong> {visite.notes}
-                        </Typography>
+                        </h4>
                       )}
-                    </CardContent>
-                    <CardActions>
+                    </div>
+                    <div>
                       <Button
                         size="small"
                         startIcon={<DownloadIcon />}
@@ -293,57 +271,57 @@ const VisitesPage = () => {
                       >
                         Annuler
                       </Button>
-                    </CardActions>
-                  </Card>
-                </Grid>
+                    </div>
+                  </div>
+                </div>
               ))}
-            </Grid>
+            </div>
           )}
-        </Box>
+        </div>
       )}
 
       {/* Onglet 3: Feedbacks */}
       {tabValue === 2 && (
-        <Box>
+        <div>
           {userRole === 'vendeur' ? (
-            <Box>
-              <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
+            <div>
+              <h6 variant="h6" gutterBottom>
                 ⭐ Feedbacks reçus des acheteurs
-              </Typography>
+              </h6>
               <FeedbacksList />
-            </Box>
+            </div>
           ) : (
-            <Box>
-              <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
+            <div>
+              <h6 variant="h6" gutterBottom>
                 Vos feedbacks
-              </Typography>
+              </h6>
               {loading ? (
-                <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-                  <CircularProgress />
-                </Box>
+                <div>
+                  <div />
+                </div>
               ) : visites.length === 0 ? (
-                <Paper sx={{ p: 3, textAlign: 'center' }}>
-                  <Typography color="text.secondary">
+                <div>
+                  <p color="text.secondary">
                     Aucune visite complétée pour le moment
-                  </Typography>
-                </Paper>
+                  </h6>
+                </div>
               ) : (
-                <Grid container spacing={2}>
+                <div container spacing={2}>
                   {visites
                     .filter((v) => v.statut === 'complétée')
                     .map((visite) => (
-                      <Grid item xs={12} key={visite.visite_id}>
-                        <Card>
-                          <CardContent>
-                            <Typography variant="h6" gutterBottom>
+                      <div item xs={12} key={visite.visite_id}>
+                        <div>
+                          <div>
+                            <h6 variant="h6" gutterBottom>
                               Visite - Annonce #{visite.annonce_id}
-                            </Typography>
-                            <Typography color="text.secondary" gutterBottom>
+                            </h6>
+                            <p color="text.secondary" gutterBottom>
                               📅 {new Date(visite.date_heure).toLocaleString('fr-FR')}
-                            </Typography>
+                            </h6>
 
                             {/* Formulaire de feedback */}
-                            <Box sx={{ mt: 2 }}>
+                            <div>
                               <FeedbackSubmitForm
                                 visiteId={visite.visite_id}
                                 onSuccess={() => {
@@ -351,40 +329,39 @@ const VisitesPage = () => {
                                   setTimeout(() => setSuccess(''), 3000);
                                 }}
                               />
-                            </Box>
-                          </CardContent>
-                        </Card>
-                      </Grid>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     ))}
-                </Grid>
+                </div>
               )}
-            </Box>
+            </div>
           )}
-        </Box>
+        </div>
       )}
 
       {/* Dialog d'édition */}
-      <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)}>
-        <DialogTitle>Modifier la date et heure</DialogTitle>
-        <DialogContent>
-          <TextField
+      <div open={editDialogOpen} onClose={() => setEditDialogOpen(false)}>
+        <div>Modifier la date et heure</div>
+        <div>
+          <Input
             fullWidth
             label="Date et heure"
             type="datetime-local"
             value={editDateHeure}
             onChange={(e) => setEditDateHeure(e.target.value)}
             InputLabelProps={{ shrink: true }}
-            sx={{ mt: 2 }}
           />
-        </DialogContent>
-        <DialogActions>
+        </div>
+        <div>
           <Button onClick={() => setEditDialogOpen(false)}>Annuler</Button>
           <Button onClick={handleUpdateVisite} color="primary" variant="contained">
             Modifier
           </Button>
-        </DialogActions>
-      </Dialog>
-    </Container>
+        </div>
+      </div>
+    </div>
   );
 };
 

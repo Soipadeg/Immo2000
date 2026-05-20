@@ -1,9 +1,9 @@
-import React
-import { Button, Alert, Input } from '@/components';, { useState } from 'react';
-
+import '../styles/CreerAnnonceEtape2.css';
+import React, { useState } from 'react';
+import { Button, Alert, Input } from '@/components';
+import { LinearProgress, Stack } from '@mui/material';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { register } from '../services/api';
-import '../styles/CreerAnnonceEtape2.css';
 
 /**
  * Page ÉTAPE 2 du tunnel : Création de compte
@@ -157,7 +157,7 @@ export default function CreerAnnonceEtape2() {
           </h1>
           <p  sx={{ color: 'text.secondary' }}>
             Étape 2 sur 4 : Profil de base
-          </h1>
+          </p>
           <LinearProgress variant="determinate" value={50} sx={{ mt: 2 }} />
         </div>
 
@@ -179,7 +179,7 @@ export default function CreerAnnonceEtape2() {
                   onChange={handleChange}
                   placeholder="vous@exemple.com"
                   required
-                / />
+                />
               </div>
 
               {/* Nom et Prénom */}
@@ -192,7 +192,7 @@ export default function CreerAnnonceEtape2() {
                   onChange={handleChange}
                   placeholder="Dupont"
                   required
-                / />
+                />
               </div>
 
               <div item xs={12} sm={6}>
@@ -204,7 +204,7 @@ export default function CreerAnnonceEtape2() {
                   onChange={handleChange}
                   placeholder="Jean"
                   required
-                / />
+                />
               </div>
 
               {/* Téléphone */}
@@ -218,7 +218,7 @@ export default function CreerAnnonceEtape2() {
                   onChange={handleChange}
                   placeholder="+33 6 12 34 56 78"
                   required
-                / />
+                />
               </div>
 
               {/* Mot de passe */}
@@ -232,13 +232,13 @@ export default function CreerAnnonceEtape2() {
                   onChange={handleChange}
                   required
                   helperText="Min 8 caractères, majuscule, minuscule, chiffre, caractère spécial"
-                / />
+                />
                 {formData.mot_de_passe && (
                   <div sx={{ mt: 1 }}>
                     <LinearProgress variant="determinate" value={passwordStrength} />
                     <p  sx={{ color: 'text.secondary' }}>
                       Force du mot de passe: {passwordStrength}%
-                    </h1>
+                    </p>
                   </div>
                 )}
               </div>
@@ -253,7 +253,7 @@ export default function CreerAnnonceEtape2() {
                   value={formData.mot_de_passe_confirm}
                   onChange={handleChange}
                   required
-                / />
+                />
               </div>
 
               {/* CGU / Politique */}
@@ -276,7 +276,7 @@ export default function CreerAnnonceEtape2() {
                       <Link href="/politique-confidentialite" target="_blank" underline="hover">
                         Politique de Confidentialité
                       </Link>
-                    </h1>
+                    </span>
                   }
                 />
               </div>
@@ -309,7 +309,7 @@ export default function CreerAnnonceEtape2() {
                 <Link href="/connexion" underline="hover">
                   Se connecter
                 </Link>
-              </h1>
+              </span>
             </div>
           </form>
         </div>

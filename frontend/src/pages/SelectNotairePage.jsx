@@ -1,3 +1,4 @@
+import '../styles/SelectNotairePage.css';
 /**
  * Page de sélection d'un notaire pour une transaction
  * L'acheteur et vendeur choisissent conjointement le notaire partenaire
@@ -8,7 +9,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { transactionsApi, notairesApi } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import { Button, Alert, Input } from '@/components';
-import '../styles/SelectNotairePage.css';
 
 
 

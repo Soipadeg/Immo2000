@@ -4,17 +4,7 @@
 
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import {
-  ThemeProvider,
-  CssBaseline,
-  Box,
-  Button,
-  Typography,
-} from '@mui/material';
 import { fr } from 'date-fns/locale';
-
-// Theme professionnel
-import theme from './theme';
 
 // Hooks personnalisés
 import { useAuth } from './hooks/useAuth';
@@ -111,19 +101,17 @@ function App() {
   const [chatbotOpen, setChatbotOpen] = useState(false);
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
-        {/* Navbar dynamique */}
-        <DynamicNavbar
-          isAuthenticated={isAuthenticated}
-          userRole={user?.role}
-          user={user}
-          onLogout={logout}
-        />
+    <Router>
+      {/* Navbar dynamique */}
+      <DynamicNavbar
+        isAuthenticated={isAuthenticated}
+        userRole={user?.role}
+        user={user}
+        onLogout={logout}
+      />
 
-        {/* Contenu principal */}
-        <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+      {/* Contenu principal */}
+      <div style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
           <Routes>
             {/* ✨ Routes de développement - Simuler les 4 rôles sans authentification */}
             <Route path="/dev/visiteur" element={<DevRoleInitializer role="visiteur" />} />
@@ -276,12 +264,12 @@ function App() {
             {/* Redirection par défaut */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-        </Box>
+        </div>
 
         {/* Bouton du chatbot - widget flottant */}
         {!chatbotOpen && (
-          <Box
-            sx={{
+          <div
+            style={{
               position: 'fixed',
               bottom: 20,
               right: 20,
@@ -290,32 +278,29 @@ function App() {
             }}
             onClick={() => setChatbotOpen(true)}
           >
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{
+            <button
+              style={{
                 borderRadius: '50%',
                 width: 60,
                 height: 60,
                 minWidth: 60,
                 fontSize: 24,
+                backgroundColor: '#4f46e5',
+                color: 'white',
+                border: 'none',
+                cursor: 'pointer',
                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                '&:hover': {
-                  transform: 'scale(1.1)',
-                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.2)',
-                },
               }}
             >
               💬
-            </Button>
-          </Box>
+            </button>
+          </div>
         )}
 
         {/* Composant Chatbot */}
         <Chatbot isOpen={chatbotOpen} onClose={() => setChatbotOpen(false)} />
       </Router>
-    </ThemeProvider>
-  );
-}
+    );
+  }
 
-export default App;
+  export default App;

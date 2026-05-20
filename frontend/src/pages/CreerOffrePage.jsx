@@ -1,3 +1,5 @@
+import '../styles/CreerOffrePage.css';
+import { Alert,Button,Input } from '@/components';
 /**
  * Page de création d'une offre d'achat
  * Appelée depuis MesRendezVous avec ?annonce_id=X
@@ -5,24 +7,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  CardActions,
-  Button,
-  TextField,
-  Stepper,
-  Step,
-  StepLabel,
-  Alert,
-  CircularProgress,
-  Grid,
-} from '@mui/material';
 import { useAuth } from '../hooks/useAuth';
 import { offresApi, annoncesApi } from '../services/api';
+
+
+
+
 
 const steps = ['Information', 'Prix', 'Message', 'Confirmation'];
 
@@ -104,19 +94,19 @@ export default function CreerOffrePage() {
 
   if (loading) {
     return (
-      <Container>
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress />
-        </Box>
-      </Container>
+      <div>
+        <div>
+          <div />
+        </div>
+      </div>
     );
   }
 
   if (!annonce) {
     return (
-      <Container>
+      <div>
         <Alert severity="error">Annonce non trouvée</Alert>
-      </Container>
+      </div>
     );
   }
 
@@ -124,14 +114,14 @@ export default function CreerOffrePage() {
   const prixMax = annonce.prix * 1.2; // +20%
 
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
-      <Typography variant="h4" gutterBottom>
+    <div maxWidth="md">
+      <h4 gutterBottom>
         Faire une offre d'achat
-      </Typography>
+      </h4>
 
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      {error && <Alert severity="error">{error}</Alert>}
 
-      <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
+      <Stepper activeStep={activeStep}>
         {steps.map((label) => (
           <Step key={label}>
             <StepLabel>{label}</StepLabel>
@@ -139,65 +129,65 @@ export default function CreerOffrePage() {
         ))}
       </Stepper>
 
-      <Card>
-        <CardContent>
+      <div>
+        <div>
           {activeStep === 0 && (
-            <Box>
-              <Typography variant="h6" gutterBottom>
+            <div>
+              <h6 gutterBottom>
                 Récapitulatif du bien
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <Typography variant="subtitle2" color="textSecondary">
+              </h6>
+              <div container spacing={2}>
+                <div item xs={12}>
+                  <p>
                     Titre
-                  </Typography>
-                  <Typography variant="body1">{annonce.titre}</Typography>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="subtitle2" color="textSecondary">
+                  </h4>
+                  <p>{annonce.titre}</h6>
+                </div>
+                <div item xs={12} sm={6}>
+                  <p>
                     Localisation
-                  </Typography>
-                  <Typography variant="body1">
+                  </h4>
+                  <p>
                     {annonce.adresse}, {annonce.code_postal} {annonce.ville}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="subtitle2" color="textSecondary">
+                  </h6>
+                </div>
+                <div item xs={12} sm={6}>
+                  <p>
                     Prix demandé
-                  </Typography>
-                  <Typography variant="body1">
+                  </h4>
+                  <p>
                     {new Intl.NumberFormat('fr-FR', {
                       style: 'currency',
                       currency: 'EUR',
                     }).format(annonce.prix)}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="subtitle2" color="textSecondary">
+                  </h6>
+                </div>
+                <div item xs={12} sm={6}>
+                  <p>
                     Surface
-                  </Typography>
-                  <Typography variant="body1">
+                  </p>
+                  <p>
                     {annonce.surface_habitable} m²
-                  </Typography>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="subtitle2" color="textSecondary">
+                  </p>
+                </div>
+                <div item xs={12} sm={6}>
+                  <p>
                     Pièces
-                  </Typography>
-                  <Typography variant="body1">
+                  </p>
+                  <p>
                     {annonce.nombre_pieces}
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Box>
+                  </p>
+                </div>
+              </div>
+            </div>
           )}
 
           {activeStep === 1 && (
-            <Box>
-              <Typography variant="h6" gutterBottom>
+            <div>
+              <h6 gutterBottom>
                 Quel est votre offre ?
-              </Typography>
-              <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
+              </h6>
+              <p>
                 Recommandation: entre {new Intl.NumberFormat('fr-FR', {
                   style: 'currency',
                   currency: 'EUR',
@@ -205,8 +195,8 @@ export default function CreerOffrePage() {
                   style: 'currency',
                   currency: 'EUR',
                 }).format(prixMax)}
-              </Typography>
-              <TextField
+              </h6>
+              <Input
                 fullWidth
                 label="Prix proposé (€)"
                 type="number"
@@ -220,18 +210,18 @@ export default function CreerOffrePage() {
                     : ''
                 }
               />
-            </Box>
+            </div>
           )}
 
           {activeStep === 2 && (
-            <Box>
-              <Typography variant="h6" gutterBottom>
+            <div>
+              <h6 gutterBottom>
                 Message au vendeur
-              </Typography>
-              <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
+              </h6>
+              <p>
                 Présentez votre projet, posez des questions, etc. (Optionnel)
-              </Typography>
-              <TextField
+              </h6>
+              <Input
                 fullWidth
                 multiline
                 rows={6}
@@ -241,67 +231,67 @@ export default function CreerOffrePage() {
                 onChange={handleInputChange}
                 placeholder="Bonjour, je suis très intéressé par ce bien..."
               />
-            </Box>
+            </div>
           )}
 
           {activeStep === 3 && (
-            <Box>
-              <Typography variant="h6" gutterBottom>
+            <div>
+              <h6 gutterBottom>
                 Récapitulatif de votre offre
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <Card variant="outlined">
-                    <CardContent>
-                      <Typography color="textSecondary">Bien</Typography>
-                      <Typography variant="body1">{annonce.titre}</Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-                <Grid item xs={6}>
-                  <Card variant="outlined">
-                    <CardContent>
-                      <Typography color="textSecondary">Prix demandé</Typography>
-                      <Typography variant="h6">
+              </h6>
+              <div container spacing={2}>
+                <div item xs={12}>
+                  <div>
+                    <div>
+                      <p>Bien</h6>
+                      <p>{annonce.titre}</h6>
+                    </div>
+                  </div>
+                </div>
+                <div item xs={6}>
+                  <div>
+                    <div>
+                      <p>Prix demandé</h6>
+                      <h6>
                         {new Intl.NumberFormat('fr-FR', {
                           style: 'currency',
                           currency: 'EUR',
                         }).format(annonce.prix)}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-                <Grid item xs={6}>
-                  <Card variant="outlined">
-                    <CardContent>
-                      <Typography color="textSecondary">Votre offre</Typography>
-                      <Typography variant="h6" color="primary">
+                      </h6>
+                    </div>
+                  </div>
+                </div>
+                <div item xs={6}>
+                  <div>
+                    <div>
+                      <p>Votre offre</h6>
+                      <h6>
                         {new Intl.NumberFormat('fr-FR', {
                           style: 'currency',
                           currency: 'EUR',
                         }).format(formData.prix_propose || 0)}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
+                      </h6>
+                    </div>
+                  </div>
+                </div>
                 {formData.message && (
-                  <Grid item xs={12}>
-                    <Card variant="outlined">
-                      <CardContent>
-                        <Typography color="textSecondary">Message</Typography>
-                        <Typography variant="body2">
+                  <div item xs={12}>
+                    <div>
+                      <div>
+                        <p>Message</h6>
+                        <p>
                           {formData.message}
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </Grid>
+                        </h6>
+                      </div>
+                    </div>
+                  </div>
                 )}
-              </Grid>
-            </Box>
+              </div>
+            </div>
           )}
-        </CardContent>
+        </div>
 
-        <CardActions sx={{ justifyContent: 'space-between', p: 2 }}>
+        <div>
           <Button
             disabled={activeStep === 0 || submitting}
             onClick={handleBack}
@@ -316,10 +306,10 @@ export default function CreerOffrePage() {
               (activeStep === 1 && !formData.prix_propose)
             }
           >
-            {submitting ? <CircularProgress size={24} /> : activeStep === steps.length - 1 ? 'Envoyer l\'offre' : 'Suivant'}
+            {submitting ? <div size={24} /> : activeStep === steps.length - 1 ? 'Envoyer l\'offre' : 'Suivant'}
           </Button>
-        </CardActions>
-      </Card>
-    </Container>
+        </div>
+      </div>
+    </div>
   );
 }

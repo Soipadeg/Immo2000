@@ -1,3 +1,4 @@
+import '../styles/HomePageV2.css';
 /**
  * Nouvelle HomePage avec formulaire multi-étapes de création d'annonce
  * Design inspiré d'EstateAI - Refactored to div-based components
@@ -6,7 +7,6 @@
 import React, { useState } from 'react';
 import { Button, Input } from '@/components';
 import { useNavigate } from 'react-router-dom';
-import '../styles/HomePageV2.css';
 
 const steps = ['Adresse & Titre', 'Caractéristiques', 'Infos Vendeur'];
 

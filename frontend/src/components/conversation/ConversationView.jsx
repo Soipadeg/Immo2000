@@ -7,20 +7,6 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
-import {
-  Box,
-  Paper,
-  TextField,
-  Button,
-  Typography,
-  List,
-  ListItem,
-  Avatar,
-  Chip,
-  CircularProgress,
-  Alert,
-} from '@mui/material';
-import SendIcon from '@mui/icons-material/Send';
 import { useConversation, useOnlineStatus } from '../hooks/useWebSocket';
 import { useAuthStore } from '../store/authStore';
 
@@ -91,13 +77,12 @@ export function ConversationView({ conversationId, otherUser }) {
   };
 
   return (
-    <Box
-      sx={{
+    <div style={
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
         backgroundColor: '#f5f5f5',
-      }}
+      }
     >
       {/* Header */}
       <Paper
@@ -111,27 +96,26 @@ export function ConversationView({ conversationId, otherUser }) {
           justifyContent: 'space-between',
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <div style={ display: 'flex', alignItems: 'center', gap: 2 }>
           <Avatar src={otherUser?.avatar} alt={otherUser?.nom} />
-          <Box>
-            <Typography variant="subtitle1" fontWeight="bold">
+          <div>
+            <span>
               {otherUser?.nom} {otherUser?.prenom}
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Box
-                sx={{
+            </span>
+            <div style={ display: 'flex', alignItems: 'center', gap: 1 }>
+              <div style={
                   width: 8,
                   height: 8,
                   borderRadius: '50%',
                   backgroundColor: isUserOnline(otherUser?.id) ? '#4caf50' : '#ccc',
-                }}
+                }
               />
-              <Typography variant="caption" color="textSecondary">
+              <span>
                 {isUserOnline(otherUser?.id) ? 'En ligne' : 'Hors ligne'}
-              </Typography>
-            </Box>
-          </Box>
-        </Box>
+              </span>
+            </div>
+          </div>
+        </div>
 
         {!connected && (
           <Alert severity="warning" sx={{ mb: 0 }}>
@@ -141,25 +125,24 @@ export function ConversationView({ conversationId, otherUser }) {
       </Paper>
 
       {/* Messages */}
-      <Box
-        sx={{
+      <div style={
           flex: 1,
           overflowY: 'auto',
           p: 2,
           display: 'flex',
           flexDirection: 'column',
           gap: 1,
-        }}
+        }
       >
         {messages.length === 0 ? (
-          <Box sx={{ textAlign: 'center', pt: 5 }}>
-            <Typography color="textSecondary">
+          <div style={ textAlign: 'center', pt: 5 }>
+            <span>
               Commencez une conversation!
-            </Typography>
-          </Box>
+            </span>
+          </div>
         ) : (
           messages.map((msg) => (
-            <Box
+            <div
               key={msg.id || msg.timestamp}
               sx={{
                 display: 'flex',
@@ -175,34 +158,27 @@ export function ConversationView({ conversationId, otherUser }) {
                   color: msg.user_id === user?.id ? 'white' : 'black',
                 }}
               >
-                <Typography variant="body2">{msg.content}</Typography>
-                <Typography
-                  variant="caption"
-                  sx={{
-                    display: 'block',
-                    mt: 0.5,
-                    opacity: 0.7,
-                  }}
-                >
+                <span>{msg.content}</span>
+                <span>
                   {new Date(msg.timestamp).toLocaleTimeString('fr-FR')}
-                </Typography>
+                </span>
               </Paper>
-            </Box>
+            </div>
           ))
         )}
 
         {/* Indicateur de typing */}
         {typing[otherUser?.id] && (
-          <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
+          <div style={ display: 'flex', gap: 0.5, alignItems: 'center' }>
             <CircularProgress size={20} />
-            <Typography variant="caption" color="textSecondary">
+            <span>
               {otherUser?.nom} est en train d'écrire...
-            </Typography>
-          </Box>
+            </span>
+          </div>
         )}
 
         <div ref={messagesEndRef} />
-      </Box>
+      </div>
 
       {/* Input */}
       <Paper
@@ -227,17 +203,12 @@ export function ConversationView({ conversationId, otherUser }) {
           disabled={!connected}
           size="small"
         />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSendMessage}
-          disabled={!connected || !content.trim()}
-          endIcon={<SendIcon />}
+        <button>}
         >
           Envoyer
-        </Button>
+        </button>
       </Paper>
-    </Box>
+    </div>
   );
 }
 
@@ -269,28 +240,23 @@ export function ConversationsList({ conversations, onSelectConversation }) {
               },
             }}
           >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }}>
+            <div style={ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }>
               <Avatar src={conv.otherUser?.avatar} alt={conv.otherUser?.nom} />
 
-              <Box sx={{ flex: 1 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Typography variant="subtitle2" fontWeight="bold">
+              <div style={ flex: 1 }>
+                <div style={ display: 'flex', justifyContent: 'space-between' }>
+                  <span>
                     {conv.otherUser?.nom}
-                  </Typography>
-                  <Typography variant="caption" color="textSecondary">
+                  </span>
+                  <span>
                     {new Date(conv.lastMessage?.timestamp).toLocaleDateString('fr-FR')}
-                  </Typography>
-                </Box>
+                  </span>
+                </div>
 
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 0.5 }}>
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    noWrap
-                    sx={{ flex: 1 }}
-                  >
+                <div style={ display: 'flex', justifyContent: 'space-between', mt: 0.5 }>
+                  <span>
                     {conv.lastMessage?.content || 'Pas de message'}
-                  </Typography>
+                  </span>
 
                   {unreadCount > 0 && (
                     <Chip
@@ -301,21 +267,20 @@ export function ConversationsList({ conversations, onSelectConversation }) {
                       sx={{ ml: 1 }}
                     />
                   )}
-                </Box>
-              </Box>
+                </div>
+              </div>
 
               {/* Indicateur en ligne */}
               {onlineUsers?.includes(conv.otherUser?.id) && (
-                <Box
-                  sx={{
+                <div style={
                     width: 12,
                     height: 12,
                     borderRadius: '50%',
                     backgroundColor: '#4caf50',
-                  }}
+                  }
                 />
               )}
-            </Box>
+            </div>
           </ListItem>
         );
       })}
@@ -331,10 +296,10 @@ export function NotificationCenter() {
   const { notifications, markAsRead } = require('../hooks/useWebSocket').useNotifications();
 
   return (
-    <Box sx={{ p: 2 }}>
-      <Typography variant="h6" fontWeight="bold" mb={2}>
+    <div style={ p: 2 }>
+      <span>
         Notifications ({notifications.length})
-      </Typography>
+      </span>
 
       <List>
         {notifications.map((notif) => (
@@ -348,20 +313,20 @@ export function NotificationCenter() {
             }}
             onClick={() => markAsRead(notif.id)}
           >
-            <Box sx={{ width: '100%' }}>
-              <Typography variant="subtitle2" fontWeight="bold">
+            <div style={ width: '100%' }>
+              <span>
                 {notif.title}
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
+              </span>
+              <span>
                 {notif.message}
-              </Typography>
-              <Typography variant="caption" color="textSecondary">
+              </span>
+              <span>
                 {new Date(notif.timestamp).toLocaleString('fr-FR')}
-              </Typography>
-            </Box>
+              </span>
+            </div>
           </ListItem>
         ))}
       </List>
-    </Box>
+    </div>
   );
 }

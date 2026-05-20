@@ -1,0 +1,112 @@
+/* Stat Card Styles */
+.stat-card {
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.09) 0%, rgba(79, 70, 229, 0.03) 100%);
+  border: 1px solid rgba(79, 70, 229, 0.18);
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+  cursor: default;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.2);
+  border-color: rgba(79, 70, 229, 0.36);
+}
+
+.stat-card__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-card__title {
+  color: #666;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+
+.stat-card__value {
+  font-weight: 700;
+  font-size: 1.875rem;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.stat-card__subtitle {
+  font-size: 0.875rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.stat-card__trend {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+.stat-card__trend.up {
+  color: #22c55e;
+}
+
+.stat-card__trend.down {
+  color: #ef4444;
+}
+
+.stat-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 0.75rem;
+  background-color: rgba(79, 70, 229, 0.1);
+  color: #4f46e5;
+  flex-shrink: 0;
+  font-size: 1.75rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .stat-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .stat-card__value {
+    font-size: 1.5rem;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .stat-card {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.05) 0%, rgba(79, 70, 229, 0.01) 100%);
+    border-color: rgba(79, 70, 229, 0.2);
+  }
+
+  .stat-card__title {
+    color: #999;
+  }
+
+  .stat-card__value {
+    color: #f0f0f0;
+  }
+
+  .stat-card__subtitle {
+    color: #999;
+  }
+
+  .stat-card__icon {
+    background-color: rgba(79, 70, 229, 0.15);
+  }
+}

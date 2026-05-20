@@ -4,27 +4,6 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Container,
-  Typography,
-  Card,
-  CardMedia,
-  CardContent,
-  CardActions,
-  Button,
-  Chip,
-  CircularProgress,
-  Alert,
-  IconButton,
-  Grid,
-} from '@mui/material';
-import {
-  ChevronLeft as ChevronLeftIcon,
-  ChevronRight as ChevronRightIcon,
-  Favorite as FavoriteIcon,
-  FavoriteBorder as FavoriteBorderIcon,
-} from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -123,9 +102,9 @@ const SimilarAnnoncesCarousel = ({ annonceActuelle, userRole }) => {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-        <CircularProgress />
-      </Box>
+      <div>
+        <div class="spinner"></div>
+      </div>
     );
   }
 
@@ -143,22 +122,22 @@ const SimilarAnnoncesCarousel = ({ annonceActuelle, userRole }) => {
   const canShowNext = currentIndex < maxIndex;
 
   return (
-    <Container maxWidth="lg" sx={{ py: 6 }}>
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h5" gutterBottom sx={{ fontWeight: 700 }}>
+    <Container maxWidth="lg">
+      <div>
+        <p>
           🏠 Annonces similaires
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
+        </p>
+        <p>
           {similaires.length} bien{similaires.length > 1 ? 's' : ''} similaire
           {similaires.length > 1 ? 's' : ''} disponible
           {similaires.length > 1 ? 's' : ''}
-        </Typography>
-      </Box>
+        </p>
+      </div>
 
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      {error && <Alert severity="error">{error}</Alert>}
 
       {/* Carousel */}
-      <Box sx={{ position: 'relative' }}>
+      <div>
         {/* Boutons de navigation */}
         {canShowPrevious && (
           <IconButton
@@ -229,70 +208,44 @@ const SimilarAnnoncesCarousel = ({ annonceActuelle, userRole }) => {
                     height="250"
                     image={annonce.photos[0]}
                     alt={annonce.titre}
-                    sx={{ objectFit: 'cover' }}
                   />
                 ) : (
-                  <Box
-                    sx={{
-                      height: 250,
-                      bgcolor: '#f0f0f0',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: '#999',
-                    }}
+                  <div
                   >
                     Pas de photo
-                  </Box>
+                  </div>
                 )}
 
-                <CardContent sx={{ flexGrow: 1 }}>
+                <CardContent>
                   {/* Titre */}
-                  <Typography
-                    gutterBottom
-                    variant="h6"
-                    component="div"
-                    sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}
-                  >
+                  <p>
                     {annonce.titre}
-                  </Typography>
+                  </p>
 
                   {/* Prix */}
-                  <Typography
-                    variant="h5"
-                    color="primary"
-                    sx={{ mb: 1, fontWeight: 700 }}
-                  >
+                  <p>
                     {annonce.prix.toLocaleString('fr-FR', {
                       style: 'currency',
                       currency: 'EUR',
                     })}
-                  </Typography>
+                  </p>
 
                   {/* Localisation */}
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                  <p>
                     📍 {annonce.ville}
-                  </Typography>
+                  </p>
 
                   {/* Caractéristiques */}
-                  <Box sx={{ my: 1.5, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                  <div>
                     <Chip label={`${annonce.surface}m²`} size="small" variant="outlined" />
                     <Chip label={`${annonce.nombre_pieces} p.`} size="small" variant="outlined" />
-                  </Box>
+                  </div>
 
                   {/* DPE */}
                   {annonce.dpe && (
                     <Chip
                       label={`DPE: ${annonce.dpe}`}
                       size="small"
-                      sx={{ mb: 1 }}
-                      color={
-                        annonce.dpe <= 'B'
-                          ? 'success'
-                          : annonce.dpe <= 'D'
-                          ? 'warning'
-                          : 'error'
-                      }
                       variant="outlined"
                     />
                   )}
@@ -300,8 +253,7 @@ const SimilarAnnoncesCarousel = ({ annonceActuelle, userRole }) => {
 
                 {/* Actions */}
                 <CardActions>
-                  <Button
-                    size="small"
+                  <button size="small"
                     startIcon={
                       favorites.includes(annonce.annonce_id) ? (
                         <FavoriteIcon />
@@ -313,19 +265,16 @@ const SimilarAnnoncesCarousel = ({ annonceActuelle, userRole }) => {
                       e.stopPropagation();
                       toggleFavorite(annonce.annonce_id);
                     }}
-                    color={favorites.includes(annonce.annonce_id) ? 'error' : 'inherit'}
                   >
                     {favorites.includes(annonce.annonce_id) ? 'Favori' : 'Ajouter'}
-                  </Button>
-                  <Button
-                    size="small"
+                  </button>
+                  <button size="small"
                     variant="contained"
                     color="primary"
-                    sx={{ ml: 'auto' }}
                     onClick={() => handleCardClick(annonce.annonce_id)}
                   >
                     Voir →
-                  </Button>
+                  </button>
                 </CardActions>
               </Card>
             </Grid>
@@ -334,14 +283,14 @@ const SimilarAnnoncesCarousel = ({ annonceActuelle, userRole }) => {
 
         {/* Indicateur de position */}
         {similaires.length > itemsPerView && (
-          <Box sx={{ textAlign: 'center', mt: 3 }}>
-            <Typography variant="caption" color="text.secondary">
+          <div>
+            <p>
               {currentIndex + 1} - {Math.min(currentIndex + itemsPerView, similaires.length)} sur{' '}
               {similaires.length}
-            </Typography>
-          </Box>
+            </p>
+          </div>
         )}
-      </Box>
+      </div>
     </Container>
   );
 };

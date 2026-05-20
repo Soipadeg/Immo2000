@@ -1,3 +1,4 @@
+import '../styles/OffresPage.css';
 /**
  * Page de gestion des offres d'achat (Mes offres)
  * Affiche les offres faites par l'acheteur et les offres reçues par le vendeur
@@ -7,7 +8,6 @@ import React, { useState, useEffect } from 'react';
 import { Button, Alert, Input, Modal } from '@/components';
 import { useAuth } from '../hooks/useAuth';
 import { offresApi } from '../services/api';
-import '../styles/OffresPage.css';
 
 /**
  * Composant pour afficher une offre

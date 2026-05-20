@@ -1,10 +1,10 @@
+import './HomePage.css';
 import React from 'react';
 import Footer from '@/components/Footer/Footer';
 import SearchBar from '@/components/SearchBar/SearchBar';
 import Button from '@/components/Button/Button';
 import Card from '@/components/Card/Card';
 import { spacing, typography } from '@/design-system/tokens';
-import './HomePage.css';
 
 /**
  * HomePage Component

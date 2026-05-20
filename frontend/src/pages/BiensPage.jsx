@@ -1,3 +1,4 @@
+import '../styles/BiensPage.css';
 /**
  * Page de gestion des biens immobiliers
  * Créer et lister les propriétés
@@ -8,7 +9,6 @@ import { Button, Input, Card, Modal, Alert, FormContainer } from '@/components';
 import { biensApi } from '../services/api';
 import ImageUploadComponent from '../components/ImageUpload';
 import ImageGalleryComponent from '../components/ImageGallery';
-import '../styles/BiensPage.css';
 
 const LIMIT = 10;
 

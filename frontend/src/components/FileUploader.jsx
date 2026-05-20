@@ -11,30 +11,13 @@
 
 import React, { useState, useCallback, useRef } from 'react';
 import {
-  Box,
-  Paper,
-  Typography,
-  Button,
-  CircularProgress,
-  LinearProgress,
-  Card,
-  CardMedia,
-  CardActions,
-  Grid,
-  Alert,
-  Chip,
-} from '@mui/material';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import DeleteIcon from '@mui/icons-material/Delete';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import ErrorIcon from '@mui/icons-material/Error';
-import {
   processImageFile,
   uploadFile,
   uploadMultipleFiles,
   isValidImageFile,
 } from '../utils/imageCompressionService';
 import { useNotificationStore } from '../store/notificationStore';
+import './FileUploader.css';
 
 /**
  * Composant principal FileUploader
@@ -188,161 +171,125 @@ export function FileUploader({
   const avgReduction = files.length > 0 ? Math.round(totalReduction / files.length) : 0;
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <div className="file-uploader">
       {/* Zone drag-drop */}
-      <Paper
+      <div
+        className={`file-uploader__drop-zone ${dragCounter.current > 0 ? 'drag-active' : ''}`}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDrop}
-        sx={{
-          p: 4,
-          textAlign: 'center',
-          border: '2px dashed #ccc',
-          backgroundColor: dragCounter.current > 0 ? '#f0f7ff' : 'transparent',
-          transition: 'all 0.3s',
-          cursor: 'pointer',
-          mb: 2,
-          '&:hover': {
-            borderColor: '#2196f3',
-            backgroundColor: '#f5f5f5',
-          },
-        }}
       >
-        <CloudUploadIcon sx={{ fontSize: 48, color: '#2196f3', mb: 1 }} />
-        <Typography variant="h6" gutterBottom>
-          Déposez vos fichiers ici
-        </Typography>
-        <Typography variant="body2" color="textSecondary" gutterBottom>
-          ou cliquez pour sélectionner
-        </Typography>
+        <div className="file-uploader__drop-icon">📁</div>
+        <div className="file-uploader__drop-text">Déposez vos fichiers ici</div>
+        <div className="file-uploader__drop-hint">ou cliquez pour sélectionner</div>
 
         <input
           type="file"
           multiple
           accept={acceptedTypes.join(',')}
           onChange={handleFileSelect}
-          style={{ display: 'none' }}
+          className="file-uploader__input"
           id="file-input"
         />
         <label htmlFor="file-input" style={{ width: '100%' }}>
-          <Button component="span" variant="contained" sx={{ mt: 2 }}>
+          <button className="file-uploader__button" type="button">
             Sélectionner des fichiers
-          </Button>
+          </button>
         </label>
 
-        <Typography variant="caption" display="block" sx={{ mt: 2 }}>
+        <div style={{ marginTop: '1rem', fontSize: '0.875rem', color: '#999' }}>
           Max {maxFiles} fichiers, 50 MB chacun
-        </Typography>
-      </Paper>
+        </div>
+      </div>
 
       {/* Résumé compression */}
       {files.length > 0 && (
-        <Alert severity="success" sx={{ mb: 2 }}>
-          {files.length} fichier(s) prêt(s) • Compression moyenne: {avgReduction}%
-        </Alert>
+        <div style={{
+          padding: '1rem',
+          backgroundColor: '#dbeafe',
+          color: '#0c4a6e',
+          borderRadius: '0.375rem',
+          fontSize: '0.875rem'
+        }}>
+          ✓ {files.length} fichier(s) prêt(s) • Compression moyenne: {avgReduction}%
+        </div>
       )}
 
       {/* Liste des fichiers */}
-      <Grid container spacing={2}>
+      <div className="file-uploader__files">
         {files.map((fileItem, idx) => (
-          <Grid item xs={12} sm={6} md={4} key={fileItem.id}>
-            <Card>
-              {/* Aperçu */}
-              {showThumbnails && fileItem.preview && (
-                <CardMedia component="img" height="200" image={fileItem.preview} alt={fileItem.name} />
+          <div key={fileItem.id} className="file-uploader__file-item">
+            {/* Aperçu */}
+            {showThumbnails && fileItem.preview && (
+              <div className="file-uploader__file-thumbnail">
+                <img src={fileItem.preview} alt={fileItem.name} />
+              </div>
+            )}
+
+            {/* Contenu */}
+            <div className="file-uploader__file-info">
+              <div className="file-uploader__file-name">{fileItem.name}</div>
+
+              <div className="file-uploader__file-details">
+                <span>{(fileItem.originalSize / 1024 / 1024).toFixed(2)} MB</span>
+                <span>→</span>
+                <span>{(fileItem.compressedSize / 1024 / 1024).toFixed(2)} MB</span>
+                <span style={{ marginLeft: 'auto', color: '#22c55e', fontWeight: '600' }}>
+                  -{fileItem.reductionPercent}%
+                </span>
+              </div>
+
+              {/* Barre de progression */}
+              {fileItem.status === 'uploading' && (
+                <div className="file-uploader__progress-bar">
+                  <div
+                    className="file-uploader__progress-fill"
+                    style={{ width: `${uploadProgress[idx] || 0}%` }}
+                  />
+                </div>
               )}
 
-              {/* Contenu */}
-              <Box sx={{ p: 2 }}>
-                <Typography variant="subtitle2" noWrap>
-                  {fileItem.name}
-                </Typography>
+              {/* Status */}
+              <div className={`file-uploader__status ${fileItem.status}`}>
+                {fileItem.status === 'done' && <span>✓ Uploadé</span>}
+                {fileItem.status === 'uploading' && <span>⟳ {uploadProgress[idx]?.toFixed(0)}%</span>}
+                {fileItem.status === 'error' && <span>✘ Erreur</span>}
+                {fileItem.status === 'ready' && <span>Prêt</span>}
+              </div>
+            </div>
 
-                <Box sx={{ mt: 1, mb: 1 }}>
-                  <Typography variant="caption" color="textSecondary">
-                    {(fileItem.originalSize / 1024 / 1024).toFixed(2)} MB →{' '}
-                    {(fileItem.compressedSize / 1024 / 1024).toFixed(2)} MB
-                  </Typography>
-                </Box>
-
-                {/* Compression stat */}
-                <Chip
-                  label={`-${fileItem.reductionPercent}%`}
-                  size="small"
-                  color="success"
-                  variant="outlined"
-                  sx={{ mb: 1 }}
-                />
-
-                {/* Status icon */}
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
-                  {fileItem.status === 'done' && (
-                    <>
-                      <CheckCircleIcon sx={{ color: '#4caf50', fontSize: 20 }} />
-                      <Typography variant="caption" color="success.main">
-                        Uploadé
-                      </Typography>
-                    </>
-                  )}
-                  {fileItem.status === 'uploading' && (
-                    <>
-                      <CircularProgress size={20} />
-                      <Typography variant="caption">
-                        {uploadProgress[idx]?.toFixed(0)}%
-                      </Typography>
-                    </>
-                  )}
-                  {fileItem.status === 'error' && (
-                    <>
-                      <ErrorIcon sx={{ color: '#f44336', fontSize: 20 }} />
-                      <Typography variant="caption" color="error">
-                        Erreur
-                      </Typography>
-                    </>
-                  )}
-                </Box>
-
-                {/* Barre de progression */}
-                {fileItem.status === 'uploading' && (
-                  <LinearProgress variant="determinate" value={uploadProgress[idx] || 0} sx={{ mt: 1 }} />
-                )}
-              </Box>
-
-              {/* Actions */}
-              <CardActions>
-                <Button
-                  size="small"
-                  color="error"
-                  startIcon={<DeleteIcon />}
-                  onClick={() => handleRemoveFile(fileItem.id)}
-                  disabled={fileItem.status === 'uploading'}
-                >
-                  Supprimer
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
+            {/* Bouton supprimer */}
+            <button
+              className="file-uploader__remove-btn"
+              onClick={() => handleRemoveFile(fileItem.id)}
+              disabled={fileItem.status === 'uploading'}
+            >
+              Supprimer
+            </button>
+          </div>
         ))}
-      </Grid>
+      </div>
 
       {/* Bouton upload */}
       {files.some((f) => f.status === 'ready') && (
-        <Box sx={{ mt: 3, textAlign: 'center' }}>
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
+        <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+          <button
+            className="file-uploader__button"
             onClick={handleUpload}
             disabled={uploading}
-            startIcon={uploading ? <CircularProgress size={20} /> : <CloudUploadIcon />}
+            style={{
+              fontSize: '1rem',
+              padding: '0.75rem 2rem'
+            }}
           >
             {uploading ? 'Upload en cours...' : `Uploader ${files.filter((f) => f.status === 'ready').length} fichier(s)`}
-          </Button>
-        </Box>
+          </button>
+        </div>
       )}
-    </Box>
+    </div>
   );
+}
 }
 
 /**
@@ -387,16 +334,24 @@ export function SingleImageUploader({ onUpload, uploadUrl = '/api/uploads' }) {
   };
 
   return (
-    <Box sx={{ textAlign: 'center' }}>
+    <div style={{ textAlign: 'center' }}>
       {file && file.preview ? (
-        <Box sx={{ mb: 2 }}>
-          <CardMedia component="img" image={file.preview} alt="preview" sx={{ maxHeight: 300, mb: 1 }} />
-          <Typography variant="body2">
+        <div style={{ marginBottom: '1rem' }}>
+          <img
+            src={file.preview}
+            alt="preview"
+            style={{
+              maxHeight: '300px',
+              marginBottom: '0.5rem',
+              borderRadius: '0.375rem'
+            }}
+          />
+          <div style={{ fontSize: '0.875rem', color: '#666' }}>
             {(file.compressedSize / 1024 / 1024).toFixed(2)} MB (-{file.reductionPercent}%)
-          </Typography>
-        </Box>
+          </div>
+        </div>
       ) : (
-        <Box>
+        <div>
           <input
             type="file"
             accept="image/*"
@@ -405,24 +360,44 @@ export function SingleImageUploader({ onUpload, uploadUrl = '/api/uploads' }) {
             id="single-image-input"
           />
           <label htmlFor="single-image-input">
-            <Button component="span" variant="contained">
+            <button className="file-uploader__button" type="button">
               Sélectionner une image
-            </Button>
+            </button>
           </label>
-        </Box>
+        </div>
       )}
 
       {file && (
-        <Box sx={{ mt: 2 }}>
-          {uploading && <LinearProgress variant="determinate" value={progress} sx={{ mb: 1 }} />}
-          <Button variant="contained" onClick={handleUpload} disabled={uploading || !file}>
+        <div style={{ marginTop: '1rem' }}>
+          {uploading && (
+            <div className="file-uploader__progress-bar" style={{ marginBottom: '1rem' }}>
+              <div
+                className="file-uploader__progress-fill"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          )}
+          <button
+            className="file-uploader__button"
+            onClick={handleUpload}
+            disabled={uploading || !file}
+            style={{ marginRight: '0.5rem' }}
+          >
             {uploading ? `Upload ${progress.toFixed(0)}%` : 'Uploader'}
-          </Button>
-          <Button variant="outlined" onClick={() => setFile(null)} disabled={uploading} sx={{ ml: 1 }}>
+          </button>
+          <button
+            className="file-uploader__button"
+            onClick={() => setFile(null)}
+            disabled={uploading}
+            style={{
+              backgroundColor: '#6b7280',
+              marginLeft: '0.5rem'
+            }}
+          >
             Annuler
-          </Button>
-        </Box>
+          </button>
+        </div>
       )}
-    </Box>
+    </div>
   );
 }

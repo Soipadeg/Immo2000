@@ -1,9 +1,9 @@
-import React
-import { Button, Alert, Input } from '@/components';, { useState, useEffect } from 'react';
-
+import '../styles/CreerAnnonceEtape4.css';
+import React, { useState, useEffect } from 'react';
+import { Button, Alert, Input } from '@/components';
+import { LinearProgress, Stack, FormControl, Select, MenuItem } from '@mui/material';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { completerAnnonce } from '../services/api';
-import '../styles/CreerAnnonceEtape4.css';
 
 /**
  * Page ÉTAPE 4 du tunnel : Informations complémentaires
@@ -107,7 +107,7 @@ export default function CreerAnnonceEtape4() {
           </h1>
           <p  sx={{ color: 'text.secondary', mb: 2 }}>
             Étape 4 sur 4 : Finalisation et publication
-          </h1>
+          </p>
           <LinearProgress variant="determinate" value={100} />
         </div>
 
@@ -139,7 +139,7 @@ export default function CreerAnnonceEtape4() {
                   required
                   inputProps={{ maxLength: 2000 }}
                   helperText={`${formData.description.length}/2000`}
-                / />
+                />
               </div>
 
               {/* Prix et Surface */}
@@ -154,7 +154,7 @@ export default function CreerAnnonceEtape4() {
                   placeholder="250000"
                   required
                   inputProps={{ step: '1000' }}
-                / />
+                />
               </div>
 
               <div item xs={12} sm={6}>
@@ -168,7 +168,7 @@ export default function CreerAnnonceEtape4() {
                   placeholder="80"
                   required
                   inputProps={{ step: '0.1' }}
-                / />
+                />
               </div>
 
               {/* Pièces et Type */}
@@ -183,7 +183,7 @@ export default function CreerAnnonceEtape4() {
                   placeholder="3"
                   required
                   inputProps={{ min: '1' }}
-                / />
+                />
               </div>
 
               <div item xs={12} sm={6}>
@@ -214,7 +214,7 @@ export default function CreerAnnonceEtape4() {
                   onChange={handleChange}
                   placeholder="2"
                   inputProps={{ min: '0' }}
-                / />
+                />
               </div>
 
               <div item xs={12} sm={6}>
@@ -227,7 +227,7 @@ export default function CreerAnnonceEtape4() {
                   onChange={handleChange}
                   placeholder="2015"
                   inputProps={{ min: '1800' }}
-                / />
+                />
               </div>
 
               {/* DPE */}
@@ -255,7 +255,7 @@ export default function CreerAnnonceEtape4() {
               <div item xs={12}>
                 <h3  sx={{ mb: 2 }}>
                   Caractéristiques du bien
-                </h1>
+                </h3>
                 <div container spacing={1}>
                   <div item xs={6} sm={4}>
                     <FormControlLabel
@@ -361,7 +361,7 @@ export default function CreerAnnonceEtape4() {
           <span  sx={{ color: 'success.dark' }}>
             ✅ <strong>Dernière étape !</strong> Une fois publiée, votre annonce sera visible aux acheteurs potentiels.
             Vous pourrez la gérer depuis votre dashboard.
-          </h1>
+          </span>
         </div>
       </div>
     </div>

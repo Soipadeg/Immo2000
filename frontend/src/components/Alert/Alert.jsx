@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import CloseIcon from '@mui/icons-material/Close';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
-import InfoIcon from '@mui/icons-material/Info';
 import WarningIcon from '@mui/icons-material/Warning';
+import InfoIcon from '@mui/icons-material/Info';
+import CloseIcon from '@mui/icons-material/Close';
 import './Alert.css';
 
 /**
@@ -12,13 +12,14 @@ import './Alert.css';
  * Alert/Toast notification with auto-dismiss
  */
 const Alert = ({
-  isOpen,
+  isOpen = true,
   onClose,
   type = 'info',
   title,
   message,
+  children,
   dismissible = true,
-  autoDismiss = true,
+  autoDismiss = false,
   duration = 5000,
   className = '',
   ...props
@@ -26,7 +27,7 @@ const Alert = ({
   useEffect(() => {
     if (isOpen && autoDismiss) {
       const timer = setTimeout(() => {
-        onClose?.();
+        if (onClose) onClose();
       }, duration);
 
       return () => clearTimeout(timer);
@@ -38,20 +39,20 @@ const Alert = ({
   const getIcon = () => {
     switch (type) {
       case 'success':
-        return <CheckCircleIcon />;
+        return <CheckCircleIcon data-testid="success-icon" />;
       case 'error':
-        return <ErrorIcon />;
+        return <ErrorIcon data-testid="error-icon" />;
       case 'warning':
-        return <WarningIcon />;
+        return <WarningIcon data-testid="warning-icon" />;
       case 'info':
       default:
-        return <InfoIcon />;
+        return <InfoIcon data-testid="info-icon" />;
     }
   };
 
   const alertClass = [
     'alert',
-    `alert--${type}`,
+    'alert--' + type,
     className,
   ]
     .filter(Boolean)
@@ -66,6 +67,7 @@ const Alert = ({
       <div className="alert-content">
         {title && <h4 className="alert-title">{title}</h4>}
         {message && <p className="alert-message">{message}</p>}
+        {children}
       </div>
 
       {dismissible && (
@@ -73,6 +75,7 @@ const Alert = ({
           className="alert-close"
           onClick={onClose}
           aria-label="Close alert"
+          type="button"
         >
           <CloseIcon />
         </button>
@@ -82,11 +85,12 @@ const Alert = ({
 };
 
 Alert.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
+  isOpen: PropTypes.bool,
   onClose: PropTypes.func,
   type: PropTypes.oneOf(['success', 'error', 'warning', 'info']),
   title: PropTypes.string,
   message: PropTypes.string,
+  children: PropTypes.node,
   dismissible: PropTypes.bool,
   autoDismiss: PropTypes.bool,
   duration: PropTypes.number,

@@ -4,41 +4,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  Box,
-  Menu,
-  MenuItem,
-  Avatar,
-  Drawer,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Divider,
-  IconButton,
-  useMediaQuery,
-  useTheme,
-  Badge,
-} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import HomeIcon from '@mui/icons-material/Home';
-import SearchIcon from '@mui/icons-material/Search';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import SettingsIcon from '@mui/icons-material/Settings';
-import LogoutIcon from '@mui/icons-material/Logout';
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
-import BuildIcon from '@mui/icons-material/Build';
-import SpeakerNotesIcon from '@mui/icons-material/SpeakerNotes';
-import FeedIcon from '@mui/icons-material/Feed';
-import PersonIcon from '@mui/icons-material/Person';
-import TimelineIcon from '@mui/icons-material/Timeline';
 import { notificationsApi } from '../services/api';
+import './DynamicNavbar.css';
 
 /**
  * Composant Navbar dynamique
@@ -57,12 +24,13 @@ export const DynamicNavbar = ({
   showAppBar = true,
 }) => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const location = useLocation();  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
+  // Simple mobile detection
+
+  // Simple mobile detection
 
   // Charger le count des notifications non-lues
   useEffect(() => {
@@ -172,73 +140,22 @@ export const DynamicNavbar = ({
   };
 
   return (
-    <AppBar
-      position="sticky"
-      sx={{
-        backgroundColor: '#FFFFFF',
-        color: '#212121',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-        borderBottom: '1px solid #E8EEF5',
-      }}
-    >
-      <Toolbar
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '12px 24px',
-          minHeight: '70px',
-          maxWidth: '1400px',
-          margin: '0 auto',
-          width: '100%',
-          gap: 3,
-        }}
-      >
+    <nav class="dynamic-navbar">
+      <div class="dynamic-navbar__container">
         {/* Logo - left aligned */}
-        <Typography
-          variant="h5"
-          sx={{
-            fontWeight: 800,
-            cursor: 'pointer',
-            '&:hover': { opacity: 0.8 },
-            fontSize: '22px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 1,
-            flexShrink: 0,
-            background: 'linear-gradient(135deg, #1E88E5 0%, #6F42C1 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-          }}
-          onClick={() => handleNavigate('/')}
+        <div class="dynamic-navbar__brand"> handleNavigate('/')}
         >
           🏠 Immo2000
-        </Typography>
+        </div>
 
         {/* Navigation and Buttons container - kept together */}
         {!isMobile && (
-          <Box
-            sx={{
-              display: 'flex',
-              gap: 0,
-              alignItems: 'center',
-              justifyContent: 'flex-end',
-              flex: '0 1 auto',
-            }}
-          >
+          <div 
             {/* Navigation items */}
-            <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
+            <div 
               {navItems.map((item) => (
-                <Button
-                  key={item.path}
-                  color="inherit"
-                  onClick={() => handleNavigate(item.path)}
-                  startIcon={
-                    item.badge !== undefined && item.badge > 0 ? (
-                      <Badge badgeContent={item.badge} color="error">
-                        {item.icon}
-                      </Badge>
+                <button class="dynamic-navbar__menu-item"> handleNavigate(item.path)}
+                      </span>
                     ) : (
                       item.icon
                     )
@@ -254,85 +171,66 @@ export const DynamicNavbar = ({
                   }}
                 >
                   {item.label}
-                </Button>
+                </button>
               ))}
-            </Box>
-          </Box>
+            </div>
+          </div>
         )}
 
         {/* Spacer to push buttons to the right */}
-        <Box sx={{ flex: 1 }} />
+        <div 
 
         {/* Menu utilisateur ou boutons login */}
         {isAuthenticated && user ? (
           <>
             {/* Desktop: Avatar menu */}
             {!isMobile && (
-              <Button
-                onClick={handleUserMenuOpen}
-                startIcon={
-                  <Avatar sx={{ width: 32, height: 32, bgcolor: 'secondary.main' }}>
+              <button class="dynamic-navbar__menu-item">
                     {user?.prenom?.[0]?.toUpperCase()}
-                  </Avatar>
+                  </div>
                 }
-                sx={{
-                  color: 'white',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  padding: '6px 12px',
-                  textTransform: 'uppercase',
-                }}
               >
                 {user?.prenom}
-              </Button>
+              </button>
             )}
 
             {/* Mobile: Menu icon */}
             {isMobile && (
-              <IconButton
-                color="inherit"
-                onClick={() => setMobileDrawerOpen(true)}
-                sx={{ ml: 1 }}
+              <button class="dynamic-navbar__menu-button"> setMobileDrawerOpen(true)}
               >
-                <MenuIcon />
-              </IconButton>
+                <div class="dynamic-navbar__dropdown">
+              </button>
             )}
 
             {/* Menu utilisateur desktop */}
-            <Menu
-              anchorEl={menuAnchorEl}
-              open={Boolean(menuAnchorEl)}
-              onClose={handleUserMenuClose}
-            >
-              <MenuItem disabled>
-                <PersonIcon sx={{ mr: 1 }} />
-                <Typography variant="subtitle2">
+            <div class="dynamic-navbar__dropdown">
+              <div class="dynamic-navbar__dropdown">
+                <PersonIcon />
+                <p>
                   {user?.prenom} {user?.nom}
-                </Typography>
-              </MenuItem>
-              <MenuItem disabled>
-                <Typography variant="caption" color="textSecondary">
+                </div>
+              </button>
+              <div class="dynamic-navbar__dropdown">
+                <p>
                   {user?.email}
-                </Typography>
-              </MenuItem>
-              <Divider />
-              <MenuItem onClick={() => { handleUserMenuClose(); handleNavigate('/profile'); }}>
-                <SettingsIcon sx={{ mr: 1 }} />
+                </div>
+              </button>
+              <div class="dynamic-navbar__dropdown-divider"></div>
+              <div class="dynamic-navbar__dropdown"> { handleUserMenuClose(); handleNavigate('/profile'); }}>
+                <SettingsIcon />
                 Mon Profil
-              </MenuItem>
-              <MenuItem onClick={handleLogout}>
-                <LogoutIcon sx={{ mr: 1 }} />
+              </button>
+              <div class="dynamic-navbar__dropdown">
+                <LogoutIcon />
                 Déconnexion
-              </MenuItem>
-            </Menu>
+              </button>
+            </div>
           </>
         ) : (
           /* Buttons pour non-authentifiés */
           !isMobile && (
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <Button
-                color="inherit"
-                onClick={() => window.location.href = 'http://localhost:5000/login.html'}
+            <div 
+              <button class="dynamic-navbar__menu-item"> window.location.href = 'http://localhost:5000/login.html'}
                 sx={{
                   fontSize: '14px',
                   fontWeight: 500,
@@ -343,114 +241,81 @@ export const DynamicNavbar = ({
                 }}
               >
                 Se connecter
-              </Button>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={() => window.location.href = 'http://localhost:5000/register.html'}
-                sx={{
-                  fontSize: '14px',
-                  fontWeight: 700,
-                  padding: '6px 24px',
-                  textTransform: 'uppercase',
-                  borderRadius: '4px',
-                }}
+              </button>
+              <button class="dynamic-navbar__menu-item"> window.location.href = 'http://localhost:5000/register.html'}
               >
                 S'inscrire
-              </Button>
-            </Box>
+              </button>
+            </div>
           )
         )}
 
         {/* Mobile: Menu icon si pas connecté */}
         {!isAuthenticated && isMobile && (
-          <IconButton
-            color="inherit"
-            onClick={() => setMobileDrawerOpen(true)}
-            sx={{ ml: 1 }}
+          <button class="dynamic-navbar__menu-button"> setMobileDrawerOpen(true)}
           >
-            <MenuIcon />
-          </IconButton>
+            <div class="dynamic-navbar__dropdown">
+          </button>
         )}
-      </Toolbar>
+      </div>
 
       {/* Drawer mobile */}
-      <Drawer
-        anchor="right"
-        open={mobileDrawerOpen}
-        onClose={() => setMobileDrawerOpen(false)}
+      <div class="dynamic-navbar__drawer"> setMobileDrawerOpen(false)}
       >
-        <Box sx={{ width: 280, p: 2 }}>
-          <Typography variant="h6" gutterBottom>
+        <div 
+          <p>
             Navigation
-          </Typography>
-          <Divider sx={{ mb: 2 }} />
+          </div>
+          <div class="dynamic-navbar__dropdown-divider"></div>
 
-          <List>
+          <div>
             {navItems.map((item) => (
-              <ListItem
-                key={item.path}
-                onClick={() => handleNavigate(item.path)}
-                sx={{
-                  cursor: 'pointer',
-                  bgcolor: location.pathname === item.path ? 'action.selected' : 'transparent',
-                  borderRadius: 1,
-                  mb: 1,
-                }}
+              <div> handleNavigate(item.path)}
               >
-                <ListItemIcon>
+                <div>
                   {item.badge !== undefined && item.badge > 0 ? (
-                    <Badge badgeContent={item.badge} color="error">
+                    <span class="dynamic-navbar__notification-btn"><span class="dynamic-navbar__badge">item.badge</span>
                       {item.icon}
-                    </Badge>
+                    </span>
                   ) : (
                     item.icon
                   )}
-                </ListItemIcon>
-                <ListItemText primary={item.label} />
-              </ListItem>
+                </span>
+                <div>
+              </button>
             ))}
-          </List>
+          </div>
 
           {isAuthenticated ? (
             <>
-              <Divider sx={{ my: 2 }} />
-              <List>
-                <ListItem onClick={() => { setMobileDrawerOpen(false); handleNavigate('/profile'); }} sx={{ cursor: 'pointer' }}>
-                  <ListItemIcon><SettingsIcon /></ListItemIcon>
-                  <ListItemText primary="Mon Profil" />
-                </ListItem>
-                <ListItem onClick={handleLogout} sx={{ cursor: 'pointer' }}>
-                  <ListItemIcon><LogoutIcon /></ListItemIcon>
-                  <ListItemText primary="Déconnexion" />
-                </ListItem>
-              </List>
+              <div class="dynamic-navbar__dropdown-divider"></div>
+              <div>
+                <div> { setMobileDrawerOpen(false); handleNavigate('/profile'); }}>
+                  <div><SettingsIcon /></span>
+                  <div>
+                </button>
+                <div>
+                  <div><LogoutIcon /></span>
+                  <div>
+                </button>
+              </div>
             </>
           ) : (
             <>
-              <Divider sx={{ my: 2 }} />
-              <Button
-                fullWidth
-                variant="outlined"
-                color="primary"
-                onClick={() => handleNavigate('/login')}
-                sx={{ mb: 1 }}
+              <div class="dynamic-navbar__dropdown-divider"></div>
+              <button class="dynamic-navbar__menu-item"> handleNavigate('/login')}
               >
                 Se connecter
-              </Button>
-              <Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                onClick={() => handleNavigate('/register')}
+              </button>
+              <button class="dynamic-navbar__menu-item"> handleNavigate('/register')}
               >
                 S'inscrire
-              </Button>
+              </button>
             </>
           )}
-        </Box>
-      </Drawer>
-    </AppBar>
+        </div>
+      </div>
+    </nav>
   );
 };
 

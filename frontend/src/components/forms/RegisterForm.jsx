@@ -7,7 +7,6 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
-import { Box, Link, Alert } from '@mui/material';
 
 import { registerSchema, registerDefaultValues } from './schemas';
 import { FormField, FormCheckbox, FormContainer } from './FormField';
@@ -60,7 +59,7 @@ export function RegisterForm() {
   };
 
   return (
-    <Box sx={{ maxWidth: 500, margin: '0 auto', padding: 3 }}>
+    <div style={ maxWidth: 500, margin: '0 auto', padding: 3 }>
       <h2>Créer un compte</h2>
 
       <Alert severity="info" sx={{ mb: 2 }}>
@@ -133,14 +132,14 @@ export function RegisterForm() {
         />
 
         {/* Link to login */}
-        <Box sx={{ textAlign: 'center' }}>
+        <div style={ textAlign: 'center' }>
           <span>Déjà un compte? </span>
           <Link href="/login" variant="body2">
             Se connecter
           </Link>
-        </Box>
+        </div>
       </FormContainer>
-    </Box>
+    </div>
   );
 }
 

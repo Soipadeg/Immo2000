@@ -1,17 +1,19 @@
+import '../styles/AdminUsersPageNew.css';
 /**
  * TÂCHE 2: Gestion des Utilisateurs
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Typography, Box, CircularProgress, Alert, Button, Chip, Dialog, DialogTitle, DialogContent,
-  DialogActions, TextField, Pagination, IconButton, Tooltip,
-} from '@mui/material';
-import { Edit, Delete, Block, Check, Search } from '@mui/icons-material';
 import { usersApi } from '../services/adminApi';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { Button, Alert, Input } from '@/components';
+import { Paper, Tooltip, Pagination, Chip, Dialog, DialogTitle, DialogContent, DialogActions, Typography, CircularProgress } from '@mui/material';
+import { Edit, Block, Check, Delete } from '@mui/icons-material';
+
+
+
+
 
 const AdminUsersPage = () => {
   const { user, loading: authLoading } = useAuth();
@@ -87,11 +89,11 @@ const AdminUsersPage = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h4" gutterBottom>👥 Gestion des Utilisateurs</Typography>
-        <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
-          <TextField
+    <div maxWidth="lg">
+      <div>
+        <h2>👥 Gestion des Utilisateurs</h2>
+        <div>
+          <Input
             placeholder="Rechercher (email, nom...)"
             value={searchQuery}
             onChange={(e) => {
@@ -99,105 +101,103 @@ const AdminUsersPage = () => {
               setPage(1);
             }}
             size="small"
-            InputProps={{ startAdornment: <Search sx={{ mr: 1 }} /> }}
-            sx={{ flex: 1, maxWidth: 300 }}
           />
-        </Box>
-      </Box>
+        </div>
+      </div>
 
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      {error && <Alert severity="error">{error}</Alert>}
 
       {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress />
-        </Box>
+        <div>
+          <div />
+        </div>
       ) : (
         <>
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
-                <TableRow>
-                  <TableCell><strong>Email</strong></TableCell>
-                  <TableCell><strong>Nom</strong></TableCell>
-                  <TableCell><strong>Rôle</strong></TableCell>
-                  <TableCell><strong>Statut</strong></TableCell>
-                  <TableCell><strong>Actions</strong></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
+          <Paper>
+            <table>
+              <thead>
+                <tr>
+                  <td><strong>Email</strong></td>
+                  <td><strong>Nom</strong></td>
+                  <td><strong>Rôle</strong></td>
+                  <td><strong>Statut</strong></td>
+                  <td><strong>Actions</strong></td>
+                </tr>
+              </thead>
+              <tbody>
                 {users.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={5} sx={{ textAlign: 'center', py: 3 }}>
+                  <tr>
+                    <td colSpan={5}>
                       Aucun utilisateur trouvé
-                    </TableCell>
-                  </TableRow>
+                    </td>
+                  </tr>
                 ) : (
                   users.map((u) => (
-                    <TableRow key={u.utilisateur_id}>
-                      <TableCell>{u.email}</TableCell>
-                      <TableCell>{u.nom || '-'}</TableCell>
-                      <TableCell>
+                    <tr key={u.utilisateur_id}>
+                      <td>{u.email}</td>
+                      <td>{u.nom || '-'}</td>
+                      <td>
                         <Chip
                           label={u.role}
                           size="small"
                           color={u.role === 'admin' ? 'error' : 'default'}
                           variant="outlined"
                         />
-                      </TableCell>
-                      <TableCell>
+                      </td>
+                      <td>
                         <Chip
                           label={u.actif ? 'Actif' : 'Suspendu'}
                           size="small"
                           color={u.actif ? 'success' : 'warning'}
                         />
-                      </TableCell>
-                      <TableCell>
+                      </td>
+                      <td>
                         <Tooltip title="Changer rôle">
-                          <IconButton
+                          <Button
                             size="small"
                             onClick={() => setDialog({ open: true, action: 'changeRole', userId: u.utilisateur_id })}
                           >
                             <Edit fontSize="small" />
-                          </IconButton>
+                          </Button>
                         </Tooltip>
                         {u.actif ? (
                           <Tooltip title="Suspendre">
-                            <IconButton
+                            <Button
                               size="small"
                               onClick={() => setDialog({ open: true, action: 'suspend', userId: u.utilisateur_id })}
                             >
                               <Block fontSize="small" />
-                            </IconButton>
+                            </Button>
                           </Tooltip>
                         ) : (
                           <Tooltip title="Réactiver">
-                            <IconButton
+                            <Button
                               size="small"
                               onClick={() => setDialog({ open: true, action: 'reactivate', userId: u.utilisateur_id })}
                             >
                               <Check fontSize="small" />
-                            </IconButton>
+                            </Button>
                           </Tooltip>
                         )}
                         <Tooltip title="Supprimer">
-                          <IconButton
+                          <Button
                             size="small"
                             onClick={() => setDialog({ open: true, action: 'delete', userId: u.utilisateur_id })}
                           >
                             <Delete fontSize="small" />
-                          </IconButton>
+                          </Button>
                         </Tooltip>
-                      </TableCell>
-                    </TableRow>
+                      </td>
+                    </tr>
                   ))
                 )}
-              </TableBody>
-            </Table>
-          </TableContainer>
+              </tbody>
+            </table>
+          </Paper>
 
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+          <div>
             <Pagination count={10} page={page} onChange={(e, p) => setPage(p)} />
-          </Box>
+          </div>
         </>
       )}
 
@@ -211,13 +211,12 @@ const AdminUsersPage = () => {
         </DialogTitle>
         <DialogContent>
           {dialog.action === 'suspend' && (
-            <TextField
+            <Input
               label="Durée de suspension (heures)"
               type="number"
               value={suspendHours}
               onChange={(e) => setSuspendHours(parseInt(e.target.value))}
               fullWidth
-              sx={{ mt: 2 }}
             />
           )}
           {dialog.action === 'delete' && (
@@ -231,14 +230,14 @@ const AdminUsersPage = () => {
           <Button
             onClick={() => handleAction(dialog.action, dialog.userId)}
             disabled={actionLoading}
-            variant="contained"
+            variant="primary"
             color={dialog.action === 'delete' ? 'error' : 'primary'}
           >
             {actionLoading ? <CircularProgress size={24} /> : 'Confirmer'}
           </Button>
         </DialogActions>
       </Dialog>
-    </Container>
+    </div>
   );
 };
 

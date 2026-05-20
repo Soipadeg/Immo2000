@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { navbarTokens, spacing } from '@/design-system/tokens';
-import MenuIcon from '@mui/icons-material/Menu';
-import CloseIcon from '@mui/icons-material/Close';
 import './Navbar.css';
 
 /**
@@ -67,7 +65,7 @@ const Navbar = ({
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle menu"
         >
-          {mobileMenuOpen ? <CloseIcon /> : <MenuIcon />}
+          {mobileMenuOpen ? '×' : '☰'}
         </button>
       </div>
 

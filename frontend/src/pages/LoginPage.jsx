@@ -1,9 +1,9 @@
+import '../styles/LoginPage.css';
 import React, { useState, useEffect, useRef } from 'react';
 import { Button, Alert, Input } from '@/components';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { login as apiLogin } from '../services/api';
-import '../styles/LoginPage.css';
 
 const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes
 const MAX_LOGIN_ATTEMPTS = 5;
@@ -283,5 +283,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-export default LoginPage;

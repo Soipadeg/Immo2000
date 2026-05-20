@@ -9,18 +9,6 @@
  */
 
 import React from 'react';
-import {
-  Alert,
-  Box,
-  Button,
-  Snackbar,
-  Chip,
-  LinearProgress,
-  Typography,
-} from '@mui/material';
-import CloudOffIcon from '@mui/icons-material/CloudOff';
-import CloudDoneIcon from '@mui/icons-material/CloudDone';
-import SyncIcon from '@mui/icons-material/Sync';
 import { useOfflineMode } from '../services/syncService';
 
 /**
@@ -43,76 +31,53 @@ export function OfflineStatus() {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
         autoHideDuration={null}
       >
-        <Alert
-          severity={isOnline ? 'info' : 'warning'}
+        <div className="alert"
           icon={isOnline ? <CloudDoneIcon /> : <CloudOffIcon />}
           action={
-            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+            <div>
               {pendingCount > 0 && (
-                <Chip
-                  label={`${pendingCount} en attente`}
-                  size="small"
-                  color="warning"
+                <span className="chip" label={`${pendingCount} en attente`}
                 />
               )}
 
               {!isOnline && (
-                <Typography variant="caption" sx={{ color: 'warning.main' }}>
+                <p>
                   Mode hors ligne
-                </Typography>
+                </p>
               )}
 
               {isOnline && pendingCount > 0 && (
-                <Button
-                  size="small"
-                  color="inherit"
+                <button
                   onClick={sync}
-                  startIcon={<SyncIcon />}
                 >
                   Syncer
-                </Button>
+                </button>
               )}
 
-              <Button
-                size="small"
-                color="inherit"
+              <button
                 onClick={() => setShowDetails(!showDetails)}
               >
                 {showDetails ? 'Masquer' : 'Détails'}
-              </Button>
-            </Box>
+              </button>
+            </div>
           }
         />
       </Snackbar>
 
       {/* Détails des requêtes en attente */}
       {showDetails && pendingCount > 0 && (
-        <Box
-          sx={{
-            position: 'fixed',
-            bottom: 80,
-            left: 16,
-            right: 16,
-            p: 2,
-            backgroundColor: 'white',
-            border: '1px solid #ffb74d',
-            borderRadius: 1,
-            boxShadow: 2,
-            maxHeight: 200,
-            overflow: 'auto',
-            zIndex: 1300,
-          }}
+        <div
         >
-          <Typography variant="subtitle2" fontWeight="bold" mb={1}>
+          <p>
             Requêtes en attente ({pendingCount})
-          </Typography>
-          <Typography variant="caption" color="textSecondary">
+          </p>
+          <p>
             Ces requêtes seront envoyées dès la reconnexion
-          </Typography>
+          </p>
           {!isOnline && (
-            <LinearProgress sx={{ mt: 1 }} />
+            <div class="progress-bar"><div class="progress-fill"></div></div>
           )}
-        </Box>
+        </div>
       )}
     </>
   );
@@ -127,25 +92,18 @@ export function OfflineBanner() {
   if (isOnline) return null;
 
   return (
-    <Alert
-      severity="warning"
-      sx={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 1200,
-        borderRadius: 0,
-      }}
+    <div className="alert"
       icon={<CloudOffIcon />}
     >
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography>
+      <div>
+        <p>
           ⚠️ Vous êtes hors ligne. Les modifications seront synchronisées à la reconnexion.
-        </Typography>
-        <Typography variant="caption" color="inherit">
+        </p>
+        <p>
           Connexion en attente...
-        </Typography>
-      </Box>
-    </Alert>
+        </p>
+      </div>
+    </div>
   );
 }
 
@@ -156,28 +114,24 @@ export function SyncStatusIndicator() {
   const { isOnline, pendingCount } = useOfflineMode();
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+    <div>
       {isOnline ? (
         <>
           <CloudDoneIcon
-            sx={{
-              color: pendingCount === 0 ? '#4caf50' : '#ff9800',
-              fontSize: 20,
-            }}
           />
-          <Typography variant="caption">
+          <p>
             {pendingCount === 0 ? 'Synchronisé' : `${pendingCount} en attente`}
-          </Typography>
+          </p>
         </>
       ) : (
         <>
-          <CloudOffIcon sx={{ color: '#f44336', fontSize: 20, animation: 'pulse 2s infinite' }} />
-          <Typography variant="caption" color="error">
+          <CloudOffIcon />
+          <p>
             Hors ligne
-          </Typography>
+          </p>
         </>
       )}
-    </Box>
+    </div>
   );
 }
 
@@ -186,25 +140,23 @@ export function SyncStatusIndicator() {
  */
 export function OfflineWarningDialog({ open, onClose, onConfirm, title, message }) {
   return (
-    <Alert
-      severity="warning"
+    <div className="alert"
       onClose={onClose}
-      sx={{ mb: 2 }}
     >
-      <Typography variant="subtitle2" fontWeight="bold">
+      <p>
         {title}
-      </Typography>
-      <Typography variant="body2" sx={{ mt: 1 }}>
+      </p>
+      <p>
         {message}
-      </Typography>
-      <Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
-        <Button size="small" variant="outlined" onClick={onClose}>
+      </p>
+      <div>
+        <button onClick={onClose}>
           Annuler
-        </Button>
-        <Button size="small" variant="contained" onClick={onConfirm}>
+        </button>
+        <button onClick={onConfirm}>
           Continuer hors ligne
-        </Button>
-      </Box>
-    </Alert>
+        </button>
+      </div>
+    </div>
   );
 }

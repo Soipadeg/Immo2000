@@ -1,3 +1,4 @@
+import '../styles/AdminDashboardPage.css';
 /**
  * TÂCHE 1: Dashboard Admin - Tableau de bord administrateur
  */
@@ -7,7 +8,6 @@ import { Button, Alert } from '@/components';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { dashboardApi, analyticsApi } from '../services/adminApi';
-import '../styles/AdminDashboardPage.css';
 
 const AdminDashboardPage = () => {
   const { user, loading: authLoading } = useAuth();
@@ -88,8 +88,6 @@ const AdminDashboardPage = () => {
     { id: 2, prenom: 'Marie', nom: 'Martin', email: 'marie.martin@email.com', date: new Date().toISOString() },
     { id: 3, prenom: 'Pierre', nom: 'Bernard', email: 'pierre.bernard@email.com', date: new Date().toISOString() },
   ];
-
-  const suspiciousAccounts = [];
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);

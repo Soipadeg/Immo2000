@@ -4,22 +4,6 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  Grid,
-  ImageList,
-  ImageListItem,
-  ImageListItemBar,
-  IconButton,
-  Modal,
-  Box,
-  CircularProgress,
-  Typography,
-} from '@mui/material';
-import {
-  Cancel as CloseIcon,
-  Delete as DeleteIcon,
-  ZoomIn as ZoomInIcon,
-} from '@mui/icons-material';
 import { imagesApi } from '../services/api';
 
 const ImageGalleryComponent = ({ annonceId, onDelete }) => {
@@ -61,25 +45,25 @@ const ImageGalleryComponent = ({ annonceId, onDelete }) => {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
-        <CircularProgress />
-      </Box>
+      <div>
+        <div class="spinner"></div>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <Box sx={{ p: 3 }}>
-        <Typography color="error">{error}</Typography>
-      </Box>
+      <div>
+        <p>{error}</p>
+      </div>
     );
   }
 
   if (images.length === 0) {
     return (
-      <Box sx={{ p: 3, textAlign: 'center' }}>
-        <Typography color="text.secondary">Aucune image</Typography>
-      </Box>
+      <div>
+        <p>Aucune image</p>
+      </div>
     );
   }
 
@@ -97,22 +81,20 @@ const ImageGalleryComponent = ({ annonceId, onDelete }) => {
             />
             <ImageListItemBar
               actionIcon={
-                <Box sx={{ display: 'flex', gap: 1 }}>
+                <div>
                   <IconButton
                     size="small"
-                    sx={{ color: 'rgba(255, 255, 255, 0.9)' }}
                     onClick={() => setSelectedImage(image)}
                   >
                     <ZoomInIcon />
                   </IconButton>
                   <IconButton
                     size="small"
-                    sx={{ color: 'rgba(255, 255, 255, 0.9)' }}
                     onClick={() => handleDelete(image.image_id)}
                   >
                     <DeleteIcon />
                   </IconButton>
-                </Box>
+                </div>
               }
             />
           </ImageListItem>
@@ -123,24 +105,11 @@ const ImageGalleryComponent = ({ annonceId, onDelete }) => {
       <Modal
         open={!!selectedImage}
         onClose={() => setSelectedImage(null)}
-        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
       >
-        <Box
-          sx={{
-            position: 'relative',
-            maxWidth: '90vw',
-            maxHeight: '90vh',
-          }}
+        <div
         >
           <IconButton
             onClick={() => setSelectedImage(null)}
-            sx={{
-              position: 'absolute',
-              top: -40,
-              right: 0,
-              color: 'white',
-              zIndex: 1,
-            }}
           >
             <CloseIcon />
           </IconButton>
@@ -153,7 +122,7 @@ const ImageGalleryComponent = ({ annonceId, onDelete }) => {
               borderRadius: '8px',
             }}
           />
-        </Box>
+        </div>
       </Modal>
     </>
   );

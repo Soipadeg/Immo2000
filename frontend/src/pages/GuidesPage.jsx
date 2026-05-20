@@ -1,12 +1,14 @@
+import '../styles/GuidesPage.css';
+import { Alert,Button,Input } from '@/components';
 /**
  * Page Guides - Guides immobiliers
  */
 
 import React, { useState } from 'react';
-import { Box, Container, Typography, Grid, Card, CardContent, CardActions, Button, Chip } from '@mui/material';
-import MenuBookIcon from '@mui/icons-material/MenuBook';
-import ArticleIcon from '@mui/icons-material/Article';
-import SchoolIcon from '@mui/icons-material/School';
+
+
+
+
 
 const GuidesPage = () => {
   const guides = [
@@ -73,78 +75,68 @@ const GuidesPage = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 8 }}>
-      <Box sx={{ mb: 6, textAlign: 'center' }}>
-        <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
+    <div maxWidth="lg">
+      <div>
+        <h3 variant="h3" component="h1" gutterBottom>
           📚 Guides Immobiliers
-        </Typography>
-        <Typography variant="h6" color="textSecondary">
+        </h3>
+        <h6 variant="h6" color="textSecondary">
           Apprenez tout ce que vous devez savoir sur l'immobilier
-        </Typography>
-      </Box>
+        </h6>
+      </div>
 
-      <Grid container spacing={3}>
+      <div container spacing={3}>
         {guides.map((guide) => (
-          <Grid item xs={12} sm={6} lg={4} key={guide.id}>
-            <Card
-              sx={{
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  transform: 'translateY(-8px)',
-                  boxShadow: 6,
-                },
-              }}
+          <div item xs={12} sm={6} lg={4} key={guide.id}>
+            <div
             >
-              <CardContent sx={{ flexGrow: 1, pb: 1 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <MenuBookIcon sx={{ mr: 1, color: 'primary.main' }} />
-                  <Chip
+              <div>
+                <div>
+                  <MenuBookIcon />
+                  <span
                     label={guide.category}
                     color={getCategoryColor(guide.category)}
                     size="small"
                     variant="outlined"
                   />
-                </Box>
-                <Typography gutterBottom variant="h6" component="h3">
+                </div>
+                <h6 gutterBottom variant="h6" component="h3">
                   {guide.title}
-                </Typography>
-                <Typography color="textSecondary" sx={{ mb: 2 }}>
+                </h6>
+                <p color="textSecondary">
                   {guide.description}
-                </Typography>
-                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
+                </h3>
+                <div>
                   {guide.topics.map((topic) => (
-                    <Chip key={topic} label={topic} size="small" variant="outlined" />
+                    <span key={topic} label={topic} size="small" variant="outlined" />
                   ))}
-                </Box>
-                <Typography variant="caption" color="textSecondary">
+                </div>
+                <p variant="caption" color="textSecondary">
                   ⏱️ Temps de lecture: {guide.readTime}
-                </Typography>
-              </CardContent>
-              <CardActions>
+                </h6>
+              </div>
+              <div>
                 <Button size="small" color="primary">
                   Lire le guide →
                 </Button>
-              </CardActions>
-            </Card>
-          </Grid>
+              </div>
+            </div>
+          </div>
         ))}
-      </Grid>
+      </div>
 
-      <Box sx={{ mt: 8, p: 4, bgcolor: 'grey.100', borderRadius: 2 }}>
-        <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
+      <div>
+        <h5 variant="h5" gutterBottom>
           📖 Vous voulez apprendre un autre sujet?
-        </Typography>
-        <Typography color="textSecondary" sx={{ mb: 3 }}>
+        </h5>
+        <p color="textSecondary">
           Nous ajoutons régulièrement de nouveaux guides pour vous aider
-        </Typography>
+        </h5>
         <Button variant="contained" color="primary" startIcon={<SchoolIcon />}>
           Suggérer un guide
         </Button>
-      </Box>
-    </Container>
+      </div>
+    </div>
   );
 };
 

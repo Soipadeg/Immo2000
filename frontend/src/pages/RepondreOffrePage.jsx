@@ -1,3 +1,5 @@
+import '../styles/RepondreOffrePage.css';
+import { Alert,Button,Input } from '@/components';
 /**
  * Page de réponse à une offre (accepter/refuser/négocier)
  * Vendeur répond à une offre reçue
@@ -5,31 +7,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  Box,
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  Button,
-  TextField,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Alert,
-  CircularProgress,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Divider,
-  Grid,
-} from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CancelIcon from '@mui/icons-material/Cancel';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import { offersApi, transactionsApi } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
+
+
+
+
 
 export default function RepondreOffrePage() {
   const navigate = useNavigate();
@@ -98,154 +81,153 @@ export default function RepondreOffrePage() {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
-        <CircularProgress />
-      </Box>
+      <div>
+        <div />
+      </div>
     );
   }
 
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
-      {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
+    <div maxWidth="md">
+      {error && <Alert severity="error">{error}</Alert>}
 
-      <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold' }}>
+      <h4>
         Répondre à une offre
-      </Typography>
+      </h4>
 
       {/* Résumé de l'offre */}
-      <Card sx={{ mb: 4 }}>
-        <CardContent>
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
-              <Typography color="textSecondary" gutterBottom>
+      <div>
+        <div>
+          <div container spacing={3}>
+            <div item xs={12} sm={6}>
+              <p gutterBottom>
                 Prix proposé
-              </Typography>
-              <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+              </h4>
+              <h5>
                 {offre?.prix_propose?.toLocaleString('fr-FR')} €
-              </Typography>
-            </Grid>
+              </h5>
+            </div>
 
-            <Grid item xs={12} sm={6}>
-              <Typography color="textSecondary" gutterBottom>
+            <div item xs={12} sm={6}>
+              <p gutterBottom>
                 Votre prix de vente
-              </Typography>
-              <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+              </h5>
+              <h5>
                 {offre?.prix_vente?.toLocaleString('fr-FR')} €
-              </Typography>
-            </Grid>
+              </h5>
+            </div>
 
             {offre?.conditions_suspensives && (
-              <Grid item xs={12}>
-                <Typography color="textSecondary" gutterBottom>
+              <div item xs={12}>
+                <p gutterBottom>
                   Conditions suspensives
-                </Typography>
-                <Typography variant="body2">
+                </h5>
+                <p>
                   {offre.conditions_suspensives}
-                </Typography>
-              </Grid>
+                </h4>
+              </div>
             )}
 
             {offre?.message && (
-              <Grid item xs={12}>
-                <Typography color="textSecondary" gutterBottom>
+              <div item xs={12}>
+                <p gutterBottom>
                   Message de l'acheteur
-                </Typography>
-                <Typography variant="body2" sx={{ fontStyle: 'italic', bgcolor: '#f5f5f5', p: 2, borderRadius: 1 }}>
+                </h5>
+                <p>
                   "{offre.message}"
-                </Typography>
-              </Grid>
+                </h4>
+              </div>
             )}
-          </Grid>
-        </CardContent>
-      </Card>
+          </div>
+        </div>
+      </div>
 
-      <Divider sx={{ my: 4 }} />
+      <hr />
 
       {/* Choix de l'action */}
-      <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
+      <h6>
         Votre décision
-      </Typography>
+      </h6>
 
       <RadioGroup value={action} onChange={(e) => setAction(e.target.value)}>
         {/* Option 1: Accepter */}
-        <Card sx={{ mb: 2, border: action === 'accepter' ? '2px solid' : '1px solid', borderColor: action === 'accepter' ? 'success.main' : 'divider' }}>
-          <CardContent sx={{ pb: 2 }}>
+        <div>
+          <div>
             <FormControlLabel
               value="accepter"
               control={<Radio />}
               label={
-                <Box sx={{ ml: 1 }}>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center' }}>
-                    <CheckCircleIcon sx={{ mr: 1, color: 'success.main' }} />
+                <div>
+                  <p>
+                    <CheckCircleIcon />
                     Accepter l'offre
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
+                  </h6>
+                  <p>
                     L'offre sera acceptée, une transaction sera créée automatiquement
-                  </Typography>
-                </Box>
+                  </h6>
+                </div>
               }
             />
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Option 2: Refuser */}
-        <Card sx={{ mb: 2, border: action === 'refuser' ? '2px solid' : '1px solid', borderColor: action === 'refuser' ? 'error.main' : 'divider' }}>
-          <CardContent sx={{ pb: 2 }}>
+        <div>
+          <div>
             <FormControlLabel
               value="refuser"
               control={<Radio />}
               label={
-                <Box sx={{ ml: 1 }}>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center' }}>
-                    <CancelIcon sx={{ mr: 1, color: 'error.main' }} />
+                <div>
+                  <p>
+                    <CancelIcon />
                     Refuser l'offre
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
+                  </h5>
+                  <p>
                     L'offre sera définitivement refusée
-                  </Typography>
-                </Box>
+                  </h6>
+                </div>
               }
             />
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Option 3: Négocier */}
-        <Card sx={{ mb: 2, border: action === 'negocier' ? '2px solid' : '1px solid', borderColor: action === 'negocier' ? 'warning.main' : 'divider' }}>
-          <CardContent>
+        <div>
+          <div>
             <FormControlLabel
               value="negocier"
               control={<Radio />}
               label={
-                <Box sx={{ ml: 1 }}>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center' }}>
-                    <AttachMoneyIcon sx={{ mr: 1, color: 'warning.main' }} />
+                <div>
+                  <p>
+                    <AttachMoneyIcon />
                     Faire une contre-proposition
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
+                  </p>
+                  <p>
                     Proposer un autre montant à l'acheteur
-                  </Typography>
-                </Box>
+                  </p>
+                </div>
               }
             />
 
             {action === 'negocier' && (
-              <TextField
+              <Input
                 fullWidth
                 label="Montant contre-proposition (€)"
                 type="number"
                 inputProps={{ step: '100', min: '0' }}
                 value={contreProposition}
                 onChange={(e) => setContreProposition(e.target.value)}
-                sx={{ mt: 2 }}
                 placeholder={offre?.prix_propose?.toString()}
               />
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </RadioGroup>
 
       {/* Boutons d'action */}
-      <Box sx={{ display: 'flex', gap: 2, mt: 4 }}>
+      <div>
         <Button
           variant="outlined"
           onClick={() => navigate('/offres')}
@@ -260,26 +242,26 @@ export default function RepondreOffrePage() {
           disabled={submitting || !action}
           fullWidth
         >
-          {submitting ? <CircularProgress size={24} /> : 'Confirmer ma réponse'}
+          {submitting ? <div size={24} /> : 'Confirmer ma réponse'}
         </Button>
-      </Box>
+      </div>
 
       {/* Dialog de succès */}
-      <Dialog open={successOpen} onClose={() => setSuccessOpen(false)}>
-        <DialogTitle>Réponse enregistrée</DialogTitle>
-        <DialogContent>
-          <Typography sx={{ mt: 2 }}>
+      <div open={successOpen} onClose={() => setSuccessOpen(false)}>
+        <div>Réponse enregistrée</div>
+        <div>
+          <p>
             {action === 'accepter' && "L'offre a été acceptée avec succès. Une transaction est créée."}
             {action === 'refuser' && "L'offre a été refusée."}
             {action === 'negocier' && "Votre contre-proposition a été envoyée à l'acheteur."}
-          </Typography>
-        </DialogContent>
-        <DialogActions>
+          </p>
+        </div>
+        <div>
           <Button onClick={() => setSuccessOpen(false)} variant="contained">
             OK
           </Button>
-        </DialogActions>
-      </Dialog>
-    </Container>
+        </div>
+      </div>
+    </div>
   );
 }

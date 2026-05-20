@@ -1,24 +1,6 @@
+import '../styles/PublicAnnonceListPage.css';
 import React, { useState, useEffect } from 'react';
-import {
-  Container,
-  Grid,
-  Paper,
-  TextField,
-  Button,
-  Box,
-  Typography,
-  Card,
-  CardMedia,
-  CardContent,
-  CardActions,
-  CircularProgress,
-  Alert,
-  Stack,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-} from '@mui/material';
+import { Button, Alert, Input } from '@/components';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getAnnonces } from '../services/api';
 
@@ -107,25 +89,25 @@ export default function PublicAnnonceListPage() {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    div maxWidth="lg" sx={{ py: 4 }}>
       {/* En-tête */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h3" component="h1" sx={{ mb: 2 }}>
+      div sx={{ mb: 4 }}>
+        <div>
           Annonces Immobilières
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
+        </div>
+        <div>
           Découvrez nos propriétés disponibles. Connectez-vous pour contacter les propriétaires.
-        </Typography>
-      </Box>
+        </div>
+      </div>
 
       {/* Filtres */}
-      <Paper elevation={2} sx={{ p: 3, mb: 4, backgroundColor: '#f5f5f5' }}>
-        <Typography variant="h6" sx={{ mb: 2 }}>
+      div elevation={2} sx={{ p: 3, mb: 4, backgroundColor: '#f5f5f5' }}>
+        <div>
           Filtres de recherche
-        </Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6} md={3}>
-            <TextField
+        </div>
+        div container spacing={2}>
+          div item xs={12} sm={6} md={3}>
+            <Input
               fullWidth
               label="Ville"
               name="ville"
@@ -133,28 +115,28 @@ export default function PublicAnnonceListPage() {
               onChange={handleFilterChange}
               placeholder="Ex: Paris"
             />
-          </Grid>
+          </div>
 
-          <Grid item xs={12} sm={6} md={3}>
+          div item xs={12} sm={6} md={3}>
             <FormControl fullWidth>
               <InputLabel>Type de bien</InputLabel>
-              <Select
+              <select
                 name="type_bien"
                 value={filters.type_bien}
                 onChange={handleFilterChange}
                 label="Type de bien"
               >
-                <MenuItem value="">Tous les types</MenuItem>
-                <MenuItem value="appartement">Appartement</MenuItem>
-                <MenuItem value="maison">Maison</MenuItem>
-                <MenuItem value="terrain">Terrain</MenuItem>
-                <MenuItem value="local commercial">Local commercial</MenuItem>
-              </Select>
+                <option value="">Tous les types</option>
+                <option value="appartement">Appartement</option>
+                <option value="maison">Maison</option>
+                <option value="terrain">Terrain</option>
+                <option value="local commercial">Local commercial</option>
+              </select>
             </FormControl>
-          </Grid>
+          </div>
 
-          <Grid item xs={12} sm={6} md={3}>
-            <TextField
+          div item xs={12} sm={6} md={3}>
+            <Input
               fullWidth
               label="Prix min (€)"
               name="prix_min"
@@ -163,10 +145,10 @@ export default function PublicAnnonceListPage() {
               onChange={handleFilterChange}
               inputProps={{ step: 10000 }}
             />
-          </Grid>
+          </div>
 
-          <Grid item xs={12} sm={6} md={3}>
-            <TextField
+          div item xs={12} sm={6} md={3}>
+            <Input
               fullWidth
               label="Prix max (€)"
               name="prix_max"
@@ -175,9 +157,9 @@ export default function PublicAnnonceListPage() {
               onChange={handleFilterChange}
               inputProps={{ step: 10000 }}
             />
-          </Grid>
+          </div>
 
-          <Grid item xs={12}>
+          div item xs={12}>
             <Button
               variant="outlined"
               color="primary"
@@ -185,33 +167,33 @@ export default function PublicAnnonceListPage() {
             >
               Réinitialiser les filtres
             </Button>
-          </Grid>
-        </Grid>
-      </Paper>
+          </div>
+        </div>
+      </div>
 
       {/* Messages */}
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
       {/* Résultats */}
-      <Box sx={{ mb: 2 }}>
-        <Typography variant="body2" color="text.secondary">
+      div sx={{ mb: 2 }}>
+        <div>
           {loading ? '' : `${annonces.length} / ${total} annonces trouvées`}
-        </Typography>
-      </Box>
+        </div>
+      </div>
 
       {/* Chargement */}
       {loading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
+        div sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
           <CircularProgress />
-        </Box>
+        </div>
       )}
 
       {/* Grille d'annonces */}
       {!loading && annonces.length > 0 && (
-        <Grid container spacing={3}>
+        div container spacing={3}>
           {annonces.map((annonce) => (
-            <Grid item xs={12} sm={6} md={4} key={annonce.annonce_id}>
-              <Card
+            div item xs={12} sm={6} md={4} key={annonce.annonce_id}>
+              div
                 sx={{
                   height: '100%',
                   display: 'flex',
@@ -225,14 +207,14 @@ export default function PublicAnnonceListPage() {
               >
                 {/* Image de l'annonce */}
                 {annonce.photos && annonce.photos.length > 0 ? (
-                  <CardMedia
+                  divMedia
                     component="img"
                     height="200"
                     image={annonce.photos[0]}
                     alt={annonce.titre}
                   />
                 ) : (
-                  <Box
+                  div
                     sx={{
                       height: 200,
                       backgroundColor: '#e0e0e0',
@@ -241,67 +223,57 @@ export default function PublicAnnonceListPage() {
                       justifyContent: 'center',
                     }}
                   >
-                    <Typography color="text.secondary">Pas de photo</Typography>
-                  </Box>
+                    <div>Pas de photo</div>
+                  </div>
                 )}
 
                 {/* Contenu */}
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography variant="h6" gutterBottom noWrap>
+                divContent sx={{ flexGrow: 1 }}>
+                  <div>
                     {annonce.titre}
-                  </Typography>
+                  </div>
 
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                  <div>
                     {annonce.ville}
                     {annonce.code_postal && ` (${annonce.code_postal})`}
-                  </Typography>
+                  </div>
 
-                  <Box sx={{ mb: 2 }}>
-                    <Typography variant="h6" color="primary" sx={{ fontWeight: 'bold' }}>
+                  div sx={{ mb: 2 }}>
+                    <div>
                       {annonce.prix?.toLocaleString('fr-FR', {
                         style: 'currency',
                         currency: 'EUR',
                       }) || 'Prix non disponible'}
-                    </Typography>
-                  </Box>
+                    </div>
+                  </div>
 
                   <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
                     {annonce.surface && (
-                      <Typography variant="body2">
+                      <div>
                         📏 {annonce.surface} m²
-                      </Typography>
+                      </div>
                     )}
                     {annonce.nombre_pieces && (
-                      <Typography variant="body2">
+                      <div>
                         🚪 {annonce.nombre_pieces} pièces
-                      </Typography>
+                      </div>
                     )}
                   </Stack>
 
                   {annonce.dpe && (
-                    <Typography variant="body2" color="text.secondary">
+                    <div>
                       DPE: <strong>{annonce.dpe}</strong>
-                    </Typography>
+                    </div>
                   )}
 
                   {/* Description courte */}
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{
-                      mt: 2,
-                      display: '-webkit-box',
-                      WebkitLineClamp: 3,
-                      WebkitBoxOrient: 'vertical',
-                      overflow: 'hidden',
-                    }}
-                  >
+                  <div>
                     {annonce.description}
-                  </Typography>
-                </CardContent>
+                  </div>
+                </div>
 
                 {/* Actions */}
-                <CardActions>
+                divActions>
                   <Button
                     fullWidth
                     variant="contained"
@@ -310,22 +282,22 @@ export default function PublicAnnonceListPage() {
                   >
                     Contacter le vendeur
                   </Button>
-                </CardActions>
-              </Card>
-            </Grid>
+                </div>
+              </div>
+            </div>
           ))}
-        </Grid>
+        </div>
       )}
 
       {/* Pas de résultats */}
       {!loading && annonces.length === 0 && (
-        <Box sx={{ textAlign: 'center', py: 6 }}>
-          <Typography variant="h6" color="text.secondary" gutterBottom>
+        div sx={{ textAlign: 'center', py: 6 }}>
+          <div>
             Aucune annonce trouvée
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          </div>
+          <div>
             Essayez de modifier vos critères de filtrage
-          </Typography>
+          </div>
           <Button
             variant="contained"
             color="primary"
@@ -333,8 +305,8 @@ export default function PublicAnnonceListPage() {
           >
             Réinitialiser les filtres
           </Button>
-        </Box>
+        </div>
       )}
-    </Container>
+    </div>
   );
 }

@@ -1,3 +1,4 @@
+import '../styles/AdminListingsPage.css';
 /**
  * TÂCHE 3: Modération des Annonces
  */
@@ -7,7 +8,6 @@ import { Button, Input, Alert } from '@/components';
 import { listingsApi } from '../services/adminApi';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import '../styles/AdminListingsPage.css';
 
 const AdminListingsPage = () => {
   const { user, loading: authLoading } = useAuth();

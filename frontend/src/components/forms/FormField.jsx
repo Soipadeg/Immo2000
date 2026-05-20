@@ -6,17 +6,6 @@
  */
 
 import React from 'react';
-import {
-  TextField,
-  FormControlLabel,
-  Checkbox,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  FormHelperText,
-  Box,
-} from '@mui/material';
 import { Controller } from 'react-hook-form';
 
 /**
@@ -136,7 +125,7 @@ export function FormCheckbox({
       name={name}
       defaultValue={defaultValue}
       render={({ field }) => (
-        <Box sx={{ my: 2 }}>
+        <div style={ my: 2 }>
           <FormControlLabel
             control={<Checkbox {...field} checked={field.value} {...props} />}
             label={label}
@@ -144,7 +133,7 @@ export function FormCheckbox({
           {error && (
             <FormHelperText error>{error?.message}</FormHelperText>
           )}
-        </Box>
+        </div>
       )}
     />
   );
@@ -163,7 +152,7 @@ export function FormContainer({
   ...props
 }) {
   return (
-    <Box
+    <div
       component="form"
       onSubmit={handleSubmit(onSubmit)}
       sx={{
@@ -191,6 +180,6 @@ export function FormContainer({
       >
         {isLoading ? 'Traitement...' : submitLabel}
       </button>
-    </Box>
+    </div>
   );
 }

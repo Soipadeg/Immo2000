@@ -1,3 +1,4 @@
+import '../styles/Dashboard.css';
 /**
  * Dashboard principal avec 3 onglets : Achat, Vente, Messagerie
  * Route: /dashboard
@@ -9,7 +10,6 @@ import { Button, Card, Alert } from '@/components';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { getMesAnnonces } from '../services/api';
-import '../styles/Dashboard.css';
 
 /**
  * Composant Tab Panel

@@ -1,3 +1,4 @@
+import '../styles/AdminTransactionsPage.css';
 /**
  * TÂCHE 4: Gestion des Transactions
  */
@@ -7,7 +8,6 @@ import { Button, Alert } from '@/components';
 import { transactionsApi } from '../services/adminApi';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import '../styles/AdminTransactionsPage.css';
 
 const AdminTransactionsPage = () => {
   const { user, loading: authLoading } = useAuth();

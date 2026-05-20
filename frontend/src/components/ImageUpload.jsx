@@ -4,20 +4,6 @@
  */
 
 import React, { useState } from 'react';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Typography,
-  LinearProgress,
-  Grid,
-  IconButton,
-  Alert,
-} from '@mui/material';
-import { Cancel as CloseIcon } from '@mui/icons-material';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import ImageIcon from '@mui/icons-material/Image';
 import './ImageUpload.css';
 
 const ImageUploadComponent = ({ annonceId, onUploadSuccess }) => {
@@ -127,17 +113,16 @@ const ImageUploadComponent = ({ annonceId, onUploadSuccess }) => {
   };
 
   return (
-    <Card sx={{ mb: 2 }}>
-      <CardContent>
-        <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+    <div className="card">
+      <div className="card-content">
+        <p>
           <ImageIcon /> Ajouter des photos
-        </Typography>
+        </p>
 
-        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+        {error && <div className="alert">{error}</div>}
 
         {/* Zone de drop */}
-        <Box
-          sx={{
+        <div sx={{
             border: '2px dashed #ccc',
             borderRadius: 2,
             p: 3,
@@ -156,8 +141,8 @@ const ImageUploadComponent = ({ annonceId, onUploadSuccess }) => {
             handleFileSelect({ target: { files: e.dataTransfer.files } });
           }}
         >
-          <CloudUploadIcon sx={{ fontSize: 48, color: '#ccc', mb: 1 }} />
-          <Typography>
+          <CloudUploadIcon />
+          <p>
             Glissez-déposez vos images ou{' '}
             <label style={{ color: '#1976d2', cursor: 'pointer', fontWeight: 'bold' }}>
               cliquez pour sélectionner
@@ -169,18 +154,18 @@ const ImageUploadComponent = ({ annonceId, onUploadSuccess }) => {
                 style={{ display: 'none' }}
               />
             </label>
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
+          </p>
+          <p>
             Max {MAX_FILES} images, 10MB chacune
-          </Typography>
-        </Box>
+          </p>
+        </div>
 
         {/* Previews */}
         {previews.length > 0 && (
-          <Grid container spacing={2} sx={{ mt: 2 }}>
+          <div className="grid" container spacing={2}>
             {previews.map((preview, index) => (
-              <Grid item xs={6} sm={4} md={3} key={index}>
-                <Box sx={{ position: 'relative' }}>
+              <div className="grid" item xs={6} sm={4} md={3} key={index}>
+                <div>
                   <img
                     src={preview}
                     alt={`Preview ${index}`}
@@ -191,8 +176,7 @@ const ImageUploadComponent = ({ annonceId, onUploadSuccess }) => {
                       borderRadius: 2,
                     }}
                   />
-                  <IconButton
-                    size="small"
+                  <button class="icon-btn"
                     onClick={() => handleRemoveFile(index)}
                     sx={{
                       position: 'absolute',
@@ -204,39 +188,40 @@ const ImageUploadComponent = ({ annonceId, onUploadSuccess }) => {
                     }}
                   >
                     <CloseIcon />
-                  </IconButton>
-                </Box>
-              </Grid>
+                  </button>
+                </div>
+              </div>
             ))}
-          </Grid>
+          </div>
         )}
 
         {/* Progress bar */}
         {uploading && (
-          <Box sx={{ mt: 2 }}>
-            <LinearProgress variant="determinate" value={uploadProgress} />
-            <Typography variant="caption" color="text.secondary">
+          <div>
+            <div class="progress-bar"><div class="progress-fill"></div></div>
+            <p>
               {uploadProgress}%
-            </Typography>
-          </Box>
+            </p>
+          </div>
         )}
 
         {/* Upload button */}
         {previews.length > 0 && (
-          <Button
-            variant="contained"
-            color="primary"
+          <button
             onClick={handleUpload}
             disabled={uploading}
-            sx={{ mt: 2 }}
             fullWidth
           >
             {uploading ? 'Upload en cours...' : `Uploader ${previews.length} image(s)`}
-          </Button>
+          </button>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 
 export default ImageUploadComponent;
+
+// CSS already imported at top
+
+// CSS already imported at top

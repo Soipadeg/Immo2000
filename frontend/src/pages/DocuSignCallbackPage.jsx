@@ -1,3 +1,5 @@
+import '../styles/DocuSignCallbackPage.css';
+import { Alert,Button,Input } from '@/components';
 /**
  * Composant pour gérer le callback DocuSign OAuth
  * Traite le code d'autorisation retourné par DocuSign
@@ -5,16 +7,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import {
-  Box,
-  CircularProgress,
-  Typography,
-  Alert,
-  Container,
-} from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import ErrorIcon from '@mui/icons-material/Error';
 import docusignApi from '../services/api/docusign';
+
+
+
+
 
 export default function DocuSignCallbackPage() {
   const navigate = useNavigate();
@@ -87,44 +84,44 @@ export default function DocuSignCallbackPage() {
   }, [searchParams, navigate]);
 
   return (
-    <Container maxWidth="sm" sx={{ py: 8 }}>
-      <Box sx={{ textAlign: 'center' }}>
+    <div maxWidth="sm">
+      <div>
         {status === 'processing' && (
           <>
-            <CircularProgress sx={{ mb: 3 }} size={60} />
-            <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
+            <div size={60} />
+            <h5 variant="h5">
               Traitement du callback DocuSign...
-            </Typography>
-            <Typography color="textSecondary">
+            </h5>
+            <p color="textSecondary">
               Veuillez patienter pendant que nous finalisons votre authentification.
-            </Typography>
+            </h5>
           </>
         )}
 
         {status === 'success' && (
           <>
-            <CheckCircleIcon sx={{ fontSize: 80, color: 'success.main', mb: 2 }} />
-            <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'success.main', mb: 2 }}>
+            <CheckCircleIcon />
+            <h5 variant="h5">
               ✅ Authentification Réussie
-            </Typography>
-            <Typography sx={{ mb: 3 }}>{message}</Typography>
-            <Typography color="textSecondary">Redirection en cours...</Typography>
+            </h5>
+            <p>{message}</h5>
+            <p color="textSecondary">Redirection en cours...</h5>
           </>
         )}
 
         {status === 'error' && (
           <>
-            <ErrorIcon sx={{ fontSize: 80, color: 'error.main', mb: 2 }} />
-            <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'error.main', mb: 2 }}>
+            <ErrorIcon />
+            <h5 variant="h5">
               ❌ Erreur
-            </Typography>
-            <Alert severity="error" sx={{ mb: 3 }}>
+            </h5>
+            <Alert severity="error">
               {message}
             </Alert>
-            <Typography color="textSecondary">Redirection en cours...</Typography>
+            <p color="textSecondary">Redirection en cours...</h5>
           </>
         )}
-      </Box>
-    </Container>
+      </div>
+    </div>
   );
 }

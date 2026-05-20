@@ -1,3 +1,4 @@
+import '../styles/PaymentPage.css';
 /**
  * Page de paiement via Stripe
  * Acheteur effectue le paiement du dépôt de garantie (15% du prix)
@@ -12,7 +13,6 @@ import { stripePromise } from '../config/stripe-config';
 import { transactionsApi, paymentsApi } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import { Button, Alert, Input } from '@/components';
-import '../styles/PaymentPage.css';
 
 
 

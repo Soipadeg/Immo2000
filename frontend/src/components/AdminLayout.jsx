@@ -4,14 +4,6 @@
 
 import React from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import {
-  Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText,
-  AppBar, Toolbar, Typography, Container, Divider, Avatar, Menu, MenuItem,
-} from '@mui/material';
-import {
-  Dashboard, People, Home, ShoppingCart, Settings, Analytics,
-  Logout, Person, History, Security, TrendingUp,
-} from '@mui/icons-material';
 import { useAuth } from '../hooks/useAuth';
 import { useSessionTimeout } from '../hooks/useSessionTimeout';
 import SessionTimeoutDialog from './SessionTimeoutDialog';
@@ -39,30 +31,27 @@ const AdminLayout = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <div>
       {/* AppBar */}
-      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+      <AppBar position="fixed">
         <Toolbar>
-          <Typography
-            variant="h6"
-            sx={{ flex: 1, cursor: 'pointer', fontWeight: 700 }}
-            onClick={() => navigate('/admin')}
+          <p> navigate('/admin')}
           >
             🏢 Immo2000 Admin
-          </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Typography variant="caption" sx={{ opacity: 0.9 }}>
+          </p>
+          <div>
+            <p>
               v3.0.0 - Task 3 Complete
-            </Typography>
-            <Divider orientation="vertical" sx={{ height: 24, bgcolor: 'rgba(255,255,255,0.3)' }} />
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer' }}
+            </p>
+            <Divider orientation="vertical" />
+            <div
                  onClick={(e) => setAnchorEl(e.currentTarget)}>
-              <Avatar sx={{ width: 32, height: 32, bgcolor: 'rgba(255,255,255,0.3)' }}>
+              <Avatar>
                 {user?.nom?.charAt(0).toUpperCase()}
               </Avatar>
-              <Typography variant="body2">{user?.email}</Typography>
-            </Box>
-          </Box>
+              <p>{user?.email}</p>
+            </div>
+          </div>
         </Toolbar>
       </AppBar>
 
@@ -73,14 +62,14 @@ const AdminLayout = () => {
         onClose={() => setAnchorEl(null)}
       >
         <MenuItem onClick={() => navigate('/profile')}>
-          <Person sx={{ mr: 2 }} /> Profil
+          <Person /> Profil
         </MenuItem>
         <Divider />
         <MenuItem onClick={() => {
           logout();
           navigate('/login');
         }}>
-          <Logout sx={{ mr: 2 }} /> Déconnexion
+          <Logout /> Déconnexion
         </MenuItem>
       </Menu>
 
@@ -97,11 +86,11 @@ const AdminLayout = () => {
           },
         }}
       >
-        <Box sx={{ p: 2 }}>
-          <Typography variant="caption" color="textSecondary">
+        <div>
+          <p>
             TÂCHES
-          </Typography>
-        </Box>
+          </p>
+        </div>
         <Divider />
         <List>
           {menuItems.map((item) => (
@@ -117,7 +106,7 @@ const AdminLayout = () => {
                   },
                 }}
               >
-                <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+                <ListItemIcon>
                   {item.icon}
                 </ListItemIcon>
                 <ListItemText primary={item.label} />
@@ -128,14 +117,14 @@ const AdminLayout = () => {
       </Drawer>
 
       {/* Contenu Principal */}
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <Box sx={{ mt: '64px' }} /> {/* Espacement pour AppBar */}
-        <Box sx={{ flex: 1, overflow: 'auto' }}>
+      <div>
+        <div /> {/* Espacement pour AppBar */}
+        <div>
           <DevModeWaitingWrapper>
             <Outlet />
           </DevModeWaitingWrapper>
-        </Box>
-      </Box>
+        </div>
+      </div>
 
       {/* Session Timeout Warning Dialog */}
       {showWarning && (
@@ -145,7 +134,7 @@ const AdminLayout = () => {
           onLogout={forceLogout}
         />
       )}
-    </Box>
+    </div>
   );
 };
 

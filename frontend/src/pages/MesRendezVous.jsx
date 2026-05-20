@@ -1,3 +1,4 @@
+import '../styles/MesRendezVous.css';
 /**
  * MesRendezVous.jsx - Gestion des rendez-vous de visite
  *
@@ -13,7 +14,6 @@ import { useAuth } from '../hooks/useAuth';
 import api from '../services/api';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import '../styles/MesRendezVous.css';
 
 const MesRendezVous = () => {
   const { user, token } = useAuth();

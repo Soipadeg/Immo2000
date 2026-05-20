@@ -1,3 +1,4 @@
+import '../styles/ProfilePage.css';
 /**
  * Page de profil utilisateur
  * Afficher et modifier les informations du profil
@@ -6,7 +7,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Card, Alert, Input } from '@/components';
 import { authApi } from '../services/api';
-import '../styles/ProfilePage.css';
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);

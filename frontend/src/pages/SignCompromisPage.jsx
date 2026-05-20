@@ -1,3 +1,4 @@
+import '../styles/SignCompromisPage.css';
 /**
  * Page de signature du compromis de vente
  * Intégration DocuSign pour signer le compromis avec OAuth
@@ -8,7 +9,6 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { transactionsApi, docusignApi } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import { Button, Alert, Input } from '@/components';
-import '../styles/SignCompromisPage.css';
 
 
 
@@ -440,24 +440,39 @@ export default function SignCompromisPage() {
         </div>
       )}
 
-      {/* Dialog Succès */}
-      <div className="modal"> setSuccessOpen(false)}>
-        <div className="modal">
-          <span className="icon-placeholder">CheckCircleIcon</span>
-          Signature Confirmée
-        </DialogTitle>
-        <div className="modal">
-          <p>
-            Le compromis a été signé avec succès par DocuSign. Vous pouvez maintenant effectuer le paiement du dépôt
-            de garantie.
-          </p>
-        </DialogContent>
-        <div className="modal">
-          <Button onClick={() => setSuccessOpen(false)} variant="contained">
-            OK
-          </Button>
-        </DialogActions>
-      </div>
+      {/* Success Modal */}
+      {successOpen && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 9999,
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '8px',
+            padding: '24px',
+            maxWidth: '400px',
+            textAlign: 'center',
+          }}>
+            <h2>✓ Signature Confirmée</h2>
+            <p>
+              Le compromis a été signé avec succès par DocuSign. Vous pouvez maintenant effectuer le paiement du dépôt
+              de garantie.
+            </p>
+            <Button onClick={() => setSuccessOpen(false)} variant="primary">
+              OK
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
+}
 }
