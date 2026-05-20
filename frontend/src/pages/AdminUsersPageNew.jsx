@@ -89,7 +89,7 @@ const AdminUsersPage = () => {
   return (
     <div maxWidth="lg">
       <div>
-        <h4 variant="h4" gutterBottom>👥 Gestion des Utilisateurs</h4>
+        <h2>👥 Gestion des Utilisateurs</h2>
         <div>
           <Input
             placeholder="Rechercher (email, nom...)"
@@ -228,7 +228,7 @@ const AdminUsersPage = () => {
           <Button
             onClick={() => handleAction(dialog.action, dialog.userId)}
             disabled={actionLoading}
-            variant="contained"
+            variant="primary"
             color={dialog.action === 'delete' ? 'error' : 'primary'}
           >
             {actionLoading ? <div size={24} /> : 'Confirmer'}

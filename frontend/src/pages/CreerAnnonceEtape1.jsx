@@ -3,9 +3,6 @@ import React, { useState } from 'react';
 import { Button, Alert, Input } from '@/components';
 import { useNavigate } from 'react-router-dom';
 
-
-import { createBrouillonAnnonce } from '../services/api';
-
 /**
  * Page ÉTAPE 1 du tunnel : Adresse et Photos
  *
