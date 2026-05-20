@@ -469,24 +469,38 @@ export default function SignActePage() {
         </div>
       )}
 
-      {/* Dialog Succès */}
-      <div className="modal"> setSuccessOpen(false)}>
-        <div className="modal">
-          <span className="icon-placeholder">CheckCircleIcon</span>
-          Transaction Finalisée
-        </DialogTitle>
-        <div className="modal">
-          <p>
-            Félicitations! Votre transaction a été complètement finalisée. L'acte de vente a été signé par les deux
-            parties et est maintenant en cours d'enregistrement auprès des autorités.
-          </p>
-        </DialogContent>
-        <div className="modal">
-          <Button onClick={() => setSuccessOpen(false)} variant="contained">
-            OK
-          </Button>
-        </DialogActions>
-      </div>
+      {/* Success Modal */}
+      {successOpen && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 9999,
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '8px',
+            padding: '24px',
+            maxWidth: '400px',
+            textAlign: 'center',
+          }}>
+            <h2>✓ Transaction Finalisée</h2>
+            <p>
+              Félicitations! Votre transaction a été complètement finalisée. L'acte de vente a été signé par les deux
+              parties et est maintenant en cours d'enregistrement auprès des autorités.
+            </p>
+            <Button onClick={() => setSuccessOpen(false)} variant="primary">
+              OK
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
