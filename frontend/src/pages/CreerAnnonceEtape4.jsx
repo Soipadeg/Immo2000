@@ -1,6 +1,6 @@
 import '../styles/CreerAnnonceEtape4.css';
-import React
-import { Button, Alert, Input } from '@/components';, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Button, Alert, Input } from '@/components';
 
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { completerAnnonce } from '../services/api';
@@ -361,7 +361,7 @@ export default function CreerAnnonceEtape4() {
           <span  sx={{ color: 'success.dark' }}>
             ✅ <strong>Dernière étape !</strong> Une fois publiée, votre annonce sera visible aux acheteurs potentiels.
             Vous pourrez la gérer depuis votre dashboard.
-          </strong>
+          </span>
         </div>
       </div>
     </div>
