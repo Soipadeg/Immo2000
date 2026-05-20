@@ -91,7 +91,7 @@ export default function RepondreOffrePage() {
     <div maxWidth="md">
       {error && <Alert severity="error">{error}</Alert>}
 
-      <h4 variant="h4">
+      <h4>
         Répondre à une offre
       </h4>
 
@@ -100,29 +100,29 @@ export default function RepondreOffrePage() {
         <div>
           <div container spacing={3}>
             <div item xs={12} sm={6}>
-              <p color="textSecondary" gutterBottom>
+              <p gutterBottom>
                 Prix proposé
               </h4>
-              <h5 variant="h5">
+              <h5>
                 {offre?.prix_propose?.toLocaleString('fr-FR')} €
               </h5>
             </div>
 
             <div item xs={12} sm={6}>
-              <p color="textSecondary" gutterBottom>
+              <p gutterBottom>
                 Votre prix de vente
               </h5>
-              <h5 variant="h5">
+              <h5>
                 {offre?.prix_vente?.toLocaleString('fr-FR')} €
               </h5>
             </div>
 
             {offre?.conditions_suspensives && (
               <div item xs={12}>
-                <p color="textSecondary" gutterBottom>
+                <p gutterBottom>
                   Conditions suspensives
                 </h5>
-                <p variant="body2">
+                <p>
                   {offre.conditions_suspensives}
                 </h4>
               </div>
@@ -130,10 +130,10 @@ export default function RepondreOffrePage() {
 
             {offre?.message && (
               <div item xs={12}>
-                <p color="textSecondary" gutterBottom>
+                <p gutterBottom>
                   Message de l'acheteur
                 </h5>
-                <p variant="body2">
+                <p>
                   "{offre.message}"
                 </h4>
               </div>
@@ -145,7 +145,7 @@ export default function RepondreOffrePage() {
       <hr />
 
       {/* Choix de l'action */}
-      <h6 variant="h6">
+      <h6>
         Votre décision
       </h6>
 
@@ -158,11 +158,11 @@ export default function RepondreOffrePage() {
               control={<Radio />}
               label={
                 <div>
-                  <p variant="subtitle1">
+                  <p>
                     <CheckCircleIcon />
                     Accepter l'offre
                   </h6>
-                  <p variant="body2" color="textSecondary">
+                  <p>
                     L'offre sera acceptée, une transaction sera créée automatiquement
                   </h6>
                 </div>
@@ -179,11 +179,11 @@ export default function RepondreOffrePage() {
               control={<Radio />}
               label={
                 <div>
-                  <p variant="subtitle1">
+                  <p>
                     <CancelIcon />
                     Refuser l'offre
                   </h5>
-                  <p variant="body2" color="textSecondary">
+                  <p>
                     L'offre sera définitivement refusée
                   </h6>
                 </div>
@@ -200,11 +200,11 @@ export default function RepondreOffrePage() {
               control={<Radio />}
               label={
                 <div>
-                  <p variant="subtitle1">
+                  <p>
                     <AttachMoneyIcon />
                     Faire une contre-proposition
                   </p>
-                  <p variant="body2" color="textSecondary">
+                  <p>
                     Proposer un autre montant à l'acheteur
                   </p>
                 </div>

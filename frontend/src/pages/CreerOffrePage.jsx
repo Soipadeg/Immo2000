@@ -115,7 +115,7 @@ export default function CreerOffrePage() {
 
   return (
     <div maxWidth="md">
-      <h4 variant="h4" gutterBottom>
+      <h4 gutterBottom>
         Faire une offre d'achat
       </h4>
 
@@ -133,29 +133,29 @@ export default function CreerOffrePage() {
         <div>
           {activeStep === 0 && (
             <div>
-              <h6 variant="h6" gutterBottom>
+              <h6 gutterBottom>
                 Récapitulatif du bien
               </h6>
               <div container spacing={2}>
                 <div item xs={12}>
-                  <p variant="subtitle2" color="textSecondary">
+                  <p>
                     Titre
                   </h4>
-                  <p variant="body1">{annonce.titre}</h6>
+                  <p>{annonce.titre}</h6>
                 </div>
                 <div item xs={12} sm={6}>
-                  <p variant="subtitle2" color="textSecondary">
+                  <p>
                     Localisation
                   </h4>
-                  <p variant="body1">
+                  <p>
                     {annonce.adresse}, {annonce.code_postal} {annonce.ville}
                   </h6>
                 </div>
                 <div item xs={12} sm={6}>
-                  <p variant="subtitle2" color="textSecondary">
+                  <p>
                     Prix demandé
                   </h4>
-                  <p variant="body1">
+                  <p>
                     {new Intl.NumberFormat('fr-FR', {
                       style: 'currency',
                       currency: 'EUR',
@@ -163,18 +163,18 @@ export default function CreerOffrePage() {
                   </h6>
                 </div>
                 <div item xs={12} sm={6}>
-                  <p variant="subtitle2" color="textSecondary">
+                  <p>
                     Surface
                   </p>
-                  <p variant="body1">
+                  <p>
                     {annonce.surface_habitable} m²
                   </p>
                 </div>
                 <div item xs={12} sm={6}>
-                  <p variant="subtitle2" color="textSecondary">
+                  <p>
                     Pièces
                   </p>
-                  <p variant="body1">
+                  <p>
                     {annonce.nombre_pieces}
                   </p>
                 </div>
@@ -184,10 +184,10 @@ export default function CreerOffrePage() {
 
           {activeStep === 1 && (
             <div>
-              <h6 variant="h6" gutterBottom>
+              <h6 gutterBottom>
                 Quel est votre offre ?
               </h6>
-              <p variant="body2" color="textSecondary">
+              <p>
                 Recommandation: entre {new Intl.NumberFormat('fr-FR', {
                   style: 'currency',
                   currency: 'EUR',
@@ -215,10 +215,10 @@ export default function CreerOffrePage() {
 
           {activeStep === 2 && (
             <div>
-              <h6 variant="h6" gutterBottom>
+              <h6 gutterBottom>
                 Message au vendeur
               </h6>
-              <p variant="body2" color="textSecondary">
+              <p>
                 Présentez votre projet, posez des questions, etc. (Optionnel)
               </h6>
               <Input
@@ -236,23 +236,23 @@ export default function CreerOffrePage() {
 
           {activeStep === 3 && (
             <div>
-              <h6 variant="h6" gutterBottom>
+              <h6 gutterBottom>
                 Récapitulatif de votre offre
               </h6>
               <div container spacing={2}>
                 <div item xs={12}>
-                  <div variant="outlined">
+                  <div>
                     <div>
-                      <p color="textSecondary">Bien</h6>
-                      <p variant="body1">{annonce.titre}</h6>
+                      <p>Bien</h6>
+                      <p>{annonce.titre}</h6>
                     </div>
                   </div>
                 </div>
                 <div item xs={6}>
-                  <div variant="outlined">
+                  <div>
                     <div>
-                      <p color="textSecondary">Prix demandé</h6>
-                      <h6 variant="h6">
+                      <p>Prix demandé</h6>
+                      <h6>
                         {new Intl.NumberFormat('fr-FR', {
                           style: 'currency',
                           currency: 'EUR',
@@ -262,10 +262,10 @@ export default function CreerOffrePage() {
                   </div>
                 </div>
                 <div item xs={6}>
-                  <div variant="outlined">
+                  <div>
                     <div>
-                      <p color="textSecondary">Votre offre</h6>
-                      <h6 variant="h6" color="primary">
+                      <p>Votre offre</h6>
+                      <h6>
                         {new Intl.NumberFormat('fr-FR', {
                           style: 'currency',
                           currency: 'EUR',
@@ -276,10 +276,10 @@ export default function CreerOffrePage() {
                 </div>
                 {formData.message && (
                   <div item xs={12}>
-                    <div variant="outlined">
+                    <div>
                       <div>
-                        <p color="textSecondary">Message</h6>
-                        <p variant="body2">
+                        <p>Message</h6>
+                        <p>
                           {formData.message}
                         </h6>
                       </div>

@@ -113,7 +113,7 @@ export default function TransactionDetailsPage() {
 
       {/* En-tête */}
       <div>
-        <h4 variant="h4">
+        <h4>
           Détails de la Transaction
         </h4>
         <span
@@ -131,14 +131,14 @@ export default function TransactionDetailsPage() {
             <div>
               <div>
                 <HomeIcon color="primary" />
-                <p color="textSecondary" variant="caption">
+                <p variant="caption">
                   BIEN
                 </h4>
               </div>
-              <p variant="subtitle2">
+              <p>
                 {transaction?.annonce?.titre}
               </h4>
-              <p variant="body2" color="textSecondary">
+              <p>
                 {transaction?.annonce?.code_postal} {transaction?.annonce?.ville}
               </h4>
             </div>
@@ -151,11 +151,11 @@ export default function TransactionDetailsPage() {
             <div>
               <div>
                 <PaymentIcon color="success" />
-                <p color="textSecondary" variant="caption">
+                <p variant="caption">
                   PRIX VENTE
                 </p>
               </div>
-              <h5 variant="h5">
+              <h5>
                 {transaction?.prix_compromis?.toLocaleString('fr-FR')} €
               </h5>
             </div>
@@ -168,14 +168,14 @@ export default function TransactionDetailsPage() {
             <div>
               <div>
                 <PersonIcon color="primary" />
-                <p color="textSecondary" variant="caption">
+                <p variant="caption">
                   NOTAIRE
                 </h5>
               </div>
-              <p variant="subtitle2">
+              <p>
                 {transaction?.notaire?.etude_notariale || 'À sélectionner'}
               </h5>
-              <p variant="body2" color="textSecondary">
+              <p>
                 {transaction?.notaire?.email}
               </h5>
             </div>
@@ -207,10 +207,10 @@ export default function TransactionDetailsPage() {
               <TimelineConnector />
             </TimelineSeparator>
             <TimelineContent>
-              <p variant="subtitle2">
+              <p>
                 Offre créée
               </p>
-              <p variant="caption" color="textSecondary">
+              <p>
                 Offre acceptée par le vendeur
               </p>
             </TimelineContent>
@@ -224,10 +224,10 @@ export default function TransactionDetailsPage() {
               <TimelineConnector />
             </TimelineSeparator>
             <TimelineContent>
-              <p variant="subtitle2">
+              <p>
                 Notaire sélectionné
               </p>
-              <p variant="caption" color="textSecondary">
+              <p>
                 {transaction?.notaire?.etude_notariale || 'En attente'}
               </p>
             </TimelineContent>
@@ -241,10 +241,10 @@ export default function TransactionDetailsPage() {
               <TimelineConnector />
             </TimelineSeparator>
             <TimelineContent>
-              <p variant="subtitle2">
+              <p>
                 Frais validés
               </p>
-              <p variant="caption" color="textSecondary">
+              <p>
                 {transaction?.frais_valides ? 'Frais et commissions approuvés' : 'En attente'}
               </p>
             </TimelineContent>
@@ -258,10 +258,10 @@ export default function TransactionDetailsPage() {
               <TimelineConnector />
             </TimelineSeparator>
             <TimelineContent>
-              <p variant="subtitle2">
+              <p>
                 Compromis signé
               </p>
-              <p variant="caption" color="textSecondary">
+              <p>
                 {transaction?.compromis_signe ? 'Signature électronique complétée' : 'En attente'}
               </p>
             </TimelineContent>
@@ -275,10 +275,10 @@ export default function TransactionDetailsPage() {
               <TimelineConnector />
             </TimelineSeparator>
             <TimelineContent>
-              <p variant="subtitle2">
+              <p>
                 Dépôt de garantie payé
               </p>
-              <p variant="caption" color="textSecondary">
+              <p>
                 {transaction?.depot_paye ? '15% versé' : 'En attente'}
               </p>
             </TimelineContent>
@@ -291,10 +291,10 @@ export default function TransactionDetailsPage() {
               </TimelineDot>
             </TimelineSeparator>
             <TimelineContent>
-              <p variant="subtitle2">
+              <p>
                 Acte authentique signé
               </p>
-              <p variant="caption" color="textSecondary">
+              <p>
                 {transaction?.statut === 'finalisee' ? 'Vente finalisée ✅' : 'En attente'}
               </p>
             </TimelineContent>
@@ -304,7 +304,7 @@ export default function TransactionDetailsPage() {
 
       {/* Tab 1: Paiements */}
       <TabPanel value={tabValue} index={1}>
-        <h6 variant="h6">
+        <h6>
           Historique des Paiements
         </h6>
 
@@ -356,7 +356,7 @@ export default function TransactionDetailsPage() {
 
       {/* Tab 2: Frais & Commissions */}
       <TabPanel value={tabValue} index={2}>
-        <h6 variant="h6">
+        <h6>
           Décomposition des Frais
         </h6>
 
@@ -369,7 +369,7 @@ export default function TransactionDetailsPage() {
               </tr>
               <tr>
                 <td>
-                  <p variant="body2">
+                  <p>
                     Frais de notaire (~{transaction?.pourcentage_frais || '7.5'}%)
                   </h6>
                 </td>
@@ -398,7 +398,7 @@ export default function TransactionDetailsPage() {
 
       {/* Tab 3: Documents */}
       <TabPanel value={tabValue} index={3}>
-        <h6 variant="h6">
+        <h6>
           Documents et Fichiers
         </h6>
 
@@ -433,7 +433,7 @@ export default function TransactionDetailsPage() {
 
       {/* Tab 4: Parties */}
       <TabPanel value={tabValue} index={4}>
-        <h6 variant="h6">
+        <h6>
           Informations des Parties
         </h6>
 
@@ -442,16 +442,16 @@ export default function TransactionDetailsPage() {
           <div item xs={12} md={6}>
             <div>
               <div>
-                <p variant="subtitle1">
+                <p>
                   👨 Vendeur
                 </h6>
-                <p variant="body2">
+                <p>
                   <strong>Nom:</strong> {transaction?.vendeur?.full_name}
                 </h6>
-                <p variant="body2">
+                <p>
                   <strong>Email:</strong> {transaction?.vendeur?.email}
                 </h6>
-                <p variant="body2">
+                <p>
                   <strong>Téléphone:</strong> {transaction?.vendeur?.phone}
                 </p>
               </div>
@@ -462,16 +462,16 @@ export default function TransactionDetailsPage() {
           <div item xs={12} md={6}>
             <div>
               <div>
-                <p variant="subtitle1">
+                <p>
                   👩 Acheteur
                 </p>
-                <p variant="body2">
+                <p>
                   <strong>Nom:</strong> {transaction?.acheteur?.full_name}
                 </p>
-                <p variant="body2">
+                <p>
                   <strong>Email:</strong> {transaction?.acheteur?.email}
                 </p>
-                <p variant="body2">
+                <p>
                   <strong>Téléphone:</strong> {transaction?.acheteur?.phone}
                 </p>
               </div>
@@ -483,16 +483,16 @@ export default function TransactionDetailsPage() {
             <div item xs={12} md={6}>
               <div>
                 <div>
-                  <p variant="subtitle1">
+                  <p>
                     ⚖️ Notaire
                   </p>
-                  <p variant="body2">
+                  <p>
                     <strong>Étude:</strong> {transaction?.notaire?.etude_notariale}
                   </p>
-                  <p variant="body2">
+                  <p>
                     <strong>Email:</strong> {transaction?.notaire?.email}
                   </p>
-                  <p variant="body2">
+                  <p>
                     <strong>Téléphone:</strong> {transaction?.notaire?.phone}
                   </p>
                 </div>
