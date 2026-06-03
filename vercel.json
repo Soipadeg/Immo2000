@@ -2,9 +2,8 @@
   "version": 2,
   "name": "immo2000-frontend",
   "public": false,
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "rootDirectory": "frontend",
+  "buildCommand": "cd frontend && npm run build",
+  "outputDirectory": "frontend/dist",
   "framework": "vite",
   "regions": ["cdg1"],
   "env": [
