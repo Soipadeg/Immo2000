@@ -1,0 +1,15 @@
+{
+  "name": "immo2000",
+  "version": "1.0.0",
+  "description": "Immo2000 - Real estate transaction management platform",
+  "private": true,
+  "scripts": {
+    "install": "npm --prefix frontend install",
+    "build": "npm --prefix frontend run build",
+    "dev": "npm --prefix frontend run dev",
+    "preview": "npm --prefix frontend run preview"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
