@@ -91,51 +91,51 @@ export default function RepondreOffrePage() {
     <div maxWidth="md">
       {error && <Alert severity="error">{error}</Alert>}
 
-      <h4>
+      <div>
         Répondre à une offre
-      </h4>
+      </div>
 
       {/* Résumé de l'offre */}
       <div>
         <div>
           <div container spacing={3}>
             <div item xs={12} sm={6}>
-              <p gutterBottom>
+              <div>
                 Prix proposé
-              </h4>
-              <h5>
+              </div>
+              <div>
                 {offre?.prix_propose?.toLocaleString('fr-FR')} €
-              </h5>
+              </div>
             </div>
 
             <div item xs={12} sm={6}>
-              <p gutterBottom>
+              <div>
                 Votre prix de vente
-              </h5>
-              <h5>
+              </div>
+              <div>
                 {offre?.prix_vente?.toLocaleString('fr-FR')} €
-              </h5>
+              </div>
             </div>
 
             {offre?.conditions_suspensives && (
               <div item xs={12}>
-                <p gutterBottom>
+                <div>
                   Conditions suspensives
-                </h5>
-                <p>
+                </div>
+                <div>
                   {offre.conditions_suspensives}
-                </h4>
+                </div>
               </div>
             )}
 
             {offre?.message && (
               <div item xs={12}>
-                <p gutterBottom>
+                <div>
                   Message de l'acheteur
-                </h5>
-                <p>
+                </div>
+                <div>
                   "{offre.message}"
-                </h4>
+                </div>
               </div>
             )}
           </div>
@@ -145,9 +145,9 @@ export default function RepondreOffrePage() {
       <hr />
 
       {/* Choix de l'action */}
-      <h6>
+      <div>
         Votre décision
-      </h6>
+      </div>
 
       <RadioGroup value={action} onChange={(e) => setAction(e.target.value)}>
         {/* Option 1: Accepter */}
@@ -158,13 +158,13 @@ export default function RepondreOffrePage() {
               control={<Radio />}
               label={
                 <div>
-                  <p>
+                  <div>
                     <CheckCircleIcon />
                     Accepter l'offre
-                  </h6>
-                  <p>
+                  </div>
+                  <div>
                     L'offre sera acceptée, une transaction sera créée automatiquement
-                  </h6>
+                  </div>
                 </div>
               }
             />
@@ -179,13 +179,13 @@ export default function RepondreOffrePage() {
               control={<Radio />}
               label={
                 <div>
-                  <p>
+                  <div>
                     <CancelIcon />
                     Refuser l'offre
-                  </h5>
-                  <p>
+                  </div>
+                  <div>
                     L'offre sera définitivement refusée
-                  </h6>
+                  </div>
                 </div>
               }
             />
@@ -200,13 +200,13 @@ export default function RepondreOffrePage() {
               control={<Radio />}
               label={
                 <div>
-                  <p>
+                  <div>
                     <AttachMoneyIcon />
                     Faire une contre-proposition
-                  </p>
-                  <p>
+                  </div>
+                  <div>
                     Proposer un autre montant à l'acheteur
-                  </p>
+                  </div>
                 </div>
               }
             />
@@ -250,11 +250,11 @@ export default function RepondreOffrePage() {
       <div open={successOpen} onClose={() => setSuccessOpen(false)}>
         <div>Réponse enregistrée</div>
         <div>
-          <p>
+          <div>
             {action === 'accepter' && "L'offre a été acceptée avec succès. Une transaction est créée."}
             {action === 'refuser' && "L'offre a été refusée."}
             {action === 'negocier' && "Votre contre-proposition a été envoyée à l'acheteur."}
-          </p>
+          </div>
         </div>
         <div>
           <Button onClick={() => setSuccessOpen(false)} variant="contained">

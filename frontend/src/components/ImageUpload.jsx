@@ -115,9 +115,9 @@ const ImageUploadComponent = ({ annonceId, onUploadSuccess }) => {
   return (
     <div className="card">
       <div className="card-content">
-        <p>
+        <div>
           <ImageIcon /> Ajouter des photos
-        </p>
+        </div>
 
         {error && <div className="alert">{error}</div>}
 
@@ -142,7 +142,7 @@ const ImageUploadComponent = ({ annonceId, onUploadSuccess }) => {
           }}
         >
           <CloudUploadIcon />
-          <p>
+          <div>
             Glissez-déposez vos images ou{' '}
             <label style={{ color: '#1976d2', cursor: 'pointer', fontWeight: 'bold' }}>
               cliquez pour sélectionner
@@ -154,10 +154,10 @@ const ImageUploadComponent = ({ annonceId, onUploadSuccess }) => {
                 style={{ display: 'none' }}
               />
             </label>
-          </p>
-          <p>
+          </div>
+          <div>
             Max {MAX_FILES} images, 10MB chacune
-          </p>
+          </div>
         </div>
 
         {/* Previews */}
@@ -199,9 +199,9 @@ const ImageUploadComponent = ({ annonceId, onUploadSuccess }) => {
         {uploading && (
           <div>
             <div class="progress-bar"><div class="progress-fill"></div></div>
-            <p>
+            <div>
               {uploadProgress}%
-            </p>
+            </div>
           </div>
         )}
 

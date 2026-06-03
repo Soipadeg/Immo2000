@@ -99,10 +99,10 @@ const HomePage = () => {
       {/* Hero Section */}
       <section className="hero">
         <div className="hero-content">
-          <h1 className="hero-title">Trouvez votre bien immobilier idéal</h1>
-          <p className="hero-subtitle">
+          <div>Trouvez votre bien immobilier idéal</div>
+          <div className="hero-subtitle">
             Accédez à des milliers d'annonces d'immobilier de qualité vérifiée
-          </p>
+          </div>
           <SearchBar onSearch={handleSearch} />
         </div>
       </section>
@@ -111,7 +111,7 @@ const HomePage = () => {
       <section className="featured-section">
         <div className="container">
           <div className="section-header">
-            <h2 className="section-title">Annonces phares</h2>
+            <div>Annonces phares</div>
             <Button variant="secondary">Voir toutes les annonces</Button>
           </div>
 
@@ -125,23 +125,24 @@ const HomePage = () => {
                     className="listing-image"
                   />
                   <div className="listing-content">
-                    <h3 className="listing-title">{listing.title}</h3>
-                    <p className="listing-location">{listing.location}</p>
+                    <div>{listing.title}</div>
+                    <div className="listing-location">{listing.location}</div>
+
 
                     <div className="listing-features">
-                      <span className="feature">
+                      <div className="feature">
                         <strong>{listing.beds}</strong> ch.
-                      </span>
-                      <span className="feature">
+                      </div>
+                      <div className="feature">
                         <strong>{listing.baths}</strong> sdb.
-                      </span>
-                      <span className="feature">
+                      </div>
+                      <div className="feature">
                         <strong>{listing.area}</strong>
-                      </span>
+                      </div>
                     </div>
 
                     <div className="listing-footer">
-                      <span className="listing-price">{listing.price}</span>
+                      <div className="listing-price">{listing.price}</div>
                       <Button variant="ghost" size="small">
                         Détails
                       </Button>
@@ -158,10 +159,10 @@ const HomePage = () => {
       <section className="cta-section">
         <div className="container">
           <div className="cta-content">
-            <h2 className="cta-title">Vous souhaitez vendre votre bien ?</h2>
-            <p className="cta-description">
+            <div>Vous souhaitez vendre votre bien ?</div>
+            <div className="cta-description">
               Nos experts immobiliers vous aident à valoriser et vendre votre propriété au meilleur prix.
-            </p>
+            </div>
             <div className="cta-buttons">
               <Button variant="primary" size="medium">
                 Estimer mon bien

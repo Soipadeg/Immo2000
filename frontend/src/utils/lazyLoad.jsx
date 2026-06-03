@@ -149,7 +149,7 @@ class ErrorBoundary extends React.Component {
       return (
         this.props.fallback || (
           <Box sx={{ p: 4, textAlign: 'center' }}>
-            <h2>Erreur lors du chargement</h2>
+            <div>Erreur lors du chargement</div>
             <button onClick={() => window.location.reload()}>
               Recharger la page
             </button>

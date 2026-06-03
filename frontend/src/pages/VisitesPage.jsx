@@ -140,9 +140,9 @@ const VisitesPage = () => {
 
   return (
     <div maxWidth="lg">
-      <h4 variant="h4" gutterBottom>
+      <div>
         📅 Gestion des Visites
-      </h4>
+      </div>
 
       {error && <Alert severity="error">{error}</Alert>}
       {success && <Alert severity="success">{success}</Alert>}
@@ -155,10 +155,9 @@ const VisitesPage = () => {
 
       {tabValue === 0 && (
         <div>
-          <h6 variant="h6" gutterBottom>
+          <div>
             Planifier une nouvelle visite
-          </h6>
-
+          </div>
           <div component="form" onSubmit={handleScheduleVisite}>
             <div container spacing={2}>
               <div item xs={12} sm={6}>
@@ -217,9 +216,9 @@ const VisitesPage = () => {
             </div>
           ) : visites.length === 0 ? (
             <div>
-              <p color="text.secondary">
+              <div>
                 Aucune visite planifiée pour le moment
-              </h4>
+              </div>
             </div>
           ) : (
             <div container spacing={2}>
@@ -227,21 +226,21 @@ const VisitesPage = () => {
                 <div item xs={12} sm={6} md={4} key={visite.visite_id}>
                   <div>
                     <div>
-                      <h6 variant="h6" gutterBottom>
+                      <div>
                         Annonce #{visite.annonce_id}
-                      </h6>
-                      <p color="text.secondary" gutterBottom>
+                      </div>
+                      <div>
                         📅 {new Date(visite.date_heure).toLocaleString('fr-FR')}
-                      </h6>
-                      <span
+                      </div>
+                      <div
                         label={visite.statut}
                         color={getStatutColor(visite.statut)}
                         size="small"
                       />
                       {visite.notes && (
-                        <p variant="body2">
+                        <div>
                           <strong>Notes:</strong> {visite.notes}
-                        </h4>
+                        </div>
                       )}
                     </div>
                     <div>
@@ -285,25 +284,25 @@ const VisitesPage = () => {
         <div>
           {userRole === 'vendeur' ? (
             <div>
-              <h6 variant="h6" gutterBottom>
+              <div>
                 ⭐ Feedbacks reçus des acheteurs
-              </h6>
+              </div>
               <FeedbacksList />
             </div>
           ) : (
             <div>
-              <h6 variant="h6" gutterBottom>
+              <div>
                 Vos feedbacks
-              </h6>
+              </div>
               {loading ? (
                 <div>
                   <div />
                 </div>
               ) : visites.length === 0 ? (
                 <div>
-                  <p color="text.secondary">
+                  <div>
                     Aucune visite complétée pour le moment
-                  </h6>
+                  </div>
                 </div>
               ) : (
                 <div container spacing={2}>
@@ -313,12 +312,12 @@ const VisitesPage = () => {
                       <div item xs={12} key={visite.visite_id}>
                         <div>
                           <div>
-                            <h6 variant="h6" gutterBottom>
+                            <div>
                               Visite - Annonce #{visite.annonce_id}
-                            </h6>
-                            <p color="text.secondary" gutterBottom>
+                            </div>
+                            <div>
                               📅 {new Date(visite.date_heure).toLocaleString('fr-FR')}
-                            </h6>
+                            </div>
 
                             {/* Formulaire de feedback */}
                             <div>

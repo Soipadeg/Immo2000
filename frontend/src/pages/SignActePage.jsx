@@ -185,14 +185,14 @@ export default function SignActePage() {
             bgcolor: completed ? 'success.main' : pending ? 'warning.main' : 'action.disabled',
           }}
         >
-          {completed ? <span className="icon-placeholder">CheckCircleIcon</span> : pending ? <span className="icon-placeholder">HourglassIcon</span> : ''}
+          {completed ? <div className="icon-placeholder">CheckCircleIcon</div> : pending ? <div className="icon-placeholder">HourglassIcon</div> : ''}
         </TimelineDot>
         {index < 3 && <TimelineConnector />}
       </TimelineSeparator>
       <TimelineContent>
-        <span>
+        <div>
           {label}
-        </p>
+        </div>
       </TimelineContent>
     </TimelineItem>
   );
@@ -200,7 +200,7 @@ export default function SignActePage() {
   if (loading) {
     return (
       <div>
-        <span>Loading...</span>
+        <div>Loading...</div>
       </div>
     );
   }
@@ -209,30 +209,30 @@ export default function SignActePage() {
     <div className="container">
       {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
-      <h4>
+      <div>
         🔏 Signature de l'Acte Authentique
-      </p>
-      <p>
+      </div>
+      <div>
         Étape finale de la transaction - Signature irrevocable de l'acte de vente
-      </p>
+      </div>
 
       {/* Avertissement Important */}
       <Alert severity="warning" sx={{ mb: 4 }}>
-        <p>
+        <div>
           ⚠️ Attention: Cette signature est irrevocable
-        </p>
-        <span>
+        </div>
+        <div>
           Une fois l'acte signé par les deux parties (vendeur et acheteur), la transaction sera finalisée et
           irrevocable. Vérifiez tous les détails avant de procéder.
-        </p>
+        </div>
       </Alert>
 
       {/* Timeline des transactions */}
       <div className="card">
         <div className="card">
-          <h4>
+          <div>
             📊 Progression de la Transaction
-          </p>
+          </div>
           <Timeline position="alternate">
             {getTimelineItem(0, 'Compromis Signé', true)}
             {getTimelineItem(1, 'Paiement Effectué', true)}
@@ -248,36 +248,36 @@ export default function SignActePage() {
         <div className="card">
           <div className="grid-container">
             <div className="grid-item">
-              <p>
+              <div>
                 Bien
-              </p>
-              <p>
+              </div>
+              <div>
                 {transaction?.annonce?.titre}
-              </p>
+              </div>
             </div>
             <div className="grid-item">
-              <p>
+              <div>
                 Prix de Vente
-              </p>
-              <p>
+              </div>
+              <div>
                 {transaction?.prix_compromis?.toLocaleString('fr-FR')} €
-              </p>
+              </div>
             </div>
             <div className="grid-item">
-              <p>
+              <div>
                 Notaire
-              </p>
-              <p>
+              </div>
+              <div>
                 {transaction?.notaire?.etude_notariale}
-              </p>
+              </div>
             </div>
             <div className="grid-item">
-              <p>
+              <div>
                 Statut Paiement
-              </p>
-              <p>
+              </div>
+              <div>
                 ✅ Payé
-              </p>
+              </div>
             </div>
           </div>
         </div>
@@ -289,7 +289,7 @@ export default function SignActePage() {
       <div className="stepper">
         {steps.map((label) => (
           <div className="step">
-            <div className="step">{label}</StepLabel>
+            <div className="step">{label}</div>
           </div>
         ))}
       </div>
@@ -298,28 +298,28 @@ export default function SignActePage() {
       {activeStep === 0 && (
         <div className="card">
           <div className="card">
-            <h4>
+            <div>
               📥 Étape 1: Télécharger l'Acte
-            </p>
+            </div>
 
             <Alert severity="info" sx={{ mb: 3 }}>
               L'acte authentique a été préparé par le notaire. Téléchargez-le pour le consulter attentivement.
             </Alert>
 
             <List>
-              <ListItem>
-                <span className="icon-placeholder">ListItemIcon</span>
+              <li>
+                <div className="icon-placeholder">ListItemIcon</div>
                 <ListItemText
                   primary="Acte de vente authentique"
                   secondary={`${transaction?.annonce?.titre} - ${transaction?.prix_compromis?.toLocaleString('fr-FR')} €`}
                 />
-              </ListItem>
+              </li>
             </List>
 
             <div>
               <Button
                 variant="outlined"
-                startIcon={<span className="icon-placeholder">FileDownloadIcon</span>}
+                startIcon={<div className="icon-placeholder">FileDownloadIcon</div>}
                 onClick={handleDownloadDocument}
                 fullWidth
               >
@@ -334,9 +334,9 @@ export default function SignActePage() {
       {activeStep === 1 && (
         <div className="card">
           <div className="card">
-            <h4>
+            <div>
               🔐 Étape 2: S'authentifier avec DocuSign
-            </p>
+            </div>
 
             <Alert severity="info" sx={{ mb: 3 }}>
               Vous devez vous connecter à votre compte DocuSign pour signer électroniquement l'acte.
@@ -357,7 +357,7 @@ export default function SignActePage() {
                 disabled={submitting}
                 fullWidth
               >
-                {submitting ? <span>Loading...</span> : 'Connecter DocuSign'}
+                {submitting ? <div>Loading...</div> : 'Connecter DocuSign'}
               </Button>
             </div>
           </div>
@@ -368,14 +368,14 @@ export default function SignActePage() {
       {activeStep === 2 && (
         <div className="card">
           <div className="card">
-            <h4>
+            <div>
               ✍️ Étape 3: Signer l'Acte
-            </p>
+            </div>
 
             <Alert severity="error" sx={{ mb: 3 }}>
-              <p>
+              <div>
                 ⚠️ Avertissement: Cette signature est irrevocable
-              </p>
+              </div>
               Vous êtes sur le point de signer l'acte authentique. Cette signature engagera définitivement les deux
               parties. Vous avez un délai de 48 heures pour vous rétracter après cette signature.
             </Alert>
@@ -394,9 +394,9 @@ export default function SignActePage() {
                 onClick={handleRedirectToDocuSign}
                 disabled={!signingUrl || submitting}
                 fullWidth
-                endIcon={<span className="icon-placeholder">OpenInNewIcon</span>}
+                endIcon={<div className="icon-placeholder">OpenInNewIcon</div>}
               >
-                {submitting ? <span>Loading...</span> : 'Accéder à DocuSign'}
+                {submitting ? <div>Loading...</div> : 'Accéder à DocuSign'}
               </Button>
             </div>
 
@@ -411,9 +411,9 @@ export default function SignActePage() {
       {activeStep === 3 && (
         <div className="card">
           <div className="card">
-            <h4>
+            <div>
               ✅ Étape 4: Finaliser la Transaction
-            </p>
+            </div>
 
             <Alert severity="success" sx={{ mb: 3 }}>
               Votre signature a bien été enregistrée. La transaction peut maintenant être finalisée.
@@ -422,29 +422,29 @@ export default function SignActePage() {
             <div className="card">
               <div className="grid-container">
                 <div className="grid-item">
-                  <p>
-                    Statut Signature
-                  </p>
                   <div>
-                    <span className="icon-placeholder">CheckCircleIcon</span>
-                    <p>
+                    Statut Signature
+                  </div>
+                  <div>
+                    <div className="icon-placeholder">CheckCircleIcon</div>
+                    <div>
                       Signée
-                    </p>
+                    </div>
                   </div>
                 </div>
                 <div className="grid-item">
-                  <p>
+                  <div>
                     Enveloppe DocuSign
-                  </p>
-                  <span>{envelopeId}</p>
+                  </div>
+                  <div>{envelopeId}</div>
                 </div>
               </div>
             </div>
 
-            <span>
+            <div>
               L'acte a été signé électroniquement par DocuSign. Le notaire validera la signature et finalisera
               l'enregistrement auprès des services du gouvernement.
-            </p>
+            </div>
 
             <div>
               <Button
@@ -460,9 +460,9 @@ export default function SignActePage() {
                 onClick={handleFinalizeTransaction}
                 disabled={submitting}
                 fullWidth
-                startIcon={<span className="icon-placeholder">CloudUploadIcon</span>}
+                startIcon={<div className="icon-placeholder">CloudUploadIcon</div>}
               >
-                {submitting ? <span>Loading...</span> : 'Finaliser la Transaction'}
+                {submitting ? <div>Loading...</div> : 'Finaliser la Transaction'}
               </Button>
             </div>
           </div>
@@ -490,11 +490,11 @@ export default function SignActePage() {
             maxWidth: '400px',
             textAlign: 'center',
           }}>
-            <h2>✓ Transaction Finalisée</h2>
-            <p>
+            <div>✓ Transaction Finalisée</div>
+            <div>
               Félicitations! Votre transaction a été complètement finalisée. L'acte de vente a été signé par les deux
               parties et est maintenant en cours d'enregistrement auprès des autorités.
-            </p>
+            </div>
             <Button onClick={() => setSuccessOpen(false)} variant="primary">
               OK
             </Button>

@@ -85,7 +85,7 @@ const ProfilePage = () => {
 
   return (
     <div className="profile-page-container">
-      <h1 className="page-title">👤 Mon Profil</h1>
+      <div>👤 Mon Profil</div>
 
       {error && <Alert type="error" title="Erreur" message={error} />}
       {success && <Alert type="success" title="Succès" message={success} />}
@@ -98,10 +98,10 @@ const ProfilePage = () => {
               {user.prenom?.[0]?.toUpperCase()}
             </div>
             <div className="profile-info">
-              <h2 className="profile-name">
+              <div>
                 {user.prenom} {user.nom}
-              </h2>
-              <p className="profile-email">{user.email}</p>
+              </div>
+              <div className="profile-email">{user.email}</div>
             </div>
           </div>
           {!isEditing && (
@@ -198,24 +198,24 @@ const ProfilePage = () => {
             ) : (
               <div className="profile-info-grid">
                 <div className="info-item">
-                  <span className="info-label">PRÉNOM</span>
-                  <p className="info-value">{user.prenom || '-'}</p>
+                  <div className="info-label">PRÉNOM</div>
+                  <div className="info-value">{user.prenom || '-'}</div>
                 </div>
                 <div className="info-item">
-                  <span className="info-label">NOM</span>
-                  <p className="info-value">{user.nom || '-'}</p>
+                  <div className="info-label">NOM</div>
+                  <div className="info-value">{user.nom || '-'}</div>
                 </div>
                 <div className="info-item">
-                  <span className="info-label">EMAIL</span>
-                  <p className="info-value">{user.email}</p>
+                  <div className="info-label">EMAIL</div>
+                  <div className="info-value">{user.email}</div>
                 </div>
                 <div className="info-item">
-                  <span className="info-label">TÉLÉPHONE</span>
-                  <p className="info-value">{user.telephone || '-'}</p>
+                  <div className="info-label">TÉLÉPHONE</div>
+                  <div className="info-value">{user.telephone || '-'}</div>
                 </div>
                 <div className="info-item full-width">
-                  <span className="info-label">ADRESSE DE CONTACT</span>
-                  <p className="info-value">{user.adresse_contact || '-'}</p>
+                  <div className="info-label">ADRESSE DE CONTACT</div>
+                  <div className="info-value">{user.adresse_contact || '-'}</div>
                 </div>
               </div>
             )}
@@ -226,13 +226,14 @@ const ProfilePage = () => {
         {tabValue === 1 && (
           <Card className="tab-content">
             <div className="security-section">
-              <h3 className="section-title">🔐 Sécurité du Compte</h3>
+              <div>🔐 Sécurité du Compte</div>
 
               <div className="security-item">
-                <p className="security-label">Email vérifié</p>
-                <span className={`verification-badge ${user.email_verified ? 'verified' : 'unverified'}`}>
+                <div className="security-label">Email vérifié</div>
+
+                <div className={`verification-badge ${user.email_verified ? 'verified' : 'unverified'}`}>
                   {user.email_verified ? '✓ Vérifié' : '✗ Non vérifié'}
-                </span>
+                </div>
               </div>
 
               <div className="security-actions">
@@ -251,15 +252,15 @@ const ProfilePage = () => {
         {tabValue === 2 && (
           <Card className="tab-content">
             <div className="preferences-section">
-              <h3 className="section-title">⚙️ Préférences</h3>
+              <div>⚙️ Préférences</div>
 
-              <p className="preferences-text">
+              <div className="preferences-text">
                 Vous pouvez personnaliser votre expérience Immo2000 ici.
-              </p>
+              </div>
 
               <div className="preference-item">
-                <p className="preference-label">📧 Notifications par email</p>
-                <p className="preference-value">Fonctionnalité à venir...</p>
+                <div className="preference-label">📧 Notifications par email</div>
+                <div className="preference-value">Fonctionnalité à venir...</div>
               </div>
             </div>
           </Card>

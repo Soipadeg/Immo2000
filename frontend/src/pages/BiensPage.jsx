@@ -245,7 +245,7 @@ const BiensPage = () => {
   return (
     <div className="biens-page-container">
       <div className="biens-header">
-        <h1 className="biens-title">🏠 Gestion de mes Biens</h1>
+        <div>🏠 Gestion de mes Biens</div>
       </div>
 
       {error && <Alert type="error" title="Erreur" message={error} />}
@@ -284,7 +284,7 @@ const BiensPage = () => {
             </div>
           ) : biens.length === 0 ? (
             <Card className="empty-state">
-              <p>Aucune propriété pour le moment</p>
+              <div>Aucune propriété pour le moment</div>
             </Card>
           ) : (
             <>
@@ -299,28 +299,28 @@ const BiensPage = () => {
                     </div>
 
                     <div className="bien-content">
-                      <h3 className="bien-address">{bien.adresse}</h3>
-                      <p className="bien-city">
+                      <div>{bien.adresse}</div>
+                      <div className="bien-city">
                         {bien.code_postal} {bien.ville}
-                      </p>
+                      </div>
 
-                      <span className="bien-type-badge">{bien.type_bien}</span>
+                      <div className="bien-type-badge">{bien.type_bien}</div>
 
-                      <p className="bien-specs">
+                      <div className="bien-specs">
                         <strong>{bien.surface}m²</strong>
                         {bien.nombre_pieces && ` • ${bien.nombre_pieces} pièces`}
-                      </p>
+                      </div>
 
                       {bien.prix && (
-                        <p className="bien-price">
+                        <div className="bien-price">
                           {formatPrice(bien.prix)}
-                        </p>
+                        </div>
                       )}
 
                       {bien.description && (
-                        <p className="bien-description">
+                        <div className="bien-description">
                           {bien.description.substring(0, 100)}...
-                        </p>
+                        </div>
                       )}
                     </div>
 
@@ -365,7 +365,7 @@ const BiensPage = () => {
                       ← Précédent
                     </button>
                   )}
-                  <span className="pagination-info">Page {page}</span>
+                  <div className="pagination-info">Page {page}</div>
                   {biens.length === LIMIT && (
                     <button
                       className="pagination-button"
@@ -391,25 +391,25 @@ const BiensPage = () => {
           ) : stats ? (
             <div className="stats-grid">
               <Card className="stat-card">
-                <p className="stat-label">Total de Biens</p>
-                <p className="stat-value">{stats.total_biens || 0}</p>
+                <div className="stat-label">Total de Biens</div>
+                <div className="stat-value">{stats.total_biens || 0}</div>
               </Card>
               <Card className="stat-card">
-                <p className="stat-label">Surface Totale</p>
-                <p className="stat-value">{stats.surface_totale || 0}m²</p>
+                <div className="stat-label">Surface Totale</div>
+                <div className="stat-value">{stats.surface_totale || 0}m²</div>
               </Card>
               <Card className="stat-card">
-                <p className="stat-label">Valeur Totale</p>
-                <p className="stat-value">{formatPrice(stats.valeur_totale || 0)}</p>
+                <div className="stat-label">Valeur Totale</div>
+                <div className="stat-value">{formatPrice(stats.valeur_totale || 0)}</div>
               </Card>
               <Card className="stat-card">
-                <p className="stat-label">Prix Moyen/m²</p>
-                <p className="stat-value">{formatPrice(stats.prix_moyen_m2 || 0)}</p>
+                <div className="stat-label">Prix Moyen/m²</div>
+                <div className="stat-value">{formatPrice(stats.prix_moyen_m2 || 0)}</div>
               </Card>
             </div>
           ) : (
             <Card className="empty-state">
-              <p>Aucune données statistiques disponibles</p>
+              <div>Aucune données statistiques disponibles</div>
             </Card>
           )}
         </div>
@@ -419,7 +419,7 @@ const BiensPage = () => {
       {createDialogOpen && (
         <Modal onClose={() => setCreateDialogOpen(false)}>
           <div className="dialog-content">
-            <h2 className="dialog-title">Créer une nouvelle propriété</h2>
+            <div>Créer une nouvelle propriété</div>
             <div className="form-fields">
               <Input
                 label="Adresse *"
@@ -503,7 +503,7 @@ const BiensPage = () => {
       {editDialogOpen && (
         <Modal onClose={() => setEditDialogOpen(false)}>
           <div className="dialog-content">
-            <h2 className="dialog-title">Modifier la propriété</h2>
+            <div>Modifier la propriété</div>
             <div className="form-fields">
               <Input
                 label="Adresse *"
@@ -586,7 +586,7 @@ const BiensPage = () => {
       {imageUploadDialogOpen && (
         <Modal onClose={() => setImageUploadDialogOpen(false)}>
           <div className="dialog-content">
-            <h2 className="dialog-title">📸 Ajouter des photos à la propriété</h2>
+            <div>📸 Ajouter des photos à la propriété</div>
             {selectedBienId && (
               <ImageUploadComponent
                 annonceId={selectedBienId}

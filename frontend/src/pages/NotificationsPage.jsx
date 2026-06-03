@@ -150,13 +150,13 @@ const NotificationsPage = () => {
           <Badge badgeContent={unreadCount} color="error">
             <BellIcon sx={{ fontSize: '2rem', color: '#1976d2' }} />
           </Badge>
-          <h1>
+          <div>
             🔔 Notifications
-          </p>
+          </div>
         </div>
-        <p>
+        <div>
           Gérez vos notifications et vos préférences de communication
-        </p>
+        </div>
       </div>
 
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
@@ -190,15 +190,15 @@ const NotificationsPage = () => {
           ) : notifications.length === 0 ? (
             <Paper sx={{ p: 3, textAlign: 'center' }}>
               <BellIcon sx={{ fontSize: '3rem', color: '#ccc', mb: 1 }} />
-              <p>
+              <div>
                 Aucune notification pour le moment
-              </p>
+              </div>
             </Paper>
           ) : (
             <ul>
               {notifications.map((notif) => (
                 <React.Fragment key={notif.id}>
-                  <ulItem
+                <li
                     sx={{
                       backgroundColor: notif.read ? 'transparent' : '#f0f7ff',
                       borderLeft: notif.read ? 'none' : '4px solid #1976d2',
@@ -206,7 +206,7 @@ const NotificationsPage = () => {
                       borderRadius: 1,
                     }}
                   >
-                    <ulItemIcon>
+                    <ListItemIcon>
                       {notif.read ? (
                         <CheckIcon color="success" />
                       ) : (
@@ -219,16 +219,16 @@ const NotificationsPage = () => {
                         </Badge>
                       )}
                     </ListItemIcon>
-                    <ulItemText
+                    <ListItemText
                       primary={notif.titre}
                       secondary={
                         <div sx={{ mt: 1 }}>
-                          <p>
+                          <div>
                             {notif.message}
-                          </p>
-                          <p>
+                          </div>
+                          <div>
                             {new Date(notif.date).toLocaleString('fr-FR')}
-                          </p>
+                          </div>
                         </div>
                       }
                     />
@@ -266,9 +266,9 @@ const NotificationsPage = () => {
             <div className="grid-item">
               <div className="card">
                 <div className="card"Content>
-                  <h1>
+                  <div>
                     📧 Notifications par Email
-                  </p>
+                  </div>
                   <Divider sx={{ mb: 2 }} />
 
                   <div sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -330,9 +330,9 @@ const NotificationsPage = () => {
             <div className="grid-item">
               <div className="card">
                 <div className="card"Content>
-                  <h1>
+                  <div>
                     ⏰ Fréquence des Notifications
-                  </p>
+                  </div>
                   <Divider sx={{ mb: 2 }} />
 
                   <div sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
@@ -371,9 +371,9 @@ const NotificationsPage = () => {
                     </Button>
                   </div>
 
-                  <p>
+                  <div>
                     Les notifications seront envoyées selon la fréquence sélectionnée.
-                  </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -397,15 +397,15 @@ const NotificationsPage = () => {
       {tabValue === 2 && (
         <div>
           <Paper sx={{ p: 3 }}>
-            <h1>
+            <div>
               🧪 Tester l'Envoi d'Emails
-            </p>
+            </div>
             <Divider sx={{ mb: 2 }} />
 
-            <p>
+            <div>
               Envoyez un email de test à votre adresse pour vérifier que vous recevez
               bien les notifications.
-            </p>
+            </div>
 
             <div sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
               <Input

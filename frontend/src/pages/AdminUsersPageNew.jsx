@@ -8,8 +8,6 @@ import { usersApi } from '../services/adminApi';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { Button, Alert, Input } from '@/components';
-import { Paper, Tooltip, Pagination, Chip, Dialog, DialogTitle, DialogContent, DialogActions, Typography, CircularProgress } from '@mui/material';
-import { Edit, Block, Check, Delete } from '@mui/icons-material';
 
 
 
@@ -91,7 +89,7 @@ const AdminUsersPage = () => {
   return (
     <div maxWidth="lg">
       <div>
-        <h2>👥 Gestion des Utilisateurs</h2>
+        <div>👥 Gestion des Utilisateurs</div>
         <div>
           <Input
             placeholder="Rechercher (email, nom...)"
@@ -113,7 +111,7 @@ const AdminUsersPage = () => {
         </div>
       ) : (
         <>
-          <Paper>
+          <div component={Paper}>
             <table>
               <thead>
                 <tr>
@@ -137,7 +135,7 @@ const AdminUsersPage = () => {
                       <td>{u.email}</td>
                       <td>{u.nom || '-'}</td>
                       <td>
-                        <Chip
+                        <div
                           label={u.role}
                           size="small"
                           color={u.role === 'admin' ? 'error' : 'default'}
@@ -145,7 +143,7 @@ const AdminUsersPage = () => {
                         />
                       </td>
                       <td>
-                        <Chip
+                        <div
                           label={u.actif ? 'Actif' : 'Suspendu'}
                           size="small"
                           color={u.actif ? 'success' : 'warning'}
@@ -193,7 +191,7 @@ const AdminUsersPage = () => {
                 )}
               </tbody>
             </table>
-          </Paper>
+          </div>
 
           <div>
             <Pagination count={10} page={page} onChange={(e, p) => setPage(p)} />
@@ -202,14 +200,14 @@ const AdminUsersPage = () => {
       )}
 
       {/* Dialogs */}
-      <Dialog open={dialog.open} onClose={() => setDialog({ open: false, action: null, userId: null })}>
-        <DialogTitle>
+      <div open={dialog.open} onClose={() => setDialog({ open: false, action: null, userId: null })}>
+        <div>
           {dialog.action === 'changeRole' && 'Changer le rôle?'}
           {dialog.action === 'suspend' && 'Suspendre l\'utilisateur?'}
           {dialog.action === 'reactivate' && 'Réactiver l\'utilisateur?'}
           {dialog.action === 'delete' && 'Supprimer l\'utilisateur?'}
-        </DialogTitle>
-        <DialogContent>
+        </div>
+        <div>
           {dialog.action === 'suspend' && (
             <Input
               label="Durée de suspension (heures)"
@@ -220,23 +218,23 @@ const AdminUsersPage = () => {
             />
           )}
           {dialog.action === 'delete' && (
-            <Typography color="error">Cette action est irréversible!</Typography>
+            <div>Cette action est irréversible!</div>
           )}
-        </DialogContent>
-        <DialogActions>
+        </div>
+        <div>
           <Button onClick={() => setDialog({ open: false, action: null, userId: null })}>
             Annuler
           </Button>
           <Button
             onClick={() => handleAction(dialog.action, dialog.userId)}
             disabled={actionLoading}
-            variant="primary"
+            variant="contained"
             color={dialog.action === 'delete' ? 'error' : 'primary'}
           >
-            {actionLoading ? <CircularProgress size={24} /> : 'Confirmer'}
+            {actionLoading ? <div size={24} /> : 'Confirmer'}
           </Button>
-        </DialogActions>
-      </Dialog>
+        </div>
+      </div>
     </div>
   );
 };

@@ -89,36 +89,36 @@ export default function DocuSignCallbackPage() {
         {status === 'processing' && (
           <>
             <div size={60} />
-            <h5 variant="h5">
+            <div>
               Traitement du callback DocuSign...
-            </h5>
-            <p color="textSecondary">
+            </div>
+            <div>
               Veuillez patienter pendant que nous finalisons votre authentification.
-            </h5>
+            </div>
           </>
         )}
 
         {status === 'success' && (
           <>
             <CheckCircleIcon />
-            <h5 variant="h5">
+            <div>
               ✅ Authentification Réussie
-            </h5>
-            <p>{message}</h5>
-            <p color="textSecondary">Redirection en cours...</h5>
+            </div>
+            <div>{message}</div>
+            <div>Redirection en cours...</div>
           </>
         )}
 
         {status === 'error' && (
           <>
             <ErrorIcon />
-            <h5 variant="h5">
+            <div>
               ❌ Erreur
-            </h5>
+            </div>
             <Alert severity="error">
               {message}
             </Alert>
-            <p color="textSecondary">Redirection en cours...</h5>
+            <div>Redirection en cours...</div>
           </>
         )}
       </div>

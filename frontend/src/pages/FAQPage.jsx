@@ -135,22 +135,22 @@ const FAQPage = () => {
           {loading ? (
             <div className="faq-loading">
               <div className="spinner"></div>
-              <p>Chargement des FAQs...</p>
+              <div>Chargement des FAQs...</div>
             </div>
           ) : filteredFaqs.length === 0 ? (
             <div className="faq-empty">
-              <p>
+              <div>
                 {searchTerm
                   ? 'Aucune FAQ ne correspond à votre recherche'
                   : 'Aucune FAQ disponible'}
-              </p>
+              </div>
             </div>
           ) : (
             <>
               {/* Category Filters */}
               {categories.length > 1 && (
                 <div className="faq-categories">
-                  <span className="categories-label">Catégories:</span>
+                  <div className="categories-label">Catégories:</div>
                   <button
                     className={`category-chip ${!selectedCategory ? 'active' : ''}`}
                     onClick={() => handleCategoryFilter('')}
@@ -182,10 +182,10 @@ const FAQPage = () => {
 
               {/* Summary */}
               <div className="faq-summary">
-                <p>
+                <div>
                   <strong>{filteredFaqs.length} FAQ{filteredFaqs.length > 1 ? 's' : ''}</strong>
                   {selectedCategory && ` - Catégorie: ${selectedCategory}`}
-                </p>
+                </div>
               </div>
             </>
           )}
@@ -198,7 +198,7 @@ const FAQPage = () => {
           {statsLoading ? (
             <div className="faq-loading">
               <div className="spinner"></div>
-              <p>Chargement des statistiques...</p>
+              <div>Chargement des statistiques...</div>
             </div>
           ) : stats ? (
             <div className="stats-grid">
@@ -222,14 +222,14 @@ const FAQPage = () => {
               {stats.category_distribution && stats.category_distribution.length > 0 && (
                 <Card variant="elevated" interactive>
                   <div className="stat-section">
-                    <h3>📊 FAQs par Catégorie</h3>
+                    <div>📊 FAQs par Catégorie</div>
                     {stats.category_distribution.map((cat, idx) => (
                       <div key={idx} className="distribution-item">
                         <div className="distribution-header">
-                          <span className="dist-category">{cat.categorie}</span>
-                          <span className="dist-count">
+                          <div className="dist-category">{cat.categorie}</div>
+                          <div className="dist-count">
                             {cat.count} FAQ{cat.count > 1 ? 's' : ''}
-                          </span>
+                          </div>
                         </div>
                         <div className="distribution-bar">
                           <div
@@ -249,7 +249,7 @@ const FAQPage = () => {
               {stats.popular_questions && stats.popular_questions.length > 0 && (
                 <Card variant="elevated" interactive>
                   <div className="stat-section">
-                    <h3>⭐ Questions Populaires</h3>
+                    <div>⭐ Questions Populaires</div>
                     <ol className="popular-questions">
                       {stats.popular_questions.map((q, idx) => (
                         <li key={idx}>
@@ -266,7 +266,7 @@ const FAQPage = () => {
             </div>
           ) : (
             <div className="faq-empty">
-              <p>Aucune donnée statistique disponible</p>
+              <div>Aucune donnée statistique disponible</div>
             </div>
           )}
         </div>
@@ -288,12 +288,12 @@ function FAQAccordion({ faq, index }) {
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
       >
-        <span className="accordion-icon">▶</span>
-        <span className="accordion-question">{faq.question}</span>
+        <div className="accordion-icon">▶</div>
+        <div className="accordion-question">{faq.question}</div>
       </button>
       {isOpen && (
         <div className="faq-accordion-content">
-          <p className="accordion-answer">{faq.reponse}</p>
+          <div className="accordion-answer">{faq.reponse}</div>
           {faq.categorie && (
             <div className="accordion-category">📂 {faq.categorie}</div>
           )}

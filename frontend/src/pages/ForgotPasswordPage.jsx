@@ -129,9 +129,9 @@ export default function ForgotPasswordPage() {
       {/* Step 0: Email verification */}
       {step === 0 && (
         <form onSubmit={handleRequestReset} className="forgot-password-form">
-          <p className="form-description">
+          <div className="form-description">
             Entrez votre adresse email pour recevoir un code de réinitialisation.
-          </p>
+          </div>
 
           <Input
             label="Adresse email"
@@ -165,10 +165,10 @@ export default function ForgotPasswordPage() {
       {/* Step 1: Code verification */}
       {step === 1 && (
         <form onSubmit={handleVerifyCode} className="forgot-password-form">
-          <p className="form-description">
+          <div className="form-description">
             Un code de réinitialisation a été envoyé à<br />
             <strong>{sentEmail}</strong>
-          </p>
+          </div>
 
           <Input
             label="Code de réinitialisation"

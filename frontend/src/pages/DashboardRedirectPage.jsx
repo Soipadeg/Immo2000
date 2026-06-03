@@ -45,7 +45,7 @@ const DashboardRedirectPage = () => {
     <div
     >
       <div size={60} />
-      <h6 variant="h6">Redirection vers votre tableau de bord...</h6>
+      <div>Redirection vers votre tableau de bord...</div>
     </div>
   );
 };

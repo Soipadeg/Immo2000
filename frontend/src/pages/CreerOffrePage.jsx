@@ -115,16 +115,16 @@ export default function CreerOffrePage() {
 
   return (
     <div maxWidth="md">
-      <h4 gutterBottom>
+      <div>
         Faire une offre d'achat
-      </h4>
+      </div>
 
       {error && <Alert severity="error">{error}</Alert>}
 
       <Stepper activeStep={activeStep}>
         {steps.map((label) => (
           <Step key={label}>
-            <StepLabel>{label}</StepLabel>
+            <div>{label}</div>
           </Step>
         ))}
       </Stepper>
@@ -133,50 +133,50 @@ export default function CreerOffrePage() {
         <div>
           {activeStep === 0 && (
             <div>
-              <h6 gutterBottom>
+              <div>
                 Récapitulatif du bien
-              </h6>
+              </div>
               <div container spacing={2}>
                 <div item xs={12}>
-                  <p>
+                  <div>
                     Titre
-                  </h4>
-                  <p>{annonce.titre}</h6>
+                  </div>
+                  <div>{annonce.titre}</div>
                 </div>
                 <div item xs={12} sm={6}>
-                  <p>
+                  <div>
                     Localisation
-                  </h4>
-                  <p>
+                  </div>
+                  <div>
                     {annonce.adresse}, {annonce.code_postal} {annonce.ville}
-                  </h6>
+                  </div>
                 </div>
                 <div item xs={12} sm={6}>
-                  <p>
+                  <div>
                     Prix demandé
-                  </h4>
-                  <p>
+                  </div>
+                  <div>
                     {new Intl.NumberFormat('fr-FR', {
                       style: 'currency',
                       currency: 'EUR',
                     }).format(annonce.prix)}
-                  </h6>
+                  </div>
                 </div>
                 <div item xs={12} sm={6}>
-                  <p>
+                  <div>
                     Surface
-                  </p>
-                  <p>
+                  </div>
+                  <div>
                     {annonce.surface_habitable} m²
-                  </p>
+                  </div>
                 </div>
                 <div item xs={12} sm={6}>
-                  <p>
+                  <div>
                     Pièces
-                  </p>
-                  <p>
+                  </div>
+                  <div>
                     {annonce.nombre_pieces}
-                  </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -184,10 +184,10 @@ export default function CreerOffrePage() {
 
           {activeStep === 1 && (
             <div>
-              <h6 gutterBottom>
+              <div>
                 Quel est votre offre ?
-              </h6>
-              <p>
+              </div>
+              <div>
                 Recommandation: entre {new Intl.NumberFormat('fr-FR', {
                   style: 'currency',
                   currency: 'EUR',
@@ -195,7 +195,7 @@ export default function CreerOffrePage() {
                   style: 'currency',
                   currency: 'EUR',
                 }).format(prixMax)}
-              </h6>
+              </div>
               <Input
                 fullWidth
                 label="Prix proposé (€)"
@@ -215,12 +215,12 @@ export default function CreerOffrePage() {
 
           {activeStep === 2 && (
             <div>
-              <h6 gutterBottom>
+              <div>
                 Message au vendeur
-              </h6>
-              <p>
+              </div>
+              <div>
                 Présentez votre projet, posez des questions, etc. (Optionnel)
-              </h6>
+              </div>
               <Input
                 fullWidth
                 multiline
@@ -236,41 +236,41 @@ export default function CreerOffrePage() {
 
           {activeStep === 3 && (
             <div>
-              <h6 gutterBottom>
+              <div>
                 Récapitulatif de votre offre
-              </h6>
+              </div>
               <div container spacing={2}>
                 <div item xs={12}>
                   <div>
                     <div>
-                      <p>Bien</h6>
-                      <p>{annonce.titre}</h6>
+                      <div>Bien</div>
+                      <div>{annonce.titre}</div>
                     </div>
                   </div>
                 </div>
                 <div item xs={6}>
                   <div>
                     <div>
-                      <p>Prix demandé</h6>
-                      <h6>
+                      <div>Prix demandé</div>
+                      <div>
                         {new Intl.NumberFormat('fr-FR', {
                           style: 'currency',
                           currency: 'EUR',
                         }).format(annonce.prix)}
-                      </h6>
+                      </div>
                     </div>
                   </div>
                 </div>
                 <div item xs={6}>
                   <div>
                     <div>
-                      <p>Votre offre</h6>
-                      <h6>
+                      <div>Votre offre</div>
+                      <div>
                         {new Intl.NumberFormat('fr-FR', {
                           style: 'currency',
                           currency: 'EUR',
                         }).format(formData.prix_propose || 0)}
-                      </h6>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -278,10 +278,10 @@ export default function CreerOffrePage() {
                   <div item xs={12}>
                     <div>
                       <div>
-                        <p>Message</h6>
-                        <p>
+                        <div>Message</div>
+                        <div>
                           {formData.message}
-                        </h6>
+                        </div>
                       </div>
                     </div>
                   </div>

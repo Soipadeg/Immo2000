@@ -110,7 +110,7 @@ export default function PaymentPage() {
   if (loading) {
     return (
       <div>
-        <span>Loading...</span>
+        <div>Loading...</div>
       </div>
     );
   }
@@ -119,15 +119,15 @@ export default function PaymentPage() {
     <div className="container">
       {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
-      <h4>
+      <div>
         💳 Paiement du Dépôt de Garantie
-      </p>
+      </div>
 
       {/* Stepper */}
       <div className="stepper">
         {steps.map((label) => (
           <div className="step">
-            <div className="step">{label}</StepLabel>
+            <div className="step">{label}</div>
           </div>
         ))}
       </div>
@@ -140,39 +140,39 @@ export default function PaymentPage() {
             <div className="card">
               <div className="grid-container">
                 <div className="grid-item">
-                  <p>
+                  <div>
                     Bien
-                  </p>
-                  <h4>
+                  </div>
+                  <div>
                     {transaction?.annonce?.titre}
-                  </p>
+                  </div>
                 </div>
 
                 <div className="grid-item">
-                  <p>
+                  <div>
                     Prix de vente (TTC)
-                  </p>
-                  <h4>
+                  </div>
+                  <div>
                     {prixVente?.toLocaleString('fr-FR')} €
-                  </p>
+                  </div>
                 </div>
 
                 <div className="grid-item">
-                  <p>
+                  <div>
                     Dépôt à verser (15%)
-                  </p>
-                  <h4>
+                  </div>
+                  <div>
                     {montantDépôt?.toLocaleString('fr-FR')} €
-                  </p>
+                  </div>
                 </div>
 
                 <div className="grid-item">
-                  <p>
+                  <div>
                     Solde futur (85%)
-                  </p>
-                  <h4>
+                  </div>
+                  <div>
                     {montantSolde?.toLocaleString('fr-FR')} €
-                  </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -183,9 +183,9 @@ export default function PaymentPage() {
           {/* Conditions */}
           <div className="card">
             <div className="card">
-              <p>
+              <div>
                 ⚠️ Conditions
-              </p>
+              </div>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -194,10 +194,10 @@ export default function PaymentPage() {
                   />
                 }
                 label={
-                  <span>
+                  <div>
                     Je confirme que je suis le propriétaire de la carte bancaire utilisée et que j'autorise le
                     prélèvement du montant du dépôt.
-                  </p>
+                  </div>
                 }
               />
             </div>
@@ -232,11 +232,11 @@ export default function PaymentPage() {
             <div className="card">
               <Alert severity="info" sx={{ mb: 3 }}>
                 <div>
-                  <span className="icon-placeholder">LockIcon</span>
-                  <span>
+                  <div className="icon-placeholder">LockIcon</div>
+                  <div>
                     Paiement sécurisé par <strong>Stripe</strong>. Vos données bancaires ne sont jamais partagées avec
                     Immo2000.
-                  </p>
+                  </div>
                 </div>
               </Alert>
 
@@ -273,18 +273,18 @@ export default function PaymentPage() {
       {activeStep === 2 && (
         <div className="card">
           <div className="card">
-            <span className="icon-placeholder">CheckCircleIcon</span>
-            <h4>
-              Paiement Réussi! ✅
-            </p>
-            <p>
-              Votre dépôt de <strong>{montantDépôt?.toLocaleString('fr-FR')} €</strong> a été reçu avec succès.
-            </p>
-            <p>
-              Vous serez redirigé vers la signature de l'acte authentique dans quelques secondes...
-            </p>
+            <div className="icon-placeholder">CheckCircleIcon</div>
             <div>
-              <span>Loading...</span>
+              Paiement Réussi! ✅
+            </div>
+            <div>
+              Votre dépôt de <strong>{montantDépôt?.toLocaleString('fr-FR')} €</strong> a été reçu avec succès.
+            </div>
+            <div>
+              Vous serez redirigé vers la signature de l'acte authentique dans quelques secondes...
+            </div>
+            <div>
+              <div>Loading...</div>
             </div>
           </div>
         </div>

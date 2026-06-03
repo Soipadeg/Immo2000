@@ -102,7 +102,7 @@ const DevTransitionPage = () => {
     <div
     >
       <div />
-      <p variant="body1">{status}</p>
+      <div>{status}</div>
       <Alert severity="info">
         ℹ️ Ne fermez pas cette page, elle se fermera automatiquement dans quelques secondes
       </Alert>

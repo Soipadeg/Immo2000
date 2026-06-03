@@ -232,12 +232,12 @@ export function FileUploader({
               <div className="file-uploader__file-name">{fileItem.name}</div>
 
               <div className="file-uploader__file-details">
-                <span>{(fileItem.originalSize / 1024 / 1024).toFixed(2)} MB</span>
-                <span>→</span>
-                <span>{(fileItem.compressedSize / 1024 / 1024).toFixed(2)} MB</span>
-                <span style={{ marginLeft: 'auto', color: '#22c55e', fontWeight: '600' }}>
+                <div>{(fileItem.originalSize / 1024 / 1024).toFixed(2)} MB</div>
+                <div>→</div>
+                <div>{(fileItem.compressedSize / 1024 / 1024).toFixed(2)} MB</div>
+                <div style={{ marginLeft: 'auto', color: '#22c55e', fontWeight: '600' }}>
                   -{fileItem.reductionPercent}%
-                </span>
+                </div>
               </div>
 
               {/* Barre de progression */}
@@ -252,10 +252,10 @@ export function FileUploader({
 
               {/* Status */}
               <div className={`file-uploader__status ${fileItem.status}`}>
-                {fileItem.status === 'done' && <span>✓ Uploadé</span>}
-                {fileItem.status === 'uploading' && <span>⟳ {uploadProgress[idx]?.toFixed(0)}%</span>}
-                {fileItem.status === 'error' && <span>✘ Erreur</span>}
-                {fileItem.status === 'ready' && <span>Prêt</span>}
+                {fileItem.status === 'done' && <div>✓ Uploadé</div>}
+                {fileItem.status === 'uploading' && <div>⟳ {uploadProgress[idx]?.toFixed(0)}%</div>}
+                {fileItem.status === 'error' && <div>✘ Erreur</div>}
+                {fileItem.status === 'ready' && <div>Prêt</div>}
               </div>
             </div>
 

@@ -38,7 +38,7 @@ const Navbar = ({
       <div className="navbar-container">
         {/* Logo */}
         <div className="navbar-logo">
-          {typeof logo === 'string' ? <span className="navbar-logo__text">{logo}</span> : logo}
+          {typeof logo === 'string' ? <div className="navbar-logo__text">{logo}</div> : logo}
         </div>
 
         {/* Desktop Navigation Links */}

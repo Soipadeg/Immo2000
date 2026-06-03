@@ -49,22 +49,22 @@ const AnnonceBienCard = ({ annonce, isFavorite, onToggleFavorite, navigate }) =>
 
       <CardContent>
         {/* Titre */}
-        <p>
+        <div>
           {annonce.titre}
-        </p>
+        </div>
 
         {/* Prix */}
-        <p>
+        <div>
           {annonce.prix.toLocaleString('fr-FR', {
             style: 'currency',
             currency: 'EUR',
           })}
-        </p>
+        </div>
 
         {/* Localisation */}
-        <p>
+        <div>
           📍 {annonce.adresse}, {annonce.code_postal} {annonce.ville}
-        </p>
+        </div>
 
         {/* Caractéristiques */}
         <div>
@@ -93,9 +93,9 @@ const AnnonceBienCard = ({ annonce, isFavorite, onToggleFavorite, navigate }) =>
           annonce.piscine ||
           annonce.parking) && (
           <div>
-            <p>
+            <div>
               Équipements:
-            </p>
+            </div>
             <div>
               {annonce.ascenseur && <Chip label="🛗 Ascenseur" size="small" />}
               {annonce.balcon && <Chip label="🏠 Balcon" size="small" />}
@@ -116,14 +116,14 @@ const AnnonceBienCard = ({ annonce, isFavorite, onToggleFavorite, navigate }) =>
         )}
 
         {/* Description */}
-        <p>
+        <div>
           {annonce.description.substring(0, 150)}...
-        </p>
+        </div>
 
         {/* Date création */}
-        <p>
+        <div>
           Annoncée le {format(new Date(annonce.date_creation), 'dd MMMM yyyy', { locale: fr })}
-        </p>
+        </div>
       </CardContent>
 
       {/* Actions */}
@@ -301,12 +301,12 @@ export const RechercheBiens = () => {
     <Container maxWidth="lg">
       {/* En-tête */}
       <div>
-        <p>
+        <div>
           🔍 Rechercher des biens immobiliers
-        </p>
-        <p>
+        </div>
+        <div>
           Trouvez votre maison ou appartement idéal
-        </p>
+        </div>
       </div>
 
       {/* Messages */}
@@ -318,9 +318,9 @@ export const RechercheBiens = () => {
 
       {/* Formulaire de recherche */}
       <div className="card">
-        <p>
+        <div>
           🔎 Recherche
-        </p>
+        </div>
         <Grid container spacing={2}>
           {/* Recherche texte principale */}
           <Grid item xs={12}>
@@ -396,9 +396,9 @@ export const RechercheBiens = () => {
         {/* Filtres avancés */}
         <Accordion>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <p>
+            <div>
               ⚙️ Filtres avancés
-            </p>
+            </div>
           </AccordionSummary>
 
           <AccordionDetails>
@@ -468,9 +468,9 @@ export const RechercheBiens = () => {
 
               {/* Prix */}
               <Grid item xs={12} sm={6} md={6}>
-                <p>
+                <div>
                   Prix (€)
-                </p>
+                </div>
                 <div>
                   <TextField
                     fullWidth
@@ -495,9 +495,9 @@ export const RechercheBiens = () => {
 
               {/* Surface */}
               <Grid item xs={12} sm={6} md={6}>
-                <p>
+                <div>
                   Surface (m²)
-                </p>
+                </div>
                 <div>
                   <TextField
                     fullWidth
@@ -522,9 +522,9 @@ export const RechercheBiens = () => {
 
               {/* Équipements */}
               <Grid item xs={12}>
-                <p>
+                <div>
                   ✨ Équipements
-                </p>
+                </div>
                 <div>
                   <FormControlLabel
                     control={
@@ -606,10 +606,10 @@ export const RechercheBiens = () => {
         <>
           {/* Statistiques */}
           <div>
-            <p>
+            <div>
               {total} bien{total > 1 ? 's' : ''} trouvé{total > 1 ? 's' : ''} •
               Affichage {(page - 1) * limit + 1} à {Math.min(page * limit, total)}
-            </p>
+            </div>
           </div>
 
           {/* Grille */}

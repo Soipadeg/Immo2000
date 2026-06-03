@@ -130,8 +130,8 @@ const Conversations = () => {
         <Button variant="text" onClick={() => navigate('/mes-rendez-vous')}>
           ← Retour aux RDV
         </Button>
-        <h1>Conversation</h1>
-        <p>RDV #{conversation.rdv_id}</p>
+        <div>Conversation</div>
+        <div>RDV #{conversation.rdv_id}</div>
       </div>
 
       {error && (
@@ -159,37 +159,37 @@ const Conversations = () => {
         <ul>
           {messages.length === 0 ? (
             <div sx={{ textAlign: 'center', py: 4 }}>
-              <p>
+              <div>
                 Aucun message pour le moment. Commencez la conversation!
-              </p>
+              </div>
             </div>
           ) : (
             messages.map((message) => (
               <React.Fragment key={message.message_id}>
-                <ulItem
+                <li
                   sx={{
                     flexDirection: marquerCommeProprietaire(message) ? 'row-reverse' : 'row',
                     mb: 1,
                     p: 1
                   }}
                 >
-                  <ulItemAvatar>
+                  <ListItemAvatar>
                     <Avatar sx={{
                       bgcolor: marquerCommeProprietaire(message) ? '#2196F3' : '#4CAF50'
                     }}>
                       {message.sender_prenom?.[0]?.toUpperCase() || '?'}
                     </Avatar>
                   </ListItemAvatar>
-                  <ulItemText
+                  <ListItemText
                     primary={message.sender_prenom || 'Utilisateur'}
                     secondary={
                       <div>
-                        <p>
+                        <div>
                           {message.contenu}
-                        </p>
-                        <p>
+                        </div>
+                        <div>
                           {format(new Date(message.date_creation), 'dd MMM yyyy HH:mm', { locale: fr })}
-                        </p>
+                        </div>
                       </div>
                     }
                     sx={{

@@ -74,7 +74,7 @@ const AdminTransactionsPage = () => {
   return (
     <div className="admin-transactions-page">
       <div className="page-header">
-        <h1>💳 Gestion des Transactions</h1>
+        <div>💳 Gestion des Transactions</div>
       </div>
 
       <div className="filters-section">
@@ -111,7 +111,7 @@ const AdminTransactionsPage = () => {
               <div className="col-annonce">{tx.annonce_id}</div>
               <div className="col-price">€{(tx.prix_propose || 0).toLocaleString()}</div>
               <div className="col-status">
-                <span className={`status-badge status-${tx.statut}`}>{tx.statut}</span>
+                <div className={`status-badge status-${tx.statut}`}>{tx.statut}</div>
               </div>
               <div className="col-date">{new Date(tx.date_offre).toLocaleDateString()}</div>
               <div className="col-actions">
@@ -134,7 +134,7 @@ const AdminTransactionsPage = () => {
         <div className="modal-overlay" onClick={() => setDialog({ open: false, action: null, transactionId: null })}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>{dialog.action === 'accept' ? 'Accepter' : dialog.action === 'decline' ? 'Refuser' : 'Annuler'} cette offre?</h2>
+              <div>{dialog.action === 'accept' ? 'Accepter' : dialog.action === 'decline' ? 'Refuser' : 'Annuler'} cette offre?</div>
               <button className="modal-close" onClick={() => setDialog({ open: false, action: null, transactionId: null })}>✕</button>
             </div>
             {(dialog.action === 'decline' || dialog.action === 'cancel') && (

@@ -60,7 +60,7 @@ describe('Modal Component', () => {
   it('renders modal with children', () => {
     render(
       <Modal isOpen={true} onClose={vi.fn()}>
-        <p>Test paragraph</p>
+        <div>Test paragraph</div>
       </Modal>
     );
     expect(screen.getByText('Test paragraph')).toBeInTheDocument();

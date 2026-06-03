@@ -141,7 +141,7 @@ const ContacterVendeur = () => {
         <Button variant="text" onClick={() => navigate(-1)}>
           ← Retour
         </Button>
-        <h1>Demander une visite</h1>
+        <div>Demander une visite</div>
       </div>
 
       {error && (
@@ -165,15 +165,15 @@ const ContacterVendeur = () => {
               subheader={`${annonce.prix}€`}
             />
             <div className="card"Content>
-              <p>
+              <div>
                 <strong>{annonce.nombre_pieces} pièce(s)</strong> - {annonce.surface}m²
-              </p>
-              <p>
+              </div>
+              <div>
                 {annonce.adresse}
-              </p>
-              <p>
+              </div>
+              <div>
                 {annonce.ville} ({annonce.code_postal})
-              </p>
+              </div>
             </div>
           </div>
         </div>
@@ -181,7 +181,7 @@ const ContacterVendeur = () => {
         {/* Formulaire demande */}
         <div className="grid-item">
           <Paper sx={{ p: 3 }}>
-            <h2>Sélectionnez votre créneau</h2>
+            <div>Sélectionnez votre créneau</div>
 
             <div sx={{ mb: 3 }}>
               <RadioGroup
@@ -206,7 +206,7 @@ const ContacterVendeur = () => {
             {/* Option 1: Choisir un créneau */}
             {selectedType === 'creneau' && (
               <div sx={{ mb: 3 }}>
-                <h3>Créneaux disponibles</h3>
+                <div>Créneaux disponibles</div>
 
                 {creneaux.length === 0 ? (
                   <Alert severity="info">
@@ -216,12 +216,12 @@ const ContacterVendeur = () => {
                 ) : (
                   <ul>
                     {creneaux.map(creneau => (
-                      <ulItem key={creneau.id} disablePadding>
-                        <ulItemButton
+                      <li key={creneau.id} disablePadding>
+                        <button
                           selected={selectedCreneau === creneau.id}
                           onClick={() => setSelectedCreneau(creneau.id)}
                         >
-                          <ulItemText
+                          <div
                             primary={format(
                               new Date(creneau.jour),
                               'dddd dd MMMM',
@@ -229,7 +229,7 @@ const ContacterVendeur = () => {
                             )}
                             secondary={`${creneau.heure_debut} - ${creneau.heure_fin}`}
                           />
-                        </ListItemButton>
+                        </button>
                       </li>
                     ))}
                   </ul>
@@ -265,7 +265,7 @@ const ContacterVendeur = () => {
 
             {/* Message */}
             <div sx={{ mb: 3 }}>
-              <h3>Votre message</h3>
+              <div>Votre message</div>
               <Input
                 fullWidth
                 multiline
@@ -302,12 +302,12 @@ const ContacterVendeur = () => {
 
       {/* Dialog confirmation */}
       <div className="modal" open={showConfirm} onClose={() => setShowConfirm(false)}>
-        <div className="modal"Title>Confirmer votre demande</DialogTitle>
+        <div className="modal"Title>Confirmer votre demande</div>
         <div className="modal"Content>
-          <p>
+          <div>
             Êtes-vous sûr de vouloir envoyer cette demande de visite au vendeur?
-          </p>
-        </DialogContent>
+          </div>
+        </div>
         <div className="modal"Actions>
           <Button onClick={() => setShowConfirm(false)}>Annuler</Button>
           <Button
@@ -318,7 +318,7 @@ const ContacterVendeur = () => {
           >
             {sending ? 'Envoi...' : 'Confirmer'}
           </Button>
-        </DialogActions>
+        </div>
       </div>
     </div>
   );

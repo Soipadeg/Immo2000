@@ -1,6 +1,7 @@
 import '../styles/CreerAnnonceEtape2.css';
 import React, { useState } from 'react';
 import { Button, Alert, Input } from '@/components';
+
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { register } from '../services/api';
 
@@ -147,185 +148,170 @@ export default function CreerAnnonceEtape2() {
   };
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '24px' }}>
-      <div style={{ paddingY: '32px' }}>
+    <div maxWidth="sm">
+      <div sx={{ py: 4 }}>
         {/* Titre */}
-        <div style={{ marginBottom: '32px', textAlign: 'center' }}>
-          <h1 style={{ fontWeight: 'bold', marginBottom: '8px' }}>
-            👤 Créer un compte
-          </h1>
-          <p style={{ color: '#999', marginBottom: '16px' }}>
-            Étape 2 sur 4 : Création de compte
-          </p>
-          <div style={{ width: '100%', height: '4px', backgroundColor: '#ddd', marginTop: '16px', borderRadius: '2px' }}>
-            <div style={{ height: '100%', width: '50%', backgroundColor: '#1976d2', transition: 'width 0.3s' }}></div>
+        <div sx={{ mb: 4, textAlign: 'center' }}>
+          <div>
+            👤 Créer votre compte
           </div>
+          <div  sx={{ color: 'text.secondary' }}>
+            Étape 2 sur 4 : Profil de base
+          </div>
+          <LinearProgress variant="determinate" value={50} sx={{ mt: 2 }} />
         </div>
 
         {/* Erreurs */}
-        {error && <Alert severity="error" style={{ marginBottom: '24px' }}>{error}</Alert>}
+        {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
         {/* Formulaire */}
-        <form onSubmit={handleSubmit} style={{ marginBottom: '32px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
-            {/* Email */}
-            <div style={{ gridColumn: '1 / -1' }}>
-              <Input
-                fullWidth
-                label="Email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="vous@exemple.com"
-                required
-              />
-            </div>
-
-            {/* Mot de passe */}
-            <div style={{ gridColumn: '1 / -1' }}>
-              <Input
-                fullWidth
-                label="Mot de passe"
-                name="mot_de_passe"
-                type="password"
-                value={formData.mot_de_passe}
-                onChange={handleChange}
-                placeholder="Min 8 caractères"
-                required
-              />
-              {/* Indicateur force */}
-              {formData.mot_de_passe && (
-                <div style={{ marginTop: '8px' }}>
-                  <div style={{ fontSize: '12px', marginBottom: '4px' }}>Force: {passwordStrength}%</div>
-                  <div style={{ height: '6px', backgroundColor: '#ddd', borderRadius: '3px', overflow: 'hidden' }}>
-                    <div
-                      style={{
-                        height: '100%',
-                        width: `${passwordStrength}%`,
-                        backgroundColor: passwordStrength < 50 ? '#d32f2f' : passwordStrength < 75 ? '#ff9800' : '#4caf50',
-                        transition: 'width 0.3s',
-                      }}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Confirmer mot de passe */}
-            <div style={{ gridColumn: '1 / -1' }}>
-              <Input
-                fullWidth
-                label="Confirmer le mot de passe"
-                name="mot_de_passe_confirm"
-                type="password"
-                value={formData.mot_de_passe_confirm}
-                onChange={handleChange}
-                placeholder="Répéter votre mot de passe"
-                required
-              />
-            </div>
-
-            {/* Nom et Prénom */}
-            <div>
-              <Input
-                fullWidth
-                label="Nom"
-                name="nom"
-                value={formData.nom}
-                onChange={handleChange}
-                placeholder="Dupont"
-                required
-              />
-            </div>
-
-            <div>
-              <Input
-                fullWidth
-                label="Prénom"
-                name="prenom"
-                value={formData.prenom}
-                onChange={handleChange}
-                placeholder="Jean"
-                required
-              />
-            </div>
-
-            {/* Téléphone */}
-            <div style={{ gridColumn: '1 / -1' }}>
-              <Input
-                fullWidth
-                label="Téléphone"
-                name="telephone"
-                type="tel"
-                value={formData.telephone}
-                onChange={handleChange}
-                placeholder="+33612345678"
-                required
-              />
-            </div>
-
-            {/* CGU */}
-            <div style={{ gridColumn: '1 / -1', marginBottom: '16px' }}>
-              <label style={{ display: 'flex', alignItems: 'flex-start', cursor: 'pointer', gap: '8px' }}>
-                <input
-                  type="checkbox"
-                  name="acceptCGU"
-                  checked={formData.acceptCGU}
+        <div elevation={3} sx={{ p: 3 }}>
+          <form onSubmit={handleSubmit}>
+            <div container spacing={2}>
+              {/* Email */}
+              <div item xs={12}>
+                <Input
+                  fullWidth
+                  label="Email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
                   onChange={handleChange}
-                  style={{ width: '20px', height: '20px', cursor: 'pointer', marginTop: '2px', flexShrink: 0 }}
+                  placeholder="vous@exemple.com"
+                  required
                 />
-                <span>
-                  J'accepte les <strong>Conditions Générales d'Utilisation</strong> et la <strong>Politique de Confidentialité</strong>
-                </span>
-              </label>
+              </div>
+
+              {/* Nom et Prénom */}
+              <div item xs={12} sm={6}>
+                <Input
+                  fullWidth
+                  label="Nom"
+                  name="nom"
+                  value={formData.nom}
+                  onChange={handleChange}
+                  placeholder="Dupont"
+                  required
+                />
+              </div>
+
+              <div item xs={12} sm={6}>
+                <Input
+                  fullWidth
+                  label="Prénom"
+                  name="prenom"
+                  value={formData.prenom}
+                  onChange={handleChange}
+                  placeholder="Jean"
+                  required
+                />
+              </div>
+
+              {/* Téléphone */}
+              <div item xs={12}>
+                <Input
+                  fullWidth
+                  label="Téléphone"
+                  name="telephone"
+                  type="tel"
+                  value={formData.telephone}
+                  onChange={handleChange}
+                  placeholder="+33 6 12 34 56 78"
+                  required
+                />
+              </div>
+
+              {/* Mot de passe */}
+              <div item xs={12}>
+                <Input
+                  fullWidth
+                  label="Mot de passe"
+                  name="mot_de_passe"
+                  type="password"
+                  value={formData.mot_de_passe}
+                  onChange={handleChange}
+                  required
+                  helperText="Min 8 caractères, majuscule, minuscule, chiffre, caractère spécial"
+                />
+                {formData.mot_de_passe && (
+                  <div sx={{ mt: 1 }}>
+                    <LinearProgress variant="determinate" value={passwordStrength} />
+                    <div  sx={{ color: 'text.secondary' }}>
+                      Force du mot de passe: {passwordStrength}%
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Confirmation mot de passe */}
+              <div item xs={12}>
+                <Input
+                  fullWidth
+                  label="Confirmer le mot de passe"
+                  name="mot_de_passe_confirm"
+                  type="password"
+                  value={formData.mot_de_passe_confirm}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              {/* CGU / Politique */}
+              <div item xs={12}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="acceptCGU"
+                      checked={formData.acceptCGU}
+                      onChange={handleChange}
+                    />
+                  }
+                  label={
+                    <div >
+                      J'accepte les{' '}
+                      <Link href="/cgu" target="_blank" underline="hover">
+                        Conditions Générales d'Utilisation
+                      </Link>
+                      {' '}et la{' '}
+                      <Link href="/politique-confidentialite" target="_blank" underline="hover">
+                        Politique de Confidentialité
+                      </Link>
+                    </div>
+                  }
+                />
+              </div>
             </div>
-          </div>
 
-          {/* Boutons */}
-          <div style={{ display: 'flex', gap: '16px', marginTop: '32px', justifyContent: 'center' }}>
-            <button
-              type="button"
-              onClick={() => navigate(-1)}
-              style={{
-                padding: '12px 24px',
-                border: '1px solid #1976d2',
-                backgroundColor: '#fff',
-                color: '#1976d2',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '16px',
-                fontWeight: '500',
-              }}
-            >
-              Retour
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                padding: '12px 24px',
-                backgroundColor: '#1976d2',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                opacity: loading ? 0.6 : 1,
-                fontSize: '16px',
-                fontWeight: '500',
-              }}
-            >
-              {loading ? 'Inscription en cours...' : 'Créer un compte'}
-            </button>
-          </div>
-        </form>
+            {/* Boutons */}
+            <Stack direction="row" spacing={2} sx={{ mt: 4, justifyContent: 'space-between' }}>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => navigate(-1)}
+              >
+                Retour
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                type="submit"
+                disabled={loading}
+              >
+                {loading ? 'Création en cours...' : 'Continuer vers étape 3'}
+              </Button>
+            </Stack>
 
-        {/* Info */}
-        <div style={{ marginTop: '32px', padding: '16px', backgroundColor: '#e3f2fd', borderRadius: '4px' }}>
-          <span style={{ color: '#0d47a1' }}>
-            💡 <strong>Conseil :</strong> Vous pouvez abandonner à tout moment. Votre brouillon sera sauvegardé
-            et vous pourrez le continuer plus tard depuis votre dashboard.
-          </span>
+            {/* Lien vers login */}
+            <div sx={{ mt: 3, textAlign: 'center' }}>
+              <div >
+                Vous avez déjà un compte ?{' '}
+                <Link href="/connexion" underline="hover">
+                  Se connecter
+                </Link>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>

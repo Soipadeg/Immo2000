@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { Button, Alert, Input } from '@/components';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { Box, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Card, CardMedia, CardContent, CardActions } from '@mui/material';
 
 const ModerationPage = () => {
   const { user, loading } = useAuth();
@@ -41,9 +42,9 @@ const ModerationPage = () => {
 
   if (loading) {
     return (
-      div sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <CircularProgress />
-      </div>
+      </Box>
     );
   }
 
@@ -78,91 +79,73 @@ const ModerationPage = () => {
   const pendingAnnonces = annonces.filter((a) => a.statut === 'sous_revue');
 
   return (
-    div maxWidth="lg" sx={{ py: 4 }}>
-      <div>
-        🛡️ Modération des Annonces
-      </div>
-      <div>
-        {pendingAnnonces.length} annonce{pendingAnnonces.length !== 1 ? 's' : ''} en attente de modération
-      </div>
+    <Box sx={{ maxWidth: 'lg', py: 4 }}>
+      <div>🛡️ Modération des Annonces</div>
+      <div>{pendingAnnonces.length} annonce{pendingAnnonces.length !== 1 ? 's' : ''} en attente de modération</div>
 
       {pendingAnnonces.length === 0 ? (
-        <div style={{textAlign: 'center', padding: '32px 0'}}>
+        <Box sx={{textAlign: 'center', padding: '32px 0'}}>
           <div style={{fontSize: '48px', marginBottom: '16px'}}>✅</div>
-          <div>
-            ✅ Toutes les annonces ont été modérées!
-          </div>
-        </div>
+          <div>✅ Toutes les annonces ont été modérées!</div>
+        </Box>
       ) : (
-        div container spacing={3}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 3 }}>
           {pendingAnnonces.map((annonce) => (
-            div item xs={12} sm={6} lg={4} key={annonce.id}>
-              div>
-                divMedia
-                  component="img"
-                  height="200"
-                  image={annonce.image}
-                  alt={annonce.titre}
-                />
-                divContent>
-                  div sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', mb: 1 }}>
-                    <div>
-                      {annonce.titre}
-                    </div>
-                    <span
-                      style={{display: 'inline-block', padding: '4px 8px', backgroundColor: '#fff3cd', color: '#856404', borderRadius: '4px', fontSize: '12px'}}
-                    >
-                      🚩 {`${annonce.signalements} signalement${annonce.signalements > 1 ? 's' : ''}`}
-                    </span>
-                  </div>
-
-                  <div>
-                    📍 {annonce.ville}
-                  </div>
-
-                  <div>
-                    {annonce.prix.toLocaleString()}€
-                  </div>
-
-                  {annonce.raison && (
-                    div sx={{ p: 1, bgcolor: 'warning.light', borderRadius: 1, mb: 2 }}>
-                      <div>
-                        ⚠️ {annonce.raison}
-                      </div>
-                    </div>
-                  )}
-                </div>
-                divActions>
-                  <Button
-                    size="small"
-                    color="success"
-                    variant="contained"
-                    onClick={() => handleApprove(annonce.id)}
+            <Card key={annonce.id}>
+              <CardMedia
+                component="img"
+                height="200"
+                image={annonce.image}
+                alt={annonce.titre}
+              />
+              <CardContent>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', mb: 1 }}>
+                  <div>{annonce.titre}</div>
+                  <div
+                    style={{display: 'inline-block', padding: '4px 8px', backgroundColor: '#fff3cd', color: '#856404', borderRadius: '4px', fontSize: '12px'}}
                   >
-                    ✅ Approuver
-                  </Button>
-                  <Button
-                    size="small"
-                    color="error"
-                    variant="outlined"
-                    onClick={() => handleReject(annonce.id)}
-                  >
-                    ❌ Rejeter
-                  </Button>
-                </div>
-              </div>
-            </div>
+                    🚩 {`${annonce.signalements} signalement${annonce.signalements > 1 ? 's' : ''}`}
+                  </div>
+                </Box>
+
+                <div>📍 {annonce.ville}</div>
+
+                <div>{annonce.prix.toLocaleString()}€</div>
+
+                {annonce.raison && (
+                  <Box sx={{ p: 1, bgcolor: 'warning.light', borderRadius: 1, mb: 2 }}>
+                    <div>⚠️ {annonce.raison}</div>
+                  </Box>
+                )}
+              </CardContent>
+              <CardActions>
+                <Button
+                  size="small"
+                  color="success"
+                  variant="contained"
+                  onClick={() => handleApprove(annonce.id)}
+                >
+                  ✅ Approuver
+                </Button>
+                <Button
+                  size="small"
+                  color="error"
+                  variant="outlined"
+                  onClick={() => handleReject(annonce.id)}
+                >
+                  ❌ Rejeter
+                </Button>
+              </CardActions>
+            </Card>
           ))}
-        </div>
+        </Box>
       )}
 
       {/* Dialog Rejet */}
-      div open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
-        div>Rejeter l'annonce</div>
-        div>
-          <div>
-            Merci de spécifier la raison du rejet:
-          </div>
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
+        <div>Rejeter l'annonce</div>
+        <div>
+          <div>Merci de spécifier la raison du rejet:</div>
           <Input
             fullWidth
             multiline
@@ -172,7 +155,7 @@ const ModerationPage = () => {
             onChange={(e) => setRejectReason(e.target.value)}
           />
         </div>
-        div>
+        <div>
           <Button onClick={() => setOpenDialog(false)}>Annuler</Button>
           <Button
             variant="contained"
@@ -183,8 +166,8 @@ const ModerationPage = () => {
             Rejeter
           </Button>
         </div>
-      </div>
-    </div>
+      </Dialog>
+    </Box>
   );
 };
 

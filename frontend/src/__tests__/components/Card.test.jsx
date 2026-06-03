@@ -7,7 +7,7 @@ describe('Card Component', () => {
   it('renders card with children', () => {
     render(
       <Card>
-        <p>Card content</p>
+        <div>Card content</div>
       </Card>
     );
     expect(screen.getByText('Card content')).toBeInTheDocument();
@@ -16,7 +16,7 @@ describe('Card Component', () => {
   it('renders with default variant elevated', () => {
     const { container } = render(
       <Card>
-        <p>Content</p>
+        <div>Content</div>
       </Card>
     );
     expect(container.querySelector('.card--elevated')).toBeInTheDocument();
@@ -25,7 +25,7 @@ describe('Card Component', () => {
   it('applies custom variant', () => {
     const { container } = render(
       <Card variant="outlined">
-        <p>Content</p>
+        <div>Content</div>
       </Card>
     );
     expect(container.querySelector('.card--outlined')).toBeInTheDocument();
@@ -43,9 +43,9 @@ describe('Card Component', () => {
   it('renders multiple children', () => {
     render(
       <Card>
-        <p>First</p>
-        <p>Second</p>
-        <p>Third</p>
+        <div>First</div>
+        <div>Second</div>
+        <div>Third</div>
       </Card>
     );
     expect(screen.getByText('First')).toBeInTheDocument();
@@ -91,7 +91,7 @@ describe('Card Component', () => {
   it('has proper structure', () => {
     const { container } = render(
       <Card>
-        <span>Test</span>
+        <div>Test</div>
       </Card>
     );
     const card = container.querySelector('.card');

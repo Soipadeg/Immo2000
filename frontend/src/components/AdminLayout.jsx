@@ -35,21 +35,20 @@ const AdminLayout = () => {
       {/* AppBar */}
       <AppBar position="fixed">
         <Toolbar>
-          <p> navigate('/admin')}
-          >
+          <Button color="inherit" onClick={() => navigate('/admin')}>
             🏢 Immo2000 Admin
-          </p>
+          </Button>
           <div>
-            <p>
+            <div>
               v3.0.0 - Task 3 Complete
-            </p>
+            </div>
             <Divider orientation="vertical" />
             <div
                  onClick={(e) => setAnchorEl(e.currentTarget)}>
               <Avatar>
                 {user?.nom?.charAt(0).toUpperCase()}
               </Avatar>
-              <p>{user?.email}</p>
+              <div>{user?.email}</div>
             </div>
           </div>
         </Toolbar>
@@ -87,15 +86,15 @@ const AdminLayout = () => {
         }}
       >
         <div>
-          <p>
+          <div>
             TÂCHES
-          </p>
+          </div>
         </div>
         <Divider />
         <List>
           {menuItems.map((item) => (
-            <ListItem key={item.path} disablePadding>
-              <ListItemButton
+            <li key={item.path} disablePadding>
+              <button
                 onClick={() => navigate(item.path)}
                 selected={isActive(item.path)}
                 sx={{
@@ -110,8 +109,8 @@ const AdminLayout = () => {
                   {item.icon}
                 </ListItemIcon>
                 <ListItemText primary={item.label} />
-              </ListItemButton>
-            </ListItem>
+              </button>
+            </li>
           ))}
         </List>
       </Drawer>

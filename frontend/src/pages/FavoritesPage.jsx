@@ -65,8 +65,8 @@ const FavoritesPage = () => {
   return (
     <div className="favorites-page">
       <div className="page-header">
-        <h1>⭐ Mes Favoris</h1>
-        <p>{favorites.length} bien{favorites.length !== 1 ? 's' : ''} sauvegardé{favorites.length !== 1 ? 's' : ''}</p>
+        <div>⭐ Mes Favoris</div>
+        <div>{favorites.length} bien{favorites.length !== 1 ? 's' : ''} sauvegardé{favorites.length !== 1 ? 's' : ''}</div>
       </div>
 
       {error && <Alert type="error" title="Erreur" message={error} />}
@@ -74,8 +74,9 @@ const FavoritesPage = () => {
       {favorites.length === 0 ? (
         <div className="empty-state">
           <div className="empty-icon">🤍</div>
-          <h3>Aucun favori pour le moment</h3>
-          <p>Commencez à sauvegarder vos biens préférés en cliquant sur le cœur</p>
+          <div>Aucun favori pour le moment</div>
+          <div>Commencez à sauvegarder vos biens préférés en cliquant sur le cœur</div>
+
           <a href="/search" className="link-button">
             Consulter les annonces
           </a>
@@ -93,21 +94,22 @@ const FavoritesPage = () => {
 
               <div className="card-content">
                 <div className="card-header">
-                  <span className="favorite-badge">❤️ Favori</span>
+                  <div className="favorite-badge">❤️ Favori</div>
                   {fav.note && (
-                    <span className="rating">⭐ {fav.note}/5</span>
+                    <div className="rating">⭐ {fav.note}/5</div>
                   )}
                 </div>
 
-                <h3 className="annonce-id">Annonce #{fav.annonce_id}</h3>
+                <div>Annonce #{fav.annonce_id}</div>
 
                 {fav.commentaire && (
-                  <p className="commentaire">{fav.commentaire}</p>
+                  <div className="commentaire">{fav.commentaire}</div>
+
                 )}
 
-                <p className="date-ajout">
+                <div className="date-ajout">
                   Ajouté le {new Date(fav.date_ajout).toLocaleDateString('fr-FR')}
-                </p>
+                </div>
               </div>
 
               <div className="card-actions">

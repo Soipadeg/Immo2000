@@ -59,8 +59,8 @@
     </style>
 </head>
 <body>
-    <h1>💰 Simulateur de Budget Immobilier</h1>
-    <p>Estimez votre budget global pour l'achat d'un bien immobilier.</p>
+    <div>💰 Simulateur de Budget Immobilier</div>
+    <div>Estimez votre budget global pour l'achat d'un bien immobilier.</div>
 
     <form id="budgetForm">
         <div class="form-group">
@@ -106,33 +106,33 @@
     </form>
 
     <div class="result" id="result">
-        <h2>📊 Résultat</h2>
+        <div>📊 Résultat</div>
         <div class="result-item">
-            <strong>Prix du bien :</strong> <span id="resultPrixBien">0</span> €
+            <strong>Prix du bien :</strong> <div id="resultPrixBien">0</div> €
         </div>
         <div class="result-item">
-            <strong>Frais de notaire :</strong> <span id="resultFraisNotaire">0</span> €
+            <strong>Frais de notaire :</strong> <div id="resultFraisNotaire">0</div> €
         </div>
         <div class="result-item">
-            <strong>Commission (1,5%) :</strong> <span id="resultCommission">0</span> €
+            <strong>Commission (1,5%) :</strong> <div id="resultCommission">0</div> €
         </div>
         <div class="result-item">
-            <strong>Budget travaux :</strong> <span id="resultTravaux">0</span> €
+            <strong>Budget travaux :</strong> <div id="resultTravaux">0</div> €
         </div>
         <div class="result-item">
-            <strong>Coût total :</strong> <span id="resultCoutTotal">0</span> €
+            <strong>Coût total :</strong> <div id="resultCoutTotal">0</div> €
         </div>
         <div class="result-item">
-            <strong>Apport personnel :</strong> <span id="resultApport">0</span> €
+            <strong>Apport personnel :</strong> <div id="resultApport">0</div> €
         </div>
         <div class="result-item">
-            <strong>Montant à emprunter :</strong> <span id="resultMontantEmprunt">0</span> €
+            <strong>Montant à emprunter :</strong> <div id="resultMontantEmprunt">0</div> €
         </div>
         <div class="result-item">
-            <strong>Mensualité estimée :</strong> <span id="resultMensualite">0</span> €/mois
+            <strong>Mensualité estimée :</strong> <div id="resultMensualite">0</div> €/mois
         </div>
         <div class="result-item">
-            <strong>Coût total du crédit :</strong> <span id="resultCoutCredit">0</span> €
+            <strong>Coût total du crédit :</strong> <div id="resultCoutCredit">0</div> €
         </div>
     </div>
 

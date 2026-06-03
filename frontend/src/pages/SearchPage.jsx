@@ -117,16 +117,16 @@ export default function SearchPage() {
 
       {/* Summary */}
       <div className="search-summary">
-        <p>
+        <div>
           <strong>{filteredAnnonces.length} annonce{filteredAnnonces.length > 1 ? 's' : ''}</strong>
           {selectedType && ` • ${selectedType}`}
-        </p>
+        </div>
       </div>
 
       {/* Results Grid */}
       {filteredAnnonces.length === 0 ? (
         <div className="search-empty">
-          <p>Aucune annonce ne correspond à vos critères de recherche</p>
+          <div>Aucune annonce ne correspond à vos critères de recherche</div>
         </div>
       ) : (
         <div className="search-grid">
@@ -147,27 +147,28 @@ export default function SearchPage() {
 
                 {/* Content */}
                 <div className="annonce-content">
-                  <h3>{annonce.titre}</h3>
+                  <div>{annonce.titre}</div>
                   <div className="annonce-price">€ {annonce.prix.toLocaleString('fr-FR')}</div>
-                  <p className="annonce-description">{annonce.description}</p>
+                  <div className="annonce-description">{annonce.description}</div>
+
 
                   {/* Details */}
                   <div className="annonce-details">
                     <div className="detail">
-                      <span className="detail-label">Surface</span>
-                      <span>{annonce.surface} m²</span>
+                      <div className="detail-label">Surface</div>
+                      <div>{annonce.surface} m²</div>
                     </div>
                     <div className="detail">
-                      <span className="detail-label">Pièces</span>
-                      <span>{annonce.nombre_pieces}</span>
+                      <div className="detail-label">Pièces</div>
+                      <div>{annonce.nombre_pieces}</div>
                     </div>
                     <div className="detail">
-                      <span className="detail-label">Chambres</span>
-                      <span>{annonce.nombre_chambres}</span>
+                      <div className="detail-label">Chambres</div>
+                      <div>{annonce.nombre_chambres}</div>
                     </div>
                     <div className="detail">
-                      <span className="detail-label">Localité</span>
-                      <span>{annonce.ville}</span>
+                      <div className="detail-label">Localité</div>
+                      <div>{annonce.ville}</div>
                     </div>
                   </div>
 

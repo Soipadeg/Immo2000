@@ -41,9 +41,10 @@ const Footer = ({
       <div className="footer-container">
         {/* Company Info */}
         <div className="footer-section footer-company">
-          <h3 className="footer-title">{companyName}</h3>
+          <div>{companyName}</div>
           {companyDescription && (
-            <p className="footer-description">{companyDescription}</p>
+            <div className="footer-description">{companyDescription}</div>
+
           )}
 
           {/* Social Links */}
@@ -68,7 +69,7 @@ const Footer = ({
         {/* Link Sections */}
         {linkSections.map((section, index) => (
           <div key={index} className="footer-section">
-            <h4 className="footer-section-title">{section.title}</h4>
+            <div>{section.title}</div>
             <ul className="footer-links">
               {section.links.map((link, linkIndex) => (
                 <li key={linkIndex}>
@@ -83,7 +84,7 @@ const Footer = ({
 
         {/* Newsletter */}
         <div className="footer-section footer-newsletter">
-          <h4 className="footer-section-title">{newsletterTitle}</h4>
+          <div>{newsletterTitle}</div>
           <form className="footer-newsletter-form" onSubmit={handleNewsletterSubmit}>
             <input
               type="email"
@@ -106,9 +107,9 @@ const Footer = ({
 
       {/* Bottom */}
       <div className="footer-bottom">
-        <p className="footer-copyright">
+        <div className="footer-copyright">
           {copyrightText || `© ${new Date().getFullYear()} ${companyName}. All rights reserved.`}
-        </p>
+        </div>
       </div>
     </footer>
   );

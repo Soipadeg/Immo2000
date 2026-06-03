@@ -179,7 +179,7 @@ export default function SignCompromisPage() {
   if (loading) {
     return (
       <div>
-        <span>Loading...</span>
+        <div>Loading...</div>
       </div>
     );
   }
@@ -188,29 +188,29 @@ export default function SignCompromisPage() {
     <div className="container">
       {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
-      <h4>
+      <div>
         Signature du Compromis avec DocuSign
-      </p>
+      </div>
 
       {/* Infos transaction */}
       <div className="card">
         <div className="card">
           <div className="grid-container">
             <div className="grid-item">
-              <p>
+              <div>
                 Bien
-              </p>
-              <p>
+              </div>
+              <div>
                 {transaction?.annonce?.titre}
-              </p>
+              </div>
             </div>
             <div className="grid-item">
-              <p>
+              <div>
                 Notaire
-              </p>
-              <p>
+              </div>
+              <div>
                 {transaction?.notaire?.etude_notariale}
-              </p>
+              </div>
             </div>
           </div>
         </div>
@@ -222,7 +222,7 @@ export default function SignCompromisPage() {
       <div className="stepper">
         {steps.map((label) => (
           <div className="step">
-            <div className="step">{label}</StepLabel>
+            <div className="step">{label}</div>
           </div>
         ))}
       </div>
@@ -231,28 +231,28 @@ export default function SignCompromisPage() {
       {activeStep === 0 && (
         <div className="card">
           <div className="card">
-            <h4>
+            <div>
               📥 Étape 1: Télécharger le Compromis
-            </p>
+            </div>
 
             <Alert severity="info" sx={{ mb: 3 }}>
               Le compromis a été préparé par le notaire. Téléchargez-le pour le consulter avant la signature.
             </Alert>
 
             <List>
-              <ListItem>
-                <span className="icon-placeholder">ListItemIcon</span>
+              <li>
+                <div className="icon-placeholder">ListItemIcon</div>
                 <ListItemText
                   primary="Compromis de vente"
                   secondary={`${transaction?.annonce?.titre} - ${transaction?.prix_compromis?.toLocaleString('fr-FR')} €`}
                 />
-              </ListItem>
+              </li>
             </List>
 
             <div>
               <Button
                 variant="outlined"
-                startIcon={<span className="icon-placeholder">FileDownloadIcon</span>}
+                startIcon={<div className="icon-placeholder">FileDownloadIcon</div>}
                 onClick={handleDownloadDocument}
                 fullWidth
               >
@@ -267,33 +267,33 @@ export default function SignCompromisPage() {
       {activeStep === 1 && (
         <div className="card">
           <div className="card">
-            <h4>
+            <div>
               🔐 Étape 2: S'authentifier avec DocuSign
-            </p>
+            </div>
 
             <Alert severity="info" sx={{ mb: 3 }}>
               Vous devez vous connecter à votre compte DocuSign pour signer électroniquement le compromis.
             </Alert>
 
-            <span>
+            <div>
               Lors de la connexion, vous devrez:
-            </p>
+            </div>
 
             <List>
-              <ListItem>
-                <span className="icon-placeholder">ListItemIcon</span>
+              <li>
+                <div className="icon-placeholder">ListItemIcon</div>
                 <ListItemText
                   primary="Entrer vos identifiants DocuSign"
                   secondary="Votre email et mot de passe"
                 />
-              </ListItem>
-              <ListItem>
-                <span className="icon-placeholder">ListItemIcon</span>
+              </li>
+              <li>
+                <div className="icon-placeholder">ListItemIcon</div>
                 <ListItemText
                   primary="Autoriser Immo2000"
                   secondary="Permettre à Immo2000 d'accéder à votre compte"
                 />
-              </ListItem>
+              </li>
             </List>
 
             <div>
@@ -311,7 +311,7 @@ export default function SignCompromisPage() {
                 disabled={submitting}
                 fullWidth
               >
-                {submitting ? <span>Loading...</span> : 'Connecter DocuSign'}
+                {submitting ? <div>Loading...</div> : 'Connecter DocuSign'}
               </Button>
             </div>
           </div>
@@ -322,34 +322,34 @@ export default function SignCompromisPage() {
       {activeStep === 2 && (
         <div className="card">
           <div className="card">
-            <h4>
+            <div>
               ✍️ Étape 3: Signer le Compromis
-            </p>
+            </div>
 
             <Alert severity="warning" sx={{ mb: 3 }}>
               Vous allez être redirigé vers <strong>DocuSign</strong> pour placer votre signature électronique sur le
               compromis.
             </Alert>
 
-            <span>
+            <div>
               Lors de la signature, vous devrez:
-            </p>
+            </div>
 
             <List>
-              <ListItem>
-                <span className="icon-placeholder">ListItemIcon</span>
+              <li>
+                <div className="icon-placeholder">ListItemIcon</div>
                 <ListItemText
                   primary="Placer votre signature"
                   secondary="Cliquez sur les zones de signature indiquées"
                 />
-              </ListItem>
-              <ListItem>
-                <span className="icon-placeholder">ListItemIcon</span>
+              </li>
+              <li>
+                <div className="icon-placeholder">ListItemIcon</div>
                 <ListItemText
                   primary="Confirmer votre signature"
                   secondary="Valider la signature électronique"
                 />
-              </ListItem>
+              </li>
             </List>
 
             <div>
@@ -366,9 +366,9 @@ export default function SignCompromisPage() {
                 onClick={handleRedirectToDocuSign}
                 disabled={!signingUrl || submitting}
                 fullWidth
-                endIcon={<span className="icon-placeholder">OpenInNewIcon</span>}
+                endIcon={<div className="icon-placeholder">OpenInNewIcon</div>}
               >
-                {submitting ? <span>Loading...</span> : 'Accéder à DocuSign'}
+                {submitting ? <div>Loading...</div> : 'Accéder à DocuSign'}
               </Button>
             </div>
 
@@ -383,9 +383,9 @@ export default function SignCompromisPage() {
       {activeStep === 3 && (
         <div className="card">
           <div className="card">
-            <h4>
+            <div>
               ✅ Étape 4: Vérifier la Signature
-            </p>
+            </div>
 
             <Alert severity="success" sx={{ mb: 3 }}>
               Votre signature a bien été enregistrée dans DocuSign. Confirmez pour continuer.
@@ -394,29 +394,29 @@ export default function SignCompromisPage() {
             <div className="card">
               <div className="grid-container">
                 <div className="grid-item">
-                  <p>
-                    Statut Signature
-                  </p>
                   <div>
-                    <span className="icon-placeholder">CheckCircleIcon</span>
-                    <p>
+                    Statut Signature
+                  </div>
+                  <div>
+                    <div className="icon-placeholder">CheckCircleIcon</div>
+                    <div>
                       Signée
-                    </p>
+                    </div>
                   </div>
                 </div>
                 <div className="grid-item">
-                  <p>
+                  <div>
                     Enveloppe DocuSign
-                  </p>
-                  <span>{envelopeId}</p>
+                  </div>
+                  <div>{envelopeId}</div>
                 </div>
               </div>
             </div>
 
-            <span>
+            <div>
               Une copie du compromis signé a été archivée dans votre espace personnel. Vous pouvez maintenant procéder
               au paiement du dépôt de garantie.
-            </p>
+            </div>
 
             <div>
               <Button
@@ -433,7 +433,7 @@ export default function SignCompromisPage() {
                 disabled={submitting}
                 fullWidth
               >
-                {submitting ? <span>Loading...</span> : 'Continuer au Paiement'}
+                {submitting ? <div>Loading...</div> : 'Continuer au Paiement'}
               </Button>
             </div>
           </div>
@@ -461,11 +461,11 @@ export default function SignCompromisPage() {
             maxWidth: '400px',
             textAlign: 'center',
           }}>
-            <h2>✓ Signature Confirmée</h2>
-            <p>
+            <div>✓ Signature Confirmée</div>
+            <div>
               Le compromis a été signé avec succès par DocuSign. Vous pouvez maintenant effectuer le paiement du dépôt
               de garantie.
-            </p>
+            </div>
             <Button onClick={() => setSuccessOpen(false)} variant="primary">
               OK
             </Button>
@@ -474,5 +474,4 @@ export default function SignCompromisPage() {
       )}
     </div>
   );
-}
 }

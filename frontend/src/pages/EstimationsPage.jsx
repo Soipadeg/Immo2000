@@ -122,12 +122,12 @@ const EstimationsPage = () => {
   return (
     <div maxWidth="lg">
       <div>
-        <h4 variant="h4" gutterBottom>
+        <div>
           💎 Estimation de Propriété - Melo API
-        </h4>
-        <p color="text.secondary">
+        </div>
+        <div>
           Estimez la valeur de votre bien immobilier basée sur les données du marché
-        </h4>
+        </div>
       </div>
 
       {error && <Alert severity="error">{error}</Alert>}
@@ -136,9 +136,9 @@ const EstimationsPage = () => {
         {/* Formulaire d'estimation */}
         <div item xs={12} md={6}>
           <div>
-            <h6 variant="h6" gutterBottom>
+            <div>
               📋 Paramètres de la Propriété
-            </h6>
+            </div>
             <hr />
 
             <div component="form" onSubmit={handleEstimate}>
@@ -233,82 +233,82 @@ const EstimationsPage = () => {
           <div item xs={12} md={6}>
             <div
             >
-              <h6 variant="h6" gutterBottom>
+              <div>
                 📊 Résultat de l'Estimation
-              </h6>
+              </div>
               <hr />
 
               <div>
-                <p variant="body2">
+                <div>
                   Valeur Estimée
-                </h6>
-                <h4 variant="h4">
+                </div>
+                <div>
                   {formatPrice(estimation.prix_estime || estimation.valeur)}
-                </h4>
+                </div>
               </div>
 
               {estimation.prix_min && estimation.prix_max && (
                 <div>
-                  <p variant="body2">
+                  <div>
                     Fourchette de Prix
-                  </h4>
-                  <p variant="body1">
+                  </div>
+                  <div>
                     {formatPrice(estimation.prix_min)} à {formatPrice(estimation.prix_max)}
-                  </h4>
+                  </div>
                 </div>
               )}
 
               <div container spacing={1}>
                 <div item xs={6}>
                   <div>
-                    <p variant="caption">
+                    <div>
                       Surface
-                    </h6>
-                    <p variant="body2">
+                    </div>
+                    <div>
                       {formData.surface}m²
-                    </h4>
+                    </div>
                   </div>
                 </div>
                 <div item xs={6}>
                   <div>
-                    <p variant="caption">
+                    <div>
                       Prix par m²
-                    </h6>
-                    <p variant="body2">
+                    </div>
+                    <div>
                       {formatPrice((estimation.prix_estime || estimation.valeur) / formData.surface)}
-                    </p>
+                    </div>
                   </div>
                 </div>
                 <div item xs={6}>
                   <div>
-                    <p variant="caption">
+                    <div>
                       Type de Bien
-                    </p>
-                    <p variant="body2">
+                    </div>
+                    <div>
                       {formData.type_bien}
-                    </p>
+                    </div>
                   </div>
                 </div>
                 <div item xs={6}>
                   <div>
-                    <p variant="caption">
+                    <div>
                       Source
-                    </p>
-                    <p variant="body2">
+                    </div>
+                    <div>
                       {estimation.source || 'Melo API'}
-                    </p>
+                    </div>
                   </div>
                 </div>
               </div>
 
               {estimation.details && (
                 <div>
-                  <p variant="caption">
+                  <div>
                     📌 Détails supplémentaires
-                  </p>
-                  <p variant="body2">
+                  </div>
+                  <div>
                     {estimation.details}
-                  </p>
+                  </div>
                 </div>
               )}
 
@@ -330,13 +330,13 @@ const EstimationsPage = () => {
       {!estimation && (
         <div>
           <div>
-            <h6 variant="h6" gutterBottom>
+            <div>
               ℹ️ À propos de l'Estimation
-            </h6>
-            <p variant="body2" color="text.secondary" paragraph>
+            </div>
+            <div>
               Notre outil utilise l'API Melo pour estimer la valeur de votre propriété en fonction
               des données du marché immobilier français. L'estimation est basée sur :
-            </h6>
+            </div>
             <ul style={{ color: '#666', marginTop: '10px' }}>
               <li>La localisation de la propriété</li>
               <li>Les caractéristiques du bien (surface, type, nombre de pièces)</li>
@@ -357,9 +357,9 @@ const EstimationsPage = () => {
         <div>🔀 Comparer deux propriétés</div>
         <div>
           <div>
-            <p variant="subtitle2">
+            <div>
               Propriété 1
-            </h6>
+            </div>
             <Input
               fullWidth
               label="Adresse 1 *"
@@ -395,9 +395,9 @@ const EstimationsPage = () => {
 
             <hr />
 
-            <p variant="subtitle2">
+            <div>
               Propriété 2
-            </h6>
+            </div>
             <Input
               fullWidth
               label="Adresse 2 *"
@@ -449,9 +449,9 @@ const EstimationsPage = () => {
       {compareResults && (
         <div>
           <div>
-            <h6 variant="h6" gutterBottom>
+            <div>
               📊 Résultats de la Comparaison
-            </h6>
+            </div>
             <hr />
 
             <div container spacing={3}>
@@ -459,12 +459,12 @@ const EstimationsPage = () => {
               <div item xs={12} sm={6}>
                 <div variant="outlined">
                   <div>
-                    <p color="primary" variant="subtitle2">
-                      {compareFormData.adresse1}
-                    </h6>
                     <div>
-                      <span label={`${compareFormData.surface1} m²`} size="small" />
-                      <span
+                      {compareFormData.adresse1}
+                    </div>
+                    <div>
+                      <div label={`${compareFormData.surface1} m²`} size="small" />
+                      <div
                         label={compareFormData.type_bien1}
                         size="small"
                         variant="outlined"
@@ -472,24 +472,24 @@ const EstimationsPage = () => {
                     </div>
                     {compareResults.propriete1 && (
                       <>
-                        <p variant="caption" color="text.secondary">
+                        <div>
                           Valeur Estimée
-                        </h6>
-                        <h6 variant="h6">
+                        </div>
+                        <div>
                           {formatPrice(
                             compareResults.propriete1.prix_estime ||
                             compareResults.propriete1.valeur
                           )}
-                        </h6>
-                        <p variant="caption" color="text.secondary">
+                        </div>
+                        <div>
                           Prix par m²
-                        </h6>
-                        <p variant="body2">
+                        </div>
+                        <div>
                           {formatPrice(
                             (compareResults.propriete1.prix_estime ||
                               compareResults.propriete1.valeur) / compareFormData.surface1
                           )}
-                        </h6>
+                        </div>
                       </>
                     )}
                   </div>
@@ -500,12 +500,12 @@ const EstimationsPage = () => {
               <div item xs={12} sm={6}>
                 <div variant="outlined">
                   <div>
-                    <p color="secondary" variant="subtitle2">
-                      {compareFormData.adresse2}
-                    </h6>
                     <div>
-                      <span label={`${compareFormData.surface2} m²`} size="small" />
-                      <span
+                      {compareFormData.adresse2}
+                    </div>
+                    <div>
+                      <div label={`${compareFormData.surface2} m²`} size="small" />
+                      <div
                         label={compareFormData.type_bien2}
                         size="small"
                         variant="outlined"
@@ -513,24 +513,24 @@ const EstimationsPage = () => {
                     </div>
                     {compareResults.propriete2 && (
                       <>
-                        <p variant="caption" color="text.secondary">
+                        <div>
                           Valeur Estimée
-                        </p>
-                        <h6 variant="h6">
+                        </div>
+                        <div>
                           {formatPrice(
                             compareResults.propriete2.prix_estime ||
                             compareResults.propriete2.valeur
                           )}
-                        </h6>
-                        <p variant="caption" color="text.secondary">
+                        </div>
+                        <div>
                           Prix par m²
-                        </h6>
-                        <p variant="body2">
+                        </div>
+                        <div>
                           {formatPrice(
                             (compareResults.propriete2.prix_estime ||
                               compareResults.propriete2.valeur) / compareFormData.surface2
                           )}
-                        </h6>
+                        </div>
                       </>
                     )}
                   </div>
@@ -540,13 +540,13 @@ const EstimationsPage = () => {
 
             {compareResults.difference && (
               <div>
-                <p variant="subtitle2">
+                <div>
                   Différence
-                </h6>
-                <p variant="body2">
+                </div>
+                <div>
                   Écart de prix: {formatPrice(compareResults.difference)} (
                   {compareResults.pourcentage_difference?.toFixed(1)}%)
-                </p>
+                </div>
               </div>
             )}
 

@@ -77,12 +77,12 @@ const GuidesPage = () => {
   return (
     <div maxWidth="lg">
       <div>
-        <h3 variant="h3" component="h1" gutterBottom>
+        <div>
           📚 Guides Immobiliers
-        </h3>
-        <h6 variant="h6" color="textSecondary">
+        </div>
+        <div>
           Apprenez tout ce que vous devez savoir sur l'immobilier
-        </h6>
+        </div>
       </div>
 
       <div container spacing={3}>
@@ -93,27 +93,27 @@ const GuidesPage = () => {
               <div>
                 <div>
                   <MenuBookIcon />
-                  <span
+                  <div
                     label={guide.category}
                     color={getCategoryColor(guide.category)}
                     size="small"
                     variant="outlined"
                   />
                 </div>
-                <h6 gutterBottom variant="h6" component="h3">
+                <div>
                   {guide.title}
-                </h6>
-                <p color="textSecondary">
+                </div>
+                <div>
                   {guide.description}
-                </h3>
+                </div>
                 <div>
                   {guide.topics.map((topic) => (
-                    <span key={topic} label={topic} size="small" variant="outlined" />
+                    <div key={topic} label={topic} size="small" variant="outlined" />
                   ))}
                 </div>
-                <p variant="caption" color="textSecondary">
+                <div>
                   ⏱️ Temps de lecture: {guide.readTime}
-                </h6>
+                </div>
               </div>
               <div>
                 <Button size="small" color="primary">
@@ -126,12 +126,12 @@ const GuidesPage = () => {
       </div>
 
       <div>
-        <h5 variant="h5" gutterBottom>
+        <div>
           📖 Vous voulez apprendre un autre sujet?
-        </h5>
-        <p color="textSecondary">
+        </div>
+        <div>
           Nous ajoutons régulièrement de nouveaux guides pour vous aider
-        </h5>
+        </div>
         <Button variant="contained" color="primary" startIcon={<SchoolIcon />}>
           Suggérer un guide
         </Button>

@@ -57,13 +57,13 @@ const AdminSecurityPage = () => {
   return (
     <div className="admin-security-page">
       <div className="page-header">
-        <h1>🔒 Statut de Sécurité</h1>
+        <div>🔒 Statut de Sécurité</div>
         <Button variant="secondary" size="small" onClick={loadSecurityStatus} disabled={loading}>🔄 Rafraîchir</Button>
       </div>
 
       <div className="kpi-grid">
         <div className="kpi-card">
-          <span className={`status-icon ${isHealthy ? 'healthy' : 'warning'}`}>{getStatusIcon(isHealthy)}</span>
+          <div className={`status-icon ${isHealthy ? 'healthy' : 'warning'}`}>{getStatusIcon(isHealthy)}</div>
           <div className="kpi-content">
             <div className="kpi-label">Statut Global</div>
             <div className="kpi-value">{isHealthy ? 'Sûr' : 'Attention'}</div>
@@ -71,7 +71,7 @@ const AdminSecurityPage = () => {
         </div>
 
         <div className="kpi-card">
-          <span className={`status-icon ${failedActions <= 5 ? 'healthy' : 'warning'}`}>{getStatusIcon(failedActions <= 5)}</span>
+          <div className={`status-icon ${failedActions <= 5 ? 'healthy' : 'warning'}`}>{getStatusIcon(failedActions <= 5)}</div>
           <div className="kpi-content">
             <div className="kpi-label">Erreurs 24h</div>
             <div className="kpi-value">{failedActions}</div>
@@ -82,7 +82,7 @@ const AdminSecurityPage = () => {
         </div>
 
         <div className="kpi-card">
-          <span className={`status-icon ${suspiciousCount === 0 ? 'healthy' : 'warning'}`}>{getStatusIcon(suspiciousCount === 0)}</span>
+          <div className={`status-icon ${suspiciousCount === 0 ? 'healthy' : 'warning'}`}>{getStatusIcon(suspiciousCount === 0)}</div>
           <div className="kpi-content">
             <div className="kpi-label">IPs Suspectes</div>
             <div className="kpi-value">{suspiciousCount}</div>
@@ -90,7 +90,7 @@ const AdminSecurityPage = () => {
         </div>
 
         <div className="kpi-card">
-          <span className="status-icon">👤</span>
+          <div className="status-icon">👤</div>
           <div className="kpi-content">
             <div className="kpi-label">Admins Actifs</div>
             <div className="kpi-value">{status?.top_active_admins?.length || 0}</div>
@@ -102,8 +102,9 @@ const AdminSecurityPage = () => {
 
       <div className="security-sections">
         <div className="security-card">
-          <h3>Adresses IP Suspectes</h3>
-          <p className="card-subtitle">IPs avec &gt;5 erreurs en 24h</p>
+          <div>Adresses IP Suspectes</div>
+          <div className="card-subtitle">IPs avec &gt;5 erreurs en 24h</div>
+
           {status?.suspicious_ips && status.suspicious_ips.length > 0 ? (
             <table className="simple-table">
               <thead>
@@ -116,7 +117,7 @@ const AdminSecurityPage = () => {
                 {status.suspicious_ips.map((ip) => (
                   <tr key={ip.ip}>
                     <td><code>{ip.ip}</code></td>
-                    <td><span className="error-badge">{ip.failed_count}</span></td>
+                    <td><div className="error-badge">{ip.failed_count}</div></td>
                   </tr>
                 ))}
               </tbody>
@@ -127,8 +128,9 @@ const AdminSecurityPage = () => {
         </div>
 
         <div className="security-card">
-          <h3>Admins les Plus Actifs</h3>
-          <p className="card-subtitle">Derniers 7 jours</p>
+          <div>Admins les Plus Actifs</div>
+          <div className="card-subtitle">Derniers 7 jours</div>
+
           {status?.top_active_admins && status.top_active_admins.length > 0 ? (
             <table className="simple-table">
               <thead>
@@ -146,7 +148,7 @@ const AdminSecurityPage = () => {
                         <div className="admin-id">ID: {admin.admin_id}</div>
                       </div>
                     </td>
-                    <td><span className="action-count">{admin.actions}</span></td>
+                    <td><div className="action-count">{admin.actions}</div></td>
                   </tr>
                 ))}
               </tbody>
@@ -159,7 +161,7 @@ const AdminSecurityPage = () => {
 
       {!isHealthy && (
         <div className="recommendations-panel">
-          <h3>⚠️ Recommandations de Sécurité</h3>
+          <div>⚠️ Recommandations de Sécurité</div>
           <ul>
             {failedActions > 5 && (
               <li>Nombre élevé d'erreurs détecté. Vérifiez les logs d'audit pour identifier les problèmes.</li>
@@ -173,7 +175,7 @@ const AdminSecurityPage = () => {
       )}
 
       <div className="info-panel">
-        <h4>ℹ️ Informations</h4>
+        <div>ℹ️ Informations</div>
         <ul>
           <li>Les données de sécurité sont rafraîchies automatiquement toutes les 30 secondes</li>
           <li>Les IPs suspectes sont celles avec plus de 5 erreurs dans les dernières 24h</li>

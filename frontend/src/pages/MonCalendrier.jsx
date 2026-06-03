@@ -137,8 +137,8 @@ const MonCalendrier = () => {
   return (
     <div className="mon-calendrier-page">
       <div className="page-header">
-        <h1>Mon Calendrier de Disponibilité</h1>
-        <p>Gérez vos créneaux de visite disponibles</p>
+        <div>Mon Calendrier de Disponibilité</div>
+        <div>Gérez vos créneaux de visite disponibles</div>
       </div>
 
       {error && <Alert type="error" title="Erreur" message={error} />}
@@ -156,7 +156,7 @@ const MonCalendrier = () => {
 
       {creneaux.length === 0 ? (
         <div className="empty-state">
-          <p>Vous n'avez pas encore créé de créneaux. Ajoutez votre premier créneau pour commencer!</p>
+          <div>Vous n'avez pas encore créé de créneaux. Ajoutez votre premier créneau pour commencer!</div>
         </div>
       ) : (
         <div className="creneaux-table">
@@ -176,9 +176,9 @@ const MonCalendrier = () => {
               <div className="table-cell">{creneau.heure_debut}</div>
               <div className="table-cell">{creneau.heure_fin}</div>
               <div className="table-cell">
-                <span className={`status-badge status-${creneau.est_disponible ? 'disponible' : 'reserve'}`}>
+                <div className={`status-badge status-${creneau.est_disponible ? 'disponible' : 'reserve'}`}>
                   {creneau.est_disponible ? '✓ Disponible' : '⊗ Réservé'}
-                </span>
+                </div>
               </div>
               <div className="table-cell actions">
                 <button

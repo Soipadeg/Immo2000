@@ -77,33 +77,34 @@ const ModelesPage = () => {
   return (
     <div className="modeles-page-container">
       <div className="modeles-header">
-        <h1 className="modeles-title">📄 Modèles de Documents</h1>
-        <p className="modeles-subtitle">
+        <div>📄 Modèles de Documents</div>
+        <div className="modeles-subtitle">
           Téléchargez les modèles de documents dont vous avez besoin
-        </p>
+        </div>
       </div>
 
       <div className="modeles-grid">
         {modeles.map((modele) => (
           <Card key={modele.id} className="modele-card">
             <div className="modele-header">
-              <span className="modele-icon">📋</span>
+              <div className="modele-icon">📋</div>
             </div>
 
             <div className="modele-content">
-              <h3 className="modele-title">{modele.title}</h3>
-              <p className="modele-description">{modele.description}</p>
+              <div>{modele.title}</div>
+              <div className="modele-description">{modele.description}</div>
+
 
               <div className="modele-meta">
-                <span className="meta-badge">{modele.format}</span>
-                <span className={`category-badge category-${modele.category.toLowerCase()}`}>
+                <div className="meta-badge">{modele.format}</div>
+                <div className={`category-badge category-${modele.category.toLowerCase()}`}>
                   {modele.category}
-                </span>
+                </div>
               </div>
 
-              <p className="modele-downloads">
+              <div className="modele-downloads">
                 ⬇️ {modele.downloads.toLocaleString()} téléchargements
-              </p>
+              </div>
             </div>
 
             <div className="modele-actions">
@@ -120,25 +121,25 @@ const ModelesPage = () => {
       </div>
 
       <div className="legal-section">
-        <h3 className="legal-title">⚖️ Avis légal important</h3>
-        <p className="legal-text">
+        <div>⚖️ Avis légal important</div>
+        <div className="legal-text">
           Ces modèles sont fournis à titre informatif. Pour une transaction immobilière, nous
           recommandons de consulter un notaire ou un avocat spécialisé en droit immobilier.
-        </p>
+        </div>
       </div>
 
       {/* Modal de téléchargement */}
       {openDialog && (
         <Modal onClose={handleCloseDialog}>
           <div className="download-modal">
-            <h2 className="modal-title">📥 {openDialog.title}</h2>
+            <div>📥 {openDialog.title}</div>
             <div className="modal-content">
-              <p>Vous êtes sur le point de télécharger:</p>
+              <div>Vous êtes sur le point de télécharger:</div>
               <div className="modele-preview">
-                <p className="preview-title">{openDialog.title}</p>
-                <p className="preview-format">Format: {openDialog.format}</p>
+                <div className="preview-title">{openDialog.title}</div>
+                <div className="preview-format">Format: {openDialog.format}</div>
               </div>
-              <p className="preview-info">ℹ️ {openDialog.preview}</p>
+              <div className="preview-info">ℹ️ {openDialog.preview}</div>
             </div>
             <div className="modal-actions">
               <Button onClick={handleCloseDialog} variant="secondary">

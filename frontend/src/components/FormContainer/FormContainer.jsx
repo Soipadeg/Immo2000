@@ -27,14 +27,14 @@ const FormContainer = ({
       <div className="form-container-inner">
         <div className="form-container-header">
           {title && (
-            <h1 className="form-container-title">
+            <div>
               {title}
-            </h1>
+            </div>
           )}
           {subtitle && (
-            <p className="form-container-subtitle">
+            <div className="form-container-subtitle">
               {subtitle}
-            </p>
+            </div>
           )}
         </div>
 

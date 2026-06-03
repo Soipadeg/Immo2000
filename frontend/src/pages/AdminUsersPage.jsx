@@ -76,8 +76,8 @@ const AdminUsersPage = () => {
   return (
     <div className="admin-users-page">
       <div className="page-header">
-        <h1>👥 Gestion des Utilisateurs</h1>
-        <p>Total: {users.length} utilisateurs | Actifs: {users.filter((u) => u.statut === 'actif').length}</p>
+        <div>👥 Gestion des Utilisateurs</div>
+        <div>Total: {users.length} utilisateurs | Actifs: {users.filter((u) => u.statut === 'actif').length}</div>
       </div>
 
       {/* Filtres */}
@@ -110,8 +110,8 @@ const AdminUsersPage = () => {
             <div key={u.id} className="table-row">
               <div className="table-cell">{u.email}</div>
               <div className="table-cell">{u.prenom} {u.nom}</div>
-              <div className="table-cell"><span className={`role-badge role-${u.role}`}>{u.role === 'admin' ? 'Admin' : 'Utilisateur'}</span></div>
-              <div className="table-cell"><span className={`statut-badge statut-${u.statut}`}>{u.statut === 'actif' ? 'Actif' : 'Suspendu'}</span></div>
+              <div className="table-cell"><div className={`role-badge role-${u.role}`}>{u.role === 'admin' ? 'Admin' : 'Utilisateur'}</div></div>
+              <div className="table-cell"><div className={`statut-badge statut-${u.statut}`}>{u.statut === 'actif' ? 'Actif' : 'Suspendu'}</div></div>
               <div className="table-cell">{new Date(u.dateInscription).toLocaleDateString('fr-FR')}</div>
               <div className="table-cell actions">
                 <Button

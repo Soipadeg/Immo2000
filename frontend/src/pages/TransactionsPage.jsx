@@ -40,15 +40,15 @@ function TransactionRow({ transaction, getActionButton }) {
         {transaction.prix_compromis?.toLocaleString('fr-FR')} €
       </div>
       <div className="table-cell">
-        <span className={`status-badge status-${transaction.statut}`}>
+        <div className={`status-badge status-${transaction.statut}`}>
           {statutLabels[transaction.statut] || transaction.statut}
-        </span>
+        </div>
       </div>
       <div className="table-cell">
         {transaction.notaire ? (
-          <span>{transaction.notaire.etude_notariale}</span>
+          <div>{transaction.notaire.etude_notariale}</div>
         ) : (
-          <span className="text-secondary">Non sélectionné</span>
+          <div className="text-secondary">Non sélectionné</div>
         )}
       </div>
       <div className="table-cell actions">
@@ -187,7 +187,7 @@ export default function TransactionsPage() {
   return (
     <div className="transactions-page">
       <div className="page-header">
-        <h1>Mes Transactions Notariales</h1>
+        <div>Mes Transactions Notariales</div>
       </div>
 
       {error && <Alert type="error" title="Erreur" message={error} />}

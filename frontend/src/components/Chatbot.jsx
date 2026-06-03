@@ -118,7 +118,7 @@ const Chatbot = ({ isOpen, onClose }) => {
       <div className="chatbot-container">
         {/* Header */}
         <div className="chatbot-header">
-          <h3>💬 Assistant Immo2000</h3>
+          <div>💬 Assistant Immo2000</div>
           <button className="chatbot-close" onClick={onClose}>✕</button>
         </div>
 
@@ -128,7 +128,7 @@ const Chatbot = ({ isOpen, onClose }) => {
             <div key={msg.id} className={`message message-${msg.sender}`}>
               {msg.sender === 'bot' && <div className="message-avatar">🤖</div>}
               <div className="message-content">
-                <p className="message-text">{msg.text}</p>
+                <div className="message-text">{msg.text}</div>
                 {msg.confidence !== undefined && msg.confidence < 0.5 && (
                   <small className="message-note">⚠️ Réponse avec faible confiance</small>
                 )}
@@ -156,9 +156,9 @@ const Chatbot = ({ isOpen, onClose }) => {
               <div className="message-avatar">🤖</div>
               <div className="message-content">
                 <div className="typing-indicator">
-                  <span></span>
-                  <span></span>
-                  <span></span>
+                  <div></div>
+                  <div></div>
+                  <div></div>
                 </div>
               </div>
             </div>

@@ -57,7 +57,7 @@ export function LoginForm() {
 
   return (
     <div>
-      <h2>Connexion</h2>
+      <div>Connexion</div>
 
       <FormContainer
         onSubmit={onSubmit}

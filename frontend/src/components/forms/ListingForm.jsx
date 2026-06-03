@@ -77,7 +77,7 @@ export function ListingForm({ existingListing = null, onSuccess = null }) {
 
   return (
     <Paper sx={{ padding: 3, maxWidth: 800, margin: '0 auto' }}>
-      <h2>{existingListing ? 'Modifier l\'annonce' : 'Créer une annonce'}</h2>
+      <div>{existingListing ? 'Modifier l\'annonce' : 'Créer une annonce'}</div>
 
       <FormContainer
         onSubmit={onSubmit}

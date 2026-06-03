@@ -54,7 +54,7 @@ const Select = React.forwardRef(({
       {label && (
         <label htmlFor={selectId} className="select-label">
           {label}
-          {required && <span className="select-label__required">*</span>}
+          {required && <div className="select-label__required">*</div>}
         </label>
       )}
 
@@ -96,15 +96,15 @@ const Select = React.forwardRef(({
       </div>
 
       {error && errorMessage && (
-        <span id={`${selectId}-error`} className="select-error">
+        <div id={`${selectId}-error`} className="select-error">
           {errorMessage}
-        </span>
+        </div>
       )}
 
       {hint && !error && (
-        <span id={`${selectId}-hint`} className="select-hint">
+        <div id={`${selectId}-hint`} className="select-hint">
           {hint}
-        </span>
+        </div>
       )}
     </div>
   );

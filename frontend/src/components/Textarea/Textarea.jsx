@@ -60,7 +60,7 @@ const Textarea = React.forwardRef(({
       {label && (
         <label htmlFor={inputId} className="textarea-label">
           {label}
-          {required && <span className="textarea-label__required">*</span>}
+          {required && <div className="textarea-label__required">*</div>}
         </label>
       )}
 
@@ -87,20 +87,20 @@ const Textarea = React.forwardRef(({
       <div className="textarea-footer">
         <div>
           {error && errorMessage && (
-            <span id={`${inputId}-error`} className="textarea-error">
+            <div id={`${inputId}-error`} className="textarea-error">
               {errorMessage}
-            </span>
+            </div>
           )}
           {hint && !error && (
-            <span id={`${inputId}-hint`} className="textarea-hint">
+            <div id={`${inputId}-hint`} className="textarea-hint">
               {hint}
-            </span>
+            </div>
           )}
         </div>
         {maxLength && (
-          <span className="textarea-counter">
+          <div className="textarea-counter">
             {charCount}/{maxLength}
-          </span>
+          </div>
         )}
       </div>
     </div>

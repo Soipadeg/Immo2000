@@ -80,12 +80,12 @@ const DevRoleInitializer = ({ role }) => {
     <div
     >
       <div class="spinner"></div>
-      <p>
+      <div>
         🚀 Initialisation du mode {role.toUpperCase()}...
-      </p>
-      <p>
+      </div>
+      <div>
         Chargement des données...
-      </p>
+      </div>
     </div>
   );
 };

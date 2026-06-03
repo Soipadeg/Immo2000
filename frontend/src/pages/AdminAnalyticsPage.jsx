@@ -54,7 +54,7 @@ const AdminAnalyticsPage = () => {
   return (
     <div className="admin-analytics-page">
       <div className="page-header">
-        <h1>📊 Analytics - Statistiques Avancées</h1>
+        <div>📊 Analytics - Statistiques Avancées</div>
       </div>
 
       {error && <Alert type="error" title="Erreur" message={error} />}
@@ -109,18 +109,18 @@ const AdminAnalyticsPage = () => {
                 <>
                   <div className="charts-grid">
                     <div className="chart-box">
-                      <h3>Répartition des rôles</h3>
+                      <div>Répartition des rôles</div>
                       <div className="chart-placeholder">[Graphique - Répartition des rôles]</div>
                     </div>
                     <div className="chart-box">
-                      <h3>Croissance</h3>
+                      <div>Croissance</div>
                       <div className="chart-placeholder">[Graphique - Croissance]</div>
                     </div>
                   </div>
 
                   {users.top_vendeurs && users.top_vendeurs.length > 0 && (
                     <div className="table-section">
-                      <h3>Top vendeurs</h3>
+                      <div>Top vendeurs</div>
                       <div className="table-wrapper">
                         <div className="table-header">
                           <div>Nom</div>
@@ -147,11 +147,11 @@ const AdminAnalyticsPage = () => {
                 <>
                   <div className="charts-grid">
                     <div className="chart-box">
-                      <h3>Par statut</h3>
+                      <div>Par statut</div>
                       <div className="chart-placeholder">[Graphique - Statuts]</div>
                     </div>
                     <div className="chart-box">
-                      <h3>Par type</h3>
+                      <div>Par type</div>
                       <div className="chart-placeholder">[Graphique - Types]</div>
                     </div>
                   </div>
@@ -163,7 +163,7 @@ const AdminAnalyticsPage = () => {
                 <>
                   <div className="charts-grid">
                     <div className="chart-box">
-                      <h3>Évolution des transactions</h3>
+                      <div>Évolution des transactions</div>
                       <div className="chart-placeholder">[Graphique - Transactions]</div>
                     </div>
                   </div>

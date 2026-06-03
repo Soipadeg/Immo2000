@@ -148,16 +148,16 @@ export default function StripePaymentForm({
         className="stripe-payment-form__button"
       >
         {processing || isProcessing ? (
-          <span>Traitement en cours...</span>
+          <div>Traitement en cours...</div>
         ) : (
           `Payer ${amount?.toLocaleString('fr-FR')} €`
         )}
       </Button>
 
       <div className="stripe-payment-form__info">
-        <p>
+        <div>
           <strong>Test:</strong> Utilisez 4242 4242 4242 4242 pour un succès, 4000 0000 0000 0002 pour un échec.
-        </p>
+        </div>
       </div>
     </form>
   );

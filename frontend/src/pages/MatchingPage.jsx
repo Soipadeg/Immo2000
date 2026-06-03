@@ -118,14 +118,14 @@ const MatchingPage = () => {
       <div className="page-header">
         <div>
           <HomeIcon />
-          <h3 variant="h3" component="h1">
+          <div>
             Trouvez votre bien idéal
-          </h3>
+          </div>
         </div>
-        <p variant="subtitle1" color="textSecondary">
+        <div>
           Utilisez les filtres ci-dessous pour découvrir les annonces les plus adaptées à vos
           critères.
-        </h3>
+        </div>
       </div>
 
       {/* Messages d'alerte */}
@@ -224,21 +224,21 @@ const MatchingPage = () => {
 
       {/* Résultats */}
       <div className="results-section">
-        <h5 variant="h5">
+        <div>
           Résultats ({annonces.length})
-        </h5>
+        </div>
 
         {annonces.length === 0 && !loading ? (
           <div
             elevation={0}
           >
             <HomeIcon />
-            <h6 variant="h6" color="textSecondary">
+            <div>
               Aucune annonce ne correspond à vos critères.
-            </h6>
-            <p variant="body2" color="textSecondary">
+            </div>
+            <div>
               Essayez d'élargir vos critères de recherche.
-            </h5>
+            </div>
           </div>
         ) : (
           <div container spacing={3} className="annonces-grid">
@@ -264,22 +264,22 @@ const MatchingPage = () => {
                   {/* Contenu principal */}
                   <div>
                     <div>
-                      <h6 variant="h6" component="h3">
+                      <div>
                         {annonce.adresse || 'Adresse non disponible'}
-                      </h6>
+                      </div>
 
                       {/* Prix et caractéristiques */}
                       <div>
-                        <span
+                        <div
                           label={`${formatPrice(annonce.prix || 0)}`}
                           color="primary"
                           variant="outlined"
                         />
                         {annonce.surface && (
-                          <span label={`${annonce.surface} m²`} variant="outlined" />
+                          <div label={`${annonce.surface} m²`} variant="outlined" />
                         )}
                         {annonce.type_bien && (
-                          <span label={annonce.type_bien} variant="outlined" />
+                          <div label={annonce.type_bien} variant="outlined" />
                         )}
                       </div>
 
@@ -292,17 +292,17 @@ const MatchingPage = () => {
                             precision={0.5}
                             size="small"
                           />
-                          <p variant="body2" color="textSecondary">
+                          <div>
                             ({annonce.score}/100)
-                          </h6>
+                          </div>
                         </div>
                       )}
 
                       {/* Détails supplémentaires */}
                       {annonce.description && (
-                        <p variant="body2" color="textSecondary">
+                        <div>
                           {annonce.description}
-                        </h3>
+                        </div>
                       )}
                     </div>
                   </div>

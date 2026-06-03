@@ -77,19 +77,19 @@ const FeatureCard = ({
 
         {/* Titre et description */}
         <div>
-          <p>
+          <div>
             {title}
-          </p>
+          </div>
 
-          <p>
+          <div>
             {description}
-          </p>
+          </div>
 
           {/* Stats optionnels */}
           {stats !== undefined && (
-            <p>
+            <div>
               {stats} élément{stats !== 1 ? 's' : ''}
-            </p>
+            </div>
           )}
         </div>
 

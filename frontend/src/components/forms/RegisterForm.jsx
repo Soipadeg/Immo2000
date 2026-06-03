@@ -60,7 +60,7 @@ export function RegisterForm() {
 
   return (
     <div style={ maxWidth: 500, margin: '0 auto', padding: 3 }>
-      <h2>Créer un compte</h2>
+      <div>Créer un compte</div>
 
       <Alert severity="info" sx={{ mb: 2 }}>
         Le mot de passe doit contenir: min 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre
@@ -133,7 +133,7 @@ export function RegisterForm() {
 
         {/* Link to login */}
         <div style={ textAlign: 'center' }>
-          <span>Déjà un compte? </span>
+          <div>Déjà un compte? </div>
           <Link href="/login" variant="body2">
             Se connecter
           </Link>

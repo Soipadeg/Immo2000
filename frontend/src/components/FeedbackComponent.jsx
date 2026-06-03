@@ -43,16 +43,16 @@ export const FeedbackSubmitForm = ({ visiteId, onSuccess }) => {
 
   return (
     <div className="card">
-      <p>
+      <div>
         📝 Donner votre avis sur la visite
-      </p>
+      </div>
 
       {error && <Alert severity="error">{error}</Alert>}
 
       <div>
-        <p>
+        <div>
           Votre note
-        </p>
+        </div>
         <Rating
           value={formData.rating}
           onChange={(e, value) => setFormData({ ...formData, rating: value })}
@@ -122,40 +122,40 @@ export const FeedbackCard = ({ feedback, onReply }) => {
               {feedback.acheteur_nom?.[0]?.toUpperCase() || 'A'}
             </Avatar>
             <div>
-              <p>
+              <div>
                 {feedback.acheteur_nom || 'Utilisateur anonyme'}
-              </p>
-              <p>
+              </div>
+              <div>
                 {new Date(feedback.date_creation).toLocaleDateString('fr-FR')}
-              </p>
+              </div>
             </div>
           </div>
 
           {/* Note */}
           <div>
             <Rating value={feedback.rating} readOnly size="small" />
-            <p>
+            <div>
               {['Très mauvais', 'Mauvais', 'Acceptable', 'Bon', 'Excellent'][feedback.rating - 1]}
-            </p>
+            </div>
           </div>
 
           {/* Commentaire */}
           {feedback.commentaire && (
-            <p>
+            <div>
               {feedback.commentaire}
-            </p>
+            </div>
           )}
 
           {/* Réponse du vendeur */}
           {feedback.reponse_vendeur && (
             <div
             >
-              <p>
+              <div>
                 ✓ Réponse du vendeur
-              </p>
-              <p>
+              </div>
+              <div>
                 {feedback.reponse_vendeur}
-              </p>
+              </div>
             </div>
           )}
         </CardContent>
@@ -174,11 +174,11 @@ export const FeedbackCard = ({ feedback, onReply }) => {
 
       {/* Dialog de réponse */}
       <Dialog open={replyDialogOpen} onClose={() => setReplyDialogOpen(false)} fullWidth>
-        <DialogTitle>Répondre au feedback</DialogTitle>
-        <DialogContent>
-          <p>
+        <div>Répondre au feedback</div>
+        <div>
+          <div>
             Feedback de {feedback.acheteur_nom}: "{feedback.commentaire}"
-          </p>
+          </div>
           <TextField
             fullWidth
             label="Votre réponse"
@@ -188,8 +188,8 @@ export const FeedbackCard = ({ feedback, onReply }) => {
             onChange={(e) => setReplyText(e.target.value)}
             placeholder="Répondez au feedback du visiteur..."
           />
-        </DialogContent>
-        <DialogActions>
+        </div>
+        <div>
           <button onClick={() => setReplyDialogOpen(false)}>Annuler</button>
           <button onClick={handleReply}
             variant="contained"
@@ -198,7 +198,7 @@ export const FeedbackCard = ({ feedback, onReply }) => {
           >
             {loading ? <div class="spinner"></div> : 'Envoyer'}
           </button>
-        </DialogActions>
+        </div>
       </Dialog>
     </>
   );
@@ -244,9 +244,9 @@ export const FeedbacksList = () => {
   if (feedbacks.length === 0) {
     return (
       <div className="card">
-        <p>
+        <div>
           Aucun feedback reçu pour le moment
-        </p>
+        </div>
       </div>
     );
   }
@@ -271,43 +271,43 @@ export const FeedbacksList = () => {
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6} md={3}>
             <div>
-              <p>
+              <div>
                 Note Moyenne
-              </p>
-              <p>
+              </div>
+              <div>
                 {avgRating}
-              </p>
+              </div>
               <Rating value={Math.round(avgRating)} readOnly size="small" />
             </div>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <div>
-              <p>
+              <div>
                 Total de Feedbacks
-              </p>
-              <p>
+              </div>
+              <div>
                 {feedbacks.length}
-              </p>
+              </div>
             </div>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <div>
-              <p>
+              <div>
                 Positifs (4-5★)
-              </p>
-              <p>
+              </div>
+              <div>
                 {ratingDistribution[5] + ratingDistribution[4]}
-              </p>
+              </div>
             </div>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <div>
-              <p>
+              <div>
                 À améliorer (1-2★)
-              </p>
-              <p>
+              </div>
+              <div>
                 {ratingDistribution[1] + ratingDistribution[2]}
-              </p>
+              </div>
             </div>
           </Grid>
         </Grid>
@@ -315,9 +315,9 @@ export const FeedbacksList = () => {
 
       {/* Liste des feedbacks */}
       <Box>
-        <p>
+        <div>
           📋 Feedbacks Reçus
-        </p>
+        </div>
         {feedbacks.map((feedback) => (
           <FeedbackCard
             key={feedback.feedback_id}

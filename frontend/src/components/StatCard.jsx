@@ -30,8 +30,8 @@ const StatCard = ({
 
         {trend && (
           <div className={`stat-card__trend ${trendUp ? 'up' : 'down'}`}>
-            <span>{trendUp ? '↑' : '↓'}</span>
-            <span>{trend}</span>
+            <div>{trendUp ? '↑' : '↓'}</div>
+            <div>{trend}</div>
           </div>
         )}
       </div>

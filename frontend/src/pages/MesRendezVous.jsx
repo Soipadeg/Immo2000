@@ -157,8 +157,8 @@ const MesRendezVous = () => {
   return (
     <div className="mes-rendez-vous-page">
       <div className="page-header">
-        <h1>Mes Rendez-vous</h1>
-        <p>Gérez vos demandes et confirmations de visite</p>
+        <div>Mes Rendez-vous</div>
+        <div>Gérez vos demandes et confirmations de visite</div>
       </div>
 
       {error && (
@@ -184,44 +184,44 @@ const MesRendezVous = () => {
 
       {filteredRDV.length === 0 ? (
         <div className="empty-state">
-          <p>Aucun rendez-vous trouvé</p>
+          <div>Aucun rendez-vous trouvé</div>
         </div>
       ) : (
         <div className="rdv-grid">
           {filteredRDV.map(rdv => (
             <div key={rdv.rdv_id} className="rdv-card">
               <div className="rdv-header">
-                <h3>Visite #{rdv.rdv_id}</h3>
-                <span className={`rdv-status rdv-status-${rdv.statut}`}>
+                <div>Visite #{rdv.rdv_id}</div>
+                <div className={`rdv-status rdv-status-${rdv.statut}`}>
                   {getStatutLabel(rdv.statut)}
-                </span>
+                </div>
               </div>
 
               <div className="rdv-divider"></div>
 
               <div className="rdv-content">
-                <p className="rdv-info">
+                <div className="rdv-info">
                   <strong>Annonce:</strong> #{rdv.annonce_id}
-                </p>
+                </div>
 
                 {rdv.date_proposée && (
-                  <p className="rdv-info">
+                  <div className="rdv-info">
                     <strong>Date proposée:</strong>{' '}
                     {format(new Date(rdv.date_proposée), 'dd/MM/yyyy HH:mm', { locale: fr })}
-                  </p>
+                  </div>
                 )}
 
                 {rdv.date_confirmée && (
-                  <p className="rdv-info rdv-info-confirmed">
+                  <div className="rdv-info rdv-info-confirmed">
                     <strong>Date confirmée:</strong>{' '}
                     {format(new Date(rdv.date_confirmée), 'dd/MM/yyyy HH:mm', { locale: fr })}
-                  </p>
+                  </div>
                 )}
 
                 {rdv.message && (
-                  <p className="rdv-message">
+                  <div className="rdv-message">
                     <strong>Message:</strong> {rdv.message}
-                  </p>
+                  </div>
                 )}
               </div>
 

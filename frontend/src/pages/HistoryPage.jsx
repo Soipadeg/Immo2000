@@ -44,7 +44,7 @@ const HistoryPage = () => {
   return (
     <div className="history-page">
       <div className="page-header">
-        <h1>📋 Historique</h1>
+        <div>📋 Historique</div>
       </div>
 
       <div className="history-card">
@@ -77,7 +77,7 @@ const HistoryPage = () => {
             {viewedAnnonces.map((annonce) => (
               <div key={annonce.id} className="table-row">
                 <div className="table-cell">{annonce.titre}</div>
-                <div className="table-cell"><span className="type-badge">{annonce.type}</span></div>
+                <div className="table-cell"><div className="type-badge">{annonce.type}</div></div>
                 <div className="table-cell">{annonce.ville}</div>
                 <div className="table-cell price">{annonce.prix.toLocaleString()}€</div>
                 <div className="table-cell">{new Date(annonce.date).toLocaleDateString('fr-FR')}</div>
@@ -105,9 +105,9 @@ const HistoryPage = () => {
                 <div className="table-cell">{annonce.vendeur}</div>
                 <div className="table-cell">{new Date(annonce.dateContact).toLocaleDateString('fr-FR')}</div>
                 <div className="table-cell">
-                  <span className={`status-badge status-${annonce.statut === 'Répondu' ? 'replied' : 'pending'}`}>
+                  <div className={`status-badge status-${annonce.statut === 'Répondu' ? 'replied' : 'pending'}`}>
                     {annonce.statut}
-                  </span>
+                  </div>
                 </div>
                 <div className="table-cell"><button className="action-btn">Voir messages</button></div>
               </div>
@@ -118,10 +118,10 @@ const HistoryPage = () => {
 
       {(tabValue === 0 && viewedAnnonces.length === 0) || (tabValue === 1 && contactedAnnonces.length === 0) ? (
         <div className="empty-state">
-          <h3>{tabValue === 0 ? 'Aucun bien consulté' : 'Aucune annonce contactée'}</h3>
-          <p>
+          <div>{tabValue === 0 ? 'Aucun bien consulté' : 'Aucune annonce contactée'}</div>
+          <div>
             {tabValue === 0 ? 'pour le moment' : 'pour le moment'}
-          </p>
+          </div>
           <a href="/search" className="link-button">Consulter les annonces</a>
         </div>
       ) : null}

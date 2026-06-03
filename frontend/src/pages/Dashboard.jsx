@@ -29,13 +29,13 @@ function TabPanel(props) {
 function AchatTab() {
   return (
     <div className="tab-section">
-      <h2 className="section-title">🔍 Rechercher un bien</h2>
+      <div>🔍 Rechercher un bien</div>
 
       <Alert type="info" title="Fonctionnalité" message="Les fonctionnalités de recherche et de favoris seront bientôt disponibles !" />
 
       <Card className="empty-card">
         <div className="card-content">
-          <p className="empty-text">Cherchez votre bien idéal parmi nos annonces</p>
+          <div className="empty-text">Cherchez votre bien idéal parmi nos annonces</div>
           <Button variant="primary">Consulter les annonces</Button>
         </div>
       </Card>
@@ -88,7 +88,7 @@ function VenteTab({ user }) {
   return (
     <div className="tab-section">
       <div className="section-header">
-        <h2 className="section-title">📝 Mes annonces</h2>
+        <div>📝 Mes annonces</div>
         <Button
           variant="primary"
           onClick={() => navigate('/creer-annonce/etape1')}
@@ -132,9 +132,9 @@ function VenteTab({ user }) {
       {!loading && annonces.length === 0 && (
         <Card className="empty-card">
           <div className="card-content">
-            <p className="empty-text">
+            <div className="empty-text">
               Vous n'avez pas encore d'annonce {filter !== 'tous' ? `en ${filter}` : ''}
-            </p>
+            </div>
             <Button
               variant="primary"
               onClick={() => navigate('/creer-annonce/etape1')}
@@ -159,32 +159,33 @@ function VenteTab({ user }) {
                     : 'none',
                 }}
               >
-                <span className={`status-badge ${annonce.statut === 'publiée' ? 'published' : 'draft'}`}>
+                <div className={`status-badge ${annonce.statut === 'publiée' ? 'published' : 'draft'}`}>
                   {annonce.statut.toUpperCase()}
-                </span>
+                </div>
               </div>
 
               <div className="card-body">
-                <h3 className="card-title">{annonce.titre}</h3>
+                <div>{annonce.titre}</div>
 
-                <p className="card-location">📍 {annonce.adresse}, {annonce.code_postal}</p>
+                <div className="card-location">📍 {annonce.adresse}, {annonce.code_postal}</div>
+
 
                 {/* Détails */}
                 <div className="card-details">
                   {annonce.prix && (
-                    <span className="detail-badge">
+                    <div className="detail-badge">
                       💰 {annonce.prix.toLocaleString('fr-FR')} €
-                    </span>
+                    </div>
                   )}
                   {annonce.surface && (
-                    <span className="detail-badge">
+                    <div className="detail-badge">
                       📐 {annonce.surface} m²
-                    </span>
+                    </div>
                   )}
                   {annonce.nombre_pieces && (
-                    <span className="detail-badge">
+                    <div className="detail-badge">
                       🚪 {annonce.nombre_pieces} pièces
-                    </span>
+                    </div>
                   )}
                 </div>
 
@@ -268,7 +269,7 @@ function MessagerieTab() {
 
   return (
     <div className="tab-section">
-      <h2 className="section-title">💬 Messages</h2>
+      <div>💬 Messages</div>
 
       <div className="messages-list">
         {messages.map((msg, idx) => (
@@ -291,7 +292,7 @@ function MessagerieTab() {
       {messages.length === 0 && (
         <Card className="empty-card">
           <div className="card-content">
-            <p className="empty-text">Aucun message pour le moment</p>
+            <div className="empty-text">Aucun message pour le moment</div>
           </div>
         </Card>
       )}
@@ -328,10 +329,10 @@ export default function Dashboard() {
     <div className="dashboard-page-container">
       {/* En-tête */}
       <div className="dashboard-header">
-        <h1 className="dashboard-title">👋 Bienvenue, {user?.prenom} !</h1>
-        <p className="dashboard-subtitle">
+        <div>👋 Bienvenue, {user?.prenom} !</div>
+        <div className="dashboard-subtitle">
           Gérez vos annonces, recherches et messages en un seul endroit.
-        </p>
+        </div>
       </div>
 
       {/* Onglets */}

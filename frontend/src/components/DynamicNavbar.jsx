@@ -174,7 +174,7 @@ export const DynamicNavbar = ({
               >
                 {item.icon} {item.label}
                 {item.badge !== undefined && item.badge > 0 && (
-                  <span style={{
+                  <div style={{
                     backgroundColor: '#ff4444',
                     color: '#fff',
                     borderRadius: '50%',
@@ -183,7 +183,7 @@ export const DynamicNavbar = ({
                     marginLeft: '4px',
                   }}>
                     {item.badge}
-                  </span>
+                  </div>
                 )}
               </button>
             ))}
@@ -301,7 +301,7 @@ export const DynamicNavbar = ({
             >
               {item.icon} {item.label}
               {item.badge !== undefined && item.badge > 0 && (
-                <span style={{
+                <div style={{
                   backgroundColor: '#ff4444',
                   color: '#fff',
                   borderRadius: '50%',
@@ -310,7 +310,7 @@ export const DynamicNavbar = ({
                   marginLeft: '4px',
                 }}>
                   {item.badge}
-                </span>
+                </div>
               )}
             </button>
           ))}

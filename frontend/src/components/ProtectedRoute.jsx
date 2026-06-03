@@ -46,7 +46,7 @@ export const ProtectedRoute = ({
           borderRadius: '50%',
           animation: 'spin 1s linear infinite',
         }} />
-        <p>Chargement...</p>
+        <div>Chargement...</div>
       </div>
     );
   }
@@ -67,14 +67,14 @@ export const ProtectedRoute = ({
     if (!requiredRoles.includes(user?.role)) {
       return (
         <div style={{ textAlign: 'center', padding: '2rem' }}>
-          <h2 style={{ color: '#ef4444', marginBottom: '1rem' }}>❌ Accès refusé</h2>
-          <p style={{ marginBottom: '0.5rem' }}>Vous n'avez pas les droits d'accès à cette page.</p>
-          <p style={{ color: '#666', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
+          <div>❌ Accès refusé</div>
+          <div style={{ marginBottom: '0.5rem' }}>Vous n'avez pas les droits d'accès à cette page.</div>
+          <div style={{ color: '#666', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
             Votre rôle: <strong>{user?.role}</strong>
-          </p>
-          <p style={{ color: '#666', fontSize: '0.875rem' }}>
+          </div>
+          <div style={{ color: '#666', fontSize: '0.875rem' }}>
             Rôles autorisés: <strong>{requiredRoles.join(', ')}</strong>
-          </p>
+          </div>
         </div>
       );
     }

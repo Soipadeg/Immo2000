@@ -96,9 +96,9 @@ const CreateAlerteQuickModal = ({ open, onClose, initialFilters = {} }) => {
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-      <DialogTitle>🔔 Créer une alerte d'annonce</DialogTitle>
+      <div>🔔 Créer une alerte d'annonce</div>
 
-      <DialogContent>
+      <div>
         {success && (
           <Alert severity="success">
             ✅ Alerte créée avec succès! Vous recevrez les notifications par email.
@@ -127,9 +127,9 @@ const CreateAlerteQuickModal = ({ open, onClose, initialFilters = {} }) => {
 
             {/* Rappel des critères actuels */}
             {(formData.ville || formData.type_bien || formData.prix_min || formData.surface_min) && (
-              <p>
+              <div>
                 Les critères de votre recherche actuelle seront utilisés pour cette alerte.
-              </p>
+              </div>
             )}
 
             {/* Configuration */}
@@ -158,14 +158,14 @@ const CreateAlerteQuickModal = ({ open, onClose, initialFilters = {} }) => {
               label="Me notifier par email"
             />
 
-            <p>
+            <div>
               💡 Conseil: Donnez un nom explicite à votre alerte pour la retrouver facilement
-            </p>
+            </div>
           </div>
         )}
-      </DialogContent>
+      </div>
 
-      <DialogActions>
+      <div>
         <button onClick={handleClose} disabled={loading}>
           {success ? 'Fermer' : 'Annuler'}
         </button>
@@ -179,7 +179,7 @@ const CreateAlerteQuickModal = ({ open, onClose, initialFilters = {} }) => {
             Créer l'alerte
           </button>
         )}
-      </DialogActions>
+      </div>
     </Dialog>
   );
 };

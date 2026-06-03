@@ -186,7 +186,7 @@ export default function LoginPage() {
   return (
     <div className="login-page">
       <div className="login-container">
-        <h1>Se connecter</h1>
+        <div>Se connecter</div>
 
         {successMessage && (
           <Alert type="success" title="Succès" message={successMessage} />
@@ -265,14 +265,14 @@ export default function LoginPage() {
 
           <div className="divider"></div>
 
-          <p className="signup-link">
+          <div className="signup-link">
             Pas de compte ? <a href="/register">S'inscrire</a>
-          </p>
+          </div>
         </form>
 
         {/* Infos de sécurité */}
         <div className="security-info">
-          <h4>🔐 Sécurité</h4>
+          <div>🔐 Sécurité</div>
           <ul>
             <li>✓ Chiffrement TLS/SSL pour toutes les connexions</li>
             <li>✓ Verrouillage de compte après {MAX_LOGIN_ATTEMPTS} tentatives échouées</li>

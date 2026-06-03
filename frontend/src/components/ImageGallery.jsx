@@ -54,7 +54,7 @@ const ImageGalleryComponent = ({ annonceId, onDelete }) => {
   if (error) {
     return (
       <div>
-        <p>{error}</p>
+        <div>{error}</div>
       </div>
     );
   }
@@ -62,7 +62,7 @@ const ImageGalleryComponent = ({ annonceId, onDelete }) => {
   if (images.length === 0) {
     return (
       <div>
-        <p>Aucune image</p>
+        <div>Aucune image</div>
       </div>
     );
   }

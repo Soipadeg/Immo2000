@@ -99,9 +99,9 @@ export function ConversationView({ conversationId, otherUser }) {
         <div style={ display: 'flex', alignItems: 'center', gap: 2 }>
           <Avatar src={otherUser?.avatar} alt={otherUser?.nom} />
           <div>
-            <span>
+            <div>
               {otherUser?.nom} {otherUser?.prenom}
-            </span>
+            </div>
             <div style={ display: 'flex', alignItems: 'center', gap: 1 }>
               <div style={
                   width: 8,
@@ -110,9 +110,9 @@ export function ConversationView({ conversationId, otherUser }) {
                   backgroundColor: isUserOnline(otherUser?.id) ? '#4caf50' : '#ccc',
                 }
               />
-              <span>
+              <div>
                 {isUserOnline(otherUser?.id) ? 'En ligne' : 'Hors ligne'}
-              </span>
+              </div>
             </div>
           </div>
         </div>
@@ -136,9 +136,9 @@ export function ConversationView({ conversationId, otherUser }) {
       >
         {messages.length === 0 ? (
           <div style={ textAlign: 'center', pt: 5 }>
-            <span>
+            <div>
               Commencez une conversation!
-            </span>
+            </div>
           </div>
         ) : (
           messages.map((msg) => (
@@ -158,10 +158,10 @@ export function ConversationView({ conversationId, otherUser }) {
                   color: msg.user_id === user?.id ? 'white' : 'black',
                 }}
               >
-                <span>{msg.content}</span>
-                <span>
+                <div>{msg.content}</div>
+                <div>
                   {new Date(msg.timestamp).toLocaleTimeString('fr-FR')}
-                </span>
+                </div>
               </Paper>
             </div>
           ))
@@ -171,9 +171,9 @@ export function ConversationView({ conversationId, otherUser }) {
         {typing[otherUser?.id] && (
           <div style={ display: 'flex', gap: 0.5, alignItems: 'center' }>
             <CircularProgress size={20} />
-            <span>
+            <div>
               {otherUser?.nom} est en train d'écrire...
-            </span>
+            </div>
           </div>
         )}
 
@@ -229,7 +229,7 @@ export function ConversationsList({ conversations, onSelectConversation }) {
         ).length;
 
         return (
-          <ListItem
+          <li
             key={conv.id}
             button
             onClick={() => onSelectConversation(conv)}
@@ -245,18 +245,18 @@ export function ConversationsList({ conversations, onSelectConversation }) {
 
               <div style={ flex: 1 }>
                 <div style={ display: 'flex', justifyContent: 'space-between' }>
-                  <span>
+                  <div>
                     {conv.otherUser?.nom}
-                  </span>
-                  <span>
+                  </div>
+                  <div>
                     {new Date(conv.lastMessage?.timestamp).toLocaleDateString('fr-FR')}
-                  </span>
+                  </div>
                 </div>
 
                 <div style={ display: 'flex', justifyContent: 'space-between', mt: 0.5 }>
-                  <span>
+                  <div>
                     {conv.lastMessage?.content || 'Pas de message'}
-                  </span>
+                  </div>
 
                   {unreadCount > 0 && (
                     <Chip
@@ -281,7 +281,7 @@ export function ConversationsList({ conversations, onSelectConversation }) {
                 />
               )}
             </div>
-          </ListItem>
+          </li>
         );
       })}
     </List>
@@ -297,13 +297,13 @@ export function NotificationCenter() {
 
   return (
     <div style={ p: 2 }>
-      <span>
+      <div>
         Notifications ({notifications.length})
-      </span>
+      </div>
 
       <List>
         {notifications.map((notif) => (
-          <ListItem
+          <li
             key={notif.id}
             sx={{
               backgroundColor: notif.read ? 'transparent' : '#f0f7ff',
@@ -314,17 +314,17 @@ export function NotificationCenter() {
             onClick={() => markAsRead(notif.id)}
           >
             <div style={ width: '100%' }>
-              <span>
+              <div>
                 {notif.title}
-              </span>
-              <span>
+              </div>
+              <div>
                 {notif.message}
-              </span>
-              <span>
+              </div>
+              <div>
                 {new Date(notif.timestamp).toLocaleString('fr-FR')}
-              </span>
+              </div>
             </div>
-          </ListItem>
+          </li>
         ))}
       </List>
     </div>

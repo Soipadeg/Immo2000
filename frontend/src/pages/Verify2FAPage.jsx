@@ -134,9 +134,9 @@ export default function Verify2FAPage() {
       )}
 
       <form onSubmit={handleSubmit} className="verify-2fa-form">
-        <p className="form-description">
+        <div className="form-description">
           Pour sécuriser votre compte, entrez le code envoyé à <strong>{email}</strong>.
-        </p>
+        </div>
 
         <Input
           label="Code à 6 chiffres"
@@ -164,7 +164,7 @@ export default function Verify2FAPage() {
       </form>
 
       <div className="resend-section">
-        <p className="resend-text">Vous n'avez pas reçu le code ?</p>
+        <div className="resend-text">Vous n'avez pas reçu le code ?</div>
         <Button
           variant="ghost"
           size="medium"
@@ -180,10 +180,10 @@ export default function Verify2FAPage() {
 
       <div className="security-tip">
         <strong>💡 Conseil de sécurité</strong>
-        <p>
+        <div>
           L'authentification à 2 facteurs protège votre compte contre l'accès non
           autorisé. Gardez votre téléphone et votre email sécurisés.
-        </p>
+        </div>
       </div>
 
       <div className="form-link">

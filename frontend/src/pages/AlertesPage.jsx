@@ -185,10 +185,10 @@ const AlertesAnnonces = () => {
       {/* En-tête */}
       <div className="alertes-header">
         <div className="header-content">
-          <h1 className="alertes-title">🔔 Mes Alertes d'Annonces</h1>
-          <p className="alertes-subtitle">
+          <div>🔔 Mes Alertes d'Annonces</div>
+          <div className="alertes-subtitle">
             Recevez des notifications quand de nouvelles annonces correspondent à vos critères
-          </p>
+          </div>
         </div>
         <Button variant="primary" onClick={handleOpenModalCreate}>
           ➕ Créer une alerte
@@ -212,11 +212,11 @@ const AlertesAnnonces = () => {
       {!loading && alertes.length === 0 && (
         <Card className="empty-state">
           <div className="empty-content">
-            <h3>Aucune alerte créée</h3>
-            <p>
+            <div>Aucune alerte créée</div>
+            <div>
               Créez une alerte pour être notifié quand de nouvelles annonces correspondent
               à vos critères
-            </p>
+            </div>
             <Button variant="primary" onClick={handleOpenModalCreate}>
               ➕ Créer votre première alerte
             </Button>
@@ -231,27 +231,27 @@ const AlertesAnnonces = () => {
             <Card key={alerte.alerte_id} className="alerte-card">
               <div className="alerte-card-header">
                 <div>
-                  <h3 className="alerte-title">{alerte.nom}</h3>
-                  <span className={`alerte-status ${alerte.actif ? 'active' : 'inactive'}`}>
+                  <div>{alerte.nom}</div>
+                  <div className={`alerte-status ${alerte.actif ? 'active' : 'inactive'}`}>
                     {alerte.actif ? '✓ Actif' : '✗ Inactif'}
-                  </span>
+                  </div>
                 </div>
               </div>
 
               <div className="alerte-content">
                 {/* Critères principaux */}
                 <div className="alerte-criteria">
-                  {alerte.type_bien && <span className="badge">{alerte.type_bien}</span>}
-                  {alerte.ville && <span className="badge">📍 {alerte.ville}</span>}
+                  {alerte.type_bien && <div className="badge">{alerte.type_bien}</div>}
+                  {alerte.ville && <div className="badge">📍 {alerte.ville}</div>}
                   {(alerte.prix_min || alerte.prix_max) && (
-                    <span className="badge">
+                    <div className="badge">
                       💰 {alerte.prix_min || '0'} - {alerte.prix_max || '∞'} €
-                    </span>
+                    </div>
                   )}
                   {(alerte.surface_min || alerte.surface_max) && (
-                    <span className="badge">
+                    <div className="badge">
                       📐 {alerte.surface_min || '0'} - {alerte.surface_max || '∞'} m²
-                    </span>
+                    </div>
                   )}
                 </div>
 
@@ -263,14 +263,14 @@ const AlertesAnnonces = () => {
                   alerte.piscine ||
                   alerte.parking) && (
                   <div className="alerte-amenities">
-                    <span className="amenities-label">Équipements:</span>
+                    <div className="amenities-label">Équipements:</div>
                     <div className="amenities-list">
-                      {alerte.ascenseur && <span className="amenity">🛗</span>}
-                      {alerte.balcon && <span className="amenity">🏠</span>}
-                      {alerte.terrasse && <span className="amenity">🪴</span>}
-                      {alerte.jardin && <span className="amenity">🌳</span>}
-                      {alerte.piscine && <span className="amenity">🏊</span>}
-                      {alerte.parking && <span className="amenity">🚗</span>}
+                      {alerte.ascenseur && <div className="amenity">🛗</div>}
+                      {alerte.balcon && <div className="amenity">🏠</div>}
+                      {alerte.terrasse && <div className="amenity">🪴</div>}
+                      {alerte.jardin && <div className="amenity">🌳</div>}
+                      {alerte.piscine && <div className="amenity">🏊</div>}
+                      {alerte.parking && <div className="amenity">🚗</div>}
                     </div>
                   </div>
                 )}
@@ -278,7 +278,7 @@ const AlertesAnnonces = () => {
                 {/* Configuration */}
                 <div className="alerte-config">
                   <div className="config-item">
-                    <span className="config-label">Fréquence:</span>
+                    <div className="config-label">Fréquence:</div>
                     <strong>{alerte.frequence}</strong>
                   </div>
                   {alerte.email_notification ? (
@@ -321,9 +321,9 @@ const AlertesAnnonces = () => {
       {openModal && (
         <Modal onClose={handleCloseModal}>
           <div className="alerte-modal">
-            <h2 className="modal-title">
+            <div>
               {editingAlerte ? '✏️ Modifier l\'alerte' : '🔔 Créer une alerte'}
-            </h2>
+            </div>
 
             <div className="modal-form">
               {/* Nom */}

@@ -65,7 +65,7 @@ const Modal = ({
       >
         {/* Header */}
         <div className="modal-header">
-          {title && <h2 id="modal-title" className="modal-title">{title}</h2>}
+          {title && <div>{title}</div>}
           {closeButton && (
             <button
               className="modal-close"

@@ -54,23 +54,23 @@ const AnnoncesCard = ({ annonce, onEdit, onPublish, onArchive, onSell, onDelete 
     <Card>
       <CardContent>
         {/* Titre */}
-        <p>
+        <div>
           {annonce.titre}
-        </p>
+        </div>
 
         {/* Prix et surface */}
-        <p>
+        <div>
           {annonce.prix.toLocaleString('fr-FR', {
             style: 'currency',
             currency: 'EUR',
           })}{' '}
           • {annonce.surface}m²
-        </p>
+        </div>
 
         {/* Localisation */}
-        <p>
+        <div>
           {annonce.adresse}, {annonce.code_postal} {annonce.ville}
-        </p>
+        </div>
 
         {/* Type et pièces */}
         <div>
@@ -85,9 +85,9 @@ const AnnoncesCard = ({ annonce, onEdit, onPublish, onArchive, onSell, onDelete 
         </div>
 
         {/* Description courte */}
-        <p>
+        <div>
           {annonce.description.substring(0, 100)}...
-        </p>
+        </div>
 
         {/* Statut */}
         <div>
@@ -95,13 +95,13 @@ const AnnoncesCard = ({ annonce, onEdit, onPublish, onArchive, onSell, onDelete 
         </div>
 
         {/* Dates */}
-        <p>
+        <div>
           Créée le {format(new Date(annonce.date_creation), 'dd MMMM yyyy', { locale: fr })}
-        </p>
+        </div>
         {annonce.date_vente && (
-          <p>
+          <div>
             Vendue le {format(new Date(annonce.date_vente), 'dd MMMM yyyy', { locale: fr })}
-          </p>
+          </div>
         )}
       </CardContent>
 
@@ -263,12 +263,12 @@ export const VendeurDashboard = () => {
       {/* En-tête */}
       <div>
         <div>
-          <p>
+          <div>
             📊 Tableau de bord vendeur
-          </p>
-          <p>
+          </div>
+          <div>
             Gérez vos annonces immobilières
-          </p>
+          </div>
         </div>
         <button
           style={{
@@ -305,9 +305,9 @@ export const VendeurDashboard = () => {
 
       {/* Filtres */}
       <div className="card">
-        <p>
+        <div>
           Filtres
-        </p>
+        </div>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6} md={3}>
             <TextField
@@ -392,9 +392,9 @@ export const VendeurDashboard = () => {
         <>
           {/* Statistiques */}
           <div>
-            <p>
+            <div>
               {total} annonce{total > 1 ? 's' : ''} au total • Affichage {skip + 1} à {Math.min(skip + limit, total)}
-            </p>
+            </div>
           </div>
 
           {/* Grille */}

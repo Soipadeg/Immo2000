@@ -89,9 +89,9 @@ export default function PublicAnnonceListPage() {
   };
 
   return (
-    div maxWidth="lg" sx={{ py: 4 }}>
+    <div maxWidth="lg" sx={{ py: 4 }}>
       {/* En-tête */}
-      div sx={{ mb: 4 }}>
+      <div sx={{ mb: 4 }}>
         <div>
           Annonces Immobilières
         </div>
@@ -101,12 +101,12 @@ export default function PublicAnnonceListPage() {
       </div>
 
       {/* Filtres */}
-      div elevation={2} sx={{ p: 3, mb: 4, backgroundColor: '#f5f5f5' }}>
+      <div elevation={2} sx={{ p: 3, mb: 4, backgroundColor: '#f5f5f5' }}>
         <div>
           Filtres de recherche
         </div>
-        div container spacing={2}>
-          div item xs={12} sm={6} md={3}>
+        <div container spacing={2}>
+          <div item xs={12} sm={6} md={3}>
             <Input
               fullWidth
               label="Ville"
@@ -117,7 +117,7 @@ export default function PublicAnnonceListPage() {
             />
           </div>
 
-          div item xs={12} sm={6} md={3}>
+          <div item xs={12} sm={6} md={3}>
             <FormControl fullWidth>
               <InputLabel>Type de bien</InputLabel>
               <select
@@ -135,7 +135,7 @@ export default function PublicAnnonceListPage() {
             </FormControl>
           </div>
 
-          div item xs={12} sm={6} md={3}>
+          <div item xs={12} sm={6} md={3}>
             <Input
               fullWidth
               label="Prix min (€)"
@@ -147,7 +147,7 @@ export default function PublicAnnonceListPage() {
             />
           </div>
 
-          div item xs={12} sm={6} md={3}>
+          <div item xs={12} sm={6} md={3}>
             <Input
               fullWidth
               label="Prix max (€)"
@@ -159,7 +159,7 @@ export default function PublicAnnonceListPage() {
             />
           </div>
 
-          div item xs={12}>
+          <div item xs={12}>
             <Button
               variant="outlined"
               color="primary"
@@ -175,7 +175,7 @@ export default function PublicAnnonceListPage() {
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
       {/* Résultats */}
-      div sx={{ mb: 2 }}>
+      <div sx={{ mb: 2 }}>
         <div>
           {loading ? '' : `${annonces.length} / ${total} annonces trouvées`}
         </div>
@@ -183,18 +183,17 @@ export default function PublicAnnonceListPage() {
 
       {/* Chargement */}
       {loading && (
-        div sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
+        <div sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
           <CircularProgress />
         </div>
       )}
 
       {/* Grille d'annonces */}
       {!loading && annonces.length > 0 && (
-        div container spacing={3}>
+        <div container spacing={3}>
           {annonces.map((annonce) => (
-            div item xs={12} sm={6} md={4} key={annonce.annonce_id}>
-              div
-                sx={{
+            <div item xs={12} sm={6} md={4} key={annonce.annonce_id}>
+              <div sx={{
                   height: '100%',
                   display: 'flex',
                   flexDirection: 'column',
@@ -207,15 +206,13 @@ export default function PublicAnnonceListPage() {
               >
                 {/* Image de l'annonce */}
                 {annonce.photos && annonce.photos.length > 0 ? (
-                  divMedia
-                    component="img"
-                    height="200"
-                    image={annonce.photos[0]}
+                  <img
+                    src={annonce.photos[0]}
                     alt={annonce.titre}
+                    height="200"
                   />
                 ) : (
-                  div
-                    sx={{
+                  <div sx={{
                       height: 200,
                       backgroundColor: '#e0e0e0',
                       display: 'flex',
@@ -228,7 +225,7 @@ export default function PublicAnnonceListPage() {
                 )}
 
                 {/* Contenu */}
-                divContent sx={{ flexGrow: 1 }}>
+                <div sx={{ flexGrow: 1 }}>
                   <div>
                     {annonce.titre}
                   </div>
@@ -238,7 +235,7 @@ export default function PublicAnnonceListPage() {
                     {annonce.code_postal && ` (${annonce.code_postal})`}
                   </div>
 
-                  div sx={{ mb: 2 }}>
+                  <div sx={{ mb: 2 }}>
                     <div>
                       {annonce.prix?.toLocaleString('fr-FR', {
                         style: 'currency',
@@ -273,7 +270,7 @@ export default function PublicAnnonceListPage() {
                 </div>
 
                 {/* Actions */}
-                divActions>
+                <div>
                   <Button
                     fullWidth
                     variant="contained"
@@ -291,7 +288,7 @@ export default function PublicAnnonceListPage() {
 
       {/* Pas de résultats */}
       {!loading && annonces.length === 0 && (
-        div sx={{ textAlign: 'center', py: 6 }}>
+        <div sx={{ textAlign: 'center', py: 6 }}>
           <div>
             Aucune annonce trouvée
           </div>

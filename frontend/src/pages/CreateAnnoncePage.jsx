@@ -183,9 +183,9 @@ export default function CreateAnnoncePage() {
         >
           Retour
         </Button>
-        <h1  component="h1">
+        <div>
           Créer une annonce
-        </h1>
+        </div>
       </div>
 
       {/* Messages */}
@@ -205,7 +205,7 @@ export default function CreateAnnoncePage() {
       <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
         {STEPS.map((label, index) => (
           <Step key={label}>
-            <StepLabel>{label}</StepLabel>
+            <div>{label}</div>
           </Step>
         ))}
       </Stepper>
@@ -215,9 +215,9 @@ export default function CreateAnnoncePage() {
         {/* ÉTAPE 1: Informations */}
         {activeStep === 0 && (
           <div>
-            <h3  gutterBottom>
+            <div>
               📝 Informations générales
-            </h3>
+            </div>
             <div container spacing={3} sx={{ mt: 1 }}>
               <div item xs={12}>
                 <Input
@@ -285,9 +285,9 @@ export default function CreateAnnoncePage() {
         {/* ÉTAPE 2: Localisation */}
         {activeStep === 1 && (
           <div>
-            <h3  gutterBottom>
+            <div>
               📍 Localisation
-            </h3>
+            </div>
             <div container spacing={3} sx={{ mt: 1 }}>
               <div item xs={12}>
                 <Input
@@ -335,9 +335,9 @@ export default function CreateAnnoncePage() {
         {/* ÉTAPE 3: Caractéristiques */}
         {activeStep === 2 && (
           <div>
-            <h3  gutterBottom>
+            <div>
               🏠 Caractéristiques du bien
-            </h3>
+            </div>
             <div container spacing={3} sx={{ mt: 1 }}>
               <div item xs={12} sm={6}>
                 <Input
@@ -347,7 +347,7 @@ export default function CreateAnnoncePage() {
                   name="type_bien"
                   value={formData.type_bien}
                   onChange={handleInputChange}
-                 />
+                >
                   {TYPES_BIEN.map(type => (
                     <MenuItem key={type} value={type}>
                       {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -404,7 +404,7 @@ export default function CreateAnnoncePage() {
                   name="dpe"
                   value={formData.dpe}
                   onChange={handleInputChange}
-                 />
+                >
                   <MenuItem value="">Sélectionner...</MenuItem>
                   {DPE_VALUES.map(val => (
                     <MenuItem key={val} value={val}>{val}</MenuItem>
@@ -414,9 +414,9 @@ export default function CreateAnnoncePage() {
 
               {/* Équipements */}
               <div item xs={12}>
-                <p  gutterBottom sx={{ mt: 2 }}>
+                <div>
                   ✨ Équipements et caractéristiques
-                </p>
+                </div>
                 <div sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
                   <FormControlLabel
                     control={
@@ -487,9 +487,9 @@ export default function CreateAnnoncePage() {
         {/* ÉTAPE 4: Photos */}
         {activeStep === 3 && (
           <div>
-            <h3  gutterBottom>
+            <div>
               🖼️ Photos du bien
-            </h3>
+            </div>
             {annonceId && (
               <ImageUpload
                 annonceId={annonceId}
@@ -499,9 +499,9 @@ export default function CreateAnnoncePage() {
             {photosUploaded.length > 0 && (
               <div sx={{ mt: 3 }}>
                 <div>
-                  <p  gutterBottom>
+                  <div>
                     ✅ Photos uploadées: {photosUploaded.length}
-                  </p>
+                  </div>
                 </div>
               </div>
             )}

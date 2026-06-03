@@ -59,7 +59,7 @@ const DevModeWaitingWrapper = ({ children }) => {
           borderRadius: '50%',
           animation: 'spin 1s linear infinite',
         }} />
-        <p style={{ color: '#666' }}>Initialisation...</p>
+        <div style={{ color: '#666' }}>Initialisation...</div>
       </div>
     );
   }

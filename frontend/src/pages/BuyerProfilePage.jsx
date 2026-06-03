@@ -80,10 +80,10 @@ export default function BuyerProfilePage() {
   return (
     <div className="buyer-profile-page-container">
       <div className="buyer-profile-content">
-        <h1 className="page-title">Complétez votre profil acheteur</h1>
-        <p className="page-subtitle">
+        <div>Complétez votre profil acheteur</div>
+        <div className="page-subtitle">
           Étape 2 sur 2 : Ces informations nous aideront à vous proposer les meilleures annonces.
-        </p>
+        </div>
 
         {error && <Alert type="error" title="Erreur" message={error} />}
         {successMessage && <Alert type="success" title="Succès" message={successMessage} />}
@@ -104,7 +104,7 @@ export default function BuyerProfilePage() {
               <option value="terrain">Terrain</option>
               <option value="local commercial">Local commercial</option>
             </select>
-            <p className="form-help">Quel type de bien vous intéresse ?</p>
+            <div className="form-help">Quel type de bien vous intéresse ?</div>
           </div>
 
           {/* Pièces et Surface */}
@@ -144,7 +144,7 @@ export default function BuyerProfilePage() {
               inputProps={{ min: 0, step: 10000 }}
               required
             />
-            <p className="form-help">Montant maximum que vous êtes prêt à investir</p>
+            <div className="form-help">Montant maximum que vous êtes prêt à investir</div>
           </div>
 
           {/* Ville */}
@@ -157,7 +157,7 @@ export default function BuyerProfilePage() {
               onChange={handleChange}
               placeholder="Ex: Paris, Lyon, Marseille"
             />
-            <p className="form-help">Vous pouvez en laisser vide ou en spécifier plusieurs plus tard</p>
+            <div className="form-help">Vous pouvez en laisser vide ou en spécifier plusieurs plus tard</div>
           </div>
 
           {/* DPE */}
@@ -178,7 +178,7 @@ export default function BuyerProfilePage() {
               <option value="F">F - Très mauvais</option>
               <option value="G">G - À rénover</option>
             </select>
-            <p className="form-help">Classe énergétique minimale souhaitée</p>
+            <div className="form-help">Classe énergétique minimale souhaitée</div>
           </div>
 
           {/* Boutons */}
@@ -202,10 +202,10 @@ export default function BuyerProfilePage() {
 
           {/* Lien */}
           <div className="form-info">
-            <p>
+            <div>
               Vous pouvez modifier votre profil à tout moment depuis votre{' '}
               <a href="/dashboard" className="link">dashboard</a>.
-            </p>
+            </div>
           </div>
         </form>
       </div>

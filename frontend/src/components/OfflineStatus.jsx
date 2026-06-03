@@ -36,14 +36,14 @@ export function OfflineStatus() {
           action={
             <div>
               {pendingCount > 0 && (
-                <span className="chip" label={`${pendingCount} en attente`}
+                <div className="chip" label={`${pendingCount} en attente`}
                 />
               )}
 
               {!isOnline && (
-                <p>
+                <div>
                   Mode hors ligne
-                </p>
+                </div>
               )}
 
               {isOnline && pendingCount > 0 && (
@@ -68,12 +68,12 @@ export function OfflineStatus() {
       {showDetails && pendingCount > 0 && (
         <div
         >
-          <p>
+          <div>
             Requêtes en attente ({pendingCount})
-          </p>
-          <p>
+          </div>
+          <div>
             Ces requêtes seront envoyées dès la reconnexion
-          </p>
+          </div>
           {!isOnline && (
             <div class="progress-bar"><div class="progress-fill"></div></div>
           )}
@@ -96,12 +96,12 @@ export function OfflineBanner() {
       icon={<CloudOffIcon />}
     >
       <div>
-        <p>
+        <div>
           ⚠️ Vous êtes hors ligne. Les modifications seront synchronisées à la reconnexion.
-        </p>
-        <p>
+        </div>
+        <div>
           Connexion en attente...
-        </p>
+        </div>
       </div>
     </div>
   );
@@ -119,16 +119,16 @@ export function SyncStatusIndicator() {
         <>
           <CloudDoneIcon
           />
-          <p>
+          <div>
             {pendingCount === 0 ? 'Synchronisé' : `${pendingCount} en attente`}
-          </p>
+          </div>
         </>
       ) : (
         <>
           <CloudOffIcon />
-          <p>
+          <div>
             Hors ligne
-          </p>
+          </div>
         </>
       )}
     </div>
@@ -143,12 +143,12 @@ export function OfflineWarningDialog({ open, onClose, onConfirm, title, message 
     <div className="alert"
       onClose={onClose}
     >
-      <p>
+      <div>
         {title}
-      </p>
-      <p>
+      </div>
+      <div>
         {message}
-      </p>
+      </div>
       <div>
         <button onClick={onClose}>
           Annuler

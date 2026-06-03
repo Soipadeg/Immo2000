@@ -124,14 +124,14 @@ const SimilarAnnoncesCarousel = ({ annonceActuelle, userRole }) => {
   return (
     <Container maxWidth="lg">
       <div>
-        <p>
+        <div>
           🏠 Annonces similaires
-        </p>
-        <p>
+        </div>
+        <div>
           {similaires.length} bien{similaires.length > 1 ? 's' : ''} similaire
           {similaires.length > 1 ? 's' : ''} disponible
           {similaires.length > 1 ? 's' : ''}
-        </p>
+        </div>
       </div>
 
       {error && <Alert severity="error">{error}</Alert>}
@@ -218,22 +218,22 @@ const SimilarAnnoncesCarousel = ({ annonceActuelle, userRole }) => {
 
                 <CardContent>
                   {/* Titre */}
-                  <p>
+                  <div>
                     {annonce.titre}
-                  </p>
+                  </div>
 
                   {/* Prix */}
-                  <p>
+                  <div>
                     {annonce.prix.toLocaleString('fr-FR', {
                       style: 'currency',
                       currency: 'EUR',
                     })}
-                  </p>
+                  </div>
 
                   {/* Localisation */}
-                  <p>
+                  <div>
                     📍 {annonce.ville}
-                  </p>
+                  </div>
 
                   {/* Caractéristiques */}
                   <div>
@@ -284,10 +284,10 @@ const SimilarAnnoncesCarousel = ({ annonceActuelle, userRole }) => {
         {/* Indicateur de position */}
         {similaires.length > itemsPerView && (
           <div>
-            <p>
+            <div>
               {currentIndex + 1} - {Math.min(currentIndex + itemsPerView, similaires.length)} sur{' '}
               {similaires.length}
-            </p>
+            </div>
           </div>
         )}
       </div>

@@ -3,6 +3,9 @@ import React, { useState } from 'react';
 import { Button, Alert, Input } from '@/components';
 import { useNavigate } from 'react-router-dom';
 
+
+import { createBrouillonAnnonce } from '../services/api';
+
 /**
  * Page ÉTAPE 1 du tunnel : Adresse et Photos
  *
@@ -160,31 +163,30 @@ export default function CreerAnnonceEtape1() {
   };
 
   return (
-    <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 16px' }}>
-      <div style={{ paddingTop: '32px', paddingBottom: '32px' }}>
+    <div maxWidth="md">
+      <div sx={{ py: 4 }}>
         {/* Titre */}
-        <div style={{ marginBottom: '32px', textAlign: 'center' }}>
-          <h1 style={{ fontWeight: 'bold', marginBottom: '8px' }}>
+        <div sx={{ mb: 4, textAlign: 'center' }}>
+          <div>
             🏠 Créer une annonce
-          </h1>
-          <p style={{ color: '#666' }}>
-            Étape 1 sur 4 : Adresse et photos
-          </p>
-          <div style={{ width: '100%', height: '4px', backgroundColor: '#ddd', marginTop: '16px', borderRadius: '2px' }}>
-            <div style={{ height: '100%', width: '25%', backgroundColor: '#1976d2', transition: 'width 0.3s' }}></div>
           </div>
+          <div  sx={{ color: 'text.secondary' }}>
+            Étape 1 sur 4 : Adresse et photos
+          </div>
+          <LinearProgress variant="determinate" value={25} sx={{ mt: 2 }} />
         </div>
 
         {/* Erreurs */}
-        {error && <Alert severity="error" style={{ marginBottom: '24px' }}>{error}</Alert>}
+        {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
         {/* Formulaire */}
-        <div style={{ padding: '32px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+        <div elevation={3} sx={{ p: 4 }}>
           <form onSubmit={handleSubmit}>
-            <div style={{ display: 'grid', gap: '24px' }}>
+            <div container spacing={3}>
               {/* Titre */}
-              <div>
+              <div item xs={12}>
                 <Input
+                  fullWidth
                   label="Titre de l'annonce"
                   name="titre"
                   value={formData.titre}
@@ -197,8 +199,9 @@ export default function CreerAnnonceEtape1() {
               </div>
 
               {/* Adresse */}
-              <div>
+              <div item xs={12}>
                 <Input
+                  fullWidth
                   label="Adresse complète"
                   name="adresse"
                   value={formData.adresse}
@@ -209,17 +212,22 @@ export default function CreerAnnonceEtape1() {
               </div>
 
               {/* Code postal et Ville */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div item xs={12} sm={6}>
                 <Input
+                  fullWidth
                   label="Code postal"
                   name="code_postal"
                   value={formData.code_postal}
                   onChange={handleChange}
                   placeholder="75001"
                   required
-                  maxLength={5}
+                  inputProps={{ maxLength: 5 }}
                 />
+              </div>
+
+              <div item xs={12} sm={6}>
                 <Input
+                  fullWidth
                   label="Ville"
                   name="ville"
                   value={formData.ville}
@@ -230,36 +238,40 @@ export default function CreerAnnonceEtape1() {
               </div>
 
               {/* Masquer adresse */}
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: '8px' }}>
-                  <input
-                    type="checkbox"
-                    name="masquer_adresse_complete"
-                    checked={formData.masquer_adresse_complete}
-                    onChange={handleChange}
-                    style={{ width: '20px', height: '20px', cursor: 'pointer' }}
-                  />
-                  <span>Masquer l'adresse complète (seul le code postal et la ville seront visibles)</span>
-                </label>
+              <div item xs={12}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="masquer_adresse_complete"
+                      checked={formData.masquer_adresse_complete}
+                      onChange={handleChange}
+                    />
+                  }
+                  label="Masquer l'adresse complète (seul le code postal et la ville seront visibles)"
+                />
               </div>
 
               {/* Photos */}
-              <div>
-                <h3 style={{ marginBottom: '16px' }}>
+              <div item xs={12}>
+                <div>
                   📸 Photos ({photos.length}/{MAX_PHOTOS})
-                </h3>
+                </div>
 
                 {/* Upload Area */}
-                <label
-                  style={{
-                    border: '2px dashed #1976d2',
-                    backgroundColor: '#f5f5f5',
+                <div
+                  sx={{
+                    border: '2px dashed',
+                    borderColor: 'primary.main',
+                    backgroundColor: 'action.hover',
                     cursor: 'pointer',
-                    padding: '24px',
+                    p: 3,
                     textAlign: 'center',
-                    marginBottom: '16px',
-                    borderRadius: '4px',
+                    mb: 2,
+                    '&:hover': {
+                      backgroundColor: 'action.selected',
+                    },
                   }}
+                  component="label"
                 >
                   <input
                     hidden
@@ -269,106 +281,85 @@ export default function CreerAnnonceEtape1() {
                     onChange={handlePhotoChange}
                     disabled={photos.length >= MAX_PHOTOS}
                   />
-                  <div style={{ fontSize: '48px', color: '#1976d2', marginBottom: '8px' }}>☁️</div>
-                  <h3 style={{ margin: '8px 0' }}>Déposer les photos ici</h3>
-                  <span style={{ color: '#666' }}>
+                  <CloudUploadIcon sx={{ fontSize: 48, color: 'primary.main', mb: 1 }} />
+                  <div>Déposer les photos ici</div>
+                  <div  sx={{ color: 'text.secondary' }}>
                     ou cliquez pour sélectionner (jpg, png, webp, max 10MB chacune)
-                  </span>
-                </label>
+                  </div>
+                </div>
 
                 {/* Photos Previews */}
                 {photoPreviews.length > 0 && (
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '16px', marginBottom: '16px' }}>
+                  <div container spacing={2}>
                     {photoPreviews.map((preview, index) => (
-                      <div key={index} style={{ position: 'relative' }}>
-                        <img
-                          src={preview.url}
-                          alt={`Photo ${index + 1}`}
-                          style={{ width: '100%', height: '140px', objectFit: 'cover', borderRadius: '4px' }}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => removePhoto(index)}
-                          style={{
-                            position: 'absolute',
-                            top: '4px',
-                            right: '4px',
-                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                            border: 'none',
-                            borderRadius: '50%',
-                            width: '32px',
-                            height: '32px',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '18px',
-                          }}
-                        >
-                          ✕
-                        </button>
-                        <p style={{ marginTop: '4px', fontSize: '12px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {preview.name}
-                        </p>
+                      <div item xs={6} sm={4} key={index}>
+                        <div sx={{ position: 'relative' }}>
+                          <img
+                            component="img"
+                            height="140"
+                            image={preview.url}
+                            alt={`Photo ${index + 1}`}
+                            sx={{ borderRadius: 1, objectFit: 'cover' }}
+                          />
+                          <IconButton
+                            size="small"
+                            sx={{
+                              position: 'absolute',
+                              top: 4,
+                              right: 4,
+                              backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                            }}
+                            onClick={() => removePhoto(index)}
+                          >
+                            <CloseIcon fontSize="small" />
+                          </IconButton>
+                          <div style={{ marginTop: '8px', display: 'block' }}>
+                            {preview.name}
+                          </div>
+                        </div>
                       </div>
                     ))}
                   </div>
                 )}
-
-                {/* Progress */}
-                {uploadProgress > 0 && uploadProgress < 100 && (
-                  <div style={{ width: '100%', height: '4px', backgroundColor: '#ddd', borderRadius: '2px', marginBottom: '16px' }}>
-                    <div style={{ height: '100%', width: `${uploadProgress}%`, backgroundColor: '#4caf50', transition: 'width 0.3s' }}></div>
-                  </div>
-                )}
               </div>
+
+              {/* Progress */}
+              {uploadProgress > 0 && uploadProgress < 100 && (
+                <div item xs={12}>
+                  <LinearProgress variant="determinate" value={uploadProgress} />
+                </div>
+              )}
             </div>
 
             {/* Boutons */}
-            <div style={{ display: 'flex', gap: '16px', marginTop: '32px', justifyContent: 'center' }}>
-              <button
-                type="button"
+            <Stack direction="row" spacing={2} sx={{ mt: 4, justifyContent: 'center' }}>
+              <Button
+                variant="outlined"
+                color="primary"
+                size="large"
                 onClick={() => navigate('/')}
-                style={{
-                  padding: '12px 24px',
-                  border: '1px solid #1976d2',
-                  backgroundColor: '#fff',
-                  color: '#1976d2',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontSize: '16px',
-                  fontWeight: '500',
-                }}
               >
                 Annuler
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
                 type="submit"
-                disabled={loading || (uploadProgress > 0 && uploadProgress < 100)}
-                style={{
-                  padding: '12px 24px',
-                  backgroundColor: '#1976d2',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: loading || (uploadProgress > 0 && uploadProgress < 100) ? 'not-allowed' : 'pointer',
-                  opacity: loading || (uploadProgress > 0 && uploadProgress < 100) ? 0.6 : 1,
-                  fontSize: '16px',
-                  fontWeight: '500',
-                }}
+                disabled={loading || uploadProgress > 0 && uploadProgress < 100}
               >
                 {loading ? 'Création en cours...' : 'Continuer vers étape 2'}
-              </button>
-            </div>
+              </Button>
+            </Stack>
           </form>
         </div>
 
         {/* Info */}
-        <div style={{ marginTop: '32px', padding: '16px', backgroundColor: '#e3f2fd', borderRadius: '4px' }}>
-          <span style={{ color: '#1565c0' }}>
+        <div sx={{ mt: 4, p: 2, backgroundColor: 'info.light', borderRadius: 1 }}>
+          <div  sx={{ color: 'info.dark' }}>
             💡 <strong>Conseil :</strong> Vous pouvez abandonner à tout moment. Votre brouillon sera sauvegardé
             et vous pourrez le continuer plus tard depuis votre dashboard.
-          </span>
+          </div>
         </div>
       </div>
     </div>

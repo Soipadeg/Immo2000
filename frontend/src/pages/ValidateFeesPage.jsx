@@ -74,7 +74,7 @@ export default function ValidateFeesPage() {
   if (loading) {
     return (
       <div>
-        <span>Loading...</span>
+        <div>Loading...</div>
       </div>
     );
   }
@@ -83,48 +83,48 @@ export default function ValidateFeesPage() {
     <div className="container">
       {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
-      <h4>
+      <div>
         Validation des Frais Notaire
-      </h4>
+      </div>
 
       {/* Infos transaction */}
       <div className="card">
         <div className="card">
           <div className="grid-container">
             <div className="grid-item">
-              <p>
+              <div>
                 Bien
-              </p>
-              <h4>
+              </div>
+              <div>
                 {transaction?.annonce?.titre}
-              </h4>
+              </div>
             </div>
 
             <div className="grid-item">
-              <p>
+              <div>
                 Prix de vente
-              </p>
-              <h4>
+              </div>
+              <div>
                 {transaction?.prix_compromis?.toLocaleString('fr-FR')} €
-              </h4>
+              </div>
             </div>
 
             <div className="grid-item">
-              <p>
+              <div>
                 Notaire
-              </p>
-              <p>
+              </div>
+              <div>
                 {transaction?.notaire?.etude_notariale || 'Non sélectionné'}
-              </p>
+              </div>
             </div>
 
             <div className="grid-item">
-              <p>
+              <div>
                 Localité
-              </p>
-              <p>
+              </div>
+              <div>
                 {transaction?.annonce?.code_postal} {transaction?.annonce?.ville}
-              </p>
+              </div>
             </div>
           </div>
         </div>
@@ -133,9 +133,9 @@ export default function ValidateFeesPage() {
       <Divider sx={{ my: 4 }} />
 
       {/* Détail des frais */}
-      <h4>
+      <div>
         Détail des Frais
-      </h4>
+      </div>
 
       {fees && (
         <TableContainer component={Paper} sx={{ mb: 4 }}>
@@ -153,18 +153,18 @@ export default function ValidateFeesPage() {
               <TableRow>
                 <TableCell sx={{ pl: 4 }}>
                   <div>
-                    <span>
+                    <div>
                       Frais de notaire
-                    </span>
-                    <p>
+                    </div>
+                    <div>
                       {fees.pourcentage_frais}% selon tarif légal
-                    </p>
+                    </div>
                   </div>
                 </TableCell>
                 <TableCell align="right">
-                  <span>
+                  <div>
                     {fees.montant_frais?.toLocaleString('fr-FR')} €
-                  </span>
+                  </div>
                 </TableCell>
               </TableRow>
 
@@ -213,41 +213,41 @@ export default function ValidateFeesPage() {
       {/* Récapitulatif */}
       <div className="card">
         <div className="card">
-          <p>
+          <div>
             📊 Récapitulatif
-          </p>
+          </div>
 
           <div className="grid-container">
             <div className="grid-item">
               <div>
-                <p>
+                <div>
                   Frais notaire (HT)
-                </p>
-                <h4>
+                </div>
+                <div>
                   {fees?.montant_frais?.toLocaleString('fr-FR')} €
-                </h4>
+                </div>
               </div>
             </div>
 
             <div className="grid-item">
               <div>
-                <p>
+                <div>
                   Commission Immo2000 (2%)
-                </p>
-                <h4>
+                </div>
+                <div>
                   {fees?.commission_immo2000?.toLocaleString('fr-FR')} €
-                </h4>
+                </div>
               </div>
             </div>
 
             <div className="grid-item">
               <div>
-                <p>
+                <div>
                   Montant total (frais + commission TTC)
-                </p>
-                <h4>
+                </div>
+                <div>
                   {fees?.montant_total?.toLocaleString('fr-FR')} €
-                </h4>
+                </div>
               </div>
             </div>
           </div>
@@ -277,7 +277,7 @@ export default function ValidateFeesPage() {
           disabled={submitting || !fees}
           fullWidth
         >
-          {submitting ? <span>Loading...</span> : 'Valider et Continuer'}
+          {submitting ? <div>Loading...</div> : 'Valider et Continuer'}
         </Button>
       </div>
 
@@ -286,12 +286,12 @@ export default function ValidateFeesPage() {
         <div className="modal-overlay">
           <div className="modal">
             <div className="modal-header">
-              <h2>✓ Frais Validés</h2>
+              <div>✓ Frais Validés</div>
             </div>
             <div className="modal-body">
-              <p>
+              <div>
                 Les frais ont été validés avec succès. Vous pouvez maintenant procéder à la signature du compromis.
-              </p>
+              </div>
             </div>
             <div className="modal-footer">
               <Button onClick={() => setSuccessOpen(false)} variant="contained">

@@ -125,13 +125,13 @@ const AdminHomePage = () => {
     <div className="admin-home-page">
       {/* Header */}
       <div className="page-header">
-        <h1>👋 Bienvenue, {user?.nom || 'Admin'}!</h1>
-        <p>Tableau de bord administrateur - {new Date().toLocaleDateString('fr-FR', {
+        <div>👋 Bienvenue, {user?.nom || 'Admin'}!</div>
+        <div>Tableau de bord administrateur - {new Date().toLocaleDateString('fr-FR', {
           weekday: 'long',
           year: 'numeric',
           month: 'long',
           day: 'numeric',
-        })}</p>
+        })}</div>
       </div>
 
       {error && (
@@ -163,16 +163,17 @@ const AdminHomePage = () => {
 
       {/* Features Grid */}
       <div className="features-section">
-        <h2>📋 Fonctionnalités Disponibles</h2>
+        <div>📋 Fonctionnalités Disponibles</div>
         <div className="features-grid">
           {features.map((feature, index) => (
             <div key={index} className="feature-card">
               <div className="feature-header">
                 <div className="feature-icon">{feature.title.charAt(0)}</div>
-                <span className="feature-badge">{feature.badge}</span>
+                <div className="feature-badge">{feature.badge}</div>
               </div>
-              <h3 className="feature-title">{feature.title}</h3>
-              <p className="feature-description">{feature.description}</p>
+              <div>{feature.title}</div>
+              <div className="feature-description">{feature.description}</div>
+
               {feature.stats && (
                 <div className="feature-stats">
                   ✓ {feature.stats} actifs
@@ -193,8 +194,8 @@ const AdminHomePage = () => {
       {/* Upcoming Features */}
       <div className="upcoming-card">
         <div className="upcoming-header">
-          <span className="warning-icon">⚠️</span>
-          <h3>🚀 Prochaines Fonctionnalités</h3>
+          <div className="warning-icon">⚠️</div>
+          <div>🚀 Prochaines Fonctionnalités</div>
         </div>
         <div className="upcoming-list">
           <div className="upcoming-item">✨ <strong>Système Notaire</strong> - Gestion des profils notaires et documents</div>
@@ -206,7 +207,7 @@ const AdminHomePage = () => {
 
       {/* Quick Actions */}
       <div className="quick-actions">
-        <h3>⚡ Actions Rapides</h3>
+        <div>⚡ Actions Rapides</div>
         <div className="actions-grid">
           <Button
             variant="primary"

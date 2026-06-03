@@ -190,10 +190,10 @@ export default function ResetPasswordPage() {
         {formData.password && (
           <div className="password-strength">
             <div className="strength-header">
-              <span className="strength-label">Force du mot de passe:</span>
-              <span className={`strength-value ${getStrengthLabel().toLowerCase()}`}>
+              <div className="strength-label">Force du mot de passe:</div>
+              <div className={`strength-value ${getStrengthLabel().toLowerCase()}`}>
                 {getStrengthLabel()} ({passwordStrength}%)
-              </span>
+              </div>
             </div>
             <div className="strength-bar">
               <div
@@ -210,23 +210,23 @@ export default function ResetPasswordPage() {
             <div className="criteria-label">Critères de sécurité:</div>
             <ul className="criteria-list">
               <li className={PASSWORD_STRENGTH_RULES.length(formData.password) ? 'met' : 'unmet'}>
-                <span className="criterion-icon">●</span>
+                <div className="criterion-icon">●</div>
                 Au moins 8 caractères
               </li>
               <li className={PASSWORD_STRENGTH_RULES.uppercase(formData.password) ? 'met' : 'unmet'}>
-                <span className="criterion-icon">●</span>
+                <div className="criterion-icon">●</div>
                 Une lettre majuscule
               </li>
               <li className={PASSWORD_STRENGTH_RULES.lowercase(formData.password) ? 'met' : 'unmet'}>
-                <span className="criterion-icon">●</span>
+                <div className="criterion-icon">●</div>
                 Une lettre minuscule
               </li>
               <li className={PASSWORD_STRENGTH_RULES.number(formData.password) ? 'met' : 'unmet'}>
-                <span className="criterion-icon">●</span>
+                <div className="criterion-icon">●</div>
                 Un chiffre
               </li>
               <li className={PASSWORD_STRENGTH_RULES.special(formData.password) ? 'met' : 'unmet'}>
-                <span className="criterion-icon">●</span>
+                <div className="criterion-icon">●</div>
                 Un caractère spécial (!@#$%^&*...)
               </li>
             </ul>
@@ -259,7 +259,7 @@ export default function ResetPasswordPage() {
           formData.passwordConfirm &&
           formData.password === formData.passwordConfirm && (
             <div className="password-match-success">
-              <span className="check-icon">✓</span>
+              <div className="check-icon">✓</div>
               Les mots de passe correspondent
             </div>
           )}

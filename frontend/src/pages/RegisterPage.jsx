@@ -110,7 +110,7 @@ const RegisterPage = () => {
   return (
     <div className="register-container">
       <div className="register-card">
-        <h1 className="register-title">Créer un compte</h1>
+        <div>Créer un compte</div>
 
         {error && <Alert variant="error" className="mb-4">{error}</Alert>}
 
@@ -198,9 +198,9 @@ const RegisterPage = () => {
             {captchaLoading ? 'Vérification...' : loading ? 'Inscription...' : "S'inscrire"}
           </Button>
 
-          <p className="register-footer">
+          <div className="register-footer">
             Vous avez déjà un compte ? <Link to="/login">Se connecter</Link>
-          </p>
+          </div>
         </form>
       </div>
     </div>

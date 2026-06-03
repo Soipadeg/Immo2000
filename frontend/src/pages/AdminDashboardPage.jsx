@@ -103,8 +103,8 @@ const AdminDashboardPage = () => {
   return (
     <div className="admin-dashboard-page">
       <div className="page-header">
-        <h1>🔐 Dashboard Admin</h1>
-        <p>Bienvenue, Admin {user.nom}</p>
+        <div>🔐 Dashboard Admin</div>
+        <div>Bienvenue, Admin {user.nom}</div>
       </div>
 
       {/* Statistiques principales */}
@@ -141,17 +141,17 @@ const AdminDashboardPage = () => {
           {tabValue === 0 && (
             <div className="overview-grid">
               <div className="chart-box">
-                <h3>📈 Activité utilisateurs</h3>
+                <div>📈 Activité utilisateurs</div>
                 <div className="chart-placeholder">[Graphique d'activité]</div>
               </div>
 
               <div className="chart-box">
-                <h3>📊 Distribution des rôles</h3>
+                <div>📊 Distribution des rôles</div>
                 <div className="chart-placeholder">[Graphique circulaire]</div>
               </div>
 
               <div className="metrics-box">
-                <h3>🎯 Métriques clés</h3>
+                <div>🎯 Métriques clés</div>
                 <div className="metrics-grid">
                   <div className="metric-item metric-primary">
                     <div className="metric-label">Taux de croissance</div>
@@ -177,7 +177,7 @@ const AdminDashboardPage = () => {
           {/* Onglet Utilisateurs récents */}
           {tabValue === 1 && (
             <div className="users-section">
-              <h3>👥 Nouveaux utilisateurs</h3>
+              <div>👥 Nouveaux utilisateurs</div>
               <div className="divider"></div>
               <div className="users-list">
                 {recentUsers.map((u) => (
@@ -198,7 +198,7 @@ const AdminDashboardPage = () => {
           {/* Onglet Sécurité */}
           {tabValue === 2 && (
             <div className="security-section">
-              <h3>🛡️ Comptes suspects</h3>
+              <div>🛡️ Comptes suspects</div>
               <div className="divider"></div>
               {suspiciousAccounts.length === 0 ? (
                 <Alert type="success" title="Aucun problème" message="✅ Aucun compte suspect détecté" />
@@ -208,9 +208,9 @@ const AdminDashboardPage = () => {
                     <div key={account.id} className="suspicious-item">
                       <div className="suspicious-header">
                         <div className="suspicious-email">{account.email}</div>
-                        <span className={`severity-badge severity-${account.severity}`}>
+                        <div className={`severity-badge severity-${account.severity}`}>
                           {account.severity === 'high' ? 'Critique' : 'Moyen'}
-                        </span>
+                        </div>
                       </div>
                       <div className="suspicious-reason">{account.raison}</div>
                     </div>

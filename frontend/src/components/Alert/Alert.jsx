@@ -65,8 +65,8 @@ const Alert = ({
       </div>
 
       <div className="alert-content">
-        {title && <h4 className="alert-title">{title}</h4>}
-        {message && <p className="alert-message">{message}</p>}
+        {title && <div>{title}</div>}
+        {message && <div className="alert-message">{message}</div>}
         {children}
       </div>
 

@@ -131,10 +131,10 @@ const UserDashboardPage = () => {
       {/* En-tête */}
       <div className="dashboard-header">
         <div>
-          <h1 className="dashboard-title">📊 Dashboard</h1>
-          <p className="dashboard-subtitle">
+          <div>📊 Dashboard</div>
+          <div className="dashboard-subtitle">
             Bienvenue, <strong>{user.prenom} {user.nom}</strong> 👋
-          </p>
+          </div>
         </div>
         <Button
           variant="primary"
@@ -152,11 +152,12 @@ const UserDashboardPage = () => {
             <div className="stat-content">
               <div className="stat-icon">{stat.icon}</div>
               <div className="stat-text">
-                <p className="stat-label">{stat.label}</p>
-                <h3 className="stat-value">{stat.value.toLocaleString('fr-FR')}</h3>
-                <p className={`stat-trend ${stat.trendUp ? 'up' : 'down'}`}>
+                <div className="stat-label">{stat.label}</div>
+                <div>{stat.value.toLocaleString('fr-FR')}</div>
+
+                <div className={`stat-trend ${stat.trendUp ? 'up' : 'down'}`}>
                   {stat.trendUp ? '📈' : '📉'} {stat.trend}
-                </p>
+                </div>
               </div>
             </div>
           </Card>
@@ -192,24 +193,24 @@ const UserDashboardPage = () => {
                     <Card key={annonce.id} className="annonce-item">
                       <div className="annonce-header">
                         <div>
-                          <h3 className="annonce-title">{annonce.titre}</h3>
-                          <p className="annonce-location">
+                          <div>{annonce.titre}</div>
+                          <div className="annonce-location">
                             📍 {annonce.ville} • Créée le {new Date(annonce.dateCreation).toLocaleDateString('fr-FR')}
-                          </p>
+                          </div>
                         </div>
-                        <span className={`status-chip ${annonce.statut === 'Actif' ? 'active' : 'draft'}`}>
+                        <div className={`status-chip ${annonce.statut === 'Actif' ? 'active' : 'draft'}`}>
                           {annonce.statut}
-                        </span>
+                        </div>
                       </div>
 
-                      <h2 className="annonce-price">
+                      <div>
                         {annonce.prix.toLocaleString('fr-FR')} €
-                      </h2>
+                      </div>
 
                       <div className="progression-section">
                         <div className="progression-header">
-                          <span className="progression-label">Progression du profil</span>
-                          <span className="progression-value">{annonce.progression}%</span>
+                          <div className="progression-label">Progression du profil</div>
+                          <div className="progression-value">{annonce.progression}%</div>
                         </div>
                         <div className="progression-bar">
                           <div
@@ -263,7 +264,7 @@ const UserDashboardPage = () => {
         <div className="section-resources">
           <Card>
             <div className="card-header">
-              <h2 className="card-title">📚 Ressources utiles</h2>
+              <div>📚 Ressources utiles</div>
             </div>
             <div className="resources-grid">
               {operations.map((op, idx) => (
@@ -282,7 +283,7 @@ const UserDashboardPage = () => {
         <div className="section-settings">
           <Card>
             <div className="card-header">
-              <h2 className="card-title">⚙️ Paramètres</h2>
+              <div>⚙️ Paramètres</div>
             </div>
             <div className="settings-buttons">
               <Button

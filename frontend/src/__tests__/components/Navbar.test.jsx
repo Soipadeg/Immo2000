@@ -43,7 +43,7 @@ describe('Navbar Component', () => {
   });
 
   it('displays right content when provided', () => {
-    const rightContent = <span>User Menu</span>;
+    const rightContent = <div>User Menu</div>;
     render(
       <Navbar logo="MyApp" navLinks={mockNavLinks} rightContent={rightContent} />
     );

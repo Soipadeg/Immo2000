@@ -64,7 +64,7 @@ const Input = React.forwardRef(({
       {label && (
         <label htmlFor={inputId} className="input-label">
           {label}
-          {required && <span className="input-label__required">*</span>}
+          {required && <div className="input-label__required">*</div>}
         </label>
       )}
 
@@ -95,15 +95,15 @@ const Input = React.forwardRef(({
       </div>
 
       {error && errorMessage && (
-        <span id={`${inputId}-error`} className="input-error">
+        <div id={`${inputId}-error`} className="input-error">
           {errorMessage}
-        </span>
+        </div>
       )}
 
       {hint && !error && (
-        <span id={`${inputId}-hint`} className="input-hint">
+        <div id={`${inputId}-hint`} className="input-hint">
           {hint}
-        </span>
+        </div>
       )}
     </div>
   );

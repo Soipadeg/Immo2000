@@ -125,7 +125,7 @@ export default function VerifyEmailPage() {
       >
         <div className="verifying-loader">
           <div className="spinner"></div>
-          <p>Vérification de votre email...</p>
+          <div>Vérification de votre email...</div>
         </div>
       </FormContainer>
     );
@@ -160,10 +160,10 @@ export default function VerifyEmailPage() {
 
       {requiresVerification ? (
         <div className="verify-email-form">
-          <p className="form-description">
+          <div className="form-description">
             Un email de vérification a été envoyé à <strong>{email}</strong>.<br />
             Entrez le code ou cliquez sur le lien dans l'email.
-          </p>
+          </div>
 
           <form onSubmit={handleVerify}>
             <Input
@@ -189,7 +189,7 @@ export default function VerifyEmailPage() {
           </form>
 
           <div className="resend-section">
-            <p className="resend-text">Vous n'avez pas reçu le code ?</p>
+            <div className="resend-text">Vous n'avez pas reçu le code ?</div>
             <Button
               variant="ghost"
               size="medium"
@@ -205,10 +205,10 @@ export default function VerifyEmailPage() {
         </div>
       ) : (
         <div className="verify-email-form">
-          <p className="form-description">
+          <div className="form-description">
             Un lien de vérification a été envoyé à <strong>{email}</strong>.<br />
             Cliquez sur le lien dans l'email pour continuer.
-          </p>
+          </div>
 
           <Button
             variant="primary"
@@ -239,10 +239,10 @@ export default function VerifyEmailPage() {
 
       <div className="verify-email-info">
         <strong>Pourquoi vérifier l'email ?</strong>
-        <p>
+        <div>
           Cela protège votre compte et nous permet de vous envoyer des notifications
           importantes.
-        </p>
+        </div>
       </div>
     </FormContainer>
   );

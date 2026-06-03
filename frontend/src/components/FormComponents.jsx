@@ -158,9 +158,9 @@ export function FormSection({ title, children, sx = {} }) {
   return (
     <div>
       {title && (
-        <p>
+        <div>
           {title}
-        </p>
+        </div>
       )}
       {children}
     </div>

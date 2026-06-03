@@ -85,50 +85,50 @@ const OfferCard = ({ offre, isVendor, onUpdate }) => {
     <div className="offer-card">
       <div className="offer-header">
         <div className="offer-title-section">
-          <h3 className="offer-id">Offre #{offre.offre_id}</h3>
-          <p className="offer-party">
+          <div>Offre #{offre.offre_id}</div>
+          <div className="offer-party">
             {isVendor ? `De: ${offre.acheteur_nom}` : `Pour: ${offre.annonce_titre}`}
-          </p>
+          </div>
         </div>
-        <span className={`offer-status status-${offre.statut}`}>
+        <div className={`offer-status status-${offre.statut}`}>
           {getStatusLabel(offre.statut)}
-        </span>
+        </div>
       </div>
 
       <div className="offer-content">
         <div className="price-grid">
           <div className="price-item">
-            <span className="price-label">Prix proposé</span>
-            <span className="price-value">
+            <div className="price-label">Prix proposé</div>
+            <div className="price-value">
               {new Intl.NumberFormat('fr-FR', {
                 style: 'currency',
                 currency: 'EUR',
               }).format(offre.prix_propose)}
-            </span>
+            </div>
           </div>
           {offre.prix_contre_propose && (
             <div className="price-item">
-              <span className="price-label">Contre-proposition</span>
-              <span className="price-value">
+              <div className="price-label">Contre-proposition</div>
+              <div className="price-value">
                 {new Intl.NumberFormat('fr-FR', {
                   style: 'currency',
                   currency: 'EUR',
                 }).format(offre.prix_contre_propose)}
-              </span>
+              </div>
             </div>
           )}
           <div className="price-item">
-            <span className="price-label">Date</span>
-            <span className="date-value">
+            <div className="price-label">Date</div>
+            <div className="date-value">
               {new Date(offre.date_offre).toLocaleDateString('fr-FR')}
-            </span>
+            </div>
           </div>
         </div>
 
         {offre.message && (
           <div className="offer-message">
-            <span className="message-label">Message</span>
-            <p className="message-text">{offre.message}</p>
+            <div className="message-label">Message</div>
+            <div className="message-text">{offre.message}</div>
           </div>
         )}
       </div>
@@ -192,12 +192,12 @@ const OfferCard = ({ offre, isVendor, onUpdate }) => {
           onClose={() => setOpenCounterDialog(false)}
         >
           <div className="counter-offer-form">
-            <p className="current-price">
+            <div className="current-price">
               Montant actuel: {new Intl.NumberFormat('fr-FR', {
                 style: 'currency',
                 currency: 'EUR',
               }).format(offre.prix_propose)}
-            </p>
+            </div>
             <Input
               type="number"
               label="Nouveau prix proposé"
@@ -271,7 +271,7 @@ export default function OffresPage() {
   return (
     <div className="offres-page">
       <div className="page-header">
-        <h1>Gestion des offres</h1>
+        <div>Gestion des offres</div>
       </div>
 
       {error && <Alert type="error" title="Erreur" message={error} />}

@@ -93,7 +93,7 @@ export default function SelectNotairePage() {
   if (loading) {
     return (
       <div>
-        <span>Loading...</span>
+        <div>Loading...</div>
       </div>
     );
   }
@@ -102,37 +102,37 @@ export default function SelectNotairePage() {
     <div className="container">
       {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
-      <h4>
+      <div>
         Sélectionner un Notaire
-      </p>
+      </div>
 
       {/* Infos transaction */}
       <div className="card">
         <div className="card">
           <div className="grid-container">
             <div className="grid-item">
-              <p>
+              <div>
                 Bien à vendre
-              </p>
-              <p>
+              </div>
+              <div>
                 {transaction?.annonce?.titre}
-              </p>
+              </div>
             </div>
             <div className="grid-item">
-              <p>
+              <div>
                 Localisation
-              </p>
-              <p>
+              </div>
+              <div>
                 {transaction?.annonce?.code_postal} {transaction?.annonce?.ville}
-              </p>
+              </div>
             </div>
             <div className="grid-item">
-              <p>
+              <div>
                 Prix du compromis
-              </p>
-              <p>
+              </div>
+              <div>
                 {transaction?.prix_compromis?.toLocaleString('fr-FR')} €
-              </p>
+              </div>
             </div>
           </div>
         </div>
@@ -142,9 +142,9 @@ export default function SelectNotairePage() {
 
       {/* Recherche de notaires */}
       <div>
-        <h4>
+        <div>
           Rechercher un Notaire
-        </p>
+        </div>
 
         <div>
           <Input
@@ -161,7 +161,7 @@ export default function SelectNotairePage() {
             disabled={searching || !codePostal}
             sx={{ minWidth: '150px' }}
           >
-            {searching ? <span>Loading...</span> : 'Rechercher'}
+            {searching ? <div>Loading...</div> : 'Rechercher'}
           </Button>
         </div>
       </div>
@@ -169,9 +169,9 @@ export default function SelectNotairePage() {
       {/* Résultats */}
       {notaires.length > 0 && (
         <div>
-          <h4>
+          <div>
             Notaires Disponibles ({notaires.length})
-          </p>
+          </div>
 
           <RadioGroup value={selectedNotaire} onChange={(e) => setSelectedNotaire(e.target.value)}>
             <div className="grid-container">
@@ -188,32 +188,32 @@ export default function SelectNotairePage() {
                         />
 
                         <div>
-                          <p>
+                          <div>
                             {notaire.etude_notariale}
-                          </p>
+                          </div>
 
                           <div>
-                            <span className="icon-placeholder">LocationOnIcon</span>
-                            <span>
+                            <div className="icon-placeholder">LocationOnIcon</div>
+                            <div>
                               {notaire.adresse_etude}, {notaire.code_postal_etude} {notaire.ville_etude}
-                            </p>
+                            </div>
                           </div>
 
                           <div>
-                            <span className="icon-placeholder">PhoneIcon</span>
-                            <span>{notaire.telephone}</p>
+                            <div className="icon-placeholder">PhoneIcon</div>
+                            <div>{notaire.telephone}</div>
                           </div>
 
                           <div>
-                            <span className="icon-placeholder">EmailIcon</span>
-                            <span>{notaire.email_professionnel}</p>
+                            <div className="icon-placeholder">EmailIcon</div>
+                            <div>{notaire.email_professionnel}</div>
                           </div>
 
                           {notaire.zone_geographique?.villes && (
                             <div>
-                              <p>
+                              <div>
                                 Zones d'intervention:
-                              </p>
+                              </div>
                               <div>
                                 {notaire.zone_geographique.villes.map((ville) => (
                                   <Chip key={ville} label={ville} size="small" variant="outlined" />
@@ -224,7 +224,7 @@ export default function SelectNotairePage() {
                         </div>
 
                         {selectedNotaire === notaire.notaire_id.toString() && (
-                          <span className="icon-placeholder">CheckCircleIcon</span>
+                          <div className="icon-placeholder">CheckCircleIcon</div>
                         )}
                       </div>
                     </div>
@@ -258,23 +258,23 @@ export default function SelectNotairePage() {
           disabled={submitting || !selectedNotaire}
           fullWidth
         >
-          {submitting ? <span>Loading...</span> : 'Confirmer la Sélection'}
+          {submitting ? <div>Loading...</div> : 'Confirmer la Sélection'}
         </Button>
       </div>
 
       {/* Dialog de succès */}
       <div className="modal"> setSuccessOpen(false)}>
-        <div className="modal">Notaire sélectionné</DialogTitle>
+        <div className="modal">Notaire sélectionné</div>
         <div className="modal">
-          <p>
+          <div>
             Le notaire a été sélectionné avec succès. Vous pouvez maintenant valider les frais notaire.
-          </p>
-        </DialogContent>
+          </div>
+        </div>
         <div className="modal">
           <Button onClick={() => setSuccessOpen(false)} variant="contained">
             OK
           </Button>
-        </DialogActions>
+        </div>
       </div>
     </div>
   );

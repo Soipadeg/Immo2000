@@ -200,7 +200,7 @@ const AnnoncePage = () => {
           {/* Détails principaux */}
           <Card className="annonce-details-card">
             <div className="details-section">
-              <h2 className="details-title">{annonce.titre}</h2>
+              <div>{annonce.titre}</div>
 
               <div className="price-section">
                 <div className="price-main">
@@ -264,14 +264,14 @@ const AnnoncePage = () => {
                 annonce.piscine ||
                 annonce.parking) && (
                 <div className="amenities-section">
-                  <h3 className="section-title">Équipements</h3>
+                  <div>Équipements</div>
                   <div className="amenities-list">
-                    {annonce.ascenseur && <span className="amenity-badge">🛗 Ascenseur</span>}
-                    {annonce.balcon && <span className="amenity-badge">🏠 Balcon</span>}
-                    {annonce.terrasse && <span className="amenity-badge">🪴 Terrasse</span>}
-                    {annonce.jardin && <span className="amenity-badge">🌳 Jardin</span>}
-                    {annonce.piscine && <span className="amenity-badge">🏊 Piscine</span>}
-                    {annonce.parking && <span className="amenity-badge">🚗 Parking</span>}
+                    {annonce.ascenseur && <div className="amenity-badge">🛗 Ascenseur</div>}
+                    {annonce.balcon && <div className="amenity-badge">🏠 Balcon</div>}
+                    {annonce.terrasse && <div className="amenity-badge">🪴 Terrasse</div>}
+                    {annonce.jardin && <div className="amenity-badge">🌳 Jardin</div>}
+                    {annonce.piscine && <div className="amenity-badge">🏊 Piscine</div>}
+                    {annonce.parking && <div className="amenity-badge">🚗 Parking</div>}
                   </div>
                 </div>
               )}
@@ -304,8 +304,9 @@ const AnnoncePage = () => {
               <hr className="divider" />
 
               <div className="description-section">
-                <h3 className="section-title">Description</h3>
-                <p className="description-text">{annonce.description}</p>
+                <div>Description</div>
+                <div className="description-text">{annonce.description}</div>
+
               </div>
             </div>
           </Card>
@@ -315,7 +316,7 @@ const AnnoncePage = () => {
         <div className="annonce-right">
           <Card className="seller-card">
             <div className="seller-section">
-              <h3 className="seller-title">👤 Vendeur</h3>
+              <div>👤 Vendeur</div>
 
               <div className="seller-info">
                 <div className="seller-label">Annonce publiée par</div>
@@ -372,7 +373,7 @@ const AnnoncePage = () => {
       {openContactModal && (
         <Modal onClose={() => setOpenContactModal(false)}>
           <div className="contact-modal">
-            <h2 className="modal-title">Contacter le vendeur</h2>
+            <div>Contacter le vendeur</div>
             <div className="modal-content">
               <Input
                 label="Votre nom *"

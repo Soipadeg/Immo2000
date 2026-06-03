@@ -55,7 +55,7 @@ const HomePageV2 = () => {
 
   const Step1Content = () => (
     <div className="form-content">
-      <h3 className="step-title">📍 Localisation du bien</h3>
+      <div>📍 Localisation du bien</div>
       <div className="form-group">
         <label>Adresse</label>
         <Input
@@ -93,7 +93,7 @@ const HomePageV2 = () => {
 
   const Step2Content = () => (
     <div className="form-content">
-      <h3 className="step-title">🏠 Caractéristiques du bien</h3>
+      <div>🏠 Caractéristiques du bien</div>
       <div className="form-grid">
         <div className="col-6">
           <label>Surface (m²)</label>
@@ -123,7 +123,7 @@ const HomePageV2 = () => {
 
   const Step3Content = () => (
     <div className="form-content">
-      <h3 className="step-title">👤 Vos informations de contact</h3>
+      <div>👤 Vos informations de contact</div>
       <div className="form-grid">
         <div className="col-6">
           <label>Prénom</label>
@@ -166,15 +166,15 @@ const HomePageV2 = () => {
       <section className="hero-section">
         <div className="max-width-container">
           <div className="hero-content">
-            <h1>Vendez votre bien immobilier en un clic</h1>
-            <p>L'intelligence artificielle au service de votre annonce. Simple, Rapide et Gratuit.</p>
-            
+            <div>Vendez votre bien immobilier en un clic</div>
+            <div>L'intelligence artificielle au service de votre annonce. Simple, Rapide et Gratuit.</div>
+
             <div className="form-card">
               <div className="stepper-container">
                 {steps.map((label, index) => (
-                  <div key={label} className={}>
-                    <span className="step-number">{index + 1}</span>
-                    <span className="step-label">{label}</span>
+                  <div key={label} className="step-item">
+                    <div className="step-number">{index + 1}</div>
+                    <div className="step-label">{label}</div>
                   </div>
                 ))}
               </div>
@@ -199,31 +199,37 @@ const HomePageV2 = () => {
       {/* Features Section */}
       <section className="features-section">
         <div className="max-width-container">
-          <h2 className="section-title">Pourquoi choisir Immo2000 ?</h2>
+          <div>Pourquoi choisir Immo2000 ?</div>
           <div className="features-grid">
             <div className="feature-card">
-              <h3>Estimation Gratuite</h3>
-              <p>Estimation basée sur les données réelles du marché.</p>
+              <div>Estimation Gratuite</div>
+              <div>Estimation basée sur les données réelles du marché.</div>
+
             </div>
             <div className="feature-card">
-              <h3>Visibilité Maximale</h3>
-              <p>Diffusion sur les plus grandes plateformes immobilières.</p>
+              <div>Visibilité Maximale</div>
+              <div>Diffusion sur les plus grandes plateformes immobilières.</div>
+
             </div>
             <div className="feature-card">
-              <h3>Gestion Facile</h3>
-              <p>Gérez vos annonces et contacts depuis un tableau de bord unique.</p>
+              <div>Gestion Facile</div>
+              <div>Gérez vos annonces et contacts depuis un tableau de bord unique.</div>
+
             </div>
             <div className="feature-card">
-              <h3>IA Générative</h3>
-              <p>Optimisez vos descriptions grâce à notre assistant IA.</p>
+              <div>IA Générative</div>
+              <div>Optimisez vos descriptions grâce à notre assistant IA.</div>
+
             </div>
             <div className="feature-card">
-              <h3>Sécurité</h3>
-              <p>Vos données sont protégées et vos transactions sécurisées.</p>
+              <div>Sécurité</div>
+              <div>Vos données sont protégées et vos transactions sécurisées.</div>
+
             </div>
             <div className="feature-card">
-              <h3>Support 24/7</h3>
-              <p>Une équipe à votre écoute pour vous accompagner.</p>
+              <div>Support 24/7</div>
+              <div>Une équipe à votre écoute pour vous accompagner.</div>
+
             </div>
           </div>
         </div>
@@ -232,11 +238,11 @@ const HomePageV2 = () => {
       {/* Testimonials */}
       <section className="testimonials-section">
         <div className="max-width-container">
-          <h2 className="section-title">Ce que disent nos clients</h2>
+          <div>Ce que disent nos clients</div>
           <div className="testimonials-grid">
             {[1, 2, 3].map((i) => (
               <div key={i} className="testimonial-card">
-                <p>"Un service exceptionnel, j'ai vendu mon appartement en moins de deux semaines !"</p>
+                <div>"Un service exceptionnel, j'ai vendu mon appartement en moins de deux semaines !"</div>
                 <strong>- Client #{i}</strong>
               </div>
             ))}
@@ -247,7 +253,7 @@ const HomePageV2 = () => {
       {/* FAQ */}
       <section className="faq-section">
         <div className="max-width-container">
-          <h2 className="section-title">Foire Aux Questions</h2>
+          <div>Foire Aux Questions</div>
           <div className="faq-list">
             {[
               { q: "Comment ça marche ?", a: "C'est simple ! Remplissez le formulaire, notre IA analyse votre bien et génère une annonce optimisée." },
@@ -257,11 +263,11 @@ const HomePageV2 = () => {
               <div key={index} className="faq-item">
                 <button className="faq-question" onClick={() => setExpandedFaq(expandedFaq === index ? -1 : index)}>
                   {faq.q}
-                  <span>{expandedFaq === index ? '−' : '+'}</span>
+                  <div>{expandedFaq === index ? '−' : '+'}</div>
                 </button>
                 {expandedFaq === index && (
                   <div className="faq-answer">
-                    <p>{faq.a}</p>
+                    <div>{faq.a}</div>
                   </div>
                 )}
               </div>
@@ -273,8 +279,8 @@ const HomePageV2 = () => {
       {/* Final CTA */}
       <section className="cta-section">
         <div className="max-width-container">
-          <h2>Prêt à vendre votre bien ?</h2>
-          <p>Rejoignez des milliers de propriétaires qui nous font confiance.</p>
+          <div>Prêt à vendre votre bien ?</div>
+          <div>Rejoignez des milliers de propriétaires qui nous font confiance.</div>
           <Button variant="secondary" size="lg" style={{ marginTop: '24px' }}>Démarrer maintenant</Button>
         </div>
       </section>
@@ -284,18 +290,19 @@ const HomePageV2 = () => {
         <div className="max-width-container">
           <div className="footer-grid">
             <div>
-              <h3>Immo2000</h3>
-              <p>La révolution immobilière par l'IA.</p>
+              <div>Immo2000</div>
+              <div>La révolution immobilière par l'IA.</div>
+
             </div>
             <div>
-              <h4>Produit</h4>
-              <p>Fonctionnalités</p>
-              <p>Tarifs</p>
+              <div>Produit</div>
+              <div>Fonctionnalités</div>
+              <div>Tarifs</div>
             </div>
             <div>
-              <h4>Compagnie</h4>
-              <p>À propos</p>
-              <p>Contact</p>
+              <div>Compagnie</div>
+              <div>À propos</div>
+              <div>Contact</div>
             </div>
           </div>
         </div>

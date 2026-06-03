@@ -66,7 +66,7 @@ const DevRoleWrapper = ({ roleId, targetPath }) => {
     return (
       <div>
         <div class="spinner"></div>
-        <p>Activation du profil {roleId}...</p>
+        <div>Activation du profil {roleId}...</div>
       </div>
     );
   }

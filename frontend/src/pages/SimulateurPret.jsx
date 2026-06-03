@@ -199,7 +199,7 @@ const SimulateurPret = () => {
       <div className="simulateur-pret-container">
         {/* Form Section */}
         <div className="pret-form-section">
-          <h3 className="section-title">📝 Informations du bien et financement</h3>
+          <div>📝 Informations du bien et financement</div>
 
           <div className="form-grid">
             <Input
@@ -292,7 +292,7 @@ const SimulateurPret = () => {
             />
 
             <div className="section-divider">
-              <h4>💰 Revenus nets mensuels avant impôt</h4>
+              <div>💰 Revenus nets mensuels avant impôt</div>
             </div>
 
             <Input
@@ -357,17 +357,17 @@ const SimulateurPret = () => {
                   </div>
                   <div className="result-details">
                     <div className="detail-row">
-                      <span>Prix du bien</span>
-                      <span>{formatCurrency(parseFloat(formData.prixBien) || 0)}</span>
+                      <div>Prix du bien</div>
+                      <div>{formatCurrency(parseFloat(formData.prixBien) || 0)}</div>
                     </div>
                     <div className="detail-row">
-                      <span>Frais de notaire</span>
-                      <span>{formatCurrency(calculations.fraisNotaire)}</span>
+                      <div>Frais de notaire</div>
+                      <div>{formatCurrency(calculations.fraisNotaire)}</div>
                     </div>
                     {calculations.budgetTravaux > 0 && (
                       <div className="detail-row">
-                        <span>Budget travaux</span>
-                        <span>{formatCurrency(calculations.budgetTravaux)}</span>
+                        <div>Budget travaux</div>
+                        <div>{formatCurrency(calculations.budgetTravaux)}</div>
                       </div>
                     )}
                   </div>
@@ -404,46 +404,46 @@ const SimulateurPret = () => {
               <Card variant="elevated" interactive>
                 <div className={`result-card property-${calculations.isNeuf ? 'neuf' : 'ancien'}`}>
                   <div className="property-header">
-                    <h4>{calculations.isNeuf ? '🆕 Bien Neuf' : '🏛️ Bien Ancien'}</h4>
-                    <span className="badge">
+                    <div>{calculations.isNeuf ? '🆕 Bien Neuf' : '🏛️ Bien Ancien'}</div>
+                    <div className="badge">
                       {calculations.isNeuf ? 'Meilleur profil' : 'Profil moins favorable'}
-                    </span>
+                    </div>
                   </div>
                   <div className="property-grid">
                     <div className="prop-item">
-                      <span className="prop-label">Frais d'acquisition</span>
-                      <span className="prop-value">
+                      <div className="prop-label">Frais d'acquisition</div>
+                      <div className="prop-value">
                         {formatCurrency(calculations.fraisAcquisition)}
-                      </span>
-                      <span className="prop-note">
+                      </div>
+                      <div className="prop-note">
                         ({calculations.isNeuf ? '2%' : '8%'} du prix)
-                      </span>
+                      </div>
                     </div>
                     <div className="prop-item">
-                      <span className="prop-label">Taux ajusté</span>
-                      <span className="prop-value">
+                      <div className="prop-label">Taux ajusté</div>
+                      <div className="prop-value">
                         {calculations.tauxAnnuel.toFixed(2)}%
-                      </span>
+                      </div>
                       {calculations.tauxAdjustement !== 0 && (
-                        <span className="prop-note">
+                        <div className="prop-note">
                           {calculations.tauxAdjustement > 0 ? '+' : ''}{calculations.tauxAdjustement.toFixed(1)}%
-                        </span>
+                        </div>
                       )}
                     </div>
                     <div className="prop-item">
-                      <span className="prop-label">Mensualité prêt</span>
-                      <span className="prop-value">
+                      <div className="prop-label">Mensualité prêt</div>
+                      <div className="prop-value">
                         {formatCurrency(calculations.mensualitePrincipal)}
-                      </span>
+                      </div>
                     </div>
                     <div className="prop-item">
-                      <span className="prop-label">Assurance emprunteur</span>
-                      <span className="prop-value">
+                      <div className="prop-label">Assurance emprunteur</div>
+                      <div className="prop-value">
                         {formatCurrency(calculations.mensualiteAssurance)}
-                      </span>
-                      <span className="prop-note">
+                      </div>
+                      <div className="prop-note">
                         ({calculations.isNeuf ? '0,4%' : '0,7%'}/an)
-                      </span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -452,39 +452,39 @@ const SimulateurPret = () => {
               {/* Calculation Details */}
               <Card variant="elevated" interactive>
                 <div className="result-card details-card">
-                  <h4>📊 Détails du calcul</h4>
+                  <div>📊 Détails du calcul</div>
                   <div className="details-grid">
                     <div className="detail-item">
-                      <span className="detail-label">Principal à emprunter</span>
-                      <span>{formatCurrency(calculations.principal)}</span>
+                      <div className="detail-label">Principal à emprunter</div>
+                      <div>{formatCurrency(calculations.principal)}</div>
                     </div>
                     <div className="detail-item">
-                      <span className="detail-label">Revenus nets totaux</span>
-                      <span>{formatCurrency(calculations.revenusNetsTotaux)}</span>
+                      <div className="detail-label">Revenus nets totaux</div>
+                      <div>{formatCurrency(calculations.revenusNetsTotaux)}</div>
                     </div>
                     <div className="detail-item">
-                      <span className="detail-label">Charges mensuelles</span>
-                      <span>{formatCurrency(calculations.debtCharges)}</span>
+                      <div className="detail-label">Charges mensuelles</div>
+                      <div>{formatCurrency(calculations.debtCharges)}</div>
                     </div>
                     <div className="detail-item">
-                      <span className="detail-label">Durée du prêt</span>
-                      <span>{calculations.nombreMois} mois ({formData.duree} ans)</span>
+                      <div className="detail-label">Durée du prêt</div>
+                      <div>{calculations.nombreMois} mois ({formData.duree} ans)</div>
                     </div>
                     <div className="detail-item">
-                      <span className="detail-label">Coût des intérêts</span>
-                      <span>{formatCurrency(calculations.coutTotalCredit)}</span>
+                      <div className="detail-label">Coût des intérêts</div>
+                      <div>{formatCurrency(calculations.coutTotalCredit)}</div>
                     </div>
                     <div className="detail-item">
-                      <span className="detail-label">Coût de l'assurance</span>
-                      <span>{formatCurrency(calculations.coutTotalAssurance)}</span>
+                      <div className="detail-label">Coût de l'assurance</div>
+                      <div>{formatCurrency(calculations.coutTotalAssurance)}</div>
                     </div>
                     <div className="detail-item total">
-                      <span className="detail-label">Montant total remboursé</span>
-                      <span>
+                      <div className="detail-label">Montant total remboursé</div>
+                      <div>
                         {formatCurrency(
                           calculations.principal + calculations.coutTotalCredit + calculations.coutTotalAssurance
                         )}
-                      </span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -494,7 +494,7 @@ const SimulateurPret = () => {
 
           {!calculations.isValid && (
             <div className="results-empty">
-              <p>Remplissez tous les champs obligatoires pour voir les résultats</p>
+              <div>Remplissez tous les champs obligatoires pour voir les résultats</div>
               <small>Les champs marqués d'un * sont obligatoires</small>
             </div>
           )}

@@ -38,7 +38,7 @@ const OutilsPage = () => {
     return (
       <div maxWidth="lg">
         <div />
-        <p>Chargement des outils...</p>
+        <div>Chargement des outils...</div>
       </div>
     );
   }
@@ -54,12 +54,12 @@ const OutilsPage = () => {
   return (
     <div maxWidth="lg">
       <div>
-        <h4 variant="h4">
+        <div>
           🛠️ Outils Pratiques
-        </h4>
-        <p variant="body1">
+        </div>
+        <div>
           Utilisez nos outils pour faciliter vos démarches immobilières.
-        </h4>
+        </div>
       </div>
 
       <div>

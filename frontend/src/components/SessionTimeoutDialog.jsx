@@ -23,38 +23,38 @@ export default function SessionTimeoutDialog({ timeRemaining, onExtend, onLogout
 
   return (
     <Dialog open={true} disableEscapeKeyDown={true} maxWidth="sm" fullWidth>
-      <DialogTitle>
+      <div>
         <WarningIcon />
         Session Expiring Soon
-      </DialogTitle>
+      </div>
 
-      <DialogContent>
+      <div>
         <div>
-          <p>
+          <div>
             Votre session expire dans{' '}
             <strong style={{ color: '#ff9800' }}>
               {formatTime(displayTime)}
             </strong>
-          </p>
+          </div>
 
-          <p>
+          <div>
             Pour des raisons de sécurité, votre session expirera après 24 heures
             d'inactivité. Cliquez sur "Prolonger la session" pour continuer votre
             travail.
-          </p>
+          </div>
 
           <LinearProgress variant="determinate" value={progress} />
         </div>
-      </DialogContent>
+      </div>
 
-      <DialogActions>
+      <div>
         <button onClick={onLogout} color="error">
           Déconnexion
         </button>
         <button onClick={onExtend} variant="contained" color="primary">
           Prolonger la session
         </button>
-      </DialogActions>
+      </div>
     </Dialog>
   );
 }

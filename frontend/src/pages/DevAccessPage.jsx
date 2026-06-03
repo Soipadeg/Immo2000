@@ -72,12 +72,12 @@ const DevAccessPage = () => {
     <div maxWidth="md">
       <div elevation={3}>
         <div>
-          <h3 variant="h3">
+          <div>
             🔑 Mode Développement
-          </h3>
-          <p variant="body1" color="textSecondary">
+          </div>
+          <div>
             Sélectionnez un profil pour continuer sans login
-          </h3>
+          </div>
           <Alert severity="warning">
             ⚠️ Ce mode est pour le développement uniquement. Les vrai système de login sera réactivé après.
           </Alert>
@@ -95,12 +95,12 @@ const DevAccessPage = () => {
                   onClick={() => handleAccessRole(role.id)}
                 >
                   <Icon />
-                  <h6 variant="h6">
+                  <div>
                     {role.label}
-                  </h6>
-                  <p variant="body2" color="textSecondary">
+                  </div>
+                  <div>
                     {role.description}
-                  </h6>
+                  </div>
                   <Button
                     variant="contained"
                     fullWidth
@@ -116,18 +116,18 @@ const DevAccessPage = () => {
         <hr />
 
         <div>
-          <p variant="body2">
+          <div>
             <strong>💡 Tips:</strong>
-          </h3>
-          <p variant="body2">
+          </div>
+          <div>
             • Pour changer de rôle: Revenez à <code>/dev</code> et sélectionnez un autre profil
-          </h6>
-          <p variant="body2">
+          </div>
+          <div>
             • Pour quitter le mode dev: Videz localStorage et redémarrez le navigateur
-          </h3>
-          <p variant="body2">
+          </div>
+          <div>
             • Les données sont stockées en localStorage sous <code>auth_token</code>, <code>user_role</code>, etc.
-          </h6>
+          </div>
         </div>
       </div>
     </div>
