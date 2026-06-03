@@ -1,6 +1,9 @@
 {
   "version": 2,
-  "buildCommand": "cd frontend && npm install && npm run build",
+  "buildCommand": "npm --prefix frontend install && npm --prefix frontend run build",
   "outputDirectory": "frontend/dist",
-  "installCommand": "cd frontend && npm install"
+  "installCommand": "npm --prefix frontend install",
+  "env": {
+    "VITE_API_URL": "@vite_api_url"
+  }
 }
