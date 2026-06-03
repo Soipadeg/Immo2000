@@ -1,8 +1,6 @@
 import '../styles/CreerAnnonceEtape3.css';
 import React, { useState } from 'react';
 import { Button, Alert, Input } from '@/components';
-import { LinearProgress, Stack } from '@mui/material';
-import { List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 
@@ -53,24 +51,26 @@ export default function CreerAnnonceEtape3() {
   };
 
   return (
-    <div maxWidth="md">
-      <div sx={{ py: 4 }}>
+    <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 16px' }}>
+      <div style={{ paddingTop: '32px', paddingBottom: '32px' }}>
         {/* Titre */}
-        <div sx={{ mb: 4, textAlign: 'center' }}>
-          <h1  component="h1" sx={{ fontWeight: 'bold', mb: 1 }}>
+        <div style={{ marginBottom: '32px', textAlign: 'center' }}>
+          <h1 style={{ fontWeight: 'bold', marginBottom: '8px' }}>
             🤖 Outils IA (Bientôt disponibles)
           </h1>
-          <p  sx={{ color: 'text.secondary', mb: 2 }}>
+          <p style={{ color: '#666', marginBottom: '16px' }}>
             Étape 3 sur 4 : Contrat d'exclusivité
           </p>
-          <LinearProgress variant="determinate" value={75} sx={{ mt: 2 }} />
+          <div style={{ width: '100%', height: '4px', backgroundColor: '#ddd', borderRadius: '2px' }}>
+            <div style={{ height: '100%', width: '75%', backgroundColor: '#1976d2', transition: 'width 0.3s' }}></div>
+          </div>
         </div>
 
         {/* Erreurs */}
-        {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
+        {error && <Alert severity="error" style={{ marginBottom: '24px' }}>{error}</Alert>}
 
         {/* Intro */}
-        <div sx={{ mb: 4 }}>
+        <div style={{ marginBottom: '32px' }}>
           <Alert severity="info">
             Vous pouvez choisir de signer un <strong>contrat d'exclusivité</strong> avec Immo2000 pour avoir accès à
             nos <strong>outils IA futurs</strong> qui accélèreront la vente de votre bien. Sinon, publiez votre annonce
@@ -80,197 +80,170 @@ export default function CreerAnnonceEtape3() {
 
         {/* Option 1: Avec contrat */}
         <div
-          sx={{
-            mb: 3,
-            border: selectedOption === 'yes' ? '2px solid' : '1px solid',
-            borderColor: selectedOption === 'yes' ? 'primary.main' : 'divider',
+          style={{
+            marginBottom: '24px',
+            border: selectedOption === 'yes' ? '2px solid #1976d2' : '1px solid #ddd',
             cursor: 'pointer',
-            backgroundColor: selectedOption === 'yes' ? 'action.selected' : 'background.paper',
+            backgroundColor: selectedOption === 'yes' ? '#e3f2fd' : '#fff',
+            padding: '24px',
+            borderRadius: '8px',
           }}
           onClick={() => setSelectedOption('yes')}
         >
-          <div>
-            <h3  sx={{ fontWeight: 'bold', mb: 2 }}>
-              ✅ Signer le contrat d'exclusivité
-            </h3>
+          <h3 style={{ fontWeight: 'bold', marginBottom: '16px' }}>
+            ✅ Signer le contrat d'exclusivité
+          </h3>
 
-            <span  sx={{ mb: 2, color: 'text.secondary' }}>
-              En signant, Immo2000 devient votre partenaire exclusif pour la vente. Vous aurez accès à nos outils IA
-              avancés pour maximiser vos chances de vente.
+          <p style={{ marginBottom: '16px', color: '#666' }}>
+            En signant, Immo2000 devient votre partenaire exclusif pour la vente. Vous aurez accès à nos outils IA
+            avancés pour maximiser vos chances de vente.
+          </p>
+
+          {/* Avantages */}
+          <ul style={{ paddingLeft: '20px', margin: '16px 0' }}>
+            <li style={{ marginBottom: '12px' }}>
+              <strong>💡 Matching intelligent</strong>
+              <p style={{ color: '#666', margin: '4px 0' }}>Notre IA trouve les acheteurs les plus adaptés à votre bien</p>
+            </li>
+            <li style={{ marginBottom: '12px' }}>
+              <strong>📈 Estimation de prix précise</strong>
+              <p style={{ color: '#666', margin: '4px 0' }}>IA analyse le marché pour proposer le meilleur prix</p>
+            </li>
+            <li style={{ marginBottom: '12px' }}>
+              <strong>📅 Gestion d'agenda IA</strong>
+              <p style={{ color: '#666', margin: '4px 0' }}>Planifiez automatiquement vos visites et rendez-vous</p>
+            </li>
+            <li style={{ marginBottom: '12px' }}>
+              <strong>📊 Analytics détaillés</strong>
+              <p style={{ color: '#666', margin: '4px 0' }}>Suivez les performances de votre annonce en temps réel</p>
+            </li>
+            <li style={{ marginBottom: '12px' }}>
+              <strong>❤️ Support prioritaire</strong>
+              <p style={{ color: '#666', margin: '4px 0' }}>Accès à notre équipe d'experts immobiliers</p>
+            </li>
+          </ul>
+
+          {/* Tarif */}
+          <div style={{ marginTop: '16px', padding: '16px', backgroundColor: '#c8e6c9', borderRadius: '4px', borderLeft: '4px solid #388e3c' }}>
+            <span style={{ color: '#1b5e20', fontWeight: 'bold' }}>
+              💰 Commission: 1.5% du prix de vente (uniquement en cas de transaction réussie)
             </span>
-
-            {/* Avantages */}
-            <List sx={{ p: 0 }}>
-              <ListItem sx={{ px: 0, py: 1 }}>
-                <ListItemIcon sx={{ minWidth: 40 }}>
-                  <EmojiObjectsIcon fontSize="small" color="primary" />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Matching intelligent"
-                  secondary="Notre IA trouve les acheteurs les plus adaptés à votre bien"
-                />
-              </ListItem>
-
-              <ListItem sx={{ px: 0, py: 1 }}>
-                <ListItemIcon sx={{ minWidth: 40 }}>
-                  <TrendingUpIcon fontSize="small" color="primary" />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Estimation de prix précise"
-                  secondary="IA analyse le marché pour proposer le meilleur prix"
-                />
-              </ListItem>
-
-              <ListItem sx={{ px: 0, py: 1 }}>
-                <ListItemIcon sx={{ minWidth: 40 }}>
-                  <CalendarMonthIcon fontSize="small" color="primary" />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Gestion d'agenda IA"
-                  secondary="Planifiez automatiquement vos visites et rendez-vous"
-                />
-              </ListItem>
-
-              <ListItem sx={{ px: 0, py: 1 }}>
-                <ListItemIcon sx={{ minWidth: 40 }}>
-                  <AssessmentIcon fontSize="small" color="primary" />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Analytics détaillés"
-                  secondary="Suivez les performances de votre annonce en temps réel"
-                />
-              </ListItem>
-
-              <ListItem sx={{ px: 0, py: 1 }}>
-                <ListItemIcon sx={{ minWidth: 40 }}>
-                  <FavoriteBorderIcon fontSize="small" color="primary" />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Support prioritaire"
-                  secondary="Accès à notre équipe d'experts immobiliers"
-                />
-              </ListItem>
-            </List>
-
-            {/* Tarif */}
-            <div
-              sx={{
-                mt: 2,
-                p: 2,
-                backgroundColor: 'success.light',
-                borderRadius: 1,
-                borderLeft: '4px solid',
-                borderColor: 'success.main',
-              }}
-            >
-              <span  sx={{ color: 'success.dark', fontWeight: 'bold' }}>
-                💰 Commission: 1.5% du prix de vente (uniquement en cas de transaction réussie)
-              </span>
-            </div>
           </div>
         </div>
 
         {/* Option 2: Sans contrat */}
         <div
-          sx={{
-            mb: 4,
-            border: selectedOption === 'no' ? '2px solid' : '1px solid',
-            borderColor: selectedOption === 'no' ? 'primary.main' : 'divider',
+          style={{
+            marginBottom: '32px',
+            border: selectedOption === 'no' ? '2px solid #1976d2' : '1px solid #ddd',
             cursor: 'pointer',
-            backgroundColor: selectedOption === 'no' ? 'action.selected' : 'background.paper',
+            backgroundColor: selectedOption === 'no' ? '#e3f2fd' : '#fff',
+            padding: '24px',
+            borderRadius: '8px',
           }}
           onClick={() => setSelectedOption('no')}
         >
-          <div>
-            <h3  sx={{ fontWeight: 'bold', mb: 2 }}>
-              ⏭️ Publier sans contrat
-            </h3>
+          <h3 style={{ fontWeight: 'bold', marginBottom: '16px' }}>
+            ⏭️ Publier sans contrat
+          </h3>
 
-            <span  sx={{ mb: 2, color: 'text.secondary' }}>
-              Publiez votre annonce directement sans contrat. Vous aurez accès aux fonctionnalités de base.
+          <p style={{ marginBottom: '16px', color: '#666' }}>
+            Publiez votre annonce directement sans contrat. Vous aurez accès aux fonctionnalités de base.
+          </p>
+
+          {/* Avantages basiques */}
+          <ul style={{ paddingLeft: '20px', margin: '16px 0' }}>
+            <li>✓ Publier votre annonce gratuitement</li>
+            <li>✓ Recevoir des messages d'acheteurs potentiels</li>
+            <li>✓ Gérer vos annonces depuis votre dashboard</li>
+            <li>⚠️ Pas d'accès aux outils IA (pour l'instant)</li>
+          </ul>
+
+          <div style={{ marginTop: '16px', padding: '16px', backgroundColor: '#ffe0b2', borderRadius: '4px' }}>
+            <span style={{ color: '#e65100' }}>
+              📝 <strong>Vous pouvez toujours signer le contrat plus tard</strong> depuis votre dashboard.
             </span>
-
-            {/* Avantages basiques */}
-            <List sx={{ p: 0 }}>
-              <ListItem sx={{ px: 0, py: 1 }}>
-                <ListItemText primary="✓ Publier votre annonce gratuitement" />
-              </ListItem>
-
-              <ListItem sx={{ px: 0, py: 1 }}>
-                <ListItemText primary="✓ Recevoir des messages d'acheteurs potentiels" />
-              </ListItem>
-
-              <ListItem sx={{ px: 0, py: 1 }}>
-                <ListItemText primary="✓ Gérer vos annonces depuis votre dashboard" />
-              </ListItem>
-
-              <ListItem sx={{ px: 0, py: 1 }}>
-                <ListItemText primary="⚠️ Pas d'accès aux outils IA (pour l'instant)" />
-              </ListItem>
-            </List>
-
-            <div sx={{ mt: 2, p: 2, backgroundColor: 'warning.light', borderRadius: 1 }}>
-              <span  sx={{ color: 'warning.dark' }}>
-                📝 <strong>Vous pouvez toujours signer le contrat plus tard</strong> depuis votre dashboard.
-              </span>
-            </div>
           </div>
         </div>
 
         {/* Formulaire si "Oui" sélectionné */}
         {selectedOption === 'yes' && (
-          <div elevation={2} sx={{ p: 3, mb: 3, backgroundColor: 'action.hover' }}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={accepte}
-                  onChange={(e) => setAccepte(e.target.checked)}
-                />
-              }
-              label={
-                <span >
-                  J'accepte les conditions du contrat d'exclusivité et la commission de 1.5% en cas de vente
-                </span>
-              }
-            />
+          <div style={{ marginBottom: '16px', padding: '16px', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
+            <label style={{ display: 'flex', alignItems: 'flex-start', cursor: 'pointer', gap: '8px' }}>
+              <input
+                type="checkbox"
+                checked={accepte}
+                onChange={(e) => setAccepte(e.target.checked)}
+                style={{ width: '20px', height: '20px', cursor: 'pointer', marginTop: '2px', flexShrink: 0 }}
+              />
+              <span>
+                J'accepte les conditions du contrat d'exclusivité et la commission de 1.5% en cas de vente
+              </span>
+            </label>
           </div>
         )}
 
         {/* Boutons */}
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ justifyContent: 'center' }}>
-          <Button
-            variant="outlined"
-            color="primary"
-            size="large"
+        <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <button
+            type="button"
             onClick={() => navigate(-1)}
+            style={{
+              padding: '12px 24px',
+              border: '1px solid #1976d2',
+              backgroundColor: '#fff',
+              color: '#1976d2',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '16px',
+              fontWeight: '500',
+            }}
           >
             Retour
-          </Button>
+          </button>
 
-          <Button
-            variant="contained"
-            color="success"
-            size="large"
+          <button
+            type="button"
             onClick={handleSignContract}
             disabled={selectedOption !== 'yes' || !accepte || loading}
+            style={{
+              padding: '12px 24px',
+              backgroundColor: '#4caf50',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: selectedOption === 'yes' && accepte && !loading ? 'pointer' : 'not-allowed',
+              opacity: selectedOption === 'yes' && accepte && !loading ? 1 : 0.6,
+              fontSize: '16px',
+              fontWeight: '500',
+            }}
           >
             {loading ? 'Signature en cours...' : 'Signer et continuer'}
-          </Button>
+          </button>
 
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
+          <button
+            type="button"
             onClick={handleSkipContract}
             disabled={selectedOption !== 'no'}
+            style={{
+              padding: '12px 24px',
+              backgroundColor: '#1976d2',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: selectedOption === 'no' ? 'pointer' : 'not-allowed',
+              opacity: selectedOption === 'no' ? 1 : 0.6,
+              fontSize: '16px',
+              fontWeight: '500',
+            }}
           >
             Publier sans contrat
-          </Button>
-        </Stack>
+          </button>
+        </div>
 
         {/* Info */}
-        <div sx={{ mt: 4, p: 2, backgroundColor: 'info.light', borderRadius: 1 }}>
-          <span  sx={{ color: 'info.dark' }}>
+        <div style={{ marginTop: '32px', padding: '16px', backgroundColor: '#e3f2fd', borderRadius: '4px' }}>
+          <span style={{ color: '#0d47a1' }}>
             💡 <strong>À savoir :</strong> Le contrat d'exclusivité vous engage uniquement pour les ventes conclues
             via Immo2000. Les outils IA vous feront gagner du temps et augmenteront vos chances de vente.
           </span>

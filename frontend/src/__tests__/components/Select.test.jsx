@@ -91,11 +91,12 @@ describe('Select Component', () => {
         options={mockOptions}
         value=""
         onChange={() => {}}
-        error="This field is required"
+        error={true}
+        errorMessage="This field is required"
       />
     );
     const select = container.querySelector('select');
-    expect(select).toHaveAttribute('aria-invalid');
+    expect(select).toHaveAttribute('aria-invalid', 'true');
   });
 
   it('shows required indicator', () => {
