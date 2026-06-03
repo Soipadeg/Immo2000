@@ -262,7 +262,7 @@ export const VendeurDashboard = () => {
     <Container maxWidth="lg">
       {/* En-tête */}
       <div>
-        <Box>
+        <div>
           <p>
             📊 Tableau de bord vendeur
           </p>
@@ -270,10 +270,18 @@ export const VendeurDashboard = () => {
             Gérez vos annonces immobilières
           </p>
         </div>
-        <button variant="contained"
-          color="success"
-          size="large"
-          href="/annonces/create"
+        <button
+          style={{
+            backgroundColor: '#4caf50',
+            color: '#fff',
+            padding: '12px 24px',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '16px',
+            fontWeight: '500',
+          }}
+          onClick={() => window.location.href = '/annonces/create'}
         >
           ➕ Créer une annonce
         </button>

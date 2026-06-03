@@ -24,19 +24,24 @@ export const DynamicNavbar = ({
   showAppBar = true,
 }) => {
   const navigate = useNavigate();
-  const location = useLocation();  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const [menuAnchorEl, setMenuAnchorEl] = useState(null);
+  const location = useLocation();
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
-  // Simple mobile detection
 
-  // Simple mobile detection
+  // Détecter les changements de taille d'écran
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Charger le count des notifications non-lues
   useEffect(() => {
     if (isAuthenticated) {
       loadUnreadCount();
-      // Actualiser toutes les 30 secondes
       const interval = setInterval(loadUnreadCount, 30000);
       return () => clearInterval(interval);
     }
@@ -44,15 +49,13 @@ export const DynamicNavbar = ({
 
   const loadUnreadCount = async () => {
     try {
-      // Skip API call if in dev mode
       const devMode = localStorage.getItem('dev_mode') === 'true';
       if (devMode) {
         setUnreadNotifications(0);
         return;
       }
-
       const response = await notificationsApi.getUnreadCount();
-      if (response.data) {
+      if (response?.data) {
         setUnreadNotifications(response.data.unread_count || 0);
       }
     } catch (err) {
@@ -71,36 +74,36 @@ export const DynamicNavbar = ({
   const getNavItems = () => {
     const items = [];
 
-    // Items disponibles pour tous (connecté ou pas)
-    items.push({ label: 'Acheter', path: '/search', icon: <HomeIcon /> });
-    items.push({ label: 'Simulateur', path: '/simulateur-pret', icon: <TimelineIcon /> });
+    // Items disponibles pour tous
+    items.push({ label: 'Acheter', path: '/search', icon: '🏠' });
+    items.push({ label: 'Simulateur', path: '/simulateur-pret', icon: '📈' });
 
     if (!isAuthenticated) {
       return items;
     }
 
     // Items pour utilisateurs connectés
-    items.push({ label: 'Matching', path: '/matching', icon: <BookmarkIcon /> });
-    items.push({ label: 'Alertes', path: '/alertes', icon: <NotificationsIcon /> });
-    items.push({ label: 'Guides', path: '/guides', icon: <SpeakerNotesIcon /> });
-    items.push({ label: 'Modèles', path: '/modeles', icon: <FeedIcon /> });
+    items.push({ label: 'Matching', path: '/matching', icon: '❤️' });
+    items.push({ label: 'Alertes', path: '/alertes', icon: '🔔' });
+    items.push({ label: 'Guides', path: '/guides', icon: '📚' });
+    items.push({ label: 'Modèles', path: '/modeles', icon: '📄' });
 
     if (userRole === 'user') {
-      items.push({ label: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> });
-      items.push({ label: 'Favoris', path: '/favoris', icon: <BookmarkIcon /> });
-      items.push({ label: 'Historique', path: '/historique', icon: <FeedIcon /> });
-      items.push({ label: 'Notifications', path: '/notifications', icon: <NotificationsIcon />, badge: unreadNotifications });
+      items.push({ label: 'Dashboard', path: '/dashboard', icon: '📊' });
+      items.push({ label: 'Favoris', path: '/favoris', icon: '⭐' });
+      items.push({ label: 'Historique', path: '/historique', icon: '📋' });
+      items.push({ label: 'Notifications', path: '/notifications', icon: '🔔', badge: unreadNotifications });
     }
 
     if (userRole === 'admin') {
-      items.push({ label: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> });
-      items.push({ label: 'Admin', path: '/admin', icon: <AdminPanelSettingsIcon /> });
-      items.push({ label: 'Utilisateurs', path: '/admin/users', icon: <PersonIcon /> });
-      items.push({ label: 'Modération', path: '/admin/moderation', icon: <SpeakerNotesIcon /> });
+      items.push({ label: 'Dashboard', path: '/dashboard', icon: '📊' });
+      items.push({ label: 'Admin', path: '/admin', icon: '⚙️' });
+      items.push({ label: 'Utilisateurs', path: '/admin/users', icon: '👥' });
+      items.push({ label: 'Modération', path: '/admin/moderation', icon: '🛡️' });
     }
 
     if (userRole === 'notaire') {
-      items.push({ label: 'Dashboard', path: '/notaire/dashboard', icon: <BuildIcon /> });
+      items.push({ label: 'Dashboard', path: '/notaire/dashboard', icon: '📋' });
     }
 
     return items;
@@ -109,140 +112,146 @@ export const DynamicNavbar = ({
   const navItems = getNavItems();
 
   /**
-   * Ouvrir le menu utilisateur
-   */
-  const handleUserMenuOpen = (event) => {
-    setMenuAnchorEl(event.currentTarget);
-  };
-
-  /**
-   * Fermer le menu utilisateur
-   */
-  const handleUserMenuClose = () => {
-    setMenuAnchorEl(null);
-  };
-
-  /**
-   * Gérer la déconnexion
-   */
-  const handleLogout = () => {
-    handleUserMenuClose();
-    onLogout();
-    navigate('/login');
-  };
-
-  /**
-   * Naviguer vers une page
+   * Gérer la navigation
    */
   const handleNavigate = (path) => {
     navigate(path);
     setMobileDrawerOpen(false);
   };
 
+  /**
+   * Gérer la déconnexion
+   */
+  const handleLogout = () => {
+    onLogout();
+    navigate('/login');
+  };
+
   return (
-    <nav class="dynamic-navbar">
-      <div class="dynamic-navbar__container">
-        {/* Logo - left aligned */}
-        <div class="dynamic-navbar__brand"> handleNavigate('/')}
+    <>
+      <nav style={{
+        backgroundColor: '#fff',
+        borderBottom: '1px solid #eee',
+        padding: '0 16px',
+        display: 'flex',
+        alignItems: 'center',
+        height: '64px',
+        gap: '16px',
+      }}>
+        {/* Logo */}
+        <button
+          onClick={() => handleNavigate('/')}
+          style={{
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: '20px',
+            fontWeight: 'bold',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}
         >
           🏠 Immo2000
-        </div>
+        </button>
 
-        {/* Navigation and Buttons container - kept together */}
+        {/* Navigation Desktop */}
         {!isMobile && (
-          <div 
-            {/* Navigation items */}
-            <div 
-              {navItems.map((item) => (
-                <button class="dynamic-navbar__menu-item"> handleNavigate(item.path)}
-                      </span>
-                    ) : (
-                      item.icon
-                    )
-                  }
-                  sx={{
-                    opacity: location.pathname === item.path ? 1 : 0.7,
-                    fontSize: '14px',
-                    fontWeight: 500,
-                    padding: '6px 12px',
-                    textTransform: 'uppercase',
-                    textDecoration: 'none',
-                    '&:hover': { opacity: 1 },
-                  }}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
+          <div style={{ display: 'flex', gap: '8px', flex: 1 }}>
+            {navItems.map((item) => (
+              <button
+                key={item.path}
+                onClick={() => handleNavigate(item.path)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '6px 12px',
+                  opacity: location.pathname === item.path ? 1 : 0.7,
+                  fontSize: '14px',
+                  fontWeight: 500,
+                }}
+              >
+                {item.icon} {item.label}
+                {item.badge !== undefined && item.badge > 0 && (
+                  <span style={{
+                    backgroundColor: '#ff4444',
+                    color: '#fff',
+                    borderRadius: '50%',
+                    padding: '2px 6px',
+                    fontSize: '10px',
+                    marginLeft: '4px',
+                  }}>
+                    {item.badge}
+                  </span>
+                )}
+              </button>
+            ))}
           </div>
         )}
 
-        {/* Spacer to push buttons to the right */}
-        <div 
+        {/* Spacer */}
+        <div style={{ flex: isMobile ? 1 : 0 }} />
 
-        {/* Menu utilisateur ou boutons login */}
+        {/* User Menu ou Login Buttons */}
         {isAuthenticated && user ? (
-          <>
-            {/* Desktop: Avatar menu */}
-            {!isMobile && (
-              <button class="dynamic-navbar__menu-item">
-                    {user?.prenom?.[0]?.toUpperCase()}
-                  </div>
-                }
-              >
-                {user?.prenom}
-              </button>
-            )}
-
-            {/* Mobile: Menu icon */}
-            {isMobile && (
-              <button class="dynamic-navbar__menu-button"> setMobileDrawerOpen(true)}
-              >
-                <div class="dynamic-navbar__dropdown">
-              </button>
-            )}
-
-            {/* Menu utilisateur desktop */}
-            <div class="dynamic-navbar__dropdown">
-              <div class="dynamic-navbar__dropdown">
-                <PersonIcon />
-                <p>
-                  {user?.prenom} {user?.nom}
-                </div>
-              </button>
-              <div class="dynamic-navbar__dropdown">
-                <p>
-                  {user?.email}
-                </div>
-              </button>
-              <div class="dynamic-navbar__dropdown-divider"></div>
-              <div class="dynamic-navbar__dropdown"> { handleUserMenuClose(); handleNavigate('/profile'); }}>
-                <SettingsIcon />
-                Mon Profil
-              </button>
-              <div class="dynamic-navbar__dropdown">
-                <LogoutIcon />
-                Déconnexion
-              </button>
-            </div>
-          </>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <button
+              onClick={() => handleNavigate('/profile')}
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '14px',
+                padding: '6px 12px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+              }}
+            >
+              👤 {user?.prenom}
+            </button>
+            <button
+              onClick={handleLogout}
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '14px',
+                padding: '6px 12px',
+              }}
+            >
+              🚪 Déconnexion
+            </button>
+          </div>
         ) : (
-          /* Buttons pour non-authentifiés */
           !isMobile && (
-            <div 
-              <button class="dynamic-navbar__menu-item"> window.location.href = 'http://localhost:5000/login.html'}
-                sx={{
-                  fontSize: '14px',
-                  fontWeight: 500,
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                onClick={() => navigate('/login')}
+                style={{
+                  background: 'none',
+                  border: '1px solid #1976d2',
+                  color: '#1976d2',
                   padding: '6px 12px',
-                  textTransform: 'uppercase',
-                  opacity: 0.7,
-                  '&:hover': { opacity: 1 },
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
                 }}
               >
                 Se connecter
               </button>
-              <button class="dynamic-navbar__menu-item"> window.location.href = 'http://localhost:5000/register.html'}
+              <button
+                onClick={() => navigate('/register')}
+                style={{
+                  background: '#1976d2',
+                  color: '#fff',
+                  border: 'none',
+                  padding: '6px 12px',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                }}
               >
                 S'inscrire
               </button>
@@ -250,72 +259,126 @@ export const DynamicNavbar = ({
           )
         )}
 
-        {/* Mobile: Menu icon si pas connecté */}
-        {!isAuthenticated && isMobile && (
-          <button class="dynamic-navbar__menu-button"> setMobileDrawerOpen(true)}
+        {/* Mobile Menu Button */}
+        {isMobile && (
+          <button
+            onClick={() => setMobileDrawerOpen(!mobileDrawerOpen)}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '20px',
+            }}
           >
-            <div class="dynamic-navbar__dropdown">
+            ☰
           </button>
         )}
-      </div>
+      </nav>
 
-      {/* Drawer mobile */}
-      <div class="dynamic-navbar__drawer"> setMobileDrawerOpen(false)}
-      >
-        <div 
-          <p>
-            Navigation
-          </div>
-          <div class="dynamic-navbar__dropdown-divider"></div>
-
-          <div>
-            {navItems.map((item) => (
-              <div> handleNavigate(item.path)}
-              >
-                <div>
-                  {item.badge !== undefined && item.badge > 0 ? (
-                    <span class="dynamic-navbar__notification-btn"><span class="dynamic-navbar__badge">item.badge</span>
-                      {item.icon}
-                    </span>
-                  ) : (
-                    item.icon
-                  )}
+      {/* Mobile Drawer */}
+      {isMobile && mobileDrawerOpen && (
+        <div style={{
+          backgroundColor: '#fff',
+          borderBottom: '1px solid #eee',
+          padding: '16px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+        }}>
+          {navItems.map((item) => (
+            <button
+              key={item.path}
+              onClick={() => handleNavigate(item.path)}
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '12px',
+                textAlign: 'left',
+                fontSize: '14px',
+                opacity: location.pathname === item.path ? 1 : 0.7,
+              }}
+            >
+              {item.icon} {item.label}
+              {item.badge !== undefined && item.badge > 0 && (
+                <span style={{
+                  backgroundColor: '#ff4444',
+                  color: '#fff',
+                  borderRadius: '50%',
+                  padding: '2px 6px',
+                  fontSize: '10px',
+                  marginLeft: '4px',
+                }}>
+                  {item.badge}
                 </span>
-                <div>
-              </button>
-            ))}
-          </div>
+              )}
+            </button>
+          ))}
 
-          {isAuthenticated ? (
+          {isAuthenticated && user ? (
             <>
-              <div class="dynamic-navbar__dropdown-divider"></div>
-              <div>
-                <div> { setMobileDrawerOpen(false); handleNavigate('/profile'); }}>
-                  <div><SettingsIcon /></span>
-                  <div>
-                </button>
-                <div>
-                  <div><LogoutIcon /></span>
-                  <div>
-                </button>
-              </div>
+              <div style={{ height: '1px', backgroundColor: '#eee', margin: '8px 0' }} />
+              <button
+                onClick={() => handleNavigate('/profile')}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '12px',
+                  textAlign: 'left',
+                  fontSize: '14px',
+                }}
+              >
+                👤 Mon Profil
+              </button>
+              <button
+                onClick={handleLogout}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '12px',
+                  textAlign: 'left',
+                  fontSize: '14px',
+                }}
+              >
+                🚪 Déconnexion
+              </button>
             </>
           ) : (
             <>
-              <div class="dynamic-navbar__dropdown-divider"></div>
-              <button class="dynamic-navbar__menu-item"> handleNavigate('/login')}
+              <div style={{ height: '1px', backgroundColor: '#eee', margin: '8px 0' }} />
+              <button
+                onClick={() => navigate('/login')}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '12px',
+                  textAlign: 'left',
+                  fontSize: '14px',
+                }}
               >
                 Se connecter
               </button>
-              <button class="dynamic-navbar__menu-item"> handleNavigate('/register')}
+              <button
+                onClick={() => navigate('/register')}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '12px',
+                  textAlign: 'left',
+                  fontSize: '14px',
+                }}
               >
                 S'inscrire
               </button>
             </>
           )}
         </div>
-      </div>
-    </nav>
+      )}
+    </>
   );
 };
 

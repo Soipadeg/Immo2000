@@ -11,6 +11,7 @@ Configure :
 
 from flask import Flask, send_from_directory
 from flask_cors import CORS
+from flask_talisman import Talisman
 import logging
 import os
 from dotenv import load_dotenv
@@ -47,6 +48,7 @@ from src.routes.notaires import notaires_bp
 from src.routes.dev_auth import dev_auth_bp
 from src.routes.transactions import transactions_vente_bp
 from src.routes.paiements import paiements_vente_bp
+from src.routes.security import security_bp
 
 # Import des nouvelles routes (Priority 3)
 from src.routes.pret import pret_bp
@@ -59,6 +61,9 @@ from src.models.historique_rdv import HistoriqueRDV
 from src.services.scheduler import SchedulerService
 from src.services.chatbot import init_chatbot
 from src.config import get_config
+from src.integrations.sentry import init_sentry
+from src.integrations.prometheus import init_prometheus
+from src.integrations.openapi import init_openapi
 
 # Configuration
 logger = logging.getLogger(__name__)
@@ -92,6 +97,21 @@ def create_app(config_name: str = None) -> Flask:
 
     # CORS
     CORS(app, resources={r"/api/*": {"origins": "*"}, r"/auth/*": {"origins": "*"}})
+
+    # Security Headers (HTTPS, HSTS, CSP, XSS Protection)
+    if config_name == "production":
+        Talisman(app, force_https=True, strict_transport_security=True)
+    else:
+        Talisman(app, force_https=False)
+
+    # Initialize Sentry for error tracking (Phase 6G)
+    init_sentry(app)
+
+    # Initialize Prometheus for metrics monitoring
+    init_prometheus(app)
+
+    # Initialize OpenAPI/Swagger documentation
+    init_openapi(app)
 
     # Database
     db.init_app(app)
@@ -354,6 +374,9 @@ def create_app(config_name: str = None) -> Flask:
     app.register_blueprint(fcm_bp)   # Notifications push Firebase
     app.register_blueprint(chat_bp)  # Chat temps réel avec WebSocket
 
+    # Blueprints - Phase 6G: Security (2FA, RGPD, Audit)
+    app.register_blueprint(security_bp)
+
     @app.errorhandler(404)
     def not_found(error):
         return {"error": "Not found"}, 404
@@ -367,6 +390,8 @@ def create_app(config_name: str = None) -> Flask:
     with app.app_context():
         # db.create_all()  # Commented: tables already created via migrations
         # Avoids "relation already exists" errors with PostgreSQL
+        # Note: To enable security tables, uncomment db.create_all() and run migrations
+        # flask db upgrade
 
         # Initialiser le chatbot avec le dataset JSON
         init_chatbot()
@@ -374,6 +399,8 @@ def create_app(config_name: str = None) -> Flask:
         # Initialiser le scheduler pour les tâches planifiées (feedback reminders)
         if os.getenv("FLASK_ENV") != "testing":
             SchedulerService.init_scheduler()
+
+        logger.info("✅ Security module integrated (2FA, RGPD, Audit Trails)")
 
     return app
 

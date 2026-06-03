@@ -4,8 +4,8 @@ import '../styles/CreateAnnoncePage.css';
  * Formulaire complet pour créer une nouvelle annonce
  */
 
-import React
-import { Button, Alert, Input } from '@/components';, { useState } from 'react';
+import React, { useState } from 'react';
+import { Button, Alert, Input } from '@/components';
 import { useNavigate } from 'react-router-dom';
 
 

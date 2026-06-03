@@ -1,7 +1,6 @@
 import '../styles/CreerAnnonceEtape4.css';
 import React, { useState, useEffect } from 'react';
-import { Button, Alert, Input } from '@/components';
-import { LinearProgress, Stack, FormControl, Select, MenuItem } from '@mui/material';
+import { Button, Alert, Input, Select } from '@/components';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { completerAnnonce } from '../services/api';
 
@@ -98,267 +97,251 @@ export default function CreerAnnonceEtape4() {
   };
 
   return (
-    <div maxWidth="md">
-      <div sx={{ py: 4 }}>
+    <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 16px' }}>
+      <div style={{ paddingTop: '32px', paddingBottom: '32px' }}>
         {/* Titre */}
-        <div sx={{ mb: 4, textAlign: 'center' }}>
-          <h1  component="h1" sx={{ fontWeight: 'bold', mb: 1 }}>
+        <div style={{ marginBottom: '32px', textAlign: 'center' }}>
+          <h1 style={{ fontWeight: 'bold', marginBottom: '8px' }}>
             📝 Informations complètes
           </h1>
-          <p  sx={{ color: 'text.secondary', mb: 2 }}>
+          <p style={{ color: '#666', marginBottom: '16px' }}>
             Étape 4 sur 4 : Finalisation et publication
           </p>
-          <LinearProgress variant="determinate" value={100} />
+          <div style={{ width: '100%', height: '4px', backgroundColor: '#ddd', borderRadius: '2px' }}>
+            <div style={{ height: '100%', width: '100%', backgroundColor: '#4caf50', transition: 'width 0.3s' }}></div>
+          </div>
         </div>
 
         {/* Infos contrat */}
         {withContract && (
-          <Alert severity="success" sx={{ mb: 3 }}>
+          <Alert severity="success" style={{ marginBottom: '24px' }}>
             ✅ Contrat d'exclusivité signé ! Vous aurez accès aux outils IA dès la publication.
           </Alert>
         )}
 
         {/* Erreurs */}
-        {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
+        {error && <Alert severity="error" style={{ marginBottom: '24px' }}>{error}</Alert>}
 
         {/* Formulaire */}
-        <div elevation={3} sx={{ p: 4 }}>
+        <div style={{ padding: '32px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
           <form onSubmit={handleSubmit}>
-            <div container spacing={3}>
+            <div style={{ display: 'grid', gap: '24px' }}>
               {/* Description */}
-              <div item xs={12}>
-                <Input
-                  fullWidth
-                  label="Description de l'annonce"
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+                  Description de l'annonce
+                </label>
+                <textarea
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
                   placeholder="Décrivez votre bien en détail..."
-                  multiline
+                  maxLength={2000}
                   rows={6}
                   required
-                  inputProps={{ maxLength: 2000 }}
-                  helperText={`${formData.description.length}/2000`}
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    fontSize: '14px',
+                    fontFamily: 'inherit',
+                    resize: 'vertical',
+                  }}
                 />
+                <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
+                  {formData.description.length}/2000
+                </div>
               </div>
 
               {/* Prix et Surface */}
-              <div item xs={12} sm={6}>
-                <Input
-                  fullWidth
-                  label="Prix (€)"
-                  name="prix"
-                  type="number"
-                  value={formData.prix}
-                  onChange={handleChange}
-                  placeholder="250000"
-                  required
-                  inputProps={{ step: '1000' }}
-                />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+                    Prix (€)
+                  </label>
+                  <Input
+                    name="prix"
+                    type="number"
+                    value={formData.prix}
+                    onChange={handleChange}
+                    placeholder="250000"
+                    required
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+                    Surface (m²)
+                  </label>
+                  <Input
+                    name="surface"
+                    type="number"
+                    value={formData.surface}
+                    onChange={handleChange}
+                    placeholder="80"
+                    required
+                  />
+                </div>
               </div>
 
-              <div item xs={12} sm={6}>
+              {/* Pièces */}
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+                  Nombre de pièces
+                </label>
                 <Input
-                  fullWidth
-                  label="Surface (m²)"
-                  name="surface"
-                  type="number"
-                  value={formData.surface}
-                  onChange={handleChange}
-                  placeholder="80"
-                  required
-                  inputProps={{ step: '0.1' }}
-                />
-              </div>
-
-              {/* Pièces et Type */}
-              <div item xs={12} sm={6}>
-                <Input
-                  fullWidth
-                  label="Nombre de pièces"
                   name="nombre_pieces"
                   type="number"
                   value={formData.nombre_pieces}
                   onChange={handleChange}
                   placeholder="3"
                   required
-                  inputProps={{ min: '1' }}
                 />
               </div>
 
-              <div item xs={12} sm={6}>
-                <FormControl fullWidth required>
-                  <InputLabel>Type de bien</InputLabel>
-                  <Select
-                    name="type_bien"
-                    value={formData.type_bien}
-                    onChange={handleChange}
-                    label="Type de bien"
-                  >
-                    <MenuItem value="appartement">Appartement</MenuItem>
-                    <MenuItem value="maison">Maison</MenuItem>
-                    <MenuItem value="terrain">Terrain</MenuItem>
-                    <MenuItem value="local commercial">Local commercial</MenuItem>
-                  </Select>
-                </FormControl>
+              {/* Type de bien */}
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+                  Type de bien
+                </label>
+                <select
+                  name="type_bien"
+                  value={formData.type_bien}
+                  onChange={handleChange}
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    fontSize: '14px',
+                  }}
+                >
+                  <option value="appartement">Appartement</option>
+                  <option value="maison">Maison</option>
+                  <option value="terrain">Terrain</option>
+                  <option value="local commercial">Local commercial</option>
+                </select>
               </div>
 
               {/* Étage et Année */}
-              <div item xs={12} sm={6}>
-                <Input
-                  fullWidth
-                  label="Étage (optionnel)"
-                  name="etage"
-                  type="number"
-                  value={formData.etage}
-                  onChange={handleChange}
-                  placeholder="2"
-                  inputProps={{ min: '0' }}
-                />
-              </div>
-
-              <div item xs={12} sm={6}>
-                <Input
-                  fullWidth
-                  label="Année de construction (optionnel)"
-                  name="annee_construction"
-                  type="number"
-                  value={formData.annee_construction}
-                  onChange={handleChange}
-                  placeholder="2015"
-                  inputProps={{ min: '1800' }}
-                />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+                    Étage (optionnel)
+                  </label>
+                  <Input
+                    name="etage"
+                    type="number"
+                    value={formData.etage}
+                    onChange={handleChange}
+                    placeholder="2"
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+                    Année de construction (optionnel)
+                  </label>
+                  <Input
+                    name="annee_construction"
+                    type="number"
+                    value={formData.annee_construction}
+                    onChange={handleChange}
+                    placeholder="2015"
+                  />
+                </div>
               </div>
 
               {/* DPE */}
-              <div item xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel>Performance énergétique (DPE)</InputLabel>
-                  <Select
-                    name="dpe"
-                    value={formData.dpe}
-                    onChange={handleChange}
-                    label="Performance énergétique (DPE)"
-                  >
-                    <MenuItem value="A">A - Très performant</MenuItem>
-                    <MenuItem value="B">B - Performant</MenuItem>
-                    <MenuItem value="C">C - Moyen</MenuItem>
-                    <MenuItem value="D">D - Peu performant</MenuItem>
-                    <MenuItem value="E">E - Mauvais</MenuItem>
-                    <MenuItem value="F">F - Très mauvais</MenuItem>
-                    <MenuItem value="G">G - À rénover</MenuItem>
-                  </Select>
-                </FormControl>
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+                  Performance énergétique (DPE)
+                </label>
+                <select
+                  name="dpe"
+                  value={formData.dpe}
+                  onChange={handleChange}
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    fontSize: '14px',
+                  }}
+                >
+                  <option value="A">A - Très performant</option>
+                  <option value="B">B - Performant</option>
+                  <option value="C">C - Moyen</option>
+                  <option value="D">D - Peu performant</option>
+                  <option value="E">E - Mauvais</option>
+                  <option value="F">F - Très mauvais</option>
+                  <option value="G">G - À rénover</option>
+                </select>
               </div>
 
               {/* Caractéristiques */}
-              <div item xs={12}>
-                <h3  sx={{ mb: 2 }}>
-                  Caractéristiques du bien
-                </h3>
-                <div container spacing={1}>
-                  <div item xs={6} sm={4}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          name="ascenseur"
-                          checked={formData.ascenseur}
-                          onChange={handleChange}
-                        />
-                      }
-                      label="Ascenseur"
-                    />
-                  </div>
-                  <div item xs={6} sm={4}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          name="balcon"
-                          checked={formData.balcon}
-                          onChange={handleChange}
-                        />
-                      }
-                      label="Balcon"
-                    />
-                  </div>
-                  <div item xs={6} sm={4}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          name="terrasse"
-                          checked={formData.terrasse}
-                          onChange={handleChange}
-                        />
-                      }
-                      label="Terrasse"
-                    />
-                  </div>
-                  <div item xs={6} sm={4}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          name="jardin"
-                          checked={formData.jardin}
-                          onChange={handleChange}
-                        />
-                      }
-                      label="Jardin"
-                    />
-                  </div>
-                  <div item xs={6} sm={4}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          name="piscine"
-                          checked={formData.piscine}
-                          onChange={handleChange}
-                        />
-                      }
-                      label="Piscine"
-                    />
-                  </div>
-                  <div item xs={6} sm={4}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          name="parking"
-                          checked={formData.parking}
-                          onChange={handleChange}
-                        />
-                      }
-                      label="Parking"
-                    />
-                  </div>
+              <div>
+                <h3 style={{ marginBottom: '12px' }}>Caractéristiques du bien</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '12px' }}>
+                  {['ascenseur', 'balcon', 'terrasse', 'jardin', 'piscine', 'parking'].map((characteristic) => (
+                    <label key={characteristic} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: '8px' }}>
+                      <input
+                        type="checkbox"
+                        name={characteristic}
+                        checked={formData[characteristic]}
+                        onChange={handleChange}
+                        style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                      />
+                      <span style={{ textTransform: 'capitalize' }}>
+                        {characteristic.charAt(0).toUpperCase() + characteristic.slice(1)}
+                      </span>
+                    </label>
+                  ))}
                 </div>
               </div>
             </div>
 
             {/* Boutons */}
-            <Stack direction="row" spacing={2} sx={{ mt: 4, justifyContent: 'center' }}>
-              <Button
-                variant="outlined"
-                color="primary"
-                size="large"
+            <div style={{ display: 'flex', gap: '16px', marginTop: '32px', justifyContent: 'center' }}>
+              <button
+                type="button"
                 onClick={() => navigate(-1)}
+                style={{
+                  padding: '12px 24px',
+                  border: '1px solid #1976d2',
+                  backgroundColor: '#fff',
+                  color: '#1976d2',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '16px',
+                  fontWeight: '500',
+                }}
               >
                 Retour
-              </Button>
-              <Button
-                variant="contained"
-                color="success"
-                size="large"
+              </button>
+              <button
                 type="submit"
                 disabled={loading}
+                style={{
+                  padding: '12px 24px',
+                  backgroundColor: '#4caf50',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  opacity: loading ? 0.6 : 1,
+                  fontSize: '16px',
+                  fontWeight: '500',
+                }}
               >
                 {loading ? '📤 Publication en cours...' : '🎉 Publier mon annonce !'}
-              </Button>
-            </Stack>
+              </button>
+            </div>
           </form>
         </div>
 
         {/* Info */}
-        <div sx={{ mt: 4, p: 2, backgroundColor: 'success.light', borderRadius: 1 }}>
-          <span  sx={{ color: 'success.dark' }}>
+        <div style={{ marginTop: '32px', padding: '16px', backgroundColor: '#c8e6c9', borderRadius: '4px' }}>
+          <span style={{ color: '#1b5e20' }}>
             ✅ <strong>Dernière étape !</strong> Une fois publiée, votre annonce sera visible aux acheteurs potentiels.
             Vous pourrez la gérer depuis votre dashboard.
           </span>
