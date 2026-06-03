@@ -5,7 +5,13 @@
 
 # Output directory
 output/
+
+# Ignore most JSON files but allow config files
 *.json
+!vercel.json
+!tsconfig.json
+!package.json
+!package-lock.json
 
 # Python
 __pycache__/
