@@ -35,6 +35,26 @@ npm run dev
 
 ---
 
+## 🌐 Production Deployment
+
+✅ **Status:** Ready for Production
+
+**Current URLs:**
+- 🔴 Frontend: [https://immo2000.vercel.app](https://immo2000.vercel.app) - Live on Vercel
+- 🟡 Backend: Deploying to Railway.app
+
+**Deployment Guides:**
+- **[DEPLOYMENT_STATUS.md](DEPLOYMENT_STATUS.md)** - Overview & timeline
+- **[docs/RAILWAY_DEPLOYMENT.md](docs/RAILWAY_DEPLOYMENT.md)** - Step-by-step Railway setup
+- **[PRODUCTION_CHECKLIST.md](PRODUCTION_CHECKLIST.md)** - Full verification checklist
+
+**Quick Verification:**
+```bash
+python verify_deployment.py  # Validates all systems are ready
+```
+
+---
+
 ## 📚 Documentation
 
 👉 **[Consultez la documentation complète →](docs/README.md)**

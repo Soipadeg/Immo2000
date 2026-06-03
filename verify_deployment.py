@@ -49,35 +49,35 @@ def main():
     root_path = Path(__file__).parent
     backend_path = root_path / "backend"
     frontend_path = root_path / "frontend"
-    
+
     print(f"\n{Colors.BLUE}🚀 IMMO2000 PRODUCTION DEPLOYMENT VERIFICATION{Colors.RESET}\n")
-    
+
     checks_passed = 0
     checks_failed = 0
-    
+
     # ============= BACKEND CHECKS =============
     print(f"{Colors.BLUE}[BACKEND]{Colors.RESET}")
-    
+
     if check_file_exists(str(root_path / "Dockerfile.backend")):
         checks_passed += 1
     else:
         checks_failed += 1
-        
+
     if check_file_exists(str(backend_path / "requirements.txt")):
         checks_passed += 1
     else:
         checks_failed += 1
-    
+
     if check_file_exists(str(backend_path / "run_server.py")):
         checks_passed += 1
     else:
         checks_failed += 1
-        
+
     if check_file_exists(str(backend_path / "src" / "app.py")):
         checks_passed += 1
     else:
         checks_failed += 1
-    
+
     # Check migrations
     migrations_dir = backend_path / "migrations" / "versions"
     migrations = list(migrations_dir.glob("*.py")) if migrations_dir.exists() else []
@@ -87,47 +87,47 @@ def main():
     else:
         print_status("Database migrations found", False)
         checks_failed += 1
-    
+
     # ============= FRONTEND CHECKS =============
     print(f"\n{Colors.BLUE}[FRONTEND]{Colors.RESET}")
-    
+
     if check_file_exists(str(frontend_path / "package.json")):
         checks_passed += 1
     else:
         checks_failed += 1
-        
+
     if check_file_exists(str(frontend_path / "vite.config.js")):
         checks_passed += 1
     else:
         checks_failed += 1
-    
+
     if check_file_exists(str(root_path / "vercel.json")):
         checks_passed += 1
         print("  Contains Vercel monorepo config")
     else:
         checks_failed += 1
-        
+
     # ============= CONFIGURATION FILES =============
     print(f"\n{Colors.BLUE}[CONFIGURATION]{Colors.RESET}")
-    
+
     if check_file_exists(str(root_path / ".env.production.example")):
         checks_passed += 1
     else:
         checks_failed += 1
-    
+
     if check_file_exists(str(root_path / "PRODUCTION_CHECKLIST.md")):
         checks_passed += 1
     else:
         checks_failed += 1
-        
+
     if check_file_exists(str(root_path / "docs" / "RAILWAY_DEPLOYMENT.md")):
         checks_passed += 1
     else:
         checks_failed += 1
-    
+
     # ============= GIT CHECKS =============
     print(f"\n{Colors.BLUE}[GIT STATUS]{Colors.RESET}")
-    
+
     success, output = run_command("cd {} && git status --short".format(root_path))
     if success:
         if output:
@@ -137,7 +137,7 @@ def main():
         else:
             print_status("All changes committed", True)
             checks_passed += 1
-    
+
     success, branch = run_command("cd {} && git branch --show-current".format(root_path))
     if success and branch == "main":
         print_status(f"On main branch", True)
@@ -145,18 +145,18 @@ def main():
     else:
         print_status(f"On main branch (current: {branch})", False)
         checks_failed += 1
-    
+
     # ============= DOCKER =============
     print(f"\n{Colors.BLUE}[DOCKER CHECKS]{Colors.RESET}")
-    
+
     success, _ = run_command("docker --version")
     print_status("Docker installed", success)
-    
+
     # ============= SUMMARY =============
     print(f"\n{Colors.BLUE}{'='*50}{Colors.RESET}")
     print(f"✓ Passed: {Colors.GREEN}{checks_passed}{Colors.RESET}")
     print(f"✗ Failed: {Colors.RED}{checks_failed}{Colors.RESET}")
-    
+
     if checks_failed == 0:
         print(f"\n{Colors.GREEN}🎉 ALL CHECKS PASSED - READY FOR DEPLOYMENT!{Colors.RESET}\n")
         print("Next steps:")

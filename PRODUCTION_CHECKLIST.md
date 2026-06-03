@@ -2,9 +2,9 @@
 
 ## 📋 Status: EN COURS
 
-**Frontend:** ✅ Deployed on Vercel  
-**Backend:** ⏳ Ready for Railway  
-**Database:** ⏳ Ready for Railway PostgreSQL  
+**Frontend:** ✅ Deployed on Vercel
+**Backend:** ⏳ Ready for Railway
+**Database:** ⏳ Ready for Railway PostgreSQL
 
 ---
 
@@ -165,7 +165,6 @@ curl https://backend-xxx.railway.app/api/v1/offres \
 
 ---
 
-**Last Updated:** 2024-06-03  
-**Next Review:** After backend deployment  
+**Last Updated:** 2024-06-03
+**Next Review:** After backend deployment
 **Owner:** DevOps Team
-
