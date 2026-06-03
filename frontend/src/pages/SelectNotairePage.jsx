@@ -263,7 +263,7 @@ export default function SelectNotairePage() {
       </div>
 
       {/* Dialog de succès */}
-      <div className="modal"> setSuccessOpen(false)}>
+      <div className="modal" onClose={() => setSuccessOpen(false)}>
         <div className="modal">Notaire sélectionné</div>
         <div className="modal">
           <div>

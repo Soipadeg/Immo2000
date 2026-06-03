@@ -608,4 +608,313 @@ export const offresApi = {
     apiClient.post(`/offres/${id}/counter`, data),
 };
 
+/**
+ * Service de gestion des transactions
+ */
+export const transactionsApi = {
+  /**
+   * Lister toutes les transactions de l'utilisateur
+   */
+  list: (skip = 0, limit = 100) =>
+    apiClient.get('/transactions', {
+      params: { skip, limit },
+    }),
+
+  /**
+   * Récupérer une transaction par ID
+   */
+  getById: (id) => apiClient.get(`/transactions/${id}`),
+
+  /**
+   * Créer une nouvelle transaction
+   */
+  create: (data) => apiClient.post('/transactions', data),
+
+  /**
+   * Mettre à jour une transaction
+   */
+  update: (id, data) => apiClient.put(`/transactions/${id}`, data),
+
+  /**
+   * Changer le statut d'une transaction
+   */
+  updateStatus: (id, status) =>
+    apiClient.put(`/transactions/${id}/status`, { statut: status }),
+};
+
+/**
+ * Service de gestion des notaires
+ */
+export const notairesApi = {
+  /**
+   * Lister tous les notaires avec filtres
+   */
+  list: (filters = {}) =>
+    apiClient.get('/notaires', { params: filters }),
+
+  /**
+   * Récupérer un notaire par ID
+   */
+  getById: (id) => apiClient.get(`/notaires/${id}`),
+
+  /**
+   * Chercher des notaires par code postal
+   */
+  search: (codePostal) =>
+    apiClient.get('/notaires/search', {
+      params: { code_postal: codePostal },
+    }),
+
+  /**
+   * Sélectionner un notaire pour une transaction
+   */
+  select: (transactionId, notaireId) =>
+    apiClient.post(`/transactions/${transactionId}/select-notaire`, {
+      notaire_id: notaireId,
+    }),
+};
+
+/**
+ * Service de gestion des paiements
+ */
+export const paymentsApi = {
+  /**
+   * Créer une intention de paiement
+   */
+  createPaymentIntent: (data) =>
+    apiClient.post('/payments/create-intent', data),
+
+  /**
+   * Récupérer l'état d'un paiement
+   */
+  getStatus: (paymentId) =>
+    apiClient.get(`/payments/${paymentId}`),
+
+  /**
+   * Confirmer un paiement
+   */
+  confirm: (paymentId, data) =>
+    apiClient.post(`/payments/${paymentId}/confirm`, data),
+};
+
+/**
+ * Service de gestion des documents DocuSign
+ */
+export const docusignApi = {
+  /**
+   * Créer un enveloppe DocuSign
+   */
+  createEnvelope: (data) =>
+    apiClient.post('/docusign/envelopes', data),
+
+  /**
+   * Récupérer le statut d'une enveloppe
+   */
+  getEnvelopeStatus: (envelopeId) =>
+    apiClient.get(`/docusign/envelopes/${envelopeId}`),
+
+  /**
+   * Télécharger un document signé
+   */
+  downloadDocument: (envelopeId, documentId) =>
+    apiClient.get(`/docusign/envelopes/${envelopeId}/documents/${documentId}`, {
+      responseType: 'blob',
+    }),
+};
+
+/**
+ * Service de gestion des utilisateurs
+ */
+export const usersApi = {
+  /**
+   * Récupérer le profil de l'utilisateur
+   */
+  getProfile: () =>
+    apiClient.get('/users/profile'),
+
+  /**
+   * Mettre à jour le profil
+   */
+  updateProfile: (data) =>
+    apiClient.put('/users/profile', data),
+
+  /**
+   * Changer le mot de passe
+   */
+  changePassword: (data) =>
+    apiClient.post('/users/change-password', data),
+};
+
+/**
+ * Service de gestion des biens immobiliers
+ */
+export const biensApi = {
+  /**
+   * Lister tous les biens
+   */
+  list: (filters = {}) =>
+    apiClient.get('/biens', { params: filters }),
+
+  /**
+   * Récupérer un bien par ID
+   */
+  getById: (id) =>
+    apiClient.get(`/biens/${id}`),
+
+  /**
+   * Créer un bien
+   */
+  create: (data) =>
+    apiClient.post('/biens', data),
+
+  /**
+   * Mettre à jour un bien
+   */
+  update: (id, data) =>
+    apiClient.put(`/biens/${id}`, data),
+};
+
+/**
+ * Service de gestion des estimations
+ */
+export const estimationsApi = {
+  /**
+   * Créer une estimation
+   */
+  create: (data) =>
+    apiClient.post('/estimations', data),
+
+  /**
+   * Lister les estimations
+   */
+  list: () =>
+    apiClient.get('/estimations'),
+
+  /**
+   * Récupérer une estimation
+   */
+  getById: (id) =>
+    apiClient.get(`/estimations/${id}`),
+};
+
+/**
+ * Service de gestion des images
+ */
+export const imagesApi = {
+  /**
+   * Uploader une image
+   */
+  upload: (formData) =>
+    apiClient.post('/images/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
+
+  /**
+   * Supprimer une image
+   */
+  delete: (imageId) =>
+    apiClient.delete(`/images/${imageId}`),
+};
+
+/**
+ * Service analytics
+ */
+export const analyticsApi = {
+  /**
+   * Récupérer les statistiques
+   */
+  getStats: (startDate, endDate) =>
+    apiClient.get('/analytics/stats', {
+      params: { start_date: startDate, end_date: endDate },
+    }),
+
+  /**
+   * Envoyer un événement
+   */
+  trackEvent: (eventData) =>
+    apiClient.post('/analytics/events', eventData),
+};
+
+/**
+ * Service audit
+ */
+export const auditApi = {
+  /**
+   * Récupérer les logs audit
+   */
+  getLogs: (skip = 0, limit = 100) =>
+    apiClient.get('/audit/logs', {
+      params: { skip, limit },
+    }),
+};
+
+/**
+ * Service dashboard
+ */
+export const dashboardApi = {
+  /**
+   * Récupérer les données du tableau de bord
+   */
+  getData: () =>
+    apiClient.get('/dashboard'),
+};
+
+/**
+ * Service liste des annonces
+ */
+export const listingsApi = {
+  /**
+   * Lister les annonces
+   */
+  list: (filters = {}) =>
+    apiClient.get('/listings', { params: filters }),
+
+  /**
+   * Récupérer une annonce
+   */
+  getById: (id) =>
+    apiClient.get(`/listings/${id}`),
+};
+
+/**
+ * Service offres (alias pour offresApi)
+ */
+export const offersApi = offresApi;
+
+/**
+ * Service FAQ
+ */
+export const faqApi = {
+  /**
+   * Récupérer les FAQ
+   */
+  list: () =>
+    apiClient.get('/faq'),
+
+  /**
+   * Rechercher dans les FAQ
+   */
+  search: (query) =>
+    apiClient.get('/faq/search', {
+      params: { q: query },
+    }),
+};
+
+/**
+ * Service paramètres
+ */
+export const settingsApi = {
+  /**
+   * Récupérer les paramètres utilisateur
+   */
+  getSettings: () =>
+    apiClient.get('/users/settings'),
+
+  /**
+   * Mettre à jour les paramètres
+   */
+  updateSettings: (data) =>
+    apiClient.put('/users/settings', data),
+};
+
 export default apiClient;

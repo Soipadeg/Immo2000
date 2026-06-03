@@ -125,7 +125,7 @@ export function FormCheckbox({
       name={name}
       defaultValue={defaultValue}
       render={({ field }) => (
-        <div style={ my: 2 }>
+        <div style={{ my: 2 }}>
           <FormControlLabel
             control={<Checkbox {...field} checked={field.value} {...props} />}
             label={label}
