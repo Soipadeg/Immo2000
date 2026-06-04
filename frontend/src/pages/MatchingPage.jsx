@@ -117,7 +117,7 @@ const MatchingPage = () => {
     <div className="matching-page">
       <div className="page-header">
         <div className="page-header__content">
-          <span className="page-header__icon">🏠 Immo2000</span>
+          <span className="page-header__icon">❤️</span>
           <div>
             <h1>Trouvez votre bien idéal</h1>
             <p>
