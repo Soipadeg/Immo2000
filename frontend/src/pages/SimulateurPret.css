@@ -24,11 +24,11 @@
   border-bottom: 2px solid #E5E7EB;
 }
 
-/* Form Grid - 2 columns for better spacing */
+/* Form Grid - Single column for better readability */
 
 .form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: grid !important;
+  grid-template-columns: 1fr !important;
   gap: 20px;
 }
 
