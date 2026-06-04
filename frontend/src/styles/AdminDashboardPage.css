@@ -114,6 +114,24 @@
   border-radius: 12px;
   padding: 1.5rem;
   background-color: var(--color-background-secondary);
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-box > div:first-child {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+.recharts-responsive-container {
+  flex: 1 !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 300px !important;
 }
 
 .chart-box h3 {
