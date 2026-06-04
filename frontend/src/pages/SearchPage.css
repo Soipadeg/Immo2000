@@ -2,7 +2,6 @@
 
 /* Page container */
 .search-page {
-  background-color: #ffffff !important;
   min-height: 100vh;
   padding: 20px;
 }
@@ -253,4 +252,3 @@
 }
 
 /* Responsive Mobile */
-
