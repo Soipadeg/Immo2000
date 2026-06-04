@@ -85,11 +85,11 @@ export default function SearchPage() {
       {/* Animated Header */}
       <div className="search-page-header">
         <div className="search-page-header__content">
-          <span className="search-page-header__icon">🏠</span>
-          <div>
+          <div className="search-page-header__title-row">
+            <span className="search-page-header__icon">🏠</span>
             <h1>Trouvez votre bien immobilier</h1>
-            <p>Explorez nos annonces et découvrez la propriété de vos rêves</p>
           </div>
+          <p>Explorez nos annonces et découvrez la propriété de vos rêves</p>
         </div>
       </div>
 

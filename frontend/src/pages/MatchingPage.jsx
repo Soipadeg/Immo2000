@@ -117,14 +117,14 @@ const MatchingPage = () => {
     <div className="matching-page">
       <div className="page-header">
         <div className="page-header__content">
-          <span className="page-header__icon">❤️</span>
-          <div>
+          <div className="page-header__title-row">
+            <span className="page-header__icon">❤️</span>
             <h1>Trouvez votre bien idéal</h1>
-            <p>
-              Utilisez les filtres ci-dessous pour découvrir les annonces les plus adaptées à vos
-              critères.
-            </p>
           </div>
+          <p>
+            Utilisez les filtres ci-dessous pour découvrir les annonces les plus adaptées à vos
+            critères.
+          </p>
         </div>
       </div>
 

@@ -197,11 +197,11 @@ const SimulateurPret = () => {
       {/* Animated Header */}
       <div className="simulateur-pret-header">
         <div className="simulateur-pret-header__content">
-          <span className="simulateur-pret-header__icon">📈</span>
-          <div>
+          <div className="simulateur-pret-header__title-row">
+            <span className="simulateur-pret-header__icon">📈</span>
             <h1>Simulateur de Prêt Immobilier</h1>
-            <p>Calculez votre mensualité et votre capacité d'emprunt selon les critères bancaires français</p>
           </div>
+          <p>Calculez votre mensualité et votre capacité d'emprunt selon les critères bancaires français</p>
         </div>
       </div>
 
