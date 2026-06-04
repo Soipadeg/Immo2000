@@ -85,7 +85,7 @@ export default function SearchPage() {
       {/* Animated Header */}
       <div className="search-page-header">
         <div className="search-page-header__content">
-          <span className="search-page-header__icon">🏠</span>
+          <span className="search-page-header__icon">🏠 Immo2000</span>
           <div>
             <h1>Trouvez votre bien immobilier</h1>
             <p>Explorez nos annonces et découvrez la propriété de vos rêves</p>
