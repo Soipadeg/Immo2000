@@ -5,6 +5,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { notificationsApi } from '../services/api';
+import ProfileSwitcher from './ProfileSwitcher';
 import './DynamicNavbar.css';
 
 /**
@@ -190,6 +191,9 @@ export const DynamicNavbar = ({
 
         {/* Spacer */}
         <div style={{ flex: isMobile ? 1 : 0 }} />
+
+        {/* Profile Switcher (Mode Dev) */}
+        <ProfileSwitcher />
 
         {/* User Menu ou Login Buttons */}
         {isAuthenticated && user ? (

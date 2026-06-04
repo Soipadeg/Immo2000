@@ -11,10 +11,15 @@ Configure :
 
 from flask import Flask, send_from_directory
 from flask_cors import CORS
-from flask_talisman import Talisman
 import logging
 import os
 from dotenv import load_dotenv
+
+# Talisman optionnel pour dev
+try:
+    from flask_talisman import Talisman
+except ImportError:
+    Talisman = None
 
 # Charger variables d'environnement
 load_dotenv()
@@ -48,11 +53,23 @@ from src.routes.notaires import notaires_bp
 from src.routes.dev_auth import dev_auth_bp
 from src.routes.transactions import transactions_vente_bp
 from src.routes.paiements import paiements_vente_bp
-from src.routes.security import security_bp
+
+# Charger security optionnellement
+try:
+    from src.routes.security import security_bp
+except ImportError:
+    security_bp = None
 
 # Import des nouvelles routes (Priority 3)
-from src.routes.pret import pret_bp
-from src.routes.fcm import fcm_bp
+try:
+    from src.routes.pret import pret_bp
+except ImportError:
+    pret_bp = None
+
+try:
+    from src.routes.fcm import fcm_bp
+except ImportError:
+    fcm_bp = None
 # from src.routes.chat import chat_bp  # TODO: Fix imports - ChatMessage and Conversation models missing
 
 # Import models pour que SQLAlchemy les reconnaisse
@@ -99,10 +116,11 @@ def create_app(config_name: str = None) -> Flask:
     CORS(app, resources={r"/api/*": {"origins": "*"}, r"/auth/*": {"origins": "*"}})
 
     # Security Headers (HTTPS, HSTS, CSP, XSS Protection)
-    if config_name == "production":
-        Talisman(app, force_https=True, strict_transport_security=True)
-    else:
-        Talisman(app, force_https=False)
+    if Talisman:
+        if config_name == "production":
+            Talisman(app, force_https=True, strict_transport_security=True)
+        else:
+            Talisman(app, force_https=False)
 
     # Initialize Sentry for error tracking (Phase 6G)
     init_sentry(app)
@@ -370,12 +388,15 @@ def create_app(config_name: str = None) -> Flask:
     app.register_blueprint(dev_auth_bp)
 
     # Blueprints - Priority 3: Advanced Features
-    app.register_blueprint(pret_bp)  # Simulateur de prêt
-    app.register_blueprint(fcm_bp)   # Notifications push Firebase
+    if pret_bp:
+        app.register_blueprint(pret_bp)  # Simulateur de prêt
+    if fcm_bp:
+        app.register_blueprint(fcm_bp)   # Notifications push Firebase
     # app.register_blueprint(chat_bp)  # Chat temps réel avec WebSocket - TODO: Fix imports
 
     # Blueprints - Phase 6G: Security (2FA, RGPD, Audit)
-    app.register_blueprint(security_bp)
+    if security_bp:
+        app.register_blueprint(security_bp)
 
     @app.errorhandler(404)
     def not_found(error):
