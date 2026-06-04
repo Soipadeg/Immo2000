@@ -92,13 +92,16 @@ export default function SearchPage() {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
 
-        <select className="search-select" value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
-          <option value="">Tous les types</option>
-          <option value="Appartement">Appartement</option>
-          <option value="Maison">Maison</option>
-          <option value="Studio">Studio</option>
-          <option value="Duplex">Duplex</option>
-        </select>
+        <div className="search-select-wrapper">
+          <label className="search-select-label">Type de bien</label>
+          <select className="search-select" value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
+            <option value="">Tous les types</option>
+            <option value="Appartement">Appartement</option>
+            <option value="Maison">Maison</option>
+            <option value="Studio">Studio</option>
+            <option value="Duplex">Duplex</option>
+          </select>
+        </div>
 
         <Input
           label="Prix min"
