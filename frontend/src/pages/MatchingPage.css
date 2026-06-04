@@ -8,13 +8,16 @@
 
 /* Page Header */
 .page-header {
-  text-align: center;
-  padding: 6px 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-radius: 12px;
-  animation: slideDown 0.5s ease-out;
-  margin: 0 20px 24px 20px;
+  text-align: center !important;
+  padding: 4px 15px !important;
+  margin: 0 15px 20px 15px !important;
+  margin-bottom: 20px !important;
+  padding-bottom: 0 !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  border-radius: 12px !important;
+  animation: slideDown 0.5s ease-out !important;
+  border-bottom: none !important;
 }
 
 .page-header__content {
@@ -34,7 +37,10 @@
 }
 
 .page-header__icon {
-  font-size: 1.8rem;
+  font-size: 1.8rem !important;
+  flex-shrink: initial !important;
+  display: initial !important;
+  height: auto !important;
 }
 
 .page-header h1 {
