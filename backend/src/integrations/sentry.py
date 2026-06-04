@@ -61,8 +61,11 @@ def init_sentry(app):
         logging.info(f"✅ Sentry initialized (environment={environment}, sample_rate={traces_sample_rate})")
         return True
 
+    except ValueError as e:
+        logging.error(f"❌ Failed to initialize Sentry (validation): {e}", exc_info=True)
+        return False
     except Exception as e:
-        logging.error(f"❌ Failed to initialize Sentry: {e}")
+        logging.error(f"❌ Failed to initialize Sentry: {e}", exc_info=True)
         return False
 
 
@@ -119,6 +122,15 @@ def monitor_with_sentry(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
+        except ValueError as e:
+            log_error_to_sentry(
+                e,
+                level="error",
+                function=func.__name__,
+                args=str(args)[:100],
+                kwargs=str(kwargs)[:100]
+            )
+            raise
         except Exception as e:
             log_error_to_sentry(
                 e,

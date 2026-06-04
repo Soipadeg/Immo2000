@@ -73,8 +73,10 @@ class NotaireNotificationService:
 
             logger.info(f"Notification d'assignation envoyée au notaire {notaire_id}")
 
+        except ValueError as e:
+            logger.error(f"Erreur notification assignation (notaire introuvable): {str(e)}", exc_info=True)
         except Exception as e:
-            logger.error(f"Erreur notification assignation: {str(e)}")
+            logger.error(f"Erreur notification assignation: {str(e)}", exc_info=True)
 
 
     @staticmethod
@@ -113,8 +115,10 @@ class NotaireNotificationService:
 
             logger.info(f"Notifications validation compromis envoyées pour {transaction_id}")
 
+        except ValueError as e:
+            logger.error(f"Erreur notification validation (transaction introuvable): {str(e)}", exc_info=True)
         except Exception as e:
-            logger.error(f"Erreur notification validation: {str(e)}")
+            logger.error(f"Erreur notification validation: {str(e)}", exc_info=True)
 
 
     @staticmethod
@@ -154,8 +158,10 @@ class NotaireNotificationService:
 
             logger.info(f"Notifications modifications envoyées pour {transaction_id}")
 
+        except ValueError as e:
+            logger.error(f"Erreur notification modifications (transaction introuvable): {str(e)}", exc_info=True)
         except Exception as e:
-            logger.error(f"Erreur notification modifications: {str(e)}")
+            logger.error(f"Erreur notification modifications: {str(e)}", exc_info=True)
 
 
     @staticmethod
@@ -195,8 +201,10 @@ class NotaireNotificationService:
 
             logger.info(f"Notifications rejet envoyées pour {transaction_id}")
 
+        except ValueError as e:
+            logger.error(f"Erreur notification rejet (transaction introuvable): {str(e)}", exc_info=True)
         except Exception as e:
-            logger.error(f"Erreur notification rejet: {str(e)}")
+            logger.error(f"Erreur notification rejet: {str(e)}", exc_info=True)
 
 
     @staticmethod
@@ -233,8 +241,10 @@ class NotaireNotificationService:
 
             logger.debug(f"Notification in-app créée pour utilisateur {user_id}")
 
+        except ValueError as e:
+            logger.error(f"Erreur création notification in-app (utilisateur introuvable): {str(e)}", exc_info=True)
         except Exception as e:
-            logger.error(f"Erreur création notification in-app: {str(e)}")
+            logger.error(f"Erreur création notification in-app: {str(e)}", exc_info=True)
 
 
     @staticmethod
@@ -261,8 +271,10 @@ class NotaireNotificationService:
 
             logger.debug(f"Email envoyé à {to_email}")
 
+        except ValueError as e:
+            logger.error(f"Erreur envoi email (adresse invalide): {str(e)}", exc_info=True)
         except Exception as e:
-            logger.error(f"Erreur envoi email: {str(e)}")
+            logger.error(f"Erreur envoi email: {str(e)}", exc_info=True)
 
 
     @staticmethod
@@ -300,8 +312,11 @@ class NotaireNotificationService:
                 for n in notifications
             ]
 
+        except ValueError as e:
+            logger.error(f"Erreur récupération notifications (utilisateur introuvable): {str(e)}", exc_info=True)
+            return []
         except Exception as e:
-            logger.error(f"Erreur récupération notifications: {str(e)}")
+            logger.error(f"Erreur récupération notifications: {str(e)}", exc_info=True)
             return []
 
 
@@ -325,5 +340,7 @@ class NotaireNotificationService:
                 notification.lu = True
                 db.session.commit()
 
+        except ValueError as e:
+            logger.error(f"Erreur marquage notification (notification introuvable): {str(e)}", exc_info=True)
         except Exception as e:
-            logger.error(f"Erreur marquage notification: {str(e)}")
+            logger.error(f"Erreur marquage notification: {str(e)}", exc_info=True)

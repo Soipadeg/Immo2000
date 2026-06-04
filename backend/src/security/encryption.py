@@ -53,6 +53,9 @@ class EncryptionManager:
         try:
             decrypted = self.cipher.decrypt(encrypted_data.encode())
             return decrypted.decode()
+        except ValueError as e:
+            print(f"Decryption error (validation): {str(e)}")
+            return None
         except Exception as e:
             print(f"Decryption error: {str(e)}")
             return None
@@ -164,5 +167,9 @@ def decrypt_conditions(encrypted_conditions: str) -> dict:
     try:
         decrypted = encryptor.decrypt(encrypted_conditions)
         return json.loads(decrypted)
-    except:
+    except json.JSONDecodeError as e:
+        print(f"Decrypt conditions error (JSON): {str(e)}")
+        return None
+    except Exception as e:
+        print(f"Decrypt conditions error: {str(e)}")
         return None

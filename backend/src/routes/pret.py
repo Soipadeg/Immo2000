@@ -52,10 +52,10 @@ def simulate_loan():
         return jsonify(result), 200
 
     except ValueError as e:
-        logger.error(f"Erreur validation: {str(e)}")
+        logger.error(f"Erreur validation: {str(e)}", exc_info=True)
         return jsonify({'error': str(e)}), 400
     except Exception as e:
-        logger.error(f"Erreur simulation: {str(e)}")
+        logger.error(f"Erreur simulation: {str(e)}", exc_info=True)
         return jsonify({'error': 'Erreur lors de la simulation'}), 500
 
 
@@ -91,8 +91,11 @@ def get_amortization():
             'amortization_table': table
         }), 200
 
+    except ValueError as e:
+        logger.error(f"Erreur tableau amortissement (paramètres invalides): {str(e)}", exc_info=True)
+        return jsonify({'error': 'Paramètres invalides'}), 400
     except Exception as e:
-        logger.error(f"Erreur tableau amortissement: {str(e)}")
+        logger.error(f"Erreur tableau amortissement: {str(e)}", exc_info=True)
         return jsonify({'error': 'Erreur lors de la génération du tableau'}), 500
 
 
@@ -128,8 +131,11 @@ def calculate_capacity():
 
         return jsonify(result), 200
 
+    except ValueError as e:
+        logger.error(f"Erreur calcul capacité (paramètres invalides): {str(e)}", exc_info=True)
+        return jsonify({'error': 'Paramètres invalides'}), 400
     except Exception as e:
-        logger.error(f"Erreur calcul capacité: {str(e)}")
+        logger.error(f"Erreur calcul capacité: {str(e)}", exc_info=True)
         return jsonify({'error': 'Erreur lors du calcul'}), 500
 
 
@@ -170,8 +176,11 @@ def compare_simulations():
             'comparison': comparison
         }), 200
 
+    except ValueError as e:
+        logger.error(f"Erreur comparaison (paramètres invalides): {str(e)}", exc_info=True)
+        return jsonify({'error': 'Paramètres invalides'}), 400
     except Exception as e:
-        logger.error(f"Erreur comparaison: {str(e)}")
+        logger.error(f"Erreur comparaison: {str(e)}", exc_info=True)
         return jsonify({'error': 'Erreur lors de la comparaison'}), 500
 
 
@@ -192,8 +201,11 @@ def get_market_rates():
             'rates': rates
         }), 200
 
+    except ValueError as e:
+        logger.error(f"Erreur taux (erreur de calcul): {str(e)}", exc_info=True)
+        return jsonify({'error': 'Erreur de calcul'}), 500
     except Exception as e:
-        logger.error(f"Erreur taux: {str(e)}")
+        logger.error(f"Erreur taux: {str(e)}", exc_info=True)
         return jsonify({'error': 'Erreur lors de la récupération des taux'}), 500
 
 
@@ -250,8 +262,11 @@ def save_simulation():
         logger.info(f"Simulation sauvegardée pour l'utilisateur {current_user.id}")
         return jsonify({'success': True, 'simulation_id': len(user_data.loan_simulations)}), 201
 
+    except ValueError as e:
+        logger.error(f"Erreur sauvegarde simulation (données invalides): {str(e)}", exc_info=True)
+        return jsonify({'error': 'Données invalides'}), 400
     except Exception as e:
-        logger.error(f"Erreur sauvegarde simulation: {str(e)}")
+        logger.error(f"Erreur sauvegarde simulation: {str(e)}", exc_info=True)
         return jsonify({'error': 'Erreur lors de la sauvegarde'}), 500
 
 
@@ -270,8 +285,11 @@ def get_saved_simulations():
             'simulations': simulations
         }), 200
 
+    except ValueError as e:
+        logger.error(f"Erreur récupération simulations (utilisateur introuvable): {str(e)}", exc_info=True)
+        return jsonify({'error': 'Utilisateur introuvable'}), 404
     except Exception as e:
-        logger.error(f"Erreur récupération simulations: {str(e)}")
+        logger.error(f"Erreur récupération simulations: {str(e)}", exc_info=True)
         return jsonify({'error': 'Erreur lors de la récupération'}), 500
 
 
@@ -293,8 +311,11 @@ def delete_simulation(simulation_id):
 
         return jsonify({'error': 'Simulation non trouvée'}), 404
 
+    except ValueError as e:
+        logger.error(f"Erreur suppression simulation (ID invalide): {str(e)}", exc_info=True)
+        return jsonify({'error': 'ID invalide'}), 400
     except Exception as e:
-        logger.error(f"Erreur suppression simulation: {str(e)}")
+        logger.error(f"Erreur suppression simulation: {str(e)}", exc_info=True)
         return jsonify({'error': 'Erreur lors de la suppression'}), 500
 
 

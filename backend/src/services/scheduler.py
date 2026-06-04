@@ -51,8 +51,11 @@ class SchedulerService:
             cls._add_recurring_jobs()
 
             return True
+        except ImportError as e:
+            logger.error(f"❌ Erreur démarrage APScheduler (import): {e}", exc_info=True)
+            return False
         except Exception as e:
-            logger.error(f"❌ Erreur démarrage APScheduler: {e}")
+            logger.error(f"❌ Erreur démarrage APScheduler: {e}", exc_info=True)
             return False
 
     @classmethod
@@ -116,8 +119,11 @@ class SchedulerService:
             logger.info(f"✅ Rappel feedback planifié pour visite #{visite_id} à {run_time.strftime('%Y-%m-%d %H:%M:%S')}")
             return True
 
+        except ValueError as e:
+            logger.error(f"❌ Erreur planification rappel visite #{visite_id} (validation): {e}", exc_info=True)
+            return False
         except Exception as e:
-            logger.error(f"❌ Erreur planification rappel visite #{visite_id}: {e}")
+            logger.error(f"❌ Erreur planification rappel visite #{visite_id}: {e}", exc_info=True)
             return False
 
     @classmethod
@@ -191,12 +197,17 @@ class SchedulerService:
 
                     logger.info(f"✅ Rappel feedback envoyé - Visite #{visite.id} → {acheteur.utilisateur.email}")
 
+                except ValueError as e:
+                    logger.error(f"❌ Erreur envoi rappel visite #{visite.id} (validation): {e}", exc_info=True)
+                    continue
                 except Exception as e:
-                    logger.error(f"❌ Erreur envoi rappel visite #{visite.id}: {e}")
+                    logger.error(f"❌ Erreur envoi rappel visite #{visite.id}: {e}", exc_info=True)
                     continue
 
+        except ValueError as e:
+            logger.error(f"❌ Erreur tâche _send_feedback_reminders (validation): {e}", exc_info=True)
         except Exception as e:
-            logger.error(f"❌ Erreur tâche _send_feedback_reminders: {e}")
+            logger.error(f"❌ Erreur tâche _send_feedback_reminders: {e}", exc_info=True)
 
     @classmethod
     def _send_single_feedback_reminder(cls, visite_id: int) -> None:
@@ -252,8 +263,10 @@ class SchedulerService:
 
             logger.info(f"✅ Rappel feedback envoyé - Visite #{visite_id}")
 
+        except ValueError as e:
+            logger.error(f"❌ Erreur envoi rappel visite #{visite_id} (validation): {e}", exc_info=True)
         except Exception as e:
-            logger.error(f"❌ Erreur envoi rappel visite #{visite_id}: {e}")
+            logger.error(f"❌ Erreur envoi rappel visite #{visite_id}: {e}", exc_info=True)
 
     @classmethod
     def get_scheduler_status(cls) -> dict:

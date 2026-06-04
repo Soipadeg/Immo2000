@@ -80,8 +80,11 @@ class RedisCache:
                 # Test connexion
                 self._redis_client.ping()
                 logger.info(f"✅ Redis connecté: {CacheConfig.REDIS_HOST}:{CacheConfig.REDIS_PORT}")
+            except ConnectionError as e:
+                logger.warning(f"⚠️  Redis unavailable (connexion échouée): {e}", exc_info=True)
+                self._redis_client = None
             except Exception as e:
-                logger.warning(f"⚠️  Redis unavailable: {e}. Cache désactivé.")
+                logger.warning(f"⚠️  Redis unavailable: {e}. Cache désactivé.", exc_info=True)
                 self._redis_client = None
 
     def is_available(self) -> bool:
@@ -100,8 +103,11 @@ class RedisCache:
                     logger.debug(f"🔄 Cache HIT: {key}")
                 return json.loads(value)
             return None
+        except json.JSONDecodeError as e:
+            logger.warning(f"❌ Cache GET error ({key}) (JSON invalide): {e}", exc_info=True)
+            return None
         except Exception as e:
-            logger.warning(f"❌ Cache GET error ({key}): {e}")
+            logger.warning(f"❌ Cache GET error ({key}): {e}", exc_info=True)
             return None
 
     def set(self, key: str, value: Dict[str, Any], ttl: int = 3600) -> bool:
@@ -115,8 +121,11 @@ class RedisCache:
             if CacheConfig.CACHE_DEBUG:
                 logger.debug(f"💾 Cache SET: {key} (TTL: {ttl}s)")
             return True
+        except ValueError as e:
+            logger.warning(f"❌ Cache SET error ({key}) (valeur invalide): {e}", exc_info=True)
+            return False
         except Exception as e:
-            logger.warning(f"❌ Cache SET error ({key}): {e}")
+            logger.warning(f"❌ Cache SET error ({key}): {e}", exc_info=True)
             return False
 
     def delete(self, key: str) -> bool:
@@ -129,8 +138,11 @@ class RedisCache:
             if CacheConfig.CACHE_DEBUG:
                 logger.debug(f"🗑️  Cache DELETE: {key}")
             return True
+        except ValueError as e:
+            logger.warning(f"❌ Cache DELETE error ({key}) (clé invalide): {e}", exc_info=True)
+            return False
         except Exception as e:
-            logger.warning(f"❌ Cache DELETE error ({key}): {e}")
+            logger.warning(f"❌ Cache DELETE error ({key}): {e}", exc_info=True)
             return False
 
     def delete_pattern(self, pattern: str) -> int:
@@ -150,8 +162,11 @@ class RedisCache:
             if CacheConfig.CACHE_DEBUG:
                 logger.debug(f"🗑️  Cache PATTERN DELETE: {pattern} ({count} keys)")
             return count
+        except ValueError as e:
+            logger.warning(f"❌ Cache PATTERN DELETE error ({pattern}) (pattern invalide): {e}", exc_info=True)
+            return 0
         except Exception as e:
-            logger.warning(f"❌ Cache PATTERN DELETE error ({pattern}): {e}")
+            logger.warning(f"❌ Cache PATTERN DELETE error ({pattern}): {e}", exc_info=True)
             return 0
 
     def clear(self) -> bool:
@@ -163,8 +178,11 @@ class RedisCache:
             self._redis_client.flushdb()
             logger.info("🧹 Cache complètement vidé")
             return True
+        except ConnectionError as e:
+            logger.warning(f"❌ Cache CLEAR error (connexion Redis échouée): {e}", exc_info=True)
+            return False
         except Exception as e:
-            logger.warning(f"❌ Cache CLEAR error: {e}")
+            logger.warning(f"❌ Cache CLEAR error: {e}", exc_info=True)
             return False
 
     def get_stats(self) -> Dict[str, Any]:
@@ -181,8 +199,11 @@ class RedisCache:
                 'total_commands': info.get('total_commands_processed'),
                 'keyspace': self._redis_client.dbsize()
             }
+        except ConnectionError as e:
+            logger.warning(f"❌ Cache STATS error (connexion Redis échouée): {e}", exc_info=True)
+            return {'status': 'error', 'message': str(e)}
         except Exception as e:
-            logger.warning(f"❌ Cache STATS error: {e}")
+            logger.warning(f"❌ Cache STATS error: {e}", exc_info=True)
             return {'status': 'error', 'message': str(e)}
 
 

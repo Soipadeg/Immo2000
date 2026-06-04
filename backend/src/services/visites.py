@@ -245,8 +245,10 @@ class VisitesService:
                 corps_html=html
             )
             logger.info(f"✅ Email notification envoyé à {vendeur.email} pour visite #{visite_id}")
+        except ValueError as e:
+            logger.error(f"❌ Erreur envoi email notification (adresse invalide): {str(e)}", exc_info=True)
         except Exception as e:
-            logger.error(f"❌ Erreur envoi email notification: {str(e)}")
+            logger.error(f"❌ Erreur envoi email notification: {str(e)}", exc_info=True)
             # Ne pas bloquer le processus si l'email échoue
 
     @staticmethod
@@ -319,6 +321,9 @@ class VisitesService:
         except IntegrityError:
             db.session.rollback()
             raise VisitesError("Erreur d'intégrité: Une visite existe déjà pour cette annonce à cette date/heure.")
+        except ValueError as e:
+            db.session.rollback()
+            raise VisitesError(f"Erreur de validation lors de la création de la visite: {str(e)}")
         except Exception as e:
             db.session.rollback()
             raise VisitesError(f"Erreur lors de la création de la visite: {str(e)}")
@@ -326,8 +331,10 @@ class VisitesService:
         # 7. Envoyer notification au vendeur
         try:
             VisitesService.envoyer_notification_vendeur(annonce, acheteur, date_heure, visite.id)
+        except ValueError as e:
+            logger.warning(f"⚠️ Erreur lors de l'envoi de la notification (email invalide): {str(e)}", exc_info=True)
         except Exception as e:
-            logger.warning(f"⚠️ Erreur lors de l'envoi de la notification: {str(e)}")
+            logger.warning(f"⚠️ Erreur lors de l'envoi de la notification: {str(e)}", exc_info=True)
 
         # 8. Planifier rappel feedback 24h après la visite
         try:
@@ -342,8 +349,10 @@ class VisitesService:
                 SchedulerService.schedule_feedback_reminder(visite.id, delay_seconds)
             else:
                 logger.debug(f"ℹ️ Visite #{visite.id} déjà passée, pas de rappel planifié")
+        except ValueError as e:
+            logger.warning(f"⚠️ Erreur planification rappel feedback (délai invalide): {str(e)}", exc_info=True)
         except Exception as e:
-            logger.warning(f"⚠️ Erreur planification rappel feedback: {str(e)}")
+            logger.warning(f"⚠️ Erreur planification rappel feedback: {str(e)}", exc_info=True)
 
         # 9. Retourner résultat
         return {
@@ -381,6 +390,9 @@ class VisitesService:
         try:
             visite.statut = "annulee"
             db.session.commit()
+        except ValueError as e:
+            db.session.rollback()
+            raise VisitesError(f"Erreur de validation lors de l'annulation: {str(e)}")
         except Exception as e:
             db.session.rollback()
             raise VisitesError(f"Erreur lors de l'annulation: {str(e)}")
@@ -641,6 +653,9 @@ class VisitesService:
         # 6. Sauvegarder les modifications
         try:
             db.session.commit()
+        except ValueError as e:
+            db.session.rollback()
+            raise VisitesError(f"Erreur de validation lors de la modification: {str(e)}")
         except Exception as e:
             db.session.rollback()
             raise VisitesError(f"Erreur lors de la modification: {str(e)}")
@@ -700,8 +715,10 @@ class VisitesService:
                 )
                 logger.info(f"✅ Emails annulation envoyés - Visite #{visite_id}")
 
+        except ValueError as e:
+            logger.error(f"❌ Erreur lors de l'envoi des notifications (email invalide): {str(e)}", exc_info=True)
         except Exception as e:
-            logger.error(f"❌ Erreur lors de l'envoi des notifications: {str(e)}")
+            logger.error(f"❌ Erreur lors de l'envoi des notifications: {str(e)}", exc_info=True)
 
         return {
             "id": visite.id,
@@ -777,6 +794,9 @@ class VisitesService:
             )
             db.session.add(feedback)
             db.session.commit()
+        except ValueError as e:
+            db.session.rollback()
+            raise VisitesError(f"Erreur de validation lors de la création du feedback: {str(e)}")
         except Exception as e:
             db.session.rollback()
             raise VisitesError(f"Erreur lors de la création du feedback: {str(e)}")
@@ -880,6 +900,9 @@ class VisitesService:
         try:
             feedback.reponse_vendeur = reponse_vendeur
             db.session.commit()
+        except ValueError as e:
+            db.session.rollback()
+            raise VisitesError(f"Erreur de validation lors de la mise à jour: {str(e)}")
         except Exception as e:
             db.session.rollback()
             raise VisitesError(f"Erreur lors de la mise à jour: {str(e)}")

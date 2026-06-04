@@ -77,8 +77,11 @@ class DocumentEncryptionService:
             logger.info(f"Document chiffré: {metadata.get('filename', 'unknown')}")
             return encrypted_content, encryption_id
 
+        except ValueError as e:
+            logger.error(f"Erreur chiffrement document (données invalides): {str(e)}", exc_info=True)
+            raise
         except Exception as e:
-            logger.error(f"Erreur chiffrement document: {str(e)}")
+            logger.error(f"Erreur chiffrement document: {str(e)}", exc_info=True)
             raise
 
 
@@ -100,8 +103,11 @@ class DocumentEncryptionService:
             decrypted_content = DocumentEncryptionService._encryption_key.decrypt(encrypted_content)
             return decrypted_content
 
+        except ValueError as e:
+            logger.error(f"Erreur déchiffrement document (clé ou données invalides): {str(e)}", exc_info=True)
+            raise
         except Exception as e:
-            logger.error(f"Erreur déchiffrement document: {str(e)}")
+            logger.error(f"Erreur déchiffrement document: {str(e)}", exc_info=True)
             raise
 
 
@@ -170,8 +176,11 @@ class DocumentEncryptionService:
         except PermissionError as e:
             logger.warning(f"Accès refusé au document {document_id} pour utilisateur {user_id}: {str(e)}")
             raise
+        except ValueError as e:
+            logger.error(f"Erreur vérification permissions (données manquantes): {str(e)}", exc_info=True)
+            raise
         except Exception as e:
-            logger.error(f"Erreur vérification permissions: {str(e)}")
+            logger.error(f"Erreur vérification permissions: {str(e)}", exc_info=True)
             raise
 
 
@@ -211,8 +220,10 @@ class DocumentEncryptionService:
             db.session.add(audit)
             db.session.commit()
 
+        except ValueError as e:
+            logger.error(f"Erreur enregistrement accès (données invalides): {str(e)}", exc_info=True)
         except Exception as e:
-            logger.error(f"Erreur enregistrement accès: {str(e)}")
+            logger.error(f"Erreur enregistrement accès: {str(e)}", exc_info=True)
 
 
     @staticmethod
@@ -221,7 +232,11 @@ class DocumentEncryptionService:
         try:
             from flask import request
             return request.remote_addr or "unknown"
-        except:
+        except RuntimeError as e:
+            logger.warning(f"Impossible d'obtenir l'IP du client: {str(e)}", exc_info=True)
+            return "unknown"
+        except Exception as e:
+            logger.warning(f"Impossible d'obtenir l'IP du client: {str(e)}", exc_info=True)
             return "unknown"
 
 
@@ -256,8 +271,11 @@ class DocumentEncryptionService:
                 for a in accesses
             ]
 
+        except ValueError as e:
+            logger.error(f"Erreur récupération access log (données invalides): {str(e)}", exc_info=True)
+            return []
         except Exception as e:
-            logger.error(f"Erreur récupération access log: {str(e)}")
+            logger.error(f"Erreur récupération access log: {str(e)}", exc_info=True)
             return []
 
 
@@ -304,8 +322,11 @@ class DocumentEncryptionService:
 
             logger.info(f"Document {document_id} supprimé définitivement - Raison: {reason}")
 
+        except ValueError as e:
+            logger.error(f"Erreur suppression document (document introuvable): {str(e)}", exc_info=True)
+            raise
         except Exception as e:
-            logger.error(f"Erreur suppression document: {str(e)}")
+            logger.error(f"Erreur suppression document: {str(e)}", exc_info=True)
             raise
 
 
@@ -339,12 +360,14 @@ class DocumentEncryptionService:
                     )
                     deleted_count += 1
                 except Exception as e:
-                    logger.warning(f"Impossible de supprimer document {document.document_id}: {str(e)}")
+                    logger.warning(f"Impossible de supprimer document {document.document_id}: {str(e)}", exc_info=True)
 
             logger.info(f"Politique de rétention appliquée: {deleted_count} documents supprimés")
 
+        except ValueError as e:
+            logger.error(f"Erreur application politique rétention (paramètres invalides): {str(e)}", exc_info=True)
         except Exception as e:
-            logger.error(f"Erreur application politique rétention: {str(e)}")
+            logger.error(f"Erreur application politique rétention: {str(e)}", exc_info=True)
 
 
 class RGPDComplianceService:
@@ -412,8 +435,11 @@ class RGPDComplianceService:
             logger.info(f"Données RGPD exportées pour utilisateur {user_id}")
             return data
 
+        except ValueError as e:
+            logger.error(f"Erreur export données RGPD (utilisateur introuvable): {str(e)}", exc_info=True)
+            raise
         except Exception as e:
-            logger.error(f"Erreur export données RGPD: {str(e)}")
+            logger.error(f"Erreur export données RGPD: {str(e)}", exc_info=True)
             raise
 
 
@@ -470,8 +496,11 @@ class RGPDComplianceService:
 
             logger.info(f"Suppression RGPD complète effectuée pour utilisateur {user_id}")
 
+        except ValueError as e:
+            logger.error(f"Erreur suppression données RGPD (utilisateur introuvable): {str(e)}", exc_info=True)
+            raise
         except Exception as e:
-            logger.error(f"Erreur suppression données RGPD: {str(e)}")
+            logger.error(f"Erreur suppression données RGPD: {str(e)}", exc_info=True)
             raise
 
 
@@ -504,6 +533,9 @@ class RGPDComplianceService:
 
             return report
 
+        except ValueError as e:
+            logger.error(f"Erreur rapport RGPD (erreur de calcul): {str(e)}", exc_info=True)
+            raise
         except Exception as e:
-            logger.error(f"Erreur rapport RGPD: {str(e)}")
+            logger.error(f"Erreur rapport RGPD: {str(e)}", exc_info=True)
             raise

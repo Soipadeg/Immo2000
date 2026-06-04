@@ -152,11 +152,22 @@ def handle_errors(
                     "code": 400
                 }), 400
 
+            except RuntimeError as e:
+                # Erreurs inattendues : 500
+                if log_errors:
+                    logger.error(f"Unexpected RuntimeError in {func.__name__}: {str(e)}", exc_info=True)
+
+                return jsonify({
+                    "success": False,
+                    "error": "Erreur serveur interne",
+                    "code": 500,
+                    "details": str(e) if __debug__ else None  # Only in debug
+                }), 500
             except Exception as e:
                 # Erreurs inattendues : 500
                 if log_errors:
-                    logger.error(f"Unexpected error in {func.__name__}:")
-                    logger.error(traceback.format_exc())
+                    logger.error(f"Unexpected error in {func.__name__}:", exc_info=True)
+                    logger.error(traceback.format_exc(), exc_info=True)
 
                 return jsonify({
                     "success": False,

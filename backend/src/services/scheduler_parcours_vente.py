@@ -126,11 +126,15 @@ def rappeler_offres_non_repondues():
                     else:
                         logger.warning(f"   ⚠️  Erreur envoi email {vendeur.email}")
 
+                except ValueError as e:
+                    logger.error(f"   ❌ Erreur traitement offre {offre.offre_id} (données invalides): {e}", exc_info=True)
                 except Exception as e:
-                    logger.error(f"   ❌ Erreur traitement offre {offre.offre_id}: {e}")
+                    logger.error(f"   ❌ Erreur traitement offre {offre.offre_id}: {e}", exc_info=True)
 
+    except ValueError as e:
+        logger.error(f"❌ Erreur tâche rappel offres (configuration invalide): {e}", exc_info=True)
     except Exception as e:
-        logger.error(f"❌ Erreur tâche rappel offres: {e}")
+        logger.error(f"❌ Erreur tâche rappel offres: {e}", exc_info=True)
 
 
 def rappeler_offres_negociation():
@@ -187,11 +191,15 @@ def rappeler_offres_negociation():
                         )
                         logger.info(f"   ✅ Rappel acheteur envoyé (offre {offre.offre_id})")
 
+                except ValueError as e:
+                    logger.error(f"   ❌ Erreur traitement offre {offre.offre_id} (données invalides): {e}", exc_info=True)
                 except Exception as e:
-                    logger.error(f"   ❌ Erreur traitement offre {offre.offre_id}: {e}")
+                    logger.error(f"   ❌ Erreur traitement offre {offre.offre_id}: {e}", exc_info=True)
 
+    except ValueError as e:
+        logger.error(f"❌ Erreur tâche rappel négociations (configuration invalide): {e}", exc_info=True)
     except Exception as e:
-        logger.error(f"❌ Erreur tâche rappel négociations: {e}")
+        logger.error(f"❌ Erreur tâche rappel négociations: {e}", exc_info=True)
 
 
 def rappeler_paiement_depot():
@@ -234,11 +242,15 @@ def rappeler_paiement_depot():
                         )
                         logger.info(f"   ✅ Rappel paiement envoyé à l'acheteur (transaction {transaction.transaction_notaire_id})")
 
+                except ValueError as e:
+                    logger.error(f"   ❌ Erreur transaction {transaction.transaction_notaire_id} (données invalides): {e}", exc_info=True)
                 except Exception as e:
-                    logger.error(f"   ❌ Erreur transaction {transaction.transaction_notaire_id}: {e}")
+                    logger.error(f"   ❌ Erreur transaction {transaction.transaction_notaire_id}: {e}", exc_info=True)
 
+    except ValueError as e:
+        logger.error(f"❌ Erreur tâche rappel paiement dépôt (configuration invalide): {e}", exc_info=True)
     except Exception as e:
-        logger.error(f"❌ Erreur tâche rappel paiement dépôt: {e}")
+        logger.error(f"❌ Erreur tâche rappel paiement dépôt: {e}", exc_info=True)
 
 
 def rappeler_documents_en_attente():
@@ -296,11 +308,15 @@ def rappeler_documents_en_attente():
                         )
                         logger.info(f"   ✅ Rappel acheteur envoyé (transaction {transaction.transaction_notaire_id})")
 
+                except ValueError as e:
+                    logger.error(f"   ❌ Erreur transaction {transaction.transaction_notaire_id} (données invalides): {e}", exc_info=True)
                 except Exception as e:
-                    logger.error(f"   ❌ Erreur transaction {transaction.transaction_notaire_id}: {e}")
+                    logger.error(f"   ❌ Erreur transaction {transaction.transaction_notaire_id}: {e}", exc_info=True)
 
+    except ValueError as e:
+        logger.error(f"❌ Erreur tâche rappel documents (configuration invalide): {e}", exc_info=True)
     except Exception as e:
-        logger.error(f"❌ Erreur tâche rappel documents: {e}")
+        logger.error(f"❌ Erreur tâche rappel documents: {e}", exc_info=True)
 
 
 def __no_context__():

@@ -308,8 +308,10 @@ def assign_notaire_to_transaction(
                 'bien': 'Bien immobilier'  # À obtenir de la transaction
             }
         )
+    except ValueError as e:
+        logger.warning(f"Erreur lors de l'envoi de notification (transaction introuvable): {str(e)}", exc_info=True)
     except Exception as e:
-        logger.warning(f"Erreur lors de l'envoi de notification: {str(e)}")
+        logger.warning(f"Erreur lors de l'envoi de notification: {str(e)}", exc_info=True)
 
     logger.info(f"Notaire {notaire_id} assigné à transaction {transaction_notaire_id}")
     return transaction
@@ -369,8 +371,10 @@ def validate_compromis(
                 }
             ]
         )
+    except ValueError as e:
+        logger.warning(f"Erreur notification validation (transaction introuvable): {str(e)}", exc_info=True)
     except Exception as e:
-        logger.warning(f"Erreur notification validation: {str(e)}")
+        logger.warning(f"Erreur notification validation: {str(e)}", exc_info=True)
 
     logger.info(f"Compromis validé: transaction {transaction_notaire_id}")
     return transaction
@@ -430,8 +434,10 @@ def request_modifications(
                 }
             ]
         )
+    except ValueError as e:
+        logger.warning(f"Erreur notification modifications (transaction introuvable): {str(e)}", exc_info=True)
     except Exception as e:
-        logger.warning(f"Erreur notification modifications: {str(e)}")
+        logger.warning(f"Erreur notification modifications: {str(e)}", exc_info=True)
 
     logger.info(f"Modifications demandées: transaction {transaction_notaire_id}")
     return transaction
@@ -489,8 +495,10 @@ def reject_compromis(
                 }
             ]
         )
+    except ValueError as e:
+        logger.warning(f"Erreur notification rejet (transaction introuvable): {str(e)}", exc_info=True)
     except Exception as e:
-        logger.warning(f"Erreur notification rejet: {str(e)}")
+        logger.warning(f"Erreur notification rejet: {str(e)}", exc_info=True)
 
     logger.info(f"Compromis refusé: transaction {transaction_notaire_id}")
     return transaction

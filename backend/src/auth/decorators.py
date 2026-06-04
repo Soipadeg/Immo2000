@@ -88,8 +88,11 @@ def token_required(f):
                 "prenom": user.prenom,
                 "exp": payload['exp'],
             }
+        except ValueError as e:
+            current_app.logger.error(f"Error retrieving user (validation): {str(e)}", exc_info=True)
+            return jsonify({"error": "Authentication error"}), 401
         except Exception as e:
-            current_app.logger.error(f"Error retrieving user: {str(e)}")
+            current_app.logger.error(f"Error retrieving user: {str(e)}", exc_info=True)
             return jsonify({"error": "Authentication error"}), 401
 
         # Passer au route handler

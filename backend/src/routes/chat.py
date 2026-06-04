@@ -52,9 +52,12 @@ def get_conversations():
             ]
         }), 200
 
+    except ValueError as e:
+        logger.error(f"Erreur récupération conversations (paramètres invalides): {str(e)}", exc_info=True)
+        return jsonify({'error': 'Paramètres invalides'}), 400
     except Exception as e:
-        logger.error(f"Erreur récupération conversations: {str(e)}")
-        return jsonify({'error': 'Erreur'}), 500
+        logger.error(f"Erreur récupération conversations: {str(e)}", exc_info=True)
+        return jsonify({'error': 'Erreur serveur'}), 500
 
 
 @chat_bp.route('/conversations/<int:conversation_id>/messages', methods=['GET'])
@@ -91,9 +94,12 @@ def get_messages(conversation_id):
             'messages': [m.to_dict() for m in reversed(messages)]
         }), 200
 
+    except ValueError as e:
+        logger.error(f"Erreur récupération messages (paramètres invalides): {str(e)}", exc_info=True)
+        return jsonify({'error': 'Paramètres invalides'}), 400
     except Exception as e:
-        logger.error(f"Erreur récupération messages: {str(e)}")
-        return jsonify({'error': 'Erreur'}), 500
+        logger.error(f"Erreur récupération messages: {str(e)}", exc_info=True)
+        return jsonify({'error': 'Erreur serveur'}), 500
 
 
 @chat_bp.route('/conversations/<int:other_user_id>/start', methods=['POST'])
@@ -128,9 +134,12 @@ def start_conversation(other_user_id):
             'other_user': other_user.to_dict()
         }), 200
 
+    except ValueError as e:
+        logger.error(f"Erreur création conversation (utilisateur introuvable): {str(e)}", exc_info=True)
+        return jsonify({'error': 'Utilisateur introuvable'}), 404
     except Exception as e:
-        logger.error(f"Erreur création conversation: {str(e)}")
-        return jsonify({'error': 'Erreur'}), 500
+        logger.error(f"Erreur création conversation: {str(e)}", exc_info=True)
+        return jsonify({'error': 'Erreur serveur'}), 500
 
 
 @chat_bp.route('/conversations/<int:conversation_id>/delete', methods=['DELETE'])
@@ -154,7 +163,7 @@ def delete_conversation(conversation_id):
         return jsonify({'success': True}), 200
 
     except Exception as e:
-        logger.error(f"Erreur suppression conversation: {str(e)}")
+        logger.error(f"Erreur suppression conversation: {str(e)}", exc_info=True)
         return jsonify({'error': 'Erreur'}), 500
 
 
@@ -175,7 +184,7 @@ def init_socketio(socketio, app):
             emit('connect_response', {'message': 'Connecté au serveur chat'})
 
         except Exception as e:
-            logger.error(f"Erreur connexion: {str(e)}")
+            logger.error(f"Erreur connexion: {str(e)}", exc_info=True)
             return False
 
     @socketio.on('disconnect')
@@ -210,9 +219,12 @@ def init_socketio(socketio, app):
                 'timestamp': datetime.utcnow().isoformat()
             }, room=room_name)
 
+        except ValueError as e:
+            logger.error(f"Erreur join conversation (conversation introuvable): {str(e)}", exc_info=True)
+            emit('error', {'message': 'Conversation introuvable'})
         except Exception as e:
-            logger.error(f"Erreur join conversation: {str(e)}")
-            emit('error', {'message': 'Erreur'})
+            logger.error(f"Erreur join conversation: {str(e)}", exc_info=True)
+            emit('error', {'message': 'Erreur serveur'})
 
     @socketio.on('leave_conversation')
     def on_leave_conversation(data):
@@ -230,8 +242,10 @@ def init_socketio(socketio, app):
                 'username': current_user.username
             }, room=room_name)
 
+        except ValueError as e:
+            logger.error(f"Erreur leave conversation (paramètres invalides): {str(e)}", exc_info=True)
         except Exception as e:
-            logger.error(f"Erreur leave conversation: {str(e)}")
+            logger.error(f"Erreur leave conversation: {str(e)}", exc_info=True)
 
     @socketio.on('send_message')
     def on_send_message(data):
@@ -273,9 +287,12 @@ def init_socketio(socketio, app):
 
             logger.info(f"Message envoyé dans conversation {conversation_id}")
 
+        except ValueError as e:
+            logger.error(f"Erreur envoi message (conversation introuvable): {str(e)}", exc_info=True)
+            emit('error', {'message': 'Conversation introuvable'})
         except Exception as e:
-            logger.error(f"Erreur envoi message: {str(e)}")
-            emit('error', {'message': 'Erreur lors de l\'envoi'})
+            logger.error(f"Erreur envoi message: {str(e)}", exc_info=True)
+            emit('error', {'message': 'Erreur serveur lors de l\'envoi'})
 
     @socketio.on('typing')
     def on_typing(data):
@@ -289,8 +306,10 @@ def init_socketio(socketio, app):
                 'username': current_user.username
             }, room=room_name, include_self=False)
 
+        except ValueError as e:
+            logger.error(f"Erreur typing (paramètres invalides): {str(e)}", exc_info=True)
         except Exception as e:
-            logger.error(f"Erreur typing: {str(e)}")
+            logger.error(f"Erreur typing: {str(e)}", exc_info=True)
 
     @socketio.on('stop_typing')
     def on_stop_typing(data):
@@ -303,8 +322,10 @@ def init_socketio(socketio, app):
                 'user_id': current_user.id
             }, room=room_name, include_self=False)
 
+        except ValueError as e:
+            logger.error(f"Erreur stop_typing (paramètres invalides): {str(e)}", exc_info=True)
         except Exception as e:
-            logger.error(f"Erreur stop_typing: {str(e)}")
+            logger.error(f"Erreur stop_typing: {str(e)}", exc_info=True)
 
     @socketio.on('mark_as_read')
     def on_mark_as_read(data):
@@ -321,5 +342,7 @@ def init_socketio(socketio, app):
 
             logger.debug(f"Messages marqués comme lus: {len(message_ids)}")
 
+        except ValueError as e:
+            logger.error(f"Erreur mark_as_read (ID invalide): {str(e)}", exc_info=True)
         except Exception as e:
-            logger.error(f"Erreur mark_as_read: {str(e)}")
+            logger.error(f"Erreur mark_as_read: {str(e)}", exc_info=True)

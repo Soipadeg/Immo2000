@@ -143,9 +143,17 @@ def mark_as_read(current_user, notification_id):
             "data": notification.to_dict()
         }), 200
 
+    except ValueError as e:
+        db.session.rollback()
+        logger.error(f"Erreur lors du marquage de la notification (validation): {str(e)}", exc_info=True)
+        return jsonify({
+            "error": "Erreur serveur",
+            "code": 500,
+            "details": str(e)
+        }), 500
     except Exception as e:
         db.session.rollback()
-        logger.error(f"Erreur lors du marquage de la notification: {str(e)}")
+        logger.error(f"Erreur lors du marquage de la notification: {str(e)}", exc_info=True)
         return jsonify({
             "error": "Erreur serveur",
             "code": 500,
@@ -186,9 +194,17 @@ def delete_notification(current_user, notification_id):
             "message": "Notification supprimée"
         }), 200
 
+    except ValueError as e:
+        db.session.rollback()
+        logger.error(f"Erreur lors de la suppression de la notification (validation): {str(e)}", exc_info=True)
+        return jsonify({
+            "error": "Erreur serveur",
+            "code": 500,
+            "details": str(e)
+        }), 500
     except Exception as e:
         db.session.rollback()
-        logger.error(f"Erreur lors de la suppression de la notification: {str(e)}")
+        logger.error(f"Erreur lors de la suppression de la notification: {str(e)}", exc_info=True)
         return jsonify({
             "error": "Erreur serveur",
             "code": 500,

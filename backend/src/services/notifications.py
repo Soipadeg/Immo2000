@@ -51,8 +51,11 @@ def notify_user(user_id, notification_type, title, message, related_entity_type=
         logger.info(f"Notification créée pour user {user_id}: {notification_type}")
         return notification
 
+    except ValueError as e:
+        logger.error(f"Erreur lors de la création de la notification (utilisateur introuvable): {str(e)}", exc_info=True)
+        raise
     except Exception as e:
-        logger.error(f"Erreur lors de la création de la notification: {str(e)}")
+        logger.error(f"Erreur lors de la création de la notification: {str(e)}", exc_info=True)
         raise
 
 
@@ -113,8 +116,11 @@ def send_notification_email(user_email, title, message, action_url=None):
 
         return success
 
+    except ValueError as e:
+        logger.error(f"Erreur lors de l'envoi de l'email (adresse invalide): {str(e)}", exc_info=True)
+        return False
     except Exception as e:
-        logger.error(f"Erreur lors de l'envoi de l'email: {str(e)}")
+        logger.error(f"Erreur lors de l'envoi de l'email: {str(e)}", exc_info=True)
         return False
 
 
@@ -142,8 +148,10 @@ def notify_on_new_annonce(utilisateur_id, annonce_title, annonce_id):
             action_url=action_url,
             icon="🏠"
         )
+    except ValueError as e:
+        logger.error(f"Erreur lors de la notification d'alerte (utilisateur introuvable): {str(e)}", exc_info=True)
     except Exception as e:
-        logger.error(f"Erreur lors de la notification d'alerte: {str(e)}")
+        logger.error(f"Erreur lors de la notification d'alerte: {str(e)}", exc_info=True)
 
 
 def notify_on_offer_received(utilisateur_id, offer_id, buyer_name):
@@ -170,8 +178,10 @@ def notify_on_offer_received(utilisateur_id, offer_id, buyer_name):
             action_url=action_url,
             icon="📋"
         )
+    except ValueError as e:
+        logger.error(f"Erreur lors de la notification d'offre (utilisateur introuvable): {str(e)}", exc_info=True)
     except Exception as e:
-        logger.error(f"Erreur lors de la notification d'offre: {str(e)}")
+        logger.error(f"Erreur lors de la notification d'offre: {str(e)}", exc_info=True)
 
 
 def notify_on_message_received(utilisateur_id, message_id, sender_name):
@@ -198,8 +208,10 @@ def notify_on_message_received(utilisateur_id, message_id, sender_name):
             action_url=action_url,
             icon="💬"
         )
+    except ValueError as e:
+        logger.error(f"Erreur lors de la notification de message (utilisateur introuvable): {str(e)}", exc_info=True)
     except Exception as e:
-        logger.error(f"Erreur lors de la notification de message: {str(e)}")
+        logger.error(f"Erreur lors de la notification de message: {str(e)}", exc_info=True)
 
 
 def get_user_notifications_summary(user_id):
@@ -221,6 +233,9 @@ def get_user_notifications_summary(user_id):
             "unread": unread,
             "has_unread": unread > 0
         }
+    except ValueError as e:
+        logger.error(f"Erreur lors de la récupération du résumé (utilisateur introuvable): {str(e)}", exc_info=True)
+        return {"total": 0, "unread": 0, "has_unread": False}
     except Exception as e:
-        logger.error(f"Erreur lors de la récupération du résumé: {str(e)}")
+        logger.error(f"Erreur lors de la récupération du résumé: {str(e)}", exc_info=True)
         return {"total": 0, "unread": 0, "has_unread": False}

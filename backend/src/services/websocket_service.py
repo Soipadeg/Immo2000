@@ -1,13 +1,13 @@
-/**
- * Service WebSocket pour la communication en temps réel
- * Phase 5.1 - Advanced Features
- *
- * Gère:
- * - Messages en temps réel
- * - Notifications en temps réel
- * - Présence utilisateurs (online/offline)
- * - Typing indicators
- */
+"""
+Service WebSocket pour la communication en temps réel
+Phase 5.1 - Advanced Features
+
+Gère:
+- Messages en temps réel
+- Notifications en temps réel
+- Présence utilisateurs (online/offline)
+- Typing indicators
+"""
 
 from flask import request, current_app
 from flask_socketio import emit, join_room, leave_room, rooms

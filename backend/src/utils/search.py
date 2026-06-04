@@ -124,8 +124,14 @@ class SearchEngine:
             logger.debug(f"Listing {listing.id} indexé")
             return True
 
+        except ConnectionError as e:
+            logger.error(f"Erreur indexation listing {listing.id} (Elasticsearch indisponible): {str(e)}", exc_info=True)
+            return False
+        except ValueError as e:
+            logger.error(f"Erreur indexation listing {listing.id} (données invalides): {str(e)}", exc_info=True)
+            return False
         except Exception as e:
-            logger.error(f"Erreur indexation listing {listing.id}: {str(e)}")
+            logger.error(f"Erreur indexation listing {listing.id}: {str(e)}", exc_info=True)
             return False
 
     def bulk_index_listings(self, listings):
@@ -161,8 +167,14 @@ class SearchEngine:
             logger.info(f"Bulk indexation: {success} réussi(s), {failed} échoué(s)")
             return success
 
+        except ConnectionError as e:
+            logger.error(f"Erreur bulk indexation (Elasticsearch indisponible): {str(e)}", exc_info=True)
+            return 0
+        except ValueError as e:
+            logger.error(f"Erreur bulk indexation (données invalides): {str(e)}", exc_info=True)
+            return 0
         except Exception as e:
-            logger.error(f"Erreur bulk indexation: {str(e)}")
+            logger.error(f"Erreur bulk indexation: {str(e)}", exc_info=True)
             return 0
 
     def delete_listing(self, listing_id):
@@ -172,8 +184,14 @@ class SearchEngine:
             logger.debug(f"Listing {listing_id} supprimé de l'index")
             return True
 
+        except ConnectionError as e:
+            logger.error(f"Erreur suppression listing {listing_id} (Elasticsearch indisponible): {str(e)}", exc_info=True)
+            return False
+        except ValueError as e:
+            logger.error(f"Erreur suppression listing {listing_id} (ID invalide): {str(e)}", exc_info=True)
+            return False
         except Exception as e:
-            logger.error(f"Erreur suppression listing {listing_id}: {str(e)}")
+            logger.error(f"Erreur suppression listing {listing_id}: {str(e)}", exc_info=True)
             return False
 
     def search(self, query=None, filters=None, sort=None, size=50, from_=0):
@@ -292,8 +310,22 @@ class SearchEngine:
                 'pages': (total + size - 1) // size
             }
 
+        except ConnectionError as e:
+            logger.error(f"Erreur recherche (Elasticsearch indisponible): {str(e)}", exc_info=True)
+            return {
+                'total': 0,
+                'hits': [],
+                'error': str(e)
+            }
+        except ValueError as e:
+            logger.error(f"Erreur recherche (paramètres invalides): {str(e)}", exc_info=True)
+            return {
+                'total': 0,
+                'hits': [],
+                'error': str(e)
+            }
         except Exception as e:
-            logger.error(f"Erreur recherche: {str(e)}")
+            logger.error(f"Erreur recherche: {str(e)}", exc_info=True)
             return {
                 'total': 0,
                 'hits': [],
@@ -318,8 +350,14 @@ class SearchEngine:
             suggestions = response['suggest']['title-suggest'][0]['options']
             return [s['text'] for s in suggestions]
 
+        except ConnectionError as e:
+            logger.error(f"Erreur suggestions (Elasticsearch indisponible): {str(e)}", exc_info=True)
+            return []
+        except KeyError as e:
+            logger.error(f"Erreur suggestions (format de réponse invalide): {str(e)}", exc_info=True)
+            return []
         except Exception as e:
-            logger.error(f"Erreur suggestions: {str(e)}")
+            logger.error(f"Erreur suggestions: {str(e)}", exc_info=True)
             return []
 
     def get_statistics(self):
@@ -333,8 +371,14 @@ class SearchEngine:
                 'index_size': stats['indices'][self.index_name]['primaries']['store']['size_in_bytes']
             }
 
+        except ConnectionError as e:
+            logger.error(f"Erreur statistiques (Elasticsearch indisponible): {str(e)}", exc_info=True)
+            return {}
+        except KeyError as e:
+            logger.error(f"Erreur statistiques (format de réponse invalide): {str(e)}", exc_info=True)
+            return {}
         except Exception as e:
-            logger.error(f"Erreur statistiques: {str(e)}")
+            logger.error(f"Erreur statistiques: {str(e)}", exc_info=True)
             return {}
 
 
@@ -374,5 +418,5 @@ def sync_all_listings():
         return count
 
     except Exception as e:
-        logger.error(f"Erreur synchronisation: {str(e)}")
+        logger.error(f"Erreur synchronisation: {str(e)}", exc_info=True)
         return 0

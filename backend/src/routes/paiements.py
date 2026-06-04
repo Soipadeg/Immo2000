@@ -374,5 +374,7 @@ def stripe_webhook() -> Tuple[Dict[str, str], int]:
 
         return {'status': 'received'}, 200
 
+    except ValueError as e:
+        return {'error': str(e)}, 400
     except Exception as e:
         return {'error': str(e)}, 400

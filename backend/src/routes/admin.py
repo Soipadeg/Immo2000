@@ -121,8 +121,15 @@ def list_all_users(current_user):
 
         return jsonify(response), 200
 
+    except ValueError as e:
+        logger.error(f"Error listing users (paramètres invalides): {str(e)}", exc_info=True)
+        return jsonify({
+            "error": "Invalid parameters",
+            "code": 400,
+            "details": str(e)
+        }), 400
     except Exception as e:
-        logger.error(f"Error listing users: {str(e)}")
+        logger.error(f"Error listing users: {str(e)}", exc_info=True)
         return jsonify({
             "error": "Internal server error",
             "code": 500,
@@ -198,8 +205,15 @@ def get_user_details(current_user, user_id):
 
         return jsonify(user_data), 200
 
+    except ValueError as e:
+        logger.error(f"Error getting user details (utilisateur introuvable): {str(e)}", exc_info=True)
+        return jsonify({
+            "error": "User not found",
+            "code": 404,
+            "details": str(e)
+        }), 404
     except Exception as e:
-        logger.error(f"Error getting user details: {str(e)}")
+        logger.error(f"Error getting user details: {str(e)}", exc_info=True)
         return jsonify({
             "error": "Internal server error",
             "code": 500,
@@ -259,8 +273,15 @@ def deactivate_user(current_user, user_id):
 
         return jsonify(user_data), 200
 
+    except ValueError as e:
+        logger.error(f"Error deactivating user (utilisateur introuvable): {str(e)}", exc_info=True)
+        return jsonify({
+            "error": "User not found",
+            "code": 404,
+            "details": str(e)
+        }), 404
     except Exception as e:
-        logger.error(f"Error deactivating user: {str(e)}")
+        logger.error(f"Error deactivating user: {str(e)}", exc_info=True)
         return jsonify({
             "error": "Internal server error",
             "code": 500,
@@ -420,8 +441,15 @@ def get_analytics(current_user):
 
         return jsonify(analytics), 200
 
+    except ValueError as e:
+        logger.error(f"Error getting analytics (paramètres invalides): {str(e)}", exc_info=True)
+        return jsonify({
+            "error": "Invalid parameters",
+            "code": 400,
+            "details": str(e)
+        }), 400
     except Exception as e:
-        logger.error(f"Error getting analytics: {str(e)}")
+        logger.error(f"Error getting analytics: {str(e)}", exc_info=True)
         return jsonify({
             "error": "Internal server error",
             "code": 500,
@@ -477,8 +505,15 @@ def get_user_activity_stats(current_user):
 
         return jsonify(stats), 200
 
+    except ValueError as e:
+        logger.error(f"Error getting user activity stats (erreur de calcul): {str(e)}", exc_info=True)
+        return jsonify({
+            "error": "Calculation error",
+            "code": 400,
+            "details": str(e)
+        }), 400
     except Exception as e:
-        logger.error(f"Error getting user activity stats: {str(e)}")
+        logger.error(f"Error getting user activity stats: {str(e)}", exc_info=True)
         return jsonify({
             "error": "Internal server error",
             "code": 500,

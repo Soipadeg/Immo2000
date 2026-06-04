@@ -82,10 +82,13 @@ def _send_notification_email(
             return False
 
     except EmailError as e:
-        logger.error(f"Erreur email pour notification {notification_type}: {str(e)}")
+        logger.error(f"Erreur email pour notification {notification_type}: {str(e)}", exc_info=True)
+        return False
+    except ValueError as e:
+        logger.error(f"Erreur lors de l'envoi de notification (validation): {str(e)}", exc_info=True)
         return False
     except Exception as e:
-        logger.error(f"Erreur lors de l'envoi de notification: {str(e)}")
+        logger.error(f"Erreur lors de l'envoi de notification: {str(e)}", exc_info=True)
         return False
 
 

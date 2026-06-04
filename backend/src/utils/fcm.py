@@ -96,8 +96,15 @@ class FCMNotificationService:
                         'token': token
                     }
 
+        except httpx.HTTPError as e:
+            logger.error(f"Erreur envoi notification (HTTP): {str(e)}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'token': token
+            }
         except Exception as e:
-            logger.error(f"Erreur envoi notification: {str(e)}")
+            logger.error(f"Erreur envoi notification: {str(e)}", exc_info=True)
             return {
                 'success': False,
                 'error': str(e),
@@ -171,8 +178,15 @@ class FCMNotificationService:
                         'total': len(tokens)
                     }
 
+        except httpx.HTTPError as e:
+            logger.error(f"Erreur envoi multicast (HTTP): {str(e)}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'total': len(tokens)
+            }
         except Exception as e:
-            logger.error(f"Erreur envoi multicast: {str(e)}")
+            logger.error(f"Erreur envoi multicast: {str(e)}", exc_info=True)
             return {
                 'success': False,
                 'error': str(e),
@@ -231,8 +245,11 @@ class FCMNotificationService:
                     logger.error(f"Erreur FCM topic: {response.status_code}")
                     return {'success': False, 'error': response.text}
 
+        except httpx.HTTPError as e:
+            logger.error(f"Erreur envoi topic (HTTP): {str(e)}", exc_info=True)
+            return {'success': False, 'error': str(e)}
         except Exception as e:
-            logger.error(f"Erreur envoi topic: {str(e)}")
+            logger.error(f"Erreur envoi topic: {str(e)}", exc_info=True)
             return {'success': False, 'error': str(e)}
 
 

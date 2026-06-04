@@ -370,6 +370,11 @@ def sell_annonce_endpoint(current_user, annonce_id):
             "error": str(e),
             "code": 422
         }), 422
+    except ValueError as e:
+        return jsonify({
+            "error": str(e),
+            "code": 400
+        }), 400
     except Exception as e:
         return jsonify({
             "error": str(e),

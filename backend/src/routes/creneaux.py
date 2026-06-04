@@ -81,8 +81,13 @@ def creer_creneau(current_user):
             "creneau": nouveau_creneau.to_dict()
         }), 201
 
+    except ValueError as e:
+        db.session.rollback()
+        logger.error(f"Erreur création créneau (données invalides): {str(e)}", exc_info=True)
+        return jsonify({"error": str(e)}), 400
     except Exception as e:
         db.session.rollback()
+        logger.error(f"Erreur création créneau: {str(e)}", exc_info=True)
         return jsonify({"error": str(e)}), 500
 
 
@@ -126,7 +131,11 @@ def get_mes_creneaux(current_user):
             "count": len(creneaux)
         }), 200
 
+    except ValueError as e:
+        logger.error(f"Erreur récupération créneaux (paramètres invalides): {str(e)}", exc_info=True)
+        return jsonify({"error": str(e)}), 400
     except Exception as e:
+        logger.error(f"Erreur récupération créneaux: {str(e)}", exc_info=True)
         return jsonify({"error": str(e)}), 500
 
 
@@ -153,7 +162,11 @@ def get_creneau(current_user, creneau_id):
 
         return jsonify({"creneau": creneau.to_dict()}), 200
 
+    except ValueError as e:
+        logger.error(f"Erreur récupération créneau (ID invalide): {str(e)}", exc_info=True)
+        return jsonify({"error": str(e)}), 400
     except Exception as e:
+        logger.error(f"Erreur récupération créneau: {str(e)}", exc_info=True)
         return jsonify({"error": str(e)}), 500
 
 
@@ -184,8 +197,13 @@ def supprimer_creneau(current_user, creneau_id):
 
         return jsonify({"message": "Créneau supprimé avec succès"}), 200
 
+    except ValueError as e:
+        db.session.rollback()
+        logger.error(f"Erreur suppression créneau (ID invalide): {str(e)}", exc_info=True)
+        return jsonify({"error": str(e)}), 400
     except Exception as e:
         db.session.rollback()
+        logger.error(f"Erreur suppression créneau: {str(e)}", exc_info=True)
         return jsonify({"error": str(e)}), 500
 
 
@@ -233,7 +251,11 @@ def get_creneaux_vendeur(vendeur_id):
             "count": len(creneaux)
         }), 200
 
+    except ValueError as e:
+        logger.error(f"Erreur récupération créneaux vendeur (paramètres invalides): {str(e)}", exc_info=True)
+        return jsonify({"error": str(e)}), 400
     except Exception as e:
+        logger.error(f"Erreur récupération créneaux vendeur: {str(e)}", exc_info=True)
         return jsonify({"error": str(e)}), 500
 
 
@@ -265,8 +287,13 @@ def marquer_creneau_reserve(current_user, creneau_id):
 
         return jsonify({"message": "Créneau marqué comme réservé"}), 200
 
+    except ValueError as e:
+        db.session.rollback()
+        logger.error(f"Erreur marquage créneau réservé (ID invalide): {str(e)}", exc_info=True)
+        return jsonify({"error": str(e)}), 400
     except Exception as e:
         db.session.rollback()
+        logger.error(f"Erreur marquage créneau réservé: {str(e)}", exc_info=True)
         return jsonify({"error": str(e)}), 500
 
 
@@ -298,6 +325,11 @@ def marquer_creneau_disponible(current_user, creneau_id):
 
         return jsonify({"message": "Créneau marqué comme disponible"}), 200
 
+    except ValueError as e:
+        db.session.rollback()
+        logger.error(f"Erreur marquage créneau disponible (ID invalide): {str(e)}", exc_info=True)
+        return jsonify({"error": str(e)}), 400
     except Exception as e:
         db.session.rollback()
+        logger.error(f"Erreur marquage créneau disponible: {str(e)}", exc_info=True)
         return jsonify({"error": str(e)}), 500

@@ -137,8 +137,11 @@ class ImageProcessor:
             logger.info(f"Image traitée pour annonce {annonce_id}: {results}")
             return results
 
+        except ValueError as e:
+            logger.error(f"Erreur traitement image (validation): {str(e)}", exc_info=True)
+            raise
         except Exception as e:
-            logger.error(f"Erreur traitement image: {str(e)}")
+            logger.error(f"Erreur traitement image: {str(e)}", exc_info=True)
             raise
 
     def _save_jpeg(self, img: 'Image.Image', size: Tuple[int, int], output_path: Path) -> str:
@@ -212,8 +215,11 @@ class ImageProcessor:
                 shutil.rmtree(annonce_dir)
                 logger.info(f"Images annonce {annonce_id} supprimées")
             return True
+        except IOError as e:
+            logger.error(f"Erreur suppression images (IO): {str(e)}", exc_info=True)
+            return False
         except Exception as e:
-            logger.error(f"Erreur suppression images: {str(e)}")
+            logger.error(f"Erreur suppression images: {str(e)}", exc_info=True)
             return False
 
     def get_image_variants(self, annonce_id: int, filename: str) -> dict:

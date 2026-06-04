@@ -97,8 +97,11 @@ class RateLimiter:
             remaining = max(0, limit - count)
             return (count, remaining)
 
+        except ConnectionError as e:
+            logger.warning(f"❌ Rate limit counter error ({key}) (connection): {e}", exc_info=True)
+            return (0, limit)
         except Exception as e:
-            logger.warning(f"❌ Rate limit counter error ({key}): {e}")
+            logger.warning(f"❌ Rate limit counter error ({key}): {e}", exc_info=True)
             return (0, limit)
 
     def is_allowed(
