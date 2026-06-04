@@ -145,56 +145,61 @@ const AdminUsersPage = () => {
                       <td>{u.email}</td>
                       <td>{u.nom || '-'}</td>
                       <td>
-                        <div
-                          label={u.role}
-                          size="small"
-                          color={u.role === 'admin' ? 'error' : 'default'}
-                          variant="outlined"
-                        />
+                        <span style={{
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          backgroundColor: u.role === 'admin' ? '#ffe6e6' : '#e6f0ff',
+                          color: u.role === 'admin' ? '#c00' : '#004a99',
+                          fontSize: '12px',
+                          border: `1px solid ${u.role === 'admin' ? '#ff6b6b' : '#0066cc'}`
+                        }}>
+                          {u.role}
+                        </span>
                       </td>
                       <td>
-                        <div
-                          label={u.actif ? 'Actif' : 'Suspendu'}
-                          size="small"
-                          color={u.actif ? 'success' : 'warning'}
-                        />
+                        <span style={{
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          backgroundColor: u.actif ? '#e6ffe6' : '#fff0e6',
+                          color: u.actif ? '#004d00' : '#996600',
+                          fontSize: '12px',
+                          border: `1px solid ${u.actif ? '#66cc66' : '#ff9933'}`
+                        }}>
+                          {u.actif ? 'Actif' : 'Suspendu'}
+                        </span>
                       </td>
                       <td>
-                        <Tooltip title="Changer rôle">
-                          <Button
-                            size="small"
-                            onClick={() => setDialog({ open: true, action: 'changeRole', userId: u.utilisateur_id })}
-                          >
-                            <Edit fontSize="small" />
-                          </Button>
-                        </Tooltip>
+                        <Button
+                          size="small"
+                          title="Changer rôle"
+                          onClick={() => setDialog({ open: true, action: 'changeRole', userId: u.utilisateur_id })}
+                        >
+                          ✏️ Rôle
+                        </Button>
                         {u.actif ? (
-                          <Tooltip title="Suspendre">
-                            <Button
-                              size="small"
-                              onClick={() => setDialog({ open: true, action: 'suspend', userId: u.utilisateur_id })}
-                            >
-                              <Block fontSize="small" />
-                            </Button>
-                          </Tooltip>
-                        ) : (
-                          <Tooltip title="Réactiver">
-                            <Button
-                              size="small"
-                              onClick={() => setDialog({ open: true, action: 'reactivate', userId: u.utilisateur_id })}
-                            >
-                              <Check fontSize="small" />
-                            </Button>
-                          </Tooltip>
-                        )}
-                        <Tooltip title="Supprimer">
                           <Button
                             size="small"
-                            onClick={() => setDialog({ open: true, action: 'delete', userId: u.utilisateur_id })}
+                            title="Suspendre"
+                            onClick={() => setDialog({ open: true, action: 'suspend', userId: u.utilisateur_id })}
                           >
-                            <Delete fontSize="small" />
+                            🚫 Suspendre
                           </Button>
-                        </Tooltip>
+                        ) : (
+                          <Button
+                            size="small"
+                            title="Réactiver"
+                            onClick={() => setDialog({ open: true, action: 'reactivate', userId: u.utilisateur_id })}
+                          >
+                            ✅ Réactiver
+                          </Button>
+                        )}
+                        <Button
+                          size="small"
+                          title="Supprimer"
+                          onClick={() => setDialog({ open: true, action: 'delete', userId: u.utilisateur_id })}
+                        >
+                          🗑️ Supprimer
+                        </Button>
                       </td>
                     </tr>
                   ))
