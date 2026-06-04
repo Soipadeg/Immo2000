@@ -5,7 +5,7 @@ import '../styles/AlertesPage.css';
  */
 
 import React, { useEffect, useState } from 'react';
-import { Button, Input, Card, Modal, Alert } from '@/components';
+import { Button, Input, Card, Modal, Alert, FormContainer } from '@/components';
 import { alertesApi } from '../services/api';
 
 const AlertesAnnonces = () => {
@@ -181,52 +181,54 @@ const AlertesAnnonces = () => {
   };
 
   return (
-    <div className="alertes-page-container">
-      {/* En-tête */}
-      <div className="alertes-header">
-        <div className="header-content">
-          <div>🔔 Mes Alertes d'Annonces</div>
-          <div className="alertes-subtitle">
-            Recevez des notifications quand de nouvelles annonces correspondent à vos critères
+    <>
+      {/* Animated Header - Exact same structure as SearchPage */}
+      <div className="search-page-header">
+        <div className="search-page-header__content">
+          <div className="search-page-header__title-row">
+            <span className="search-page-header__icon">🔔</span>
+            <h1>Mes Alertes</h1>
           </div>
+          <p>Créez et gérez vos alertes pour recevoir des notifications quand de nouvelles annonces correspondent à vos critères</p>
         </div>
-        <Button variant="primary" onClick={handleOpenModalCreate}>
-          ➕ Créer une alerte
-        </Button>
       </div>
 
-      {/* Messages */}
-      {error && <Alert type="error" title="Erreur" message={error} />}
-      {successMessage && (
-        <Alert type="success" title="Succès" message={successMessage} />
-      )}
+      <FormContainer maxWidth="full-width">
+        {/* Messages */}
+        {error && <Alert severity="error" onClose={() => setError(null)}>{error}</Alert>}
+        {successMessage && (
+          <Alert severity="success" onClose={() => setSuccessMessage('')}>{successMessage}</Alert>
+        )}
 
-      {/* Chargement */}
-      {loading && (
-        <div className="loading-container">
-          <div className="spinner"></div>
+        {/* Create button */}
+        <div style={{ marginBottom: '24px' }}>
+          <Button variant="primary" onClick={handleOpenModalCreate}>
+            ➕ Créer une alerte
+          </Button>
         </div>
-      )}
 
-      {/* Aucune alerte */}
-      {!loading && alertes.length === 0 && (
-        <Card className="empty-state">
-          <div className="empty-content">
-            <div>Aucune alerte créée</div>
-            <div>
-              Créez une alerte pour être notifié quand de nouvelles annonces correspondent
-              à vos critères
-            </div>
+        {/* Chargement */}
+        {loading && (
+          <div className="loading-container">
+            <div className="spinner"></div>
+          </div>
+        )}
+
+        {/* Aucune alerte */}
+        {!loading && alertes.length === 0 && (
+          <div className="search-empty">
+            <div>🔔</div>
+            <h3>Aucune alerte créée</h3>
+            <p>Créez votre première alerte pour être notifié quand de nouvelles annonces correspondent à vos critères</p>
             <Button variant="primary" onClick={handleOpenModalCreate}>
-              ➕ Créer votre première alerte
+              ➕ Créer une alerte
             </Button>
           </div>
-        </Card>
-      )}
+        )}
 
-      {/* Liste des alertes */}
-      {!loading && alertes.length > 0 && (
-        <div className="alertes-grid">
+        {/* Liste des alertes */}
+        {!loading && alertes.length > 0 && (
+          <div className="search-grid">
           {alertes.map((alerte) => (
             <Card key={alerte.alerte_id} className="alerte-card">
               <div className="alerte-card-header">
@@ -315,7 +317,8 @@ const AlertesAnnonces = () => {
             </Card>
           ))}
         </div>
-      )}
+        )}
+      </FormContainer>
 
       {/* Modal de création/édition */}
       {openModal && (
@@ -537,7 +540,7 @@ const AlertesAnnonces = () => {
           </div>
         </Modal>
       )}
-    </div>
+    </>
   );
 };
 

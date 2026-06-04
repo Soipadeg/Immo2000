@@ -4,7 +4,7 @@ import '../styles/GuidesPage.css';
  */
 
 import React, { useState } from 'react';
-import { Button, Card } from '@/components';
+import { Button, Card, FormContainer } from '@/components';
 
 
 
@@ -75,22 +75,21 @@ const GuidesPage = () => {
   };
 
   return (
-    <div className="guides-page-container">
-      {/* Header */}
-      <div className="guides-header">
-        <div className="guides-header__content">
-          <span className="guides-header__icon">📚</span>
-          <div>
-            <h1 className="guides-header__title">Guides Immobiliers</h1>
-            <p className="guides-header__subtitle">
-              Apprenez tout ce que vous devez savoir sur l'immobilier
-            </p>
+    <>
+      {/* Animated Header - Exact same structure as SearchPage */}
+      <div className="search-page-header">
+        <div className="search-page-header__content">
+          <div className="search-page-header__title-row">
+            <span className="search-page-header__icon">📚</span>
+            <h1>Guides Immobiliers</h1>
           </div>
+          <p>Apprenez tout ce que vous devez savoir sur l'immobilier avec nos guides complets et pratiques</p>
         </div>
       </div>
 
-      {/* Guides Grid */}
-      <div className="guides-grid">
+      <FormContainer maxWidth="full-width">
+        {/* Guides Grid */}
+        <div className="search-grid">
         {guides.map((guide) => (
           <Card key={guide.id} className="guide-card">
             <div className="guide-card__header">
@@ -120,21 +119,20 @@ const GuidesPage = () => {
             </div>
           </Card>
         ))}
-      </div>
+        </div>
 
-      {/* CTA Section */}
-      <Card className="guides-cta">
-        <div className="guides-cta__content">
-          <h2 className="guides-cta__title">📖 Vous voulez apprendre un autre sujet?</h2>
-          <p className="guides-cta__description">
+        {/* CTA Section */}
+        <Card style={{ marginTop: '48px', textAlign: 'center', padding: '32px' }}>
+          <h2 style={{ marginBottom: '12px' }}>📖 Vous voulez apprendre un autre sujet?</h2>
+          <p style={{ marginBottom: '20px', color: '#666' }}>
             Nous ajoutons régulièrement de nouveaux guides pour vous aider
           </p>
           <Button variant="primary">
             💡 Suggérer un guide
           </Button>
-        </div>
-      </Card>
-    </div>
+        </Card>
+      </FormContainer>
+    </>
   );
 };
 
