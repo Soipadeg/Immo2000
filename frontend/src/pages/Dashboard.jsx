@@ -6,7 +6,7 @@ import '../styles/Dashboard.css';
  */
 
 import React, { useState, useEffect } from 'react';
-import { Button, Card, Alert } from '@/components';
+import { Button, Card, Alert, FormContainer } from '@/components';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { getMesAnnonces } from '../services/api';
@@ -326,17 +326,21 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="dashboard-page-container">
-      {/* En-tête */}
-      <div className="dashboard-header">
-        <div>👋 Bienvenue, {user?.prenom} !</div>
-        <div className="dashboard-subtitle">
-          Gérez vos annonces, recherches et messages en un seul endroit.
+    <>
+      {/* Animated Header - Exact same structure as SearchPage */}
+      <div className="search-page-header">
+        <div className="search-page-header__content">
+          <div className="search-page-header__title-row">
+            <span className="search-page-header__icon">📊</span>
+            <h1>Bienvenue, {user?.prenom} !</h1>
+          </div>
+          <p>Gérez vos annonces, recherches et messages en un seul endroit</p>
         </div>
       </div>
 
-      {/* Onglets */}
-      <div className="dashboard-tabs">
+      <FormContainer maxWidth="full-width">
+        {/* Onglets */}
+        <div className="dashboard-tabs">
         <div className="tabs-nav">
           <button
             className={`tab-button ${tabValue === 0 ? 'active' : ''}`}
@@ -371,6 +375,7 @@ export default function Dashboard() {
       <TabPanel value={tabValue} index={2}>
         <MessagerieTab />
       </TabPanel>
-    </div>
+      </FormContainer>
+    </>
   );
 }
