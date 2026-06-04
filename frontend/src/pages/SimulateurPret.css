@@ -28,11 +28,7 @@
   color: #1F2937;
 }
 
-@media (prefers-color-scheme: dark) {
-  .section-title {
-    color: #F3F4F6;
-  }
-}
+/* Dark mode disabled - light mode only */
 
 .form-grid {
   display: grid;
@@ -56,12 +52,7 @@
   color: #1F2937;
 }
 
-@media (prefers-color-scheme: dark) {
-  .form-toggle > label,
-  .form-duration > label {
-    color: #F3F4F6;
-  }
-}
+/* Dark mode disabled - light mode only */
 
 .toggle-buttons,
 .duration-buttons {
@@ -96,26 +87,7 @@
   border-color: #2563EB;
 }
 
-@media (prefers-color-scheme: dark) {
-  .toggle-btn,
-  .duration-btn {
-    background-color: #1F2937;
-    border-color: #374151;
-    color: #F3F4F6;
-  }
-
-  .toggle-btn:hover,
-  .duration-btn:hover {
-    border-color: #3B82F6;
-    background-color: #0F172A;
-  }
-
-  .toggle-btn.active,
-  .duration-btn.active {
-    background-color: #3B82F6;
-    border-color: #3B82F6;
-  }
-}
+/* Dark mode disabled - light mode only */
 
 /* Form Select */
 
@@ -140,21 +112,6 @@
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-@media (prefers-color-scheme: dark) {
-  .form-select {
-    background-color: #1F2937;
-    border-color: #374151;
-    color: #F3F4F6;
-  }
-
-  .form-select:hover {
-    border-color: #3B82F6;
-  }
-
-  .form-select:focus {
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-  }
-}
 
 /* Section Divider */
 
@@ -171,15 +128,6 @@
   color: #1F2937;
 }
 
-@media (prefers-color-scheme: dark) {
-  .section-divider {
-    border-top-color: #374151;
-  }
-
-  .section-divider h4 {
-    color: #F3F4F6;
-  }
-}
 
 /* Form Actions */
 
@@ -234,16 +182,6 @@
   font-size: 0.8rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  .results-empty {
-    background-color: #111827;
-  }
-
-  .results-empty p,
-  .results-empty small {
-    color: #D1D5DB;
-  }
-}
 
 /* Result Cards */
 
@@ -287,18 +225,6 @@
   border: 1px solid #E5E7EB;
 }
 
-@media (prefers-color-scheme: dark) {
-  .result-card.debt-ratio-success,
-  .result-card.debt-ratio-warning,
-  .result-card.debt-ratio-error,
-  .result-card.property-neuf,
-  .result-card.property-ancien,
-  .result-card.details-card {
-    background-color: #1F2937;
-    color: #F3F4F6;
-    border-color: #374151;
-  }
-}
 
 /* Result Label */
 
@@ -367,15 +293,6 @@
   color: inherit;
 }
 
-@media (prefers-color-scheme: dark) {
-  .property-header {
-    border-bottom-color: rgba(255, 255, 255, 0.1);
-  }
-
-  .badge {
-    background-color: rgba(255, 255, 255, 0.1);
-  }
-}
 
 /* Property Grid */
 
@@ -446,11 +363,6 @@
   border-top: 1px solid #E5E7EB;
 }
 
-@media (prefers-color-scheme: dark) {
-  .detail-item.total {
-    border-top-color: #374151;
-  }
-}
 
 .detail-label {
   font-size: 0.8rem;
@@ -459,11 +371,6 @@
   opacity: 0.9;
 }
 
-@media (prefers-color-scheme: dark) {
-  .detail-label {
-    color: #9CA3AF;
-  }
-}
 
 .detail-item > span:last-child {
   font-size: 0.9rem;
@@ -476,12 +383,6 @@
   color: #2563EB;
 }
 
-@media (prefers-color-scheme: dark) {
-  .detail-item > span:last-child,
-  .detail-item.total > span:last-child {
-    color: #60A5FA;
-  }
-}
 
 /* Responsive */
 

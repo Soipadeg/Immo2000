@@ -305,10 +305,6 @@
    DARK MODE
    ======================================== */
 
-@media (prefers-color-scheme: dark) {
-  .page-header h1 {
-    color: var(--color-text);
-  }
 
   .history-card {
     border-color: var(--color-border);

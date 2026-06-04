@@ -75,10 +75,6 @@
 
 /* Dark Mode Support */
 
-@media (prefers-color-scheme: dark) {
-  .form-description {
-    color: #9CA3AF;
-  }
 
   .form-description strong {
     color: #F3F4F6;

@@ -96,16 +96,6 @@
   white-space: nowrap;
 }
 
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  .textarea-label {
-    color: #F3F4F6;
-  }
-
-  .textarea-wrapper {
-    background-color: #1F2937;
-    border-color: #374151;
-  }
 
   .textarea-wrapper--focused {
     border-color: #3B82F6;

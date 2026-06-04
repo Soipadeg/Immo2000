@@ -114,17 +114,17 @@ const MatchingPage = () => {
   };
 
   return (
-    <div maxWidth="lg" className="matching-page">
+    <div className="matching-page">
       <div className="page-header">
-        <div>
-          <HomeIcon />
+        <div className="page-header__content">
+          <span className="page-header__icon">🏠</span>
           <div>
-            Trouvez votre bien idéal
+            <h1>Trouvez votre bien idéal</h1>
+            <p>
+              Utilisez les filtres ci-dessous pour découvrir les annonces les plus adaptées à vos
+              critères.
+            </p>
           </div>
-        </div>
-        <div>
-          Utilisez les filtres ci-dessous pour découvrir les annonces les plus adaptées à vos
-          critères.
         </div>
       </div>
 
@@ -141,69 +141,45 @@ const MatchingPage = () => {
       )}
 
       {/* Formulaire de filtres */}
-      <div elevation={3}>
+      <div className="filters-card">
         <form onSubmit={handleSubmit}>
-          <div container spacing={2}>
-            <div item xs={12} sm={6} md={3}>
-              <Input
-                fullWidth
-                label="Ville"
-                name="ville"
-                value={filters.ville}
-                onChange={handleFilterChange}
-                placeholder="Ex: Paris, Lyon..."
-                variant="outlined"
-              />
-            </div>
-            <div item xs={12} sm={6} md={3}>
-              <Input
-                fullWidth
-                label="Budget maximum (€)"
-                name="budget_max"
-                type="number"
-                value={filters.budget_max}
-                onChange={handleFilterChange}
-                placeholder="Ex: 300000"
-                variant="outlined"
-              />
-            </div>
-            <div item xs={12} sm={6} md={3}>
-              <Input
-                fullWidth
-                label="Surface minimum (m²)"
-                name="surface_min"
-                type="number"
-                value={filters.surface_min}
-                onChange={handleFilterChange}
-                placeholder="Ex: 80"
-                variant="outlined"
-              />
-            </div>
-            <div item xs={12} sm={6} md={3}>
-              <FormControl fullWidth variant="outlined">
-                <InputLabel>Type de bien</InputLabel>
-                <Select
-                  name="type_bien"
-                  value={filters.type_bien}
-                  onChange={handleFilterChange}
-                  label="Type de bien"
-                >
-                  <MenuItem value="">Tous les types</MenuItem>
-                  <MenuItem value="Appartement">Appartement</MenuItem>
-                  <MenuItem value="Maison">Maison</MenuItem>
-                  <MenuItem value="Terrain">Terrain</MenuItem>
-                  <MenuItem value="Studio">Studio</MenuItem>
-                  <MenuItem value="Loft">Loft</MenuItem>
-                </Select>
-              </FormControl>
-            </div>
+          <div className="filters-grid">
+            <Input
+              label="Ville"
+              name="ville"
+              value={filters.ville}
+              onChange={handleFilterChange}
+              placeholder="Ex: Paris, Lyon..."
+            />
+            <Input
+              label="Budget maximum (€)"
+              name="budget_max"
+              type="number"
+              value={filters.budget_max}
+              onChange={handleFilterChange}
+              placeholder="Ex: 300000"
+            />
+            <Input
+              label="Surface minimum (m²)"
+              name="surface_min"
+              type="number"
+              value={filters.surface_min}
+              onChange={handleFilterChange}
+              placeholder="Ex: 80"
+            />
+            <Input
+              label="Type de bien"
+              name="type_bien"
+              value={filters.type_bien}
+              onChange={handleFilterChange}
+              placeholder="Ex: Appartement, Maison..."
+            />
           </div>
 
           {/* Boutons d'action */}
-          <div>
+          <div className="filters-actions">
             <Button
-              variant="outlined"
-              color="secondary"
+              variant="secondary"
               onClick={handleClearFilters}
               disabled={loading}
             >
@@ -211,12 +187,10 @@ const MatchingPage = () => {
             </Button>
             <Button
               type="submit"
-              variant="contained"
-              color="primary"
-              startIcon={<SearchIcon />}
+              variant="primary"
               disabled={loading}
             >
-              {loading ? <div size={24} /> : 'Rechercher'}
+              🔍 {loading ? 'Recherche...' : 'Rechercher'}
             </Button>
           </div>
         </form>
@@ -224,24 +198,18 @@ const MatchingPage = () => {
 
       {/* Résultats */}
       <div className="results-section">
-        <div>
-          Résultats ({annonces.length})
-        </div>
+        <h2 className="results-title">Résultats ({annonces.length})</h2>
 
         {annonces.length === 0 && !loading ? (
-          <div
-            elevation={0}
-          >
-            <HomeIcon />
-            <div>
-              Aucune annonce ne correspond à vos critères.
-            </div>
-            <div>
+          <div className="no-results-card">
+            <div className="no-results-icon">🏠</div>
+            <h3>Aucune annonce ne correspond à vos critères.</h3>
+            <p>
               Essayez d'élargir vos critères de recherche.
-            </div>
+            </p>
           </div>
         ) : (
-          <div container spacing={3} className="annonces-grid">
+          <div className="annonces-grid">
             {annonces.map((annonce) => (
               <div item xs={12} sm={6} md={4} key={annonce.id}>
                 <div className="annonce-card" elevation={2}>

@@ -505,10 +505,6 @@
    DARK MODE
    ======================================== */
 
-@media (prefers-color-scheme: dark) {
-  .dashboard-page-container {
-    background-color: var(--color-background);
-  }
 
   .dashboard-title {
     color: var(--color-text);

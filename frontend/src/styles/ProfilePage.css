@@ -433,10 +433,6 @@
    DARK MODE
    ======================================== */
 
-@media (prefers-color-scheme: dark) {
-  .page-title {
-    color: var(--color-text);
-  }
 
   .profile-header-card {
     background-color: var(--color-background);

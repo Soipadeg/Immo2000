@@ -1,5 +1,12 @@
 /* SearchPage Styles */
 
+/* Page container */
+.search-page {
+  background-color: #ffffff !important;
+  min-height: 100vh;
+  padding: 20px;
+}
+
 /* Filters Section */
 
 .search-filters {
@@ -9,6 +16,7 @@
   margin-bottom: 24px;
   padding-bottom: 24px;
   border-bottom: 1px solid #E5E7EB;
+  background-color: #ffffff !important;
 }
 
 .search-select {
@@ -32,18 +40,7 @@
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-/* Dark Mode */
-@media (prefers-color-scheme: dark) {
-  .search-select {
-    background-color: #1F2937;
-    border-color: #374151;
-    color: #F3F4F6;
-  }
-
-  .search-select:hover {
-    border-color: #3B82F6;
-  }
-}
+/* Dark mode disabled - light mode only */
 
 /* Summary */
 
@@ -60,12 +57,7 @@
   margin: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  .search-summary {
-    background-color: #0F172A;
-    color: #60A5FA;
-  }
-}
+/* Dark mode disabled - light mode only */
 
 /* Empty State */
 
@@ -81,15 +73,7 @@
   font-size: 0.95rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  .search-empty {
-    background-color: #111827;
-  }
-
-  .search-empty p {
-    color: #D1D5DB;
-  }
-}
+/* Dark mode disabled - light mode only */
 
 /* Results Grid */
 
@@ -204,10 +188,6 @@
   -webkit-box-orient: vertical;
 }
 
-@media (prefers-color-scheme: dark) {
-  .annonce-content h3 {
-    color: #F3F4F6;
-  }
 }
 
 /* Price */
@@ -219,10 +199,6 @@
   margin-bottom: 8px;
 }
 
-@media (prefers-color-scheme: dark) {
-  .annonce-price {
-    color: #60A5FA;
-  }
 }
 
 /* Description */
@@ -238,10 +214,6 @@
   -webkit-box-orient: vertical;
 }
 
-@media (prefers-color-scheme: dark) {
-  .annonce-description {
-    color: #9CA3AF;
-  }
 }
 
 /* Details Grid */
@@ -256,10 +228,6 @@
   border-bottom: 1px solid #E5E7EB;
 }
 
-@media (prefers-color-scheme: dark) {
-  .annonce-details {
-    border-color: #374151;
-  }
 }
 
 .detail {
@@ -281,10 +249,6 @@
   color: #1F2937;
 }
 
-@media (prefers-color-scheme: dark) {
-  .detail {
-    color: #F3F4F6;
-  }
 
   .detail-label {
     color: #6B7280;

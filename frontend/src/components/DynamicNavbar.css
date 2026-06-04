@@ -231,11 +231,6 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .dynamic-navbar {
-    background-color: #2a2a2a;
-    border-bottom-color: #444;
-  }
 
   .dynamic-navbar__brand {
     color: #7c3aed;

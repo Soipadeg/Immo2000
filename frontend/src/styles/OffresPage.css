@@ -342,10 +342,6 @@
    DARK MODE
    ======================================== */
 
-@media (prefers-color-scheme: dark) {
-  .page-header h1 {
-    color: var(--color-text);
-  }
 
   .tabs-nav {
     border-bottom-color: var(--color-border);

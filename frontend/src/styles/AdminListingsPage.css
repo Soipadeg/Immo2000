@@ -236,10 +236,6 @@
    DARK MODE
    ======================================== */
 
-@media (prefers-color-scheme: dark) {
-  .page-header h1 {
-    color: var(--color-text);
-  }
 
   .listing-card {
     border-color: var(--color-border);

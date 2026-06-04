@@ -1,10 +1,10 @@
 import '../styles/GuidesPage.css';
-import { Alert,Button,Input } from '@/components';
 /**
  * Page Guides - Guides immobiliers
  */
 
 import React, { useState } from 'react';
+import { Button, Card } from '@/components';
 
 
 
@@ -75,67 +75,65 @@ const GuidesPage = () => {
   };
 
   return (
-    <div maxWidth="lg">
-      <div>
-        <div>
-          📚 Guides Immobiliers
-        </div>
-        <div>
-          Apprenez tout ce que vous devez savoir sur l'immobilier
+    <div className="guides-page-container">
+      {/* Header */}
+      <div className="guides-header">
+        <div className="guides-header__content">
+          <span className="guides-header__icon">📚</span>
+          <div>
+            <h1 className="guides-header__title">Guides Immobiliers</h1>
+            <p className="guides-header__subtitle">
+              Apprenez tout ce que vous devez savoir sur l'immobilier
+            </p>
+          </div>
         </div>
       </div>
 
-      <div container spacing={3}>
+      {/* Guides Grid */}
+      <div className="guides-grid">
         {guides.map((guide) => (
-          <div item xs={12} sm={6} lg={4} key={guide.id}>
-            <div
-            >
-              <div>
-                <div>
-                  <MenuBookIcon />
-                  <div
-                    label={guide.category}
-                    color={getCategoryColor(guide.category)}
-                    size="small"
-                    variant="outlined"
-                  />
-                </div>
-                <div>
-                  {guide.title}
-                </div>
-                <div>
-                  {guide.description}
-                </div>
-                <div>
-                  {guide.topics.map((topic) => (
-                    <div key={topic} label={topic} size="small" variant="outlined" />
-                  ))}
-                </div>
-                <div>
-                  ⏱️ Temps de lecture: {guide.readTime}
-                </div>
-              </div>
-              <div>
-                <Button size="small" color="primary">
-                  Lire le guide →
-                </Button>
+          <Card key={guide.id} className="guide-card">
+            <div className="guide-card__header">
+              <div className="guide-card__icon">📖</div>
+              <div className="guide-card__category" data-category={getCategoryColor(guide.category)}>
+                {guide.category}
               </div>
             </div>
-          </div>
+            <div className="guide-card__content">
+              <h3 className="guide-card__title">{guide.title}</h3>
+              <p className="guide-card__description">{guide.description}</p>
+              <div className="guide-card__topics">
+                {guide.topics.map((topic) => (
+                  <span key={topic} className="guide-card__topic-badge">
+                    {topic}
+                  </span>
+                ))}
+              </div>
+              <div className="guide-card__readtime">
+                ⏱️ Temps de lecture: {guide.readTime}
+              </div>
+            </div>
+            <div className="guide-card__actions">
+              <Button variant="primary" size="small">
+                Lire le guide →
+              </Button>
+            </div>
+          </Card>
         ))}
       </div>
 
-      <div>
-        <div>
-          📖 Vous voulez apprendre un autre sujet?
+      {/* CTA Section */}
+      <Card className="guides-cta">
+        <div className="guides-cta__content">
+          <h2 className="guides-cta__title">📖 Vous voulez apprendre un autre sujet?</h2>
+          <p className="guides-cta__description">
+            Nous ajoutons régulièrement de nouveaux guides pour vous aider
+          </p>
+          <Button variant="primary">
+            💡 Suggérer un guide
+          </Button>
         </div>
-        <div>
-          Nous ajoutons régulièrement de nouveaux guides pour vous aider
-        </div>
-        <Button variant="contained" color="primary" startIcon={<SchoolIcon />}>
-          Suggérer un guide
-        </Button>
-      </div>
+      </Card>
     </div>
   );
 };

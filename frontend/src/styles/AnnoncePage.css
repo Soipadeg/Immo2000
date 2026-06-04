@@ -703,10 +703,6 @@
    DARK MODE
    ======================================== */
 
-@media (prefers-color-scheme: dark) {
-  .annonce-page-container {
-    color: var(--color-text);
-  }
 
   .spinner {
     border-color: var(--color-border);

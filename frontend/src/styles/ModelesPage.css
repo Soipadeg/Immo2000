@@ -392,10 +392,6 @@
    DARK MODE
    ======================================== */
 
-@media (prefers-color-scheme: dark) {
-  .modeles-title {
-    color: var(--color-text);
-  }
 
   .modeles-subtitle {
     color: var(--color-text-secondary);

@@ -51,6 +51,44 @@
   gap: 20px;
 }
 
+/* Filters Card */
+.filters-card {
+  background-color: #ffffff !important;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+}
+
+/* Filters Grid */
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  background-color: #ffffff !important;
+}
+
+.filters-grid input,
+.filters-grid select {
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+  border: 1px solid #d1d5db !important;
+}
+
+.filters-grid input:focus,
+.filters-grid select:focus {
+  background-color: #ffffff !important;
+  border-color: #2563eb !important;
+}
+
+/* Filters Actions */
+.filters-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
 /* Résultats Section */
 .results-section {
   animation: fadeIn 0.6s ease-out;
@@ -337,35 +375,7 @@
   }
 }
 
-/* Dark Mode Support (optionnel) */
-@media (prefers-color-scheme: dark) {
-  .matching-page {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  }
-
-  .annonce-card {
-    background: #2d2d44;
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-
-  .annonce-card-content h3 {
-    color: #e0e0e0;
-  }
-
-  .annonce-card-content p {
-    color: #b0b0b0;
-  }
-
-  .no-results {
-    background: #2d2d44;
-    border-color: #444;
-    color: #888;
-  }
-
-  .no-results h3 {
-    color: #b0b0b0;
-  }
-}
+/* Dark mode disabled - light mode only */
 
 /* Animations supplémentaires */
 @keyframes pulse {

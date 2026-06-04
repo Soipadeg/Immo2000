@@ -180,10 +180,6 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .login-page {
-    background: linear-gradient(135deg, rgba(63, 81, 181, 0.1), rgba(33, 150, 243, 0.1));
-  }
 
   .form-group input:focus {
     box-shadow: 0 0 0 3px rgba(100, 200, 255, 0.2);

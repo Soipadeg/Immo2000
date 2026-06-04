@@ -285,10 +285,6 @@
 }
 
 /* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  .featured-section {
-    background-color: #111827;
-  }
 
   .section-title {
     color: #F3F4F6;

@@ -2,10 +2,12 @@ import './SimulateurPret.css';
 /**
  * Simulateur de Prêt Immobilier
  * Calcul de mensualité et taux d'endettement selon règles bancaires françaises
+ * Utilise PageLayout pour cohérence visuelle
  */
 
 import React, { useState, useMemo } from 'react';
 import { Button, Input, Card, Alert, FormContainer } from '@/components';
+import PageLayout from '../layouts/PageLayout';
 
 const SimulateurPret = () => {
   const [formData, setFormData] = useState({
@@ -104,20 +106,20 @@ const SimulateurPret = () => {
     // ===== STATUS ENDETTEMENT =====
     let statusEndettement = {
       color: 'success',
-      icon: <CheckCircleIcon />,
+      icon: '✅',
       message: 'Taux d\'endettement acceptable',
     };
 
     if (tauxEndettement > 33) {
       statusEndettement = {
         color: 'error',
-        icon: <ErrorIcon />,
+        icon: '❌',
         message: 'Taux d\'endettement trop élevé (> 33%)',
       };
     } else if (tauxEndettement > 25) {
       statusEndettement = {
         color: 'warning',
-        icon: <InfoIcon />,
+        icon: '⚠️',
         message: 'Taux d\'endettement dans la limite acceptable (25-33%)',
       };
     }

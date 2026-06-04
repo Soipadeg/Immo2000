@@ -65,10 +65,6 @@
 }
 
 /* Responsive */
-@media (prefers-color-scheme: dark) {
-  .stripe-payment-form__input-group label {
-    color: #f0f0f0;
-  }
 
   .stripe-payment-form__input {
     background-color: #2a2a2a;

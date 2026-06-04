@@ -509,10 +509,6 @@
    DARK MODE
    ======================================== */
 
-@media (prefers-color-scheme: dark) {
-  .biens-title {
-    color: var(--color-text);
-  }
 
   .biens-tabs {
     border-bottom-color: var(--color-border);

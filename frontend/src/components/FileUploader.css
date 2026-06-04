@@ -193,11 +193,6 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .file-uploader__drop-zone {
-    background-color: #2a2a2a;
-    border-color: #444;
-  }
 
   .file-uploader__drop-zone.drag-active {
     background-color: #1a2847;

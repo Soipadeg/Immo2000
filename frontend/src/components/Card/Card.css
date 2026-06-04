@@ -43,14 +43,7 @@
   outline-offset: 2px;
 }
 
-/* Dark Mode Support (optional) */
-@media (prefers-color-scheme: dark) {
-  .card {
-    background-color: #1F2937;
-    border-color: #374151;
-    color: #FFFFFF;
-  }
-}
+/* Dark mode disabled - light mode only */
 
 /* Responsive */
 @media (max-width: 768px) {

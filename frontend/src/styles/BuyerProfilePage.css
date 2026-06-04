@@ -192,10 +192,6 @@
    DARK MODE
    ======================================== */
 
-@media (prefers-color-scheme: dark) {
-  .page-title {
-    color: var(--color-text);
-  }
 
   .page-subtitle {
     color: var(--color-text-secondary);

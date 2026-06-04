@@ -369,11 +369,6 @@
 
 /* ==================== DARK MODE (OPTIONAL) ==================== */
 
-@media (prefers-color-scheme: dark) {
-  .chatbot-container {
-    background: #2d2d2d;
-    border-color: #444;
-  }
 
   .chatbot-messages {
     background: #1a1a1a;

@@ -201,11 +201,6 @@
 }
 
 /* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  .navbar {
-    background-color: #1F2937;
-    border-bottom-color: #374151;
-  }
 
   .navbar-logo__text {
     color: #F3F4F6;

@@ -146,10 +146,4 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .filter-select, .filter-input {
-    border-color: var(--color-border);
-    background-color: var(--color-background);
-    color: var(--color-text);
-  }
 }

@@ -138,11 +138,6 @@
 }
 
 /* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  .alert--success {
-    background-color: #064E3B;
-    color: #ECFDF5;
-  }
 
   .alert--error {
     background-color: #7F1D1D;

@@ -506,10 +506,6 @@
    DARK MODE
    ======================================== */
 
-@media (prefers-color-scheme: dark) {
-  .alertes-title {
-    color: var(--color-text);
-  }
 
   .alertes-subtitle {
     color: var(--color-text-secondary);

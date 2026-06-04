@@ -279,10 +279,6 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .simple-table tbody tr:hover {
-    background-color: rgba(255, 255, 255, 0.02);
-  }
 
   .simple-table code {
     background-color: rgba(255, 255, 255, 0.05);
@@ -364,9 +360,4 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .kpi-card {
-    border-color: var(--color-border);
-    background-color: var(--color-background);
-  }
 }

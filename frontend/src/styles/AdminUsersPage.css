@@ -302,10 +302,6 @@
    DARK MODE
    ======================================== */
 
-@media (prefers-color-scheme: dark) {
-  .page-header h1 {
-    color: var(--color-text);
-  }
 
   .page-header p {
     color: var(--color-text-secondary);

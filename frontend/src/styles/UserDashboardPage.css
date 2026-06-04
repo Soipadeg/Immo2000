@@ -555,10 +555,6 @@
    DARK MODE
    ======================================== */
 
-@media (prefers-color-scheme: dark) {
-  .dashboard-title {
-    color: var(--color-text);
-  }
 
   .dashboard-subtitle {
     color: var(--color-text-secondary);

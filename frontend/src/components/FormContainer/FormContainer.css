@@ -86,21 +86,7 @@
   }
 }
 
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  .form-container {
-    background: linear-gradient(135deg, #111827 0%, #1F2937 100%);
-  }
-
-  .form-container-inner {
-    background-color: #1F2937;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-  }
-
-  .form-container-header {
-    background-color: #1F2937;
-    border-bottom-color: #374151;
-  }
+/* Dark mode disabled - light mode only */
 
   .form-container-title {
     color: #F3F4F6;
