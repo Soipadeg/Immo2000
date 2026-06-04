@@ -4,6 +4,7 @@
 .search-page {
   min-height: 100vh;
   padding: 20px;
+  background: linear-gradient(135deg, #dbe9f4 0%, #8fa7c8 100%) !important;
 }
 
 /* Filters Section */
