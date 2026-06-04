@@ -117,17 +117,17 @@ const AdminUsersPage = () => {
 
         {loading ? (
           <div>
-            <div />
-        </div>
-      ) : (
-        <>
-          <div component={Paper}>
-            <table>
-              <thead>
-                <tr>
-                  <td><strong>Email</strong></td>
-                  <td><strong>Nom</strong></td>
-                  <td><strong>Rôle</strong></td>
+            <div>⏳ Chargement...</div>
+          </div>
+        ) : (
+          <>
+            <div style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '16px', backgroundColor: '#fff' }}>
+              <table>
+                <thead>
+                  <tr>
+                    <td><strong>Email</strong></td>
+                    <td><strong>Nom</strong></td>
+                    <td><strong>Rôle</strong></td>
                   <td><strong>Statut</strong></td>
                   <td><strong>Actions</strong></td>
                 </tr>
@@ -203,48 +203,85 @@ const AdminUsersPage = () => {
             </table>
           </div>
 
-          <div>
-            <Pagination count={10} page={page} onChange={(e, p) => setPage(p)} />
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '16px' }}>
+            <Button
+              onClick={() => setPage(Math.max(1, page - 1))}
+              disabled={page === 1}
+            >
+              ← Précédent
+            </Button>
+            <div style={{ padding: '8px 16px', backgroundColor: '#f0f0f0', borderRadius: '4px' }}>
+              Page {page}
+            </div>
+            <Button
+              onClick={() => setPage(page + 1)}
+            >
+              Suivant →
+            </Button>
           </div>
         </>
       )}
 
-      {/* Dialogs */}
-      <div open={dialog.open} onClose={() => setDialog({ open: false, action: null, userId: null })}>
-        <div>
-          {dialog.action === 'changeRole' && 'Changer le rôle?'}
-          {dialog.action === 'suspend' && 'Suspendre l\'utilisateur?'}
-          {dialog.action === 'reactivate' && 'Réactiver l\'utilisateur?'}
-          {dialog.action === 'delete' && 'Supprimer l\'utilisateur?'}
+      {/* Modal d'actions */}
+      {dialog.open && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: '#fff',
+            borderRadius: '8px',
+            padding: '24px',
+            maxWidth: '400px',
+            width: '90%',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.2)'
+          }}>
+            <h2 style={{ marginTop: 0 }}>
+              {dialog.action === 'changeRole' && 'Changer le rôle?'}
+              {dialog.action === 'suspend' && 'Suspendre l\'utilisateur?'}
+              {dialog.action === 'reactivate' && 'Réactiver l\'utilisateur?'}
+              {dialog.action === 'delete' && 'Supprimer l\'utilisateur?'}
+            </h2>
+            <div style={{ marginBottom: '16px' }}>
+              {dialog.action === 'suspend' && (
+                <div>
+                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Durée de suspension (heures):</label>
+                  <input
+                    type="number"
+                    value={suspendHours}
+                    onChange={(e) => setSuspendHours(parseInt(e.target.value))}
+                    style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
+                  />
+                </div>
+              )}
+              {dialog.action === 'delete' && (
+                <div style={{ padding: '12px', backgroundColor: '#ffe6e6', borderRadius: '4px', color: '#c00' }}>
+                  ⚠️ Cette action est irréversible!
+                </div>
+              )}
+            </div>
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+              <Button onClick={() => setDialog({ open: false, action: null, userId: null })}>
+                Annuler
+              </Button>
+              <Button
+                onClick={() => handleAction(dialog.action, dialog.userId)}
+                disabled={actionLoading}
+              >
+                {actionLoading ? '⏳...' : 'Confirmer'}
+              </Button>
+            </div>
+          </div>
         </div>
-        <div>
-          {dialog.action === 'suspend' && (
-            <Input
-              label="Durée de suspension (heures)"
-              type="number"
-              value={suspendHours}
-              onChange={(e) => setSuspendHours(parseInt(e.target.value))}
-              fullWidth
-            />
-          )}
-          {dialog.action === 'delete' && (
-            <div>Cette action est irréversible!</div>
-          )}
-        </div>
-        <div>
-          <Button onClick={() => setDialog({ open: false, action: null, userId: null })}>
-            Annuler
-          </Button>
-          <Button
-            onClick={() => handleAction(dialog.action, dialog.userId)}
-            disabled={actionLoading}
-            variant="contained"
-            color={dialog.action === 'delete' ? 'error' : 'primary'}
-          >
-            {actionLoading ? <div size={24} /> : 'Confirmer'}
-          </Button>
-        </div>
-      </div>
+      )}
       </FormContainer>
     </>
   );
