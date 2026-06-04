@@ -1,15 +1,9 @@
 /* ========================================
-   ADMIN DASHBOARD PAGE - Dashboard principal
+   ADMIN DASHBOARD PAGE - Dashboard principal avec charte graphique
    ======================================== */
 
-.admin-dashboard-page {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
-  font-family: var(--font-family-base);
-}
-
-.admin-container {
+/* Loading States */
+.admin-loading {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -17,26 +11,15 @@
   width: 100%;
 }
 
-.loading-spinner {
+.spinner {
   font-size: 1.25rem;
   color: var(--color-text-secondary);
+  animation: spin 1s linear infinite;
 }
 
-.page-header {
-  margin-bottom: 2rem;
-}
-
-.page-header h1 {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--color-text);
-  margin: 0 0 0.25rem 0;
-}
-
-.page-header p {
-  font-size: 0.9375rem;
-  color: var(--color-text-secondary);
-  margin: 0;
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* Stats Grid */
@@ -108,8 +91,11 @@
 }
 
 .tab-btn.active {
-  color: var(--color-primary);
-  border-bottom-color: var(--color-primary);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  border-bottom-color: #667eea;
 }
 
 /* Tab Content */
@@ -176,8 +162,8 @@
 }
 
 .metric-primary {
-  background-color: rgba(63, 81, 181, 0.15);
-  color: #1a237e;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  color: #667eea;
 }
 
 .metric-success {
@@ -329,106 +315,37 @@
    RESPONSIVE DESIGN
    ======================================== */
 
-
-
-
-/* ========================================
-   DARK MODE
-   ======================================== */
-
-
-  .page-header p {
-    color: var(--color-text-secondary);
-  }
-
-  .stat-card {
-    border-color: var(--color-border);
-    background-color: var(--color-background);
-  }
-
-  .stat-label {
-    color: var(--color-text-secondary);
-  }
-
-  .stat-value {
-    color: var(--color-text);
-  }
-
-  .dashboard-card {
-    border-color: var(--color-border);
-    background-color: var(--color-background);
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
   }
 
   .tabs-nav {
-    border-bottom-color: var(--color-border);
+    flex-wrap: wrap;
+  }
+
+  .tab-content {
+    padding: 1rem;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .management-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
   }
 
   .tab-btn {
-    color: var(--color-text-secondary);
-  }
-
-  .tab-btn:hover {
-    color: var(--color-text);
-  }
-
-  .tab-btn.active {
-    color: var(--color-primary);
-    border-bottom-color: var(--color-primary);
-  }
-
-  .chart-box {
-    border-color: var(--color-border);
-    background-color: var(--color-background-secondary);
-  }
-
-  .chart-box h3 {
-    color: var(--color-text);
-  }
-
-  .chart-placeholder {
-    background-color: var(--color-background);
-    color: var(--color-text-secondary);
-  }
-
-  .metrics-box {
-    border-color: var(--color-border);
-    background-color: var(--color-background-secondary);
-  }
-
-  .metrics-box h3 {
-    color: var(--color-text);
-  }
-
-  .users-section h3,
-  .security-section h3 {
-    color: var(--color-text);
-  }
-
-  .divider {
-    background-color: var(--color-border);
-  }
-
-  .user-item {
-    border-bottom-color: var(--color-border);
-  }
-
-  .user-name {
-    color: var(--color-text);
-  }
-
-  .user-meta {
-    color: var(--color-text-secondary);
-  }
-
-  .suspicious-item {
-    border-color: var(--color-border);
-  }
-
-  .suspicious-email {
-    color: var(--color-text);
-  }
-
-  .suspicious-reason {
-    color: var(--color-text-secondary);
+    padding: 0.75rem;
+    font-size: 0.8125rem;
   }
 }

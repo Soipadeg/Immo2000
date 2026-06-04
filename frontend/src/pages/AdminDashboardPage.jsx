@@ -4,7 +4,7 @@ import '../styles/AdminDashboardPage.css';
  */
 
 import React, { useState, useEffect } from 'react';
-import { Button, Alert } from '@/components';
+import { Button, Alert, FormContainer } from '@/components';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { dashboardApi, analyticsApi } from '../services/adminApi';
@@ -72,10 +72,10 @@ const AdminDashboardPage = () => {
 
   if (authLoading) {
     return (
-      <div className="admin-container">
-        <div className="loading-spinner">⏳ Chargement...</div>
-      </div>
-    );
+    <div className="admin-loading">
+      <div className="spinner">⏳ Chargement...</div>
+    </div>
+  );
   }
 
   if (!user || user.role !== 'admin') {
@@ -101,14 +101,20 @@ const AdminDashboardPage = () => {
   ];
 
   return (
-    <div className="admin-dashboard-page">
-      <div className="page-header">
-        <div>🔐 Dashboard Admin</div>
-        <div>Bienvenue, Admin {user.nom}</div>
+    <>
+      <div className="search-page-header">
+        <div className="search-page-header__content">
+          <div className="search-page-header__title-row">
+            <span className="search-page-header__icon">🔐</span>
+            <h1>Dashboard Admin</h1>
+          </div>
+          <p>Bienvenue, {user?.nom}! Gérez la plateforme en un seul endroit</p>
+        </div>
       </div>
 
-      {/* Statistiques principales */}
-      <div className="stats-grid">
+      <FormContainer maxWidth="full-width">
+        {/* Statistiques principales */}
+        <div className="stats-grid">
         {stats.map((stat, index) => (
           <div key={index} className="stat-card">
             <div className="stat-label">{stat.label}</div>
@@ -245,7 +251,8 @@ const AdminDashboardPage = () => {
           )}
         </div>
       </div>
-    </div>
+      </FormContainer>
+    </>
   );
 };
 
