@@ -15,7 +15,7 @@ import io
 from src.auth.models import db, User
 from src.models.security import SecurityProfile, AuditLog, RGPDRequest, IdentityVerificationLog
 from src.security.auth_advanced import TwoFactorAuth, IdentityVerification, XSSProtection
-from src.security.audit import log_audit_action, AuditAction, AlertSystem
+from src.security.audit import log_admin_action, audit_logger
 
 security_bp = Blueprint('security', __name__, url_prefix='/api/v1/security')
 
