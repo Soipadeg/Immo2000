@@ -217,6 +217,7 @@ function App() {
               <Route path="home" element={<AdminHomePage />} />
               <Route path="dashboard" element={<AdminDashboardPage />} />
               <Route path="users" element={<AdminUsersPageNew />} />
+              <Route path="moderation" element={<ModerationPage />} />
               <Route path="listings" element={<AdminListingsPage />} />
               <Route path="transactions" element={<AdminTransactionsPage />} />
               <Route path="settings" element={<AdminSettingsPage />} />
