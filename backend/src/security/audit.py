@@ -7,6 +7,7 @@ from datetime import datetime
 from flask import request, current_app
 from functools import wraps
 import logging
+from src.auth.models import db
 
 logger = logging.getLogger(__name__)
 

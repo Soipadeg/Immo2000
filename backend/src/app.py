@@ -53,7 +53,7 @@ from src.routes.security import security_bp
 # Import des nouvelles routes (Priority 3)
 from src.routes.pret import pret_bp
 from src.routes.fcm import fcm_bp
-from src.routes.chat import chat_bp
+# from src.routes.chat import chat_bp  # TODO: Fix imports - ChatMessage and Conversation models missing
 
 # Import models pour que SQLAlchemy les reconnaisse
 from src.models.historique_rdv import HistoriqueRDV
@@ -372,7 +372,7 @@ def create_app(config_name: str = None) -> Flask:
     # Blueprints - Priority 3: Advanced Features
     app.register_blueprint(pret_bp)  # Simulateur de prêt
     app.register_blueprint(fcm_bp)   # Notifications push Firebase
-    app.register_blueprint(chat_bp)  # Chat temps réel avec WebSocket
+    # app.register_blueprint(chat_bp)  # Chat temps réel avec WebSocket - TODO: Fix imports
 
     # Blueprints - Phase 6G: Security (2FA, RGPD, Audit)
     app.register_blueprint(security_bp)
