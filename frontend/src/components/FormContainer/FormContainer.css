@@ -29,6 +29,31 @@
   max-width: 700px;
 }
 
+/* Full-width layout - content takes entire page width */
+.form-container--full-width {
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 0;
+  min-height: auto;
+}
+
+.form-container--full-width .form-container-inner {
+  max-width: 100%;
+  width: 100%;
+  border-radius: 0;
+}
+
+.form-container--full-width .form-container-header {
+  border-radius: 0;
+  padding: 2rem;
+  background-color: transparent;
+}
+
+.form-container--full-width .form-container-content {
+  padding: 2rem;
+  width: 100%;
+}
+
 /* Header */
 .form-container-header {
   padding: 2rem;

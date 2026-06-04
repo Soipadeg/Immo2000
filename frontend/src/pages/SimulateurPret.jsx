@@ -196,7 +196,7 @@ const SimulateurPret = () => {
     <FormContainer
       title="🏠 Simulateur de Prêt Immobilier"
       subtitle="Calculez votre mensualité et votre capacité d'emprunt selon les critères bancaires français"
-      maxWidth="large"
+      maxWidth="full-width"
     >
       <div className="simulateur-pret-container">
         {/* Form Section */}

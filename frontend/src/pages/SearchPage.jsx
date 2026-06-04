@@ -81,7 +81,7 @@ export default function SearchPage() {
   };
 
   return (
-    <FormContainer title="🔍 Trouvez votre bien immobilier" maxWidth="large">
+    <FormContainer title="🔍 Trouvez votre bien immobilier" maxWidth="full-width">
       {/* Filters */}
       <div className="search-filters">
         <Input
