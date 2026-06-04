@@ -50,7 +50,7 @@ FormContainer.propTypes = {
   title: PropTypes.string,
   subtitle: PropTypes.string,
   children: PropTypes.node.isRequired,
-  maxWidth: PropTypes.oneOf(['small', 'medium', 'large']),
+  maxWidth: PropTypes.oneOf(['small', 'medium', 'large', 'full-width']),
   className: PropTypes.string,
 };
 

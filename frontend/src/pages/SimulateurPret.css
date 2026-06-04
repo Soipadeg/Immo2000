@@ -1,33 +1,35 @@
-/* SimulateurPret Styles */
+/* SimulateurPret Styles - Complete Redesign */
 
 .simulateur-pret-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 32px;
+  gap: 48px;
+  padding: 0;
 }
-
 
 /* Form Section */
 
 .pret-form-section {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 32px;
 }
 
 .section-title {
-  margin: 0 0 16px 0;
-  font-size: 1rem;
-  font-weight: 600;
+  margin: 0;
+  padding-bottom: 16px;
+  font-size: 1.1rem;
+  font-weight: 700;
   color: #1F2937;
+  border-bottom: 2px solid #E5E7EB;
 }
 
-/* Dark mode disabled - light mode only */
+/* Form Grid - 2 columns for better spacing */
 
 .form-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
 }
 
 /* Toggle Buttons */
@@ -36,36 +38,37 @@
 .form-duration {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
+  grid-column: 1 / -1;
 }
 
 .form-toggle > label,
 .form-duration > label {
   font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: 600;
   color: #1F2937;
 }
 
-/* Dark mode disabled - light mode only */
+/* Toggle and Duration Buttons */
 
 .toggle-buttons,
 .duration-buttons {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 10px;
 }
 
 .toggle-btn,
 .duration-btn {
-  padding: 10px 12px;
-  border: 1px solid #D1D5DB;
-  border-radius: 6px;
-  background-color: #F9FAFB;
+  padding: 10px 14px;
+  border: 2px solid #D1D5DB;
+  border-radius: 8px;
+  background-color: #FFFFFF;
   color: #1F2937;
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 500;
-  transition: all 300ms ease;
+  transition: all 200ms ease;
 }
 
 .toggle-btn:hover,
@@ -81,8 +84,6 @@
   border-color: #2563EB;
 }
 
-/* Dark mode disabled - light mode only */
-
 /* Form Select */
 
 .form-select {
@@ -93,7 +94,7 @@
   background-color: #FFFFFF;
   color: #1F2937;
   cursor: pointer;
-  transition: all 300ms ease;
+  transition: all 200ms ease;
 }
 
 .form-select:hover {
@@ -106,47 +107,19 @@
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-
-/* Section Divider */
-
-.section-divider {
-  margin: 16px 0;
-  padding-top: 16px;
-  border-top: 1px solid #E5E7EB;
-}
-
-.section-divider h4 {
-  margin: 0;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #1F2937;
-}
-
-
-/* Form Actions */
-
-.form-actions {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 12px;
-  margin-top: 16px;
-}
-
-
 /* Results Section */
 
 .pret-results-section {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
 .results-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
 }
-
 
 .results-empty {
   padding: 48px 24px;
@@ -166,11 +139,11 @@
   font-size: 0.8rem;
 }
 
-
 /* Result Cards */
 
 .result-card {
   padding: 20px;
+  border-radius: 8px;
   color: #1F2937;
 }
 
@@ -209,9 +182,6 @@
   border: 1px solid #E5E7EB;
 }
 
-
-/* Result Label */
-
 .result-label {
   font-size: 0.85rem;
   font-weight: 500;
@@ -235,8 +205,6 @@
   opacity: 0.9;
   margin-top: 8px;
 }
-
-/* Result Details */
 
 .result-details {
   margin-top: 12px;
@@ -277,7 +245,6 @@
   color: inherit;
 }
 
-
 /* Property Grid */
 
 .property-grid {
@@ -285,7 +252,6 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
 }
-
 
 .prop-item {
   display: flex;
@@ -359,4 +325,3 @@
 
 
 /* Responsive */
-
