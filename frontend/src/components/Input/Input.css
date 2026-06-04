@@ -118,12 +118,3 @@
 }
 
 /* Responsive */
-@media (max-width: 640px) {
-  .input-wrapper {
-    height: 40px;
-  }
-
-  .input-control {
-    font-size: 16px; /* Prevent auto zoom on iOS */
-  }
-}

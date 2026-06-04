@@ -144,18 +144,3 @@
 
 /* Responsive */
 
-@media (max-width: 640px) {
-  .verifying-loader {
-    padding: 24px 0;
-  }
-
-  .spinner {
-    width: 32px;
-    height: 32px;
-  }
-
-  .verify-email-info {
-    padding: 12px;
-    font-size: 0.8rem;
-  }
-}

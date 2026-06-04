@@ -188,49 +188,7 @@
    RESPONSIVE DESIGN
    ======================================== */
 
-@media (max-width: 768px) {
-  .admin-listings-page {
-    padding: 1.5rem 1rem;
-  }
 
-  .page-header h1 {
-    font-size: 1.5rem;
-  }
-
-  .listings-grid {
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  }
-
-  .modal-content {
-    width: 95%;
-  }
-}
-
-@media (max-width: 640px) {
-  .admin-listings-page {
-    padding: 1rem 0.75rem;
-  }
-
-  .page-header h1 {
-    font-size: 1.25rem;
-  }
-
-  .listings-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .listing-card {
-    padding: 1rem;
-  }
-
-  .modal-actions {
-    flex-direction: column;
-  }
-
-  .modal-actions button {
-    width: 100%;
-  }
-}
 
 /* ========================================
    DARK MODE

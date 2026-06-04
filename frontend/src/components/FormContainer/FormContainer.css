@@ -58,33 +58,6 @@
 }
 
 /* Responsive */
-@media (max-width: 640px) {
-  .form-container {
-    padding: 1rem;
-  }
-
-  .form-container-inner {
-    border-radius: 8px;
-  }
-
-  .form-container-header {
-    padding: 1.5rem;
-  }
-
-  .form-container-title {
-    font-size: 1.5rem;
-  }
-
-  .form-container-content {
-    padding: 1.5rem;
-  }
-
-  .form-container--small,
-  .form-container--medium,
-  .form-container--large {
-    max-width: 100%;
-  }
-}
 
 /* Dark mode disabled - light mode only */
 

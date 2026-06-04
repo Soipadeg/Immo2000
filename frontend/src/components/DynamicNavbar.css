@@ -217,19 +217,6 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
-  .dynamic-navbar__menu {
-    display: none;
-  }
-
-  .dynamic-navbar__menu-button {
-    display: block;
-  }
-
-  .dynamic-navbar__container {
-    padding: 0.5rem 1rem;
-  }
-}
 
 
   .dynamic-navbar__brand {

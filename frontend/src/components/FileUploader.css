@@ -178,20 +178,6 @@
 }
 
 /* Responsive */
-@media (max-width: 640px) {
-  .file-uploader__drop-zone {
-    padding: 1.5rem;
-  }
-
-  .file-uploader__file-item {
-    flex-direction: column;
-  }
-
-  .file-uploader__file-thumbnail {
-    width: 100%;
-    height: 150px;
-  }
-}
 
 
   .file-uploader__drop-zone.drag-active {

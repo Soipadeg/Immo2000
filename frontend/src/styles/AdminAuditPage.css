@@ -25,13 +25,6 @@
 .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; }
 .modal-content { background: var(--color-background); border-radius: 12px; padding: 2rem; max-width: 500px; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); }
 .json-pre { background-color: rgba(0, 0, 0, 0.05); padding: 0.75rem; border-radius: 6px; font-size: 0.75rem; overflow-x: auto; }
-@media (max-width: 768px) { .filters-section { grid-template-columns: 1fr; } .audit-table th, .audit-table td { font-size: 0.75rem; } }
-
-.admin-audit-page {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
-}
 
 .page-header {
   display: flex;
@@ -126,24 +119,6 @@
   border-color: var(--color-primary);
 }
 
-@media (max-width: 1024px) {
-  .table-header, .table-row {
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  }
-}
 
-@media (max-width: 768px) {
-  .admin-audit-page {
-    padding: 1.5rem 1rem;
-  }
-
-  .filters-section {
-    grid-template-columns: 1fr;
-  }
-
-  .table-header, .table-row {
-    grid-template-columns: 1fr;
-  }
-}
 
 }

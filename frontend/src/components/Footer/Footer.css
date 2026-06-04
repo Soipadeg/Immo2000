@@ -187,43 +187,4 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
-  .footer {
-    padding: 32px 1rem;
-  }
 
-  .footer-container {
-    grid-template-columns: 1fr;
-    gap: 32px;
-  }
-
-  .footer-newsletter-form {
-    flex-direction: column;
-  }
-
-  .footer-newsletter-input {
-    width: 100%;
-  }
-
-  .footer-newsletter-button {
-    width: 100%;
-  }
-}
-
-@media (max-width: 480px) {
-  .footer {
-    padding: 24px 1rem;
-  }
-
-  .footer-container {
-    gap: 24px;
-  }
-
-  .footer-title {
-    font-size: 1.25rem;
-  }
-
-  .footer-section-title {
-    font-size: 0.875rem;
-  }
-}

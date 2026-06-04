@@ -164,21 +164,6 @@
   color: var(--color-text-secondary);
 }
 
-@media (max-width: 768px) {
-  .login-page {
-    align-items: flex-start;
-    padding-top: 2rem;
-  }
-
-  .login-form {
-    padding: 1.5rem;
-  }
-
-  .login-container h1 {
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-}
 
 
   .form-group input:focus {

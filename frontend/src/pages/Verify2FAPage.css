@@ -105,13 +105,3 @@
 
 /* Responsive */
 
-@media (max-width: 640px) {
-  .security-tip {
-    padding: 12px;
-    font-size: 0.8rem;
-  }
-
-  .form-description {
-    font-size: 0.85rem;
-  }
-}

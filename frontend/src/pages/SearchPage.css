@@ -84,18 +84,7 @@
   margin-bottom: 32px;
 }
 
-@media (max-width: 640px) {
-  .search-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-}
 
-@media (max-width: 1024px) {
-  .search-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
 
 /* Annonce Card */
 
@@ -265,28 +254,3 @@
 
 /* Responsive Mobile */
 
-@media (max-width: 640px) {
-  .annonce-image {
-    height: 180px;
-  }
-
-  .annonce-content {
-    padding: 12px;
-  }
-
-  .annonce-content h3 {
-    font-size: 0.95rem;
-  }
-
-  .annonce-price {
-    font-size: 1.1rem;
-  }
-
-  .annonce-details {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .search-filters {
-    grid-template-columns: 1fr;
-  }
-}

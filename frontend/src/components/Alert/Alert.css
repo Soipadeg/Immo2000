@@ -156,17 +156,3 @@
 }
 
 /* Responsive */
-@media (max-width: 640px) {
-  .alert {
-    padding: 12px;
-    gap: 10px;
-  }
-
-  .alert-title {
-    font-size: 0.85rem;
-  }
-
-  .alert-message {
-    font-size: 0.8rem;
-  }
-}
