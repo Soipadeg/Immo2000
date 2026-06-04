@@ -28,9 +28,18 @@ export class FirebaseAnalytics {
 }
 
 // Mixpanel Analytics
+export const initMixpanel = () => {
+  const token = import.meta.env.VITE_MIXPANEL_TOKEN || '';
+  if (token) {
+    mixpanel.init(token);
+  }
+};
+
 export class MixpanelAnalytics {
   constructor(token: string) {
-    mixpanel.init(token);
+    if (token) {
+      mixpanel.init(token);
+    }
   }
 
   trackEvent(eventName: string, properties?: Record<string, any>) {

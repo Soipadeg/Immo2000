@@ -5,14 +5,14 @@ import { BrowserTracing } from "@sentry/tracing";
 
 export const initSentry = () => {
   Sentry.init({
-    dsn: process.env.REACT_APP_SENTRY_DSN,
+    dsn: import.meta.env.VITE_SENTRY_DSN,
     integrations: [
       new BrowserTracing({
         routingInstrumentation: Sentry.reactRouterV6Instrumentation(
           window.history
         ),
         tracingOrigins: [
-          process.env.REACT_APP_API_URL || 'localhost',
+          import.meta.env.VITE_API_URL || 'localhost',
           /^\//,
         ],
       }),
@@ -21,11 +21,11 @@ export const initSentry = () => {
         blockAllMedia: true,
       }),
     ],
-    tracesSampleRate: parseFloat(process.env.REACT_APP_SENTRY_TRACES_RATE || '0.1'),
+    tracesSampleRate: parseFloat(import.meta.env.VITE_SENTRY_TRACES_RATE || '0.1'),
     replaysSessionSampleRate: 0.1,
     replaysOnErrorSampleRate: 1.0,
-    release: process.env.REACT_APP_VERSION,
-    environment: process.env.REACT_APP_ENV,
+    release: import.meta.env.VITE_VERSION,
+    environment: import.meta.env.VITE_ENV,
     maxBreadcrumbs: 50,
     attachStacktrace: true,
     denyUrls: [
