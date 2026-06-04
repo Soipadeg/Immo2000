@@ -193,15 +193,23 @@ const SimulateurPret = () => {
   };
 
   return (
-    <FormContainer
-      title="🏠 Simulateur de Prêt Immobilier"
-      subtitle="Calculez votre mensualité et votre capacité d'emprunt selon les critères bancaires français"
-      maxWidth="full-width"
-    >
-      <div className="simulateur-pret-container">
-        {/* Form Section */}
-        <div className="pret-form-section">
-          <div className="section-title">📝 Le bien immobilier</div>
+    <>
+      {/* Animated Header */}
+      <div className="simulateur-pret-header">
+        <div className="simulateur-pret-header__content">
+          <span className="simulateur-pret-header__icon">🏠</span>
+          <div>
+            <h1>Simulateur de Prêt Immobilier</h1>
+            <p>Calculez votre mensualité et votre capacité d'emprunt selon les critères bancaires français</p>
+          </div>
+        </div>
+      </div>
+
+      <FormContainer maxWidth="full-width">
+        <div className="simulateur-pret-container">
+          {/* Form Section */}
+          <div className="pret-form-section">
+            <div className="section-title">📝 Le bien immobilier</div>
 
           <div className="form-grid">
             <Input
@@ -518,7 +526,8 @@ const SimulateurPret = () => {
           />
         </div>
       </div>
-    </FormContainer>
+      </FormContainer>
+    </>
   );
 };
 

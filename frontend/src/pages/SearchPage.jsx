@@ -81,9 +81,21 @@ export default function SearchPage() {
   };
 
   return (
-    <FormContainer title="🔍 Trouvez votre bien immobilier" maxWidth="full-width">
-      {/* Filters */}
-      <div className="search-filters">
+    <>
+      {/* Animated Header */}
+      <div className="search-page-header">
+        <div className="search-page-header__content">
+          <span className="search-page-header__icon">🏠</span>
+          <div>
+            <h1>Trouvez votre bien immobilier</h1>
+            <p>Explorez nos annonces et découvrez la propriété de vos rêves</p>
+          </div>
+        </div>
+      </div>
+
+      <FormContainer maxWidth="full-width">
+        {/* Filters */}
+        <div className="search-filters">
         <Input
           label="Rechercher par ville ou titre"
           type="text"
@@ -191,6 +203,7 @@ export default function SearchPage() {
           ))}
         </div>
       )}
-    </FormContainer>
+      </FormContainer>
+    </>
   );
 }
