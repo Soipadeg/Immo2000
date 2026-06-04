@@ -1,15 +1,10 @@
-import '../styles/MatchingPage.css';
 import './MatchingPage.css';
-import { Alert,Button,Input } from '@/components';
+import { Alert, Button, Input, Card, FormContainer } from '@/components';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
-
-
-
-
 
 const MatchingPage = () => {
   const navigate = useNavigate();
@@ -24,13 +19,11 @@ const MatchingPage = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
 
-  // Récupérer l'acheteur_id depuis le localStorage
   const userId = localStorage.getItem('user_id');
   const token = localStorage.getItem('auth_token');
 
   useEffect(() => {
-    // Optionnel : charger les matching au montage si souhaité
-    // handleSubmit();
+    // Optionnel : charger les matching au montage
   }, []);
 
   const handleFilterChange = (e) => {
@@ -73,7 +66,6 @@ const MatchingPage = () => {
 
       setAnnonces(response.data);
       setSuccess(true);
-      // Fermer le message de succès après 3 secondes
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
       console.error('Erreur lors de la requête de matching:', err);
@@ -99,10 +91,8 @@ const MatchingPage = () => {
     setError(null);
   };
 
-  const renderScoreStars = (score) => {
-    // Convertir le score 0-100 en étoiles 0-5
-    const stars = (score / 100) * 5;
-    return stars;
+  const handleDetailClick = (annonceId) => {
+    navigate(`/annonce/${annonceId}`);
   };
 
   const formatPrice = (price) => {
@@ -114,36 +104,34 @@ const MatchingPage = () => {
   };
 
   return (
-    <div className="matching-page">
-      <div className="page-header">
-        <div className="page-header__content">
-          <div className="page-header__title-row">
-            <span className="page-header__icon">❤️</span>
+    <>
+      {/* Animated Header - Exact same structure as SearchPage */}
+      <div className="search-page-header">
+        <div className="search-page-header__content">
+          <div className="search-page-header__title-row">
+            <span className="search-page-header__icon">❤️</span>
             <h1>Trouvez votre bien idéal</h1>
           </div>
-          <p>
-            Utilisez les filtres ci-dessous pour découvrir les annonces les plus adaptées à vos
-            critères.
-          </p>
+          <p>Utilisez les filtres ci-dessous pour découvrir les annonces les plus adaptées à vos critères</p>
         </div>
       </div>
 
-      {/* Messages d'alerte */}
-      {error && (
-        <Alert severity="error" onClose={() => setError(null)}>
-          {error}
-        </Alert>
-      )}
-      {success && annonces.length > 0 && (
-        <Alert severity="success" onClose={() => setSuccess(false)}>
-          Recherche effectuée ! {annonces.length} annonce(s) trouvée(s).
-        </Alert>
-      )}
+      <FormContainer maxWidth="full-width">
+        {/* Messages d'alerte */}
+        {error && (
+          <Alert severity="error" onClose={() => setError(null)}>
+            {error}
+          </Alert>
+        )}
+        {success && annonces.length > 0 && (
+          <Alert severity="success" onClose={() => setSuccess(false)}>
+            Recherche effectuée ! {annonces.length} annonce(s) trouvée(s).
+          </Alert>
+        )}
 
-      {/* Formulaire de filtres */}
-      <div className="filters-card">
-        <form onSubmit={handleSubmit}>
-          <div className="filters-grid">
+        {/* Filters */}
+        <div className="search-filters">
+          <form onSubmit={handleSubmit}>
             <Input
               label="Ville"
               name="ville"
@@ -151,6 +139,7 @@ const MatchingPage = () => {
               onChange={handleFilterChange}
               placeholder="Ex: Paris, Lyon..."
             />
+
             <Input
               label="Budget maximum (€)"
               name="budget_max"
@@ -159,6 +148,7 @@ const MatchingPage = () => {
               onChange={handleFilterChange}
               placeholder="Ex: 300000"
             />
+
             <Input
               label="Surface minimum (m²)"
               name="surface_min"
@@ -167,6 +157,7 @@ const MatchingPage = () => {
               onChange={handleFilterChange}
               placeholder="Ex: 80"
             />
+
             <Input
               label="Type de bien"
               name="type_bien"
@@ -174,134 +165,127 @@ const MatchingPage = () => {
               onChange={handleFilterChange}
               placeholder="Ex: Appartement, Maison..."
             />
+
+            {/* Action Buttons */}
+            <div className="search-filters-actions">
+              <Button
+                variant="secondary"
+                onClick={handleClearFilters}
+                disabled={loading}
+              >
+                Réinitialiser
+              </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={loading}
+              >
+                🔍 {loading ? 'Recherche...' : 'Rechercher'}
+              </Button>
+            </div>
+          </form>
+        </div>
+
+        {/* Summary */}
+        <div className="search-summary">
+          <div>
+            <strong>{annonces.length} annonce{annonces.length !== 1 ? 's' : ''}</strong>
+            {filters.type_bien && ` • ${filters.type_bien}`}
           </div>
+        </div>
 
-          {/* Boutons d'action */}
-          <div className="filters-actions">
-            <Button
-              variant="secondary"
-              onClick={handleClearFilters}
-              disabled={loading}
-            >
-              Réinitialiser
-            </Button>
-            <Button
-              type="submit"
-              variant="primary"
-              disabled={loading}
-            >
-              🔍 {loading ? 'Recherche...' : 'Rechercher'}
-            </Button>
-          </div>
-        </form>
-      </div>
-
-      {/* Résultats */}
-      <div className="results-section">
-        <h2 className="results-title">Résultats ({annonces.length})</h2>
-
-        {annonces.length === 0 && !loading ? (
-          <div className="no-results-card">
-            <div className="no-results-icon">🏠</div>
+        {/* Results Grid */}
+        {annonces.length === 0 ? (
+          <div className="search-empty">
+            <div>🏠</div>
             <h3>Aucune annonce ne correspond à vos critères.</h3>
-            <p>
-              Essayez d'élargir vos critères de recherche.
-            </p>
+            <p>Essayez d'élargir vos critères de recherche.</p>
           </div>
         ) : (
-          <div className="annonces-grid">
+          <div className="search-grid">
             {annonces.map((annonce) => (
-              <div item xs={12} sm={6} md={4} key={annonce.id}>
-                <div className="annonce-card" elevation={2}>
+              <Card key={annonce.id} variant="elevated" interactive>
+                <div className="annonce-card">
                   {/* Image */}
-                  <CardMedia
-                    component="img"
-                    height="200"
-                    image={
-                      annonce.image_url ||
-                      annonce.photo ||
-                      'https://via.placeholder.com/400x200?text=Pas+d%27image'
-                    }
-                    alt={annonce.adresse || 'Annonce immobilière'}
-                    onError={(e) => {
-                      e.target.src =
-                        'https://via.placeholder.com/400x200?text=Image+indisponible';
-                    }}
-                  />
+                  <div className="annonce-image">
+                    <img
+                      src={
+                        annonce.image_url ||
+                        annonce.photo ||
+                        'https://via.placeholder.com/400x200?text=Pas+d%27image'
+                      }
+                      alt={annonce.adresse || 'Annonce'}
+                      onError={(e) => {
+                        e.target.src =
+                          'https://via.placeholder.com/400x200?text=Image+indisponible';
+                      }}
+                    />
+                    <div className="property-type-badge">{annonce.type_bien || 'Bien'}</div>
+                  </div>
 
-                  {/* Contenu principal */}
-                  <div>
-                    <div>
-                      <div>
-                        {annonce.adresse || 'Adresse non disponible'}
-                      </div>
+                  {/* Content */}
+                  <div className="annonce-content">
+                    <div>{annonce.adresse || 'Adresse non disponible'}</div>
+                    <div className="annonce-price">{formatPrice(annonce.prix || 0)}</div>
+                    <div className="annonce-description">
+                      {annonce.description || 'Pas de description'}
+                    </div>
 
-                      {/* Prix et caractéristiques */}
-                      <div>
-                        <div
-                          label={`${formatPrice(annonce.prix || 0)}`}
-                          color="primary"
-                          variant="outlined"
-                        />
-                        {annonce.surface && (
-                          <div label={`${annonce.surface} m²`} variant="outlined" />
-                        )}
-                        {annonce.type_bien && (
-                          <div label={annonce.type_bien} variant="outlined" />
-                        )}
-                      </div>
-
-                      {/* Score */}
-                      {annonce.score !== undefined && (
-                        <div>
-                          <Rating
-                            value={renderScoreStars(annonce.score)}
-                            readOnly
-                            precision={0.5}
-                            size="small"
-                          />
-                          <div>
-                            ({annonce.score}/100)
-                          </div>
+                    {/* Details */}
+                    <div className="annonce-details">
+                      {annonce.surface && (
+                        <div className="detail">
+                          <div className="detail-label">Surface</div>
+                          <div>{annonce.surface} m²</div>
                         </div>
                       )}
-
-                      {/* Détails supplémentaires */}
-                      {annonce.description && (
-                        <div>
-                          {annonce.description}
+                      {annonce.nombre_pieces && (
+                        <div className="detail">
+                          <div className="detail-label">Pièces</div>
+                          <div>{annonce.nombre_pieces}</div>
+                        </div>
+                      )}
+                      {annonce.nombre_chambres !== undefined && (
+                        <div className="detail">
+                          <div className="detail-label">Chambres</div>
+                          <div>{annonce.nombre_chambres}</div>
+                        </div>
+                      )}
+                      {annonce.ville && (
+                        <div className="detail">
+                          <div className="detail-label">Localité</div>
+                          <div>{annonce.ville}</div>
                         </div>
                       )}
                     </div>
-                  </div>
 
-                  {/* Boutons d'action */}
-                  <div>
-                    <Button
-                      fullWidth
-                      variant="contained"
-                      color="primary"
-                      onClick={() => navigate(`/annonces/${annonce.id}`)}
-                    >
-                      Voir l'annonce
-                    </Button>
-                    <Button
-                      fullWidth
-                      variant="outlined"
-                      color="primary"
-                      onClick={() => navigate(`/visites?annonce_id=${annonce.id}`)}
-                    >
-                      Prendre RDV
-                    </Button>
+                    {/* Score if available */}
+                    {annonce.score !== undefined && (
+                      <div className="annonce-score">
+                        Score: {annonce.score}/100
+                      </div>
+                    )}
+
+                    {/* Actions */}
+                    <div className="annonce-actions">
+                      <Button
+                        variant="primary"
+                        size="medium"
+                        onClick={() => handleDetailClick(annonce.id)}
+                      >
+                        Voir les détails
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
         )}
-      </div>
-    </div>
+      </FormContainer>
+    </>
   );
 };
+
 
 export default MatchingPage;
