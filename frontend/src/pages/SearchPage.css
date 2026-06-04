@@ -55,6 +55,91 @@
   }
 }
 
+/* Estimation Banner */
+.estimation-banner {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  margin-bottom: 24px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+  animation: slideDown 0.5s ease-out;
+}
+
+.estimation-banner__content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  gap: 16px;
+  color: white;
+}
+
+.estimation-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.estimation-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.estimation-info h3 {
+  margin: 0 0 4px 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.estimation-info p {
+  margin: 0;
+  font-size: 0.95rem;
+  opacity: 0.95;
+}
+
+.estimation-info strong {
+  font-weight: 700;
+  display: block;
+  font-size: 1.2rem;
+  margin-top: 4px;
+}
+
+.estimation-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+
+.spinner-mini {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.estimation-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.8;
+  transition: opacity 200ms ease;
+  flex-shrink: 0;
+}
+
+.estimation-close:hover {
+  opacity: 1;
+}
+
 /* Page container */
 .search-page {
   min-height: 100vh;
@@ -322,3 +407,50 @@
 }
 
 /* Responsive Mobile */
+
+/* Estimation Banner - Mobile */
+@media (max-width: 768px) {
+  .estimation-banner__content {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px 16px;
+    gap: 8px;
+  }
+
+  .estimation-icon {
+    width: 100%;
+    text-align: center;
+  }
+
+  .estimation-info {
+    width: 100%;
+  }
+
+  .estimation-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .estimation-banner__content {
+    padding: 12px;
+  }
+
+  .estimation-info h3 {
+    font-size: 0.9rem;
+  }
+
+  .estimation-info p {
+    font-size: 0.85rem;
+  }
+
+  .estimation-info strong {
+    font-size: 1rem;
+  }
+}

@@ -14,6 +14,7 @@ export { listingsApi } from './listings';
 export { messagesApi, conversationsApi, notificationsApi } from './messages';
 export { offersApi, visitsApi, appointmentsApi } from './offers';
 export { transactionsApi, paymentsApi, notairesApi } from './transactions';
+export { estimationsApi } from './estimations';
 export { default as docusignApi } from './docusign';
 
 // Re-export de api.js pour compatibilité

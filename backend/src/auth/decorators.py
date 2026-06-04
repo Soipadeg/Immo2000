@@ -43,18 +43,22 @@ def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         # Mode développement : permettre le bypass avec X-Dev-Role header
-        if is_dev_mode():
-            dev_role = request.headers.get('X-Dev-Role')
-            if dev_role:
-                current_user = {
-                    "user_id": 999,  # Mock user ID
-                    "email": f"dev-{dev_role}@immo2000.dev",
-                    "role": dev_role,
-                    "nom": "Dev",
-                    "prenom": dev_role.capitalize(),
-                    "exp": None,
-                }
-                return f(current_user, *args, **kwargs)
+        dev_mode_enabled = is_dev_mode()
+        dev_role = request.headers.get('X-Dev-Role')
+
+        # Debug logging
+        current_app.logger.debug(f"DEV_MODE_ENABLED: {dev_mode_enabled}, X-Dev-Role: {dev_role}, DEV_MODE env: {os.getenv('DEV_MODE')}")
+
+        if dev_mode_enabled and dev_role:
+            current_user = {
+                "user_id": 999,  # Mock user ID
+                "email": f"dev-{dev_role}@immo2000.dev",
+                "role": dev_role,
+                "nom": "Dev",
+                "prenom": dev_role.capitalize(),
+                "exp": None,
+            }
+            return f(current_user, *args, **kwargs)
 
         # Récupérer le header Authorization
         auth_header = request.headers.get('Authorization')

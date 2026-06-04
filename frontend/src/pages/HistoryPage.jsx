@@ -1,10 +1,11 @@
 import '../styles/HistoryPage.css';
 /**
  * Page Historique - Biens consultés et annonces contactées
+ * Affichage avec interface harmonisée
  */
 
 import React, { useState } from 'react';
-import { Button, Alert } from '@/components';
+import { Button, Alert, Card } from '@/components';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,8 +27,11 @@ const HistoryPage = () => {
 
   if (loading) {
     return (
-      <div className="history-container">
-        <div className="loading-spinner">⏳ Chargement...</div>
+      <div className="history-page-container">
+        <div className="loading-page">
+          <div className="spinner"></div>
+          <p>⏳ Chargement de l'historique...</p>
+        </div>
       </div>
     );
   }
@@ -37,17 +41,21 @@ const HistoryPage = () => {
     return null;
   }
 
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
-
   return (
-    <div className="history-page">
-      <div className="page-header">
-        <div>📋 Historique</div>
+    <div className="history-page-container">
+      {/* Page Header Banner */}
+      <div className="search-page-header">
+        <div className="search-page-header__content">
+          <div className="search-page-header__title-row">
+            <span className="search-page-header__icon">📋</span>
+            <h1>Historique</h1>
+          </div>
+          <p>Consultez vos biens visités et vos contacts</p>
+        </div>
       </div>
 
-      <div className="history-card">
+      {/* Conteneur des onglets */}}
+      <Card className="tabs-card">
         <div className="tabs-nav">
           {[
             { label: `Biens consultés (${viewedAnnonces.length})`, icon: '👀', index: 0 },
@@ -55,7 +63,7 @@ const HistoryPage = () => {
           ].map((tab) => (
             <button
               key={tab.index}
-              className={`tab-btn ${tabValue === tab.index ? 'active' : ''}`}
+              className={`tab-button ${tabValue === tab.index ? 'active' : ''}`}
               onClick={() => setTabValue(tab.index)}
             >
               {tab.icon} {tab.label}
@@ -63,68 +71,97 @@ const HistoryPage = () => {
           ))}
         </div>
 
-        {/* Biens consultés */}
-        {tabValue === 0 && (
-          <div className="table-wrapper">
-            <div className="table-header">
-              <div className="table-cell">Annonce</div>
-              <div className="table-cell">Type</div>
-              <div className="table-cell">Localité</div>
-              <div className="table-cell">Prix</div>
-              <div className="table-cell">Date de visite</div>
-              <div className="table-cell">Actions</div>
-            </div>
-            {viewedAnnonces.map((annonce) => (
-              <div key={annonce.id} className="table-row">
-                <div className="table-cell">{annonce.titre}</div>
-                <div className="table-cell"><div className="type-badge">{annonce.type}</div></div>
-                <div className="table-cell">{annonce.ville}</div>
-                <div className="table-cell price">{annonce.prix.toLocaleString()}€</div>
-                <div className="table-cell">{new Date(annonce.date).toLocaleDateString('fr-FR')}</div>
-                <div className="table-cell"><a href={`/annonce/${annonce.id}`} className="action-link">Voir</a></div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Annonces contactées */}
-        {tabValue === 1 && (
-          <div className="table-wrapper">
-            <div className="table-header">
-              <div className="table-cell">Annonce</div>
-              <div className="table-cell">Localité</div>
-              <div className="table-cell">Vendeur</div>
-              <div className="table-cell">Date de contact</div>
-              <div className="table-cell">Statut</div>
-              <div className="table-cell">Actions</div>
-            </div>
-            {contactedAnnonces.map((annonce) => (
-              <div key={annonce.id} className="table-row">
-                <div className="table-cell">{annonce.titre}</div>
-                <div className="table-cell">{annonce.ville}</div>
-                <div className="table-cell">{annonce.vendeur}</div>
-                <div className="table-cell">{new Date(annonce.dateContact).toLocaleDateString('fr-FR')}</div>
-                <div className="table-cell">
-                  <div className={`status-badge status-${annonce.statut === 'Répondu' ? 'replied' : 'pending'}`}>
-                    {annonce.statut}
-                  </div>
+        <div className="tabs-content">
+          {/* Biens consultés */}
+          {tabValue === 0 && (
+            <>
+              {viewedAnnonces.length === 0 ? (
+                <div className="empty-state">
+                  <div className="empty-icon">👀</div>
+                  <h3>Aucun bien consulté</h3>
+                  <p>Explorez les annonces pour commencer</p>
+                  <a href="/search" className="cta-button">Consulter les annonces</a>
                 </div>
-                <div className="table-cell"><button className="action-btn">Voir messages</button></div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+              ) : (
+                <div className="table-wrapper">
+                  <div className="table-header">
+                    <div className="table-cell">Annonce</div>
+                    <div className="table-cell">Type</div>
+                    <div className="table-cell">Localité</div>
+                    <div className="table-cell">Prix</div>
+                    <div className="table-cell">Date de visite</div>
+                    <div className="table-cell">Actions</div>
+                  </div>
+                  {viewedAnnonces.map((annonce) => (
+                    <div key={annonce.id} className="table-row">
+                      <div className="table-cell"><strong>{annonce.titre}</strong></div>
+                      <div className="table-cell"><span className="type-badge">{annonce.type}</span></div>
+                      <div className="table-cell">{annonce.ville}</div>
+                      <div className="table-cell price">{annonce.prix.toLocaleString()}€</div>
+                      <div className="table-cell">{new Date(annonce.date).toLocaleDateString('fr-FR')}</div>
+                      <div className="table-cell">
+                        <Button
+                          variant="secondary"
+                          size="small"
+                          onClick={() => navigate(`/annonce/${annonce.id}`)}
+                        >
+                          Voir
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
 
-      {(tabValue === 0 && viewedAnnonces.length === 0) || (tabValue === 1 && contactedAnnonces.length === 0) ? (
-        <div className="empty-state">
-          <div>{tabValue === 0 ? 'Aucun bien consulté' : 'Aucune annonce contactée'}</div>
-          <div>
-            {tabValue === 0 ? 'pour le moment' : 'pour le moment'}
-          </div>
-          <a href="/search" className="link-button">Consulter les annonces</a>
+          {/* Annonces contactées */}
+          {tabValue === 1 && (
+            <>
+              {contactedAnnonces.length === 0 ? (
+                <div className="empty-state">
+                  <div className="empty-icon">💬</div>
+                  <h3>Aucune annonce contactée</h3>
+                  <p>Contactez les vendeurs pour commencer</p>
+                  <a href="/search" className="cta-button">Trouver des annonces</a>
+                </div>
+              ) : (
+                <div className="table-wrapper">
+                  <div className="table-header">
+                    <div className="table-cell">Annonce</div>
+                    <div className="table-cell">Localité</div>
+                    <div className="table-cell">Vendeur</div>
+                    <div className="table-cell">Date de contact</div>
+                    <div className="table-cell">Statut</div>
+                    <div className="table-cell">Actions</div>
+                  </div>
+                  {contactedAnnonces.map((annonce) => (
+                    <div key={annonce.id} className="table-row">
+                      <div className="table-cell"><strong>{annonce.titre}</strong></div>
+                      <div className="table-cell">{annonce.ville}</div>
+                      <div className="table-cell">{annonce.vendeur}</div>
+                      <div className="table-cell">{new Date(annonce.dateContact).toLocaleDateString('fr-FR')}</div>
+                      <div className="table-cell">
+                        <span className={`status-badge status-${annonce.statut === 'Répondu' ? 'replied' : 'pending'}`}>
+                          {annonce.statut}
+                        </span>
+                      </div>
+                      <div className="table-cell">
+                        <Button
+                          variant="secondary"
+                          size="small"
+                        >
+                          💬 Messages
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
         </div>
-      ) : null}
+      </Card>
     </div>
   );
 };

@@ -8,7 +8,7 @@
 import axios from 'axios';
 import { useNotificationStore } from '../../store/notificationStore';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
+const API_BASE_URL = 'http://localhost:8000/api/v1';
 
 // Créer l'instance axios
 const apiClient = axios.create({
@@ -33,11 +33,17 @@ apiClient.interceptors.request.use(
     const token = localStorage.getItem('auth_token');
     const devRole = localStorage.getItem('dev_role');
 
+    console.log('[API] Request to', config.url, '| token:', !!token, '| devRole:', devRole);
+
     // Mode dev - ajouter X-Dev-Role header
     if (devRole) {
       config.headers['X-Dev-Role'] = devRole;
+      console.log('[API] ✅ Added X-Dev-Role header:', devRole);
     } else if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      console.log('[API] ✅ Added Authorization header');
+    } else {
+      console.log('[API] ⚠️  No auth token or dev role found!');
     }
 
     // Ajouter un ID unique pour le tracking

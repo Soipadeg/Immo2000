@@ -81,6 +81,7 @@ import SignCompromisPage from './pages/SignCompromisPage';
 import SignActePage from './pages/SignActePage';
 import TransactionDetailsPage from './pages/TransactionDetailsPage';
 import DocuSignCallbackPage from './pages/DocuSignCallbackPage';
+import EstimationPage from './pages/EstimationPage';
 
 
 /**
@@ -178,6 +179,7 @@ function App() {
             <Route path="/search" element={<SearchPage />} />
             <Route path="/annonce/:id" element={<AnnoncePage />} />
             <Route path="/simulateur-pret" element={<SimulateurPret />} />
+            <Route path="/estimations" element={<EstimationPage />} />
 
             {/* Routes protégées - Utilisateur connecté uniquement */}
             <Route
