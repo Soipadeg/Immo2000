@@ -81,7 +81,7 @@ Les bases image disponibles pour Python:
 
 ## ✨ Résumé
 
-**Problème:** wkhtmltopdf manquant dans Debian Trixie  
-**Solution:** Changer vers Debian Bookworm  
-**Temps:** 5 min  
+**Problème:** wkhtmltopdf manquant dans Debian Trixie
+**Solution:** Changer vers Debian Bookworm
+**Temps:** 5 min
 **Statut:** ✅ Corrigé et repoussé vers GitHub
