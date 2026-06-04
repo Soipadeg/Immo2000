@@ -1,6 +1,6 @@
 import '../styles/AdminSecurityPage.css';
 import React, { useState, useEffect } from 'react';
-import { Button, Alert } from '@/components';
+import { Button, Alert, FormContainer } from '@/components';
 import { auditApi } from '../services/adminApi';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -55,13 +55,23 @@ const AdminSecurityPage = () => {
   const isHealthy = failedActions <= 5 && suspiciousCount === 0;
 
   return (
-    <div className="admin-security-page">
-      <div className="page-header">
-        <div>🔒 Statut de Sécurité</div>
-        <Button variant="secondary" size="small" onClick={loadSecurityStatus} disabled={loading}>🔄 Rafraîchir</Button>
+    <>
+      <div className="search-page-header">
+        <div className="search-page-header__content">
+          <div className="search-page-header__title-row">
+            <span className="search-page-header__icon">🔒</span>
+            <h1>Statut de Sécurité</h1>
+          </div>
+          <p>Dernière mise à jour: {new Date().toLocaleTimeString('fr-FR')}</p>
+        </div>
       </div>
 
-      <div className="kpi-grid">
+      <FormContainer maxWidth="full-width">
+        <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
+          <Button variant="secondary" size="small" onClick={loadSecurityStatus} disabled={loading}>🔄 Rafraîchir</Button>
+        </div>
+
+        <div className="kpi-grid">
         <div className="kpi-card">
           <div className={`status-icon ${isHealthy ? 'healthy' : 'warning'}`}>{getStatusIcon(isHealthy)}</div>
           <div className="kpi-content">
@@ -182,7 +192,8 @@ const AdminSecurityPage = () => {
           <li>Consultez l'onglet "Audit Trail" pour voir l'historique complet des actions</li>
         </ul>
       </div>
-    </div>
+      </FormContainer>
+    </>
   );
 };
 

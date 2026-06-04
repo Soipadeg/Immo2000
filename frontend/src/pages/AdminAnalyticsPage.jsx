@@ -1,6 +1,6 @@
 import '../styles/AdminAnalyticsPage.css';
 import React, { useState, useEffect } from 'react';
-import { Alert, Button } from '@/components';
+import { Alert, Button, FormContainer } from '@/components';
 import { analyticsApi } from '../services/adminApi';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -52,27 +52,34 @@ const AdminAnalyticsPage = () => {
   const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7c7c', '#a4de6c', '#d084d0'];
 
   return (
-    <div className="admin-analytics-page">
-      <div className="page-header">
-        <div>📊 Analytics - Statistiques Avancées</div>
+    <>
+      <div className="search-page-header">
+        <div className="search-page-header__content">
+          <div className="search-page-header__title-row">
+            <span className="search-page-header__icon">📊</span>
+            <h1>Analyses Avancées</h1>
+          </div>
+          <p>Statistiques complètes et métriques de la plateforme</p>
+        </div>
       </div>
 
-      {error && <Alert type="error" title="Erreur" message={error} />}
+      <FormContainer maxWidth="full-width">
+        {error && <Alert type="error" title="Erreur" message={error} />}
 
-      {loading ? (
-        <div className="admin-container">
-          <div className="loading-spinner">⏳ Chargement...</div>
-        </div>
-      ) : (
-        <>
-          {/* KPIs */}
-          <div className="kpi-grid">
-            <div className="kpi-card">
-              <div className="kpi-label">👥 Utilisateurs</div>
-              <div className="kpi-value">{summary?.utilisateurs?.total || 0}</div>
-              <div className="kpi-meta">Actifs (30j): {summary?.utilisateurs?.actifs_derniers_30_jours || 0}</div>
-            </div>
-            <div className="kpi-card">
+        {loading ? (
+          <div className="admin-container">
+            <div className="loading-spinner">⏳ Chargement...</div>
+          </div>
+        ) : (
+          <>
+            {/* KPIs */}
+            <div className="kpi-grid">
+              <div className="kpi-card">
+                <div className="kpi-label">👥 Utilisateurs</div>
+                <div className="kpi-value">{summary?.utilisateurs?.total || 0}</div>
+                <div className="kpi-meta">Actifs (30j): {summary?.utilisateurs?.actifs_derniers_30_jours || 0}</div>
+              </div>
+              <div className="kpi-card">
               <div className="kpi-label">🏠 Annonces</div>
               <div className="kpi-value">{summary?.annonces?.total || 0}</div>
               <div className="kpi-meta">Publiées: {summary?.annonces?.publiees || 0}</div>
@@ -173,7 +180,8 @@ const AdminAnalyticsPage = () => {
           </div>
         </>
       )}
-    </div>
+      </FormContainer>
+    </>
   );
 }
 

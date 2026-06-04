@@ -4,7 +4,7 @@ import '../styles/AdminUsersPage.css';
  */
 
 import React, { useState } from 'react';
-import { Button, Input } from '@/components';
+import { Button, Input, FormContainer } from '@/components';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 
@@ -74,14 +74,20 @@ const AdminUsersPage = () => {
   };
 
   return (
-    <div className="admin-users-page">
-      <div className="page-header">
-        <div>👥 Gestion des Utilisateurs</div>
-        <div>Total: {users.length} utilisateurs | Actifs: {users.filter((u) => u.statut === 'actif').length}</div>
+    <>
+      <div className="search-page-header">
+        <div className="search-page-header__content">
+          <div className="search-page-header__title-row">
+            <span className="search-page-header__icon">👥</span>
+            <h1>Gestion des Utilisateurs</h1>
+          </div>
+          <p>Total: {users.length} utilisateurs | Actifs: {users.filter((u) => u.statut === 'actif').length}</p>
+        </div>
       </div>
 
-      {/* Filtres */}
-      <div className="filters">
+      <FormContainer maxWidth="full-width">
+        {/* Filtres */}
+        <div className="filters">
         <select className="filter-select" value={filterRole} onChange={(e) => setFilterRole(e.target.value)}>
           <option value="">Rôle: Tous</option>
           <option value="user">Rôle: Utilisateur</option>
@@ -135,7 +141,8 @@ const AdminUsersPage = () => {
           ))}
         </div>
       </div>
-    </div>
+      </FormContainer>
+    </>
   );
 };
 

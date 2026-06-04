@@ -4,10 +4,9 @@ import '../styles/ModerationPage.css';
  */
 
 import React, { useState } from 'react';
-import { Button, Alert, Input } from '@/components';
+import { Button, Alert, Input, FormContainer } from '@/components';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import { Box, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Card, CardMedia, CardContent, CardActions } from '@mui/material';
 
 const ModerationPage = () => {
   const { user, loading } = useAuth();
@@ -79,17 +78,25 @@ const ModerationPage = () => {
   const pendingAnnonces = annonces.filter((a) => a.statut === 'sous_revue');
 
   return (
-    <Box sx={{ maxWidth: 'lg', py: 4 }}>
-      <div>🛡️ Modération des Annonces</div>
-      <div>{pendingAnnonces.length} annonce{pendingAnnonces.length !== 1 ? 's' : ''} en attente de modération</div>
+    <>
+      <div className="search-page-header">
+        <div className="search-page-header__content">
+          <div className="search-page-header__title-row">
+            <span className="search-page-header__icon">🛡️</span>
+            <h1>Modération des Annonces</h1>
+          </div>
+          <p>{pendingAnnonces.length} annonce{pendingAnnonces.length !== 1 ? 's' : ''} en attente de modération</p>
+        </div>
+      </div>
 
-      {pendingAnnonces.length === 0 ? (
-        <Box sx={{textAlign: 'center', padding: '32px 0'}}>
-          <div style={{fontSize: '48px', marginBottom: '16px'}}>✅</div>
-          <div>✅ Toutes les annonces ont été modérées!</div>
-        </Box>
-      ) : (
-        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 3 }}>
+      <FormContainer maxWidth="full-width">
+        {pendingAnnonces.length === 0 ? (
+          <div style={{textAlign: 'center', padding: '32px 0'}}>
+            <div style={{fontSize: '48px', marginBottom: '16px'}}>✅</div>
+            <div>✅ Toutes les annonces ont été modérées!</div>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '24px' }}>
           {pendingAnnonces.map((annonce) => (
             <Card key={annonce.id}>
               <CardMedia
@@ -138,8 +145,9 @@ const ModerationPage = () => {
               </CardActions>
             </Card>
           ))}
-        </Box>
-      )}
+        </div>
+        )}
+      </FormContainer>
 
       {/* Dialog Rejet */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
@@ -167,7 +175,7 @@ const ModerationPage = () => {
           </Button>
         </div>
       </Dialog>
-    </Box>
+    </>
   );
 };
 

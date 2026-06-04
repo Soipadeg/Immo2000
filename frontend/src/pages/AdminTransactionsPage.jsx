@@ -4,7 +4,7 @@ import '../styles/AdminTransactionsPage.css';
  */
 
 import React, { useState, useEffect } from 'react';
-import { Button, Alert } from '@/components';
+import { Button, Alert, FormContainer } from '@/components';
 import { transactionsApi } from '../services/adminApi';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -72,27 +72,34 @@ const AdminTransactionsPage = () => {
   };
 
   return (
-    <div className="admin-transactions-page">
-      <div className="page-header">
-        <div>💳 Gestion des Transactions</div>
+    <>
+      <div className="search-page-header">
+        <div className="search-page-header__content">
+          <div className="search-page-header__title-row">
+            <span className="search-page-header__icon">💳</span>
+            <h1>Gestion des Transactions</h1>
+          </div>
+          <p>Suivez et gérez toutes les transactions</p>
+        </div>
       </div>
 
-      <div className="filters-section">
-        <select value={status} onChange={(e) => setStatus(e.target.value)} className="filter-select">
-          <option value="">Tous les statuts</option>
-          <option value="proposee">Proposée</option>
-          <option value="acceptee">Acceptée</option>
-          <option value="refusee">Refusée</option>
-          <option value="negociation">En négociation</option>
-          <option value="retiree">Retirée</option>
-          <option value="finalisee">Finalisée</option>
-        </select>
-      </div>
+      <FormContainer maxWidth="full-width">
+        <div className="filters-section">
+          <select value={status} onChange={(e) => setStatus(e.target.value)} className="filter-select">
+            <option value="">Tous les statuts</option>
+            <option value="proposee">Proposée</option>
+            <option value="acceptee">Acceptée</option>
+            <option value="refusee">Refusée</option>
+            <option value="negociation">En négociation</option>
+            <option value="retiree">Retirée</option>
+            <option value="finalisee">Finalisée</option>
+          </select>
+        </div>
 
-      {error && <Alert type="error" title="Erreur" message={error} />}
+        {error && <Alert type="error" title="Erreur" message={error} />}
 
-      {loading ? (
-        <div className="loading-state">⏳ Chargement...</div>
+        {loading ? (
+          <div className="loading-state">⏳ Chargement...</div>
       ) : transactions.length === 0 ? (
         <Alert type="info" title="Info" message="Aucune transaction trouvée" />
       ) : (
@@ -151,7 +158,8 @@ const AdminTransactionsPage = () => {
           </div>
         </div>
       )}
-    </div>
+      </FormContainer>
+    </>
   );
 };
 

@@ -7,7 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { usersApi } from '../services/adminApi';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import { Button, Alert, Input } from '@/components';
+import { Button, Alert, Input, FormContainer } from '@/components';
 
 
 
@@ -87,27 +87,37 @@ const AdminUsersPage = () => {
   };
 
   return (
-    <div maxWidth="lg">
-      <div>
-        <div>👥 Gestion des Utilisateurs</div>
-        <div>
-          <Input
-            placeholder="Rechercher (email, nom...)"
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setPage(1);
-            }}
-            size="small"
-          />
+    <>
+      <div className="search-page-header">
+        <div className="search-page-header__content">
+          <div className="search-page-header__title-row">
+            <span className="search-page-header__icon">👥</span>
+            <h1>Gestion des Utilisateurs</h1>
+          </div>
+          <p>Recherchez et gérez les comptes utilisateurs</p>
         </div>
       </div>
 
-      {error && <Alert severity="error">{error}</Alert>}
-
-      {loading ? (
+      <FormContainer maxWidth="full-width">
         <div>
-          <div />
+          <div>
+            <Input
+              placeholder="Rechercher (email, nom...)"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setPage(1);
+              }}
+              size="small"
+            />
+          </div>
+        </div>
+
+        {error && <Alert severity="error">{error}</Alert>}
+
+        {loading ? (
+          <div>
+            <div />
         </div>
       ) : (
         <>
@@ -235,7 +245,8 @@ const AdminUsersPage = () => {
           </Button>
         </div>
       </div>
-    </div>
+      </FormContainer>
+    </>
   );
 };
 
