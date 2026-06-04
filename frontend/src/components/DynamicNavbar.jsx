@@ -98,8 +98,6 @@ export const DynamicNavbar = ({
     if (userRole === 'admin') {
       items.push({ label: 'Dashboard', path: '/dashboard', icon: '📊' });
       items.push({ label: 'Admin', path: '/admin', icon: '⚙️' });
-      items.push({ label: 'Utilisateurs', path: '/admin/users', icon: '👥' });
-      items.push({ label: 'Modération', path: '/admin/moderation', icon: '🛡️' });
     }
 
     if (userRole === 'notaire') {
