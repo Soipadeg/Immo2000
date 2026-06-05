@@ -65,6 +65,7 @@ import CreerAnnonceEtape1 from './pages/CreerAnnonceEtape1';
 import CreerAnnonceEtape2 from './pages/CreerAnnonceEtape2';
 import CreerAnnonceEtape3 from './pages/CreerAnnonceEtape3';
 import CreerAnnonceEtape4 from './pages/CreerAnnonceEtape4';
+import VendreBienPage from './pages/VendreBienPage';
 import Dashboard from './pages/Dashboard';
 import MonCalendrier from './pages/MonCalendrier';
 import MesRendezVous from './pages/MesRendezVous';
@@ -136,6 +137,7 @@ function App() {
             <Route path="/inscription/etape2" element={<BuyerProfilePage />} />
 
             {/* === TUNNEL DE CRÉATION D'ANNONCE === */}
+            <Route path="/vendre" element={<VendreBienPage />} />
             <Route path="/creer-annonce/etape1" element={<CreerAnnonceEtape1 />} />
             <Route path="/creer-annonce/etape2" element={<CreerAnnonceEtape2 />} />
             <Route path="/creer-annonce/etape3" element={<ProtectedRoute element={<CreerAnnonceEtape3 />} />} />

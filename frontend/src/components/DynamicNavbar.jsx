@@ -76,6 +76,7 @@ export const DynamicNavbar = ({
     const items = [];
 
     // Items disponibles pour tous
+    items.push({ label: 'Vendre', path: '/vendre', icon: '📝' });
     items.push({ label: 'Acheter', path: '/search', icon: '🏠' });
     items.push({ label: 'Simulateur', path: '/simulateur-pret', icon: '📈' });
 
@@ -85,14 +86,11 @@ export const DynamicNavbar = ({
 
     // Items pour utilisateurs connectés
     items.push({ label: 'Matching', path: '/matching', icon: '❤️' });
-    items.push({ label: 'Alertes', path: '/alertes', icon: '🔔' });
     items.push({ label: 'Guides', path: '/guides', icon: '📚' });
     items.push({ label: 'Modèles', path: '/modeles', icon: '📄' });
 
     if (userRole === 'user') {
       items.push({ label: 'Dashboard', path: '/dashboard', icon: '📊' });
-      items.push({ label: 'Favoris', path: '/favoris', icon: '⭐' });
-      items.push({ label: 'Historique', path: '/historique', icon: '📋' });
       items.push({ label: 'Notifications', path: '/notifications', icon: '🔔', badge: unreadNotifications });
     }
 
