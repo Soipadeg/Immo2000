@@ -1,7 +1,7 @@
-# devops/alert_rules.yml
+# Alert rules for Immo2000 Production Environment
 
 groups:
-  - name: immo2000
+  - name: immo2000_production
     interval: 30s
     rules:
       # ========== ERROR RATE ALERTS ==========
