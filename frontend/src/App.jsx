@@ -87,6 +87,7 @@ const SignActePage = React.lazy(() => import('./pages/SignActePage'));
 const TransactionDetailsPage = React.lazy(() => import('./pages/TransactionDetailsPage'));
 const DocuSignCallbackPage = React.lazy(() => import('./pages/DocuSignCallbackPage'));
 const EstimationPage = React.lazy(() => import('./pages/EstimationPage'));
+const SlotManagementPage = React.lazy(() => import('./pages/SlotManagementPage'));
 
 
 /**
@@ -153,6 +154,7 @@ function App() {
             <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} />} />
 
             {/* === PLANIFICATION DE VISITE === */}
+            <Route path="/slots" element={<ProtectedRoute element={<SlotManagementPage />} />} />
             <Route path="/mon-calendrier" element={<ProtectedRoute element={<MonCalendrier />} />} />
             <Route path="/mes-rendez-vous" element={<ProtectedRoute element={<MesRendezVous />} />} />
             <Route path="/conversations/:conversationId" element={<ProtectedRoute element={<Conversations />} />} />

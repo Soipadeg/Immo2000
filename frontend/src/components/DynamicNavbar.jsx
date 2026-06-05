@@ -91,6 +91,7 @@ export const DynamicNavbar = ({
 
     if (userRole === 'user') {
       items.push({ label: 'Dashboard', path: '/dashboard', icon: '📊' });
+      items.push({ label: 'Créneaux', path: '/slots', icon: '📅' });
       items.push({ label: 'Notifications', path: '/notifications', icon: '🔔', badge: unreadNotifications });
     }
 
