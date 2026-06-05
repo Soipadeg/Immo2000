@@ -50,6 +50,7 @@ from src.routes.annonce_views import views_bp
 from src.routes.search_history import search_bp
 from src.routes.favoris import favoris_bp
 from src.routes.offres import offres_bp
+from src.cache import redis_cache, clear_cache, REDIS_AVAILABLE
 from src.routes.notaires import notaires_bp
 from src.routes.dev_auth import dev_auth_bp
 from src.routes.transactions import transactions_vente_bp
@@ -315,6 +316,7 @@ def create_app(config_name: str = None) -> Flask:
         }, 200
 
     @app.route("/api/annonces", methods=["GET"])
+    @redis_cache(cache_type='listings', ttl=3600)
     def get_annonces():
         """Récupérer la liste des annonces."""
         from src.models.annonces import Annonce
@@ -448,6 +450,7 @@ def create_app(config_name: str = None) -> Flask:
         }, 200
 
     @app.route("/api/v1/annonces", methods=["GET"])
+    @redis_cache(cache_type='listings', ttl=3600)
     def get_v1_annonces():
         """Récupérer la liste des annonces via API v1."""
         # Pagination
@@ -499,6 +502,7 @@ def create_app(config_name: str = None) -> Flask:
 
     @app.route("/api/favoris", methods=["GET"])
     @token_required
+    @redis_cache(cache_type='favorites', ttl=1800)
     def get_favoris(current_user):
         """Récupérer la liste des favoris utilisateur (authentifiée)."""
         page = request.args.get('page', 1, type=int)
@@ -530,6 +534,7 @@ def create_app(config_name: str = None) -> Flask:
 
     @app.route("/api/alertes", methods=["GET"])
     @token_required
+    @redis_cache(cache_type='alerts', ttl=1800)
     def get_alertes(current_user):
         """Récupérer la liste des alertes utilisateur (authentifiée)."""
         page = request.args.get('page', 1, type=int)
@@ -560,7 +565,9 @@ def create_app(config_name: str = None) -> Flask:
             return {"alertes": [], "total": 0, "page": page, "per_page": per_page, "message": "User alerts and notifications", "debug": str(e)[:50]}, 200
 
     @app.route("/api/v1/offres", methods=["GET"])
-    def get_offers():
+    @token_required
+    @redis_cache(cache_type='offers', ttl=1200)
+    def get_offers(current_user):
         """Récupérer les offres d'achat."""
         try:
             from src.models.offres import Offre
