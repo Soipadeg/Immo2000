@@ -40,14 +40,14 @@ def seed():
 
         # Acheteurs
         users_data = [
-            ('alice.martin@example.com', 'Martin', 'Alice', 'acheteur'),
-            ('bob.bernard@example.com', 'Bernard', 'Bob', 'acheteur'),
-            ('claire.dubois@example.com', 'Dubois', 'Claire', 'acheteur'),
-            ('david.moreau@example.com', 'Moreau', 'David', 'acheteur'),
-            ('emma.rousseau@example.com', 'Rousseau', 'Emma', 'acheteur'),
-            ('françois.fournier@example.com', 'Fournier', 'François', 'vendeur'),
-            ('gabrielle.laurent@example.com', 'Laurent', 'Gabrielle', 'vendeur'),
-            ('henry.lefebvre@example.com', 'Lefebvre', 'Henry', 'vendeur'),
+            ('alice.martin@example.com', 'Martin', 'Alice', 'utilisateur'),
+            ('bob.bernard@example.com', 'Bernard', 'Bob', 'utilisateur'),
+            ('claire.dubois@example.com', 'Dubois', 'Claire', 'utilisateur'),
+            ('david.moreau@example.com', 'Moreau', 'David', 'utilisateur'),
+            ('emma.rousseau@example.com', 'Rousseau', 'Emma', 'utilisateur'),
+            ('françois.fournier@example.com', 'Fournier', 'François', 'utilisateur'),
+            ('gabrielle.laurent@example.com', 'Laurent', 'Gabrielle', 'utilisateur'),
+            ('henry.lefebvre@example.com', 'Lefebvre', 'Henry', 'utilisateur'),
         ]
 
         created = 0
