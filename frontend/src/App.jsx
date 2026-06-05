@@ -67,6 +67,7 @@ import CreerAnnonceEtape3 from './pages/CreerAnnonceEtape3';
 import CreerAnnonceEtape4 from './pages/CreerAnnonceEtape4';
 import VendreBienPage from './pages/VendreBienPage';
 import Dashboard from './pages/Dashboard';
+import ApiStatusPage from './pages/ApiStatusPage';
 import MonCalendrier from './pages/MonCalendrier';
 import MesRendezVous from './pages/MesRendezVous';
 import Conversations from './pages/Conversations';
@@ -125,6 +126,7 @@ function App() {
             {/* Route de développement - Mode sans login */}
             <Route path="/dev" element={<DevAccessPage />} />
             <Route path="/dev-transition" element={<DevTransitionPage />} />
+            <Route path="/dev/api-status" element={<ApiStatusPage />} />
             <Route path="/utilisateur/*" element={<DevRoleWrapper roleId="user" targetPath="/dashboard" />} />
             <Route path="/admin-dev/*" element={<DevRoleWrapper roleId="admin" targetPath="/admin" />} />
             <Route path="/notaire-dev/*" element={<DevRoleWrapper roleId="notaire" targetPath="/notaire" />} />

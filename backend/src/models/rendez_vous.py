@@ -131,6 +131,14 @@ class RendezVous(db.Model):
         lazy="joined"
     )
 
+    # Créneau disponible proposé
+    creneau = db.relationship(
+        "CreneauDisponible",
+        foreign_keys=[creneau_id],
+        back_populates="rendez_vous",
+        lazy="joined"
+    )
+
     def __repr__(self) -> str:
         """Représentation lisible du RDV."""
         return f"<RendezVous {self.rdv_id}: Annonce {self.annonce_id} ({self.statut.value if isinstance(self.statut, StatutRDV) else self.statut})>"
