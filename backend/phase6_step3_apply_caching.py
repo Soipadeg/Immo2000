@@ -42,7 +42,7 @@ except Exception as e:
 def redis_cache(cache_type='listings', ttl=3600):
     """
     Decorator for caching GET endpoint responses.
-    
+
     Args:
         cache_type: Cache category (listings, messages, etc.)
         ttl: Time to live in seconds
@@ -52,7 +52,7 @@ def redis_cache(cache_type='listings', ttl=3600):
         def decorated_function(*args, **kwargs):
             if not REDIS_AVAILABLE:
                 return f(*args, **kwargs)
-            
+
             # Build cache key
             query_string = '&'.join(sorted(
                 [f"{k}={v}" for k, v in request.args.items()]
@@ -60,7 +60,7 @@ def redis_cache(cache_type='listings', ttl=3600):
             cache_key = f"cache:{cache_type}:{request.path}"
             if query_string:
                 cache_key += f":{query_string}"
-            
+
             # Try to get from cache
             try:
                 cached = redis_client.get(cache_key)
@@ -68,10 +68,10 @@ def redis_cache(cache_type='listings', ttl=3600):
                     return json.loads(cached)
             except Exception:
                 pass
-            
+
             # Execute function
             result = f(*args, **kwargs)
-            
+
             # Store in cache
             try:
                 redis_client.setex(
@@ -81,7 +81,7 @@ def redis_cache(cache_type='listings', ttl=3600):
                 )
             except Exception:
                 pass
-            
+
             return result
         return decorated_function
     return decorator
@@ -89,13 +89,13 @@ def redis_cache(cache_type='listings', ttl=3600):
 def clear_cache(pattern):
     """
     Clear cache entries matching pattern.
-    
+
     Args:
         pattern: Pattern to match (e.g., 'cache:listings:*')
     """
     if not REDIS_AVAILABLE:
         return
-    
+
     try:
         keys = redis_client.keys(pattern)
         if keys:
@@ -133,7 +133,7 @@ if 'from src.cache import' in app_content:
 else:
     # STEP 4: Add import at beginning
     print("\n🔧 STEP 3: Applying cache decorators...")
-    
+
     # Find first import line
     import_section = app_content.split('\n')
     insert_idx = 0
@@ -141,34 +141,34 @@ else:
         if line.startswith('from ') or line.startswith('import '):
             insert_idx = i
             break
-    
+
     # Add import
     new_import = 'from src.cache import redis_cache, clear_cache'
     if new_import not in app_content:
         import_lines = app_content.split('\n')[:insert_idx + 5]
         rest_lines = app_content.split('\n')[insert_idx + 5:]
-        
+
         # Find last import in this section
         for i in range(len(import_lines) - 1, -1, -1):
             if import_lines[i].startswith(('from ', 'import ')):
                 import_lines.insert(i + 1, new_import)
                 break
-        
+
         app_content = '\n'.join(import_lines + rest_lines)
         print(f"✅ Added import: {new_import}")
-    
+
     # Add decorators to GET endpoints
     endpoints_to_cache = [
         ('/api/annonces', 'listings', 3600),
         ('/api/messages', 'messages', 600),
         ('/api/offres', 'offers', 1200),
     ]
-    
+
     modifications = 0
     for endpoint, cache_type, ttl in endpoints_to_cache:
         decorator = f"@redis_cache(cache_type='{cache_type}', ttl={ttl})"
         route_pattern = f"@app.route('{endpoint}'"
-        
+
         if route_pattern in app_content and decorator not in app_content:
             # Find the route
             lines = app_content.split('\n')
@@ -181,9 +181,9 @@ else:
                         modifications += 1
                         print(f"✅ Added cache decorator to {endpoint}")
                         break
-            
+
             app_content = '\n'.join(lines)
-    
+
     # Save modified app.py
     try:
         with open(app_path, 'w') as f:
