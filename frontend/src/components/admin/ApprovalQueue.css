@@ -1,0 +1,167 @@
+/* ApprovalQueue Styling */
+
+.approval-queue {
+  padding: 20px 0;
+}
+
+.approval-queue .queue-header h4 {
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.approval-queue .queue-header p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* Filter Card */
+.approval-queue .filter-card {
+  background: #ffffff;
+  border-radius: 8px;
+}
+
+.approval-queue .filter-card .form-select,
+.approval-queue .filter-card .form-control {
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  padding: 8px 12px;
+  font-size: 0.95rem;
+}
+
+.approval-queue .filter-card .form-select:focus,
+.approval-queue .filter-card .form-control:focus {
+  border-color: #0066cc;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+.approval-queue .filter-card .input-group-text {
+  background: transparent;
+  border: 1px solid #e0e0e0;
+  color: #666;
+}
+
+/* Bulk Actions */
+.approval-queue .bulk-actions-card {
+  border-radius: 8px;
+  border: 2px solid #0066cc;
+}
+
+.approval-queue .bulk-actions-card .btn {
+  font-weight: 500;
+}
+
+/* Select All Bar */
+.approval-queue .select-all-bar {
+  border: 1px solid #e0e0e0;
+}
+
+.approval-queue .select-all-bar .form-check {
+  margin: 0;
+}
+
+.approval-queue .select-all-bar .form-check-label {
+  font-weight: 500;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+/* Listings Container */
+.approval-queue .listings-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.approval-queue .listing-wrapper {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.approval-queue .listing-wrapper .select-checkbox {
+  flex-shrink: 0;
+  padding-top: 15px;
+}
+
+.approval-queue .listing-wrapper .select-checkbox .form-check {
+  margin: 0;
+}
+
+.approval-queue .listing-wrapper .approval-card {
+  flex-grow: 1;
+}
+
+/* Alert Styling */
+.approval-queue .alert {
+  border-radius: 8px;
+  border: none;
+  padding: 16px;
+  font-size: 0.95rem;
+}
+
+.approval-queue .alert-info {
+  background: rgba(0, 102, 204, 0.1);
+  color: #0066cc;
+}
+
+.approval-queue .alert-danger {
+  background: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+}
+
+/* Spinner */
+.approval-queue .spinner-border {
+  width: 40px;
+  height: 40px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .approval-queue {
+    padding: 10px 0;
+  }
+
+  .approval-queue .filter-card .row {
+    flex-direction: column;
+  }
+
+  .approval-queue .filter-card .col-md-5,
+  .approval-queue .filter-card .col-md-3 {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .approval-queue .listing-wrapper {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .approval-queue .listing-wrapper .select-checkbox {
+    padding-top: 0;
+  }
+
+  .approval-queue .bulk-actions-card .row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .approval-queue .bulk-actions-card .text-end {
+    text-align: left !important;
+  }
+
+  .approval-queue .bulk-actions-card .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .approval-queue .listing-wrapper {
+    flex-direction: column;
+  }
+
+  .approval-queue .listing-wrapper .select-checkbox {
+    order: -1;
+  }
+}

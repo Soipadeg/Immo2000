@@ -1,0 +1,137 @@
+/* ApprovalCard Styling */
+
+.approval-card {
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  background: #ffffff;
+}
+
+.approval-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+}
+
+.approval-card .detail-item {
+  text-align: center;
+}
+
+.approval-card .detail-value {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #0066cc;
+  margin-top: 4px;
+}
+
+.approval-card .price-badge {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #27ae60;
+  background: rgba(39, 174, 96, 0.1);
+  padding: 10px 15px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.approval-card .description-preview {
+  background: #f9f9f9;
+  padding: 12px;
+  border-left: 3px solid #0066cc;
+  border-radius: 4px;
+}
+
+.approval-card .text-truncate-lines {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
+}
+
+.approval-card .seller-info {
+  border-left: 3px solid #f39c12;
+}
+
+.approval-card .seller-info small {
+  display: block;
+  margin-top: 4px;
+}
+
+.approval-card .approval-actions {
+  flex-wrap: wrap;
+}
+
+.approval-card .approval-actions .btn {
+  flex-shrink: 0;
+}
+
+.approval-card .btn-success,
+.approval-card .btn-danger,
+.approval-card .btn-outline-danger {
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.approval-card .btn-success:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.approval-card .btn-danger:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+/* Modal styling */
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.modal-footer {
+  border-top: 1px solid #e0e0e0;
+  padding: 15px;
+}
+
+/* Badge styling */
+.badge {
+  font-weight: 500;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+}
+
+.badge-warning {
+  background-color: #f39c12;
+  color: white;
+}
+
+.badge-success {
+  background-color: #27ae60;
+  color: white;
+}
+
+.badge-danger {
+  background-color: #e74c3c;
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .approval-card .approval-actions {
+    flex-direction: column;
+  }
+
+  .approval-card .approval-actions .btn {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  .approval-card .price-badge {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+  }
+}
