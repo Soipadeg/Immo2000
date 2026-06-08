@@ -1,0 +1,3 @@
+Method,Name,Error,Occurrences,First Seen,Last Seen
+GET,/api/v1/listings/search,HTTPError('422 Client Error: Unprocessable Entity for url: /api/v1/listings/search'),164,2026-06-08T09:25:59Z,2026-06-08T09:26:53Z
+GET,/api/v1/admin/users,RemoteDisconnected('Remote end closed connection without response'),1,2026-06-08T09:26:12Z,2026-06-08T09:26:12Z
