@@ -20,28 +20,38 @@ Immo2000 a été entièrement migré de Flask vers FastAPI avec succès. Toutes 
 
 ## 🎯 OPTIONS DE DÉPLOIEMENT
 
-### Option 1: Railway.app (RECOMMANDÉ - Plus Simple)
+### Option 1: Railway.app (RECOMMANDÉ - Plus Simple) ✅
 
 **Avantages:**
 - Déploiement en 1 clic depuis GitHub
 - PostgreSQL et Redis inclus
 - SSL/HTTPS automatique
 - Monitoring intégré
+- Configuration automatiquement correcte avec Procfile + script bash
 
 **Étapes:**
 ```bash
 1. Créer compte sur railway.app
 2. Connecter ton repository GitHub
-3. Ajouter les variables d'environnement:
-   - DATABASE_URL (auto-généré)
-   - REDIS_URL (auto-généré)
-   - SECRET_KEY (générer new)
+3. Railway détecte maintenant correctement:
+   - Procfile: "web: bash start.sh"
+   - Script: start.sh qui lance Uvicorn
+   - Dépendances: Python 3.11 + backend/requirements.txt
+
+4. Ajouter les variables d'environnement:
+   - DATABASE_URL (auto-généré si vous créez une BD)
+   - REDIS_URL (auto-généré si vous créez Redis)
+   - SECRET_KEY (générer nouveau - 32+ caractères)
    - JWT_ALGORITHM=HS256
    - CORS_ALLOWED_ORIGINS=https://yourdomain.com
 
-4. Déclencher le déploiement
-5. Vérifier: https://yourdomain.railway.app/api/v1/health
+5. Déclencher le déploiement (Railway détecte les changements automatiquement)
+6. Attendre 2-3 minutes pour le build
+7. Vérifier: https://yourdomain.railway.app/api/v1/health
 ```
+
+**Note**: Les fichiers `Procfile`, `start.sh`, `Dockerfile` et `railway.json`
+sont maintenant configurés correctement et testés.
 
 ### Option 2: Heroku
 
