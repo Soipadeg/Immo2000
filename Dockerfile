@@ -24,14 +24,17 @@ COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH" \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    FASTAPI_ENV=production
+    FASTAPI_ENV=production \
+    PORT=8000
 
-COPY backend/ .
+# Copy startup script and backend
+COPY start.sh .
+RUN chmod +x start.sh
+COPY backend/ backend/
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:$PORT/api/v1/health || exit 1
+    CMD curl -f http://localhost:${PORT}/api/v1/health || exit 1
 
 EXPOSE 8000
-ENV PORT=8000
 
-CMD ["uvicorn", "src.main:create_app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
+CMD ["bash", "start.sh"]
