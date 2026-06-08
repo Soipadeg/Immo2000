@@ -1,7 +1,7 @@
 # 🚂 Configuration Railway - Guide de Correction
 
-**Problème**: Railway détectait Node.js au lieu de Python et cherchait un start script.  
-**Cause**: Présence de `package.json` à la racine (pour le frontend React).  
+**Problème**: Railway détectait Node.js au lieu de Python et cherchait un start script.
+**Cause**: Présence de `package.json` à la racine (pour le frontend React).
 **Solution**: Configuration explicite pour Railway avec Procfile, Dockerfile, et scripts.
 
 ---
@@ -249,6 +249,6 @@ railway status
 
 ---
 
-**Créé**: 2026-06-08  
-**Commit**: 3fd3fc7  
+**Créé**: 2026-06-08
+**Commit**: 3fd3fc7
 **Status**: 🚀 Prêt pour redéploiement
