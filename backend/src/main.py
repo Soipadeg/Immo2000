@@ -185,44 +185,87 @@ def create_app(config_name: str = None) -> FastAPI:
             "version": "6.0.0"
         }
 
-# ===== ROUTES (MIGRATED) =====
-
-    # Import and include newly migrated FastAPI routers
+# ===== ROUTES (MIGRATED FROM FLASK) =====
+    
+    # Core Auth & Listings (Phase 1)
     try:
         from src.routers.auth import router as auth_router
-        app.include_router(auth_router, prefix="/api/v1", tags=["auth"])
-        logger.info("✅ Auth router included (migrated from Flask)")
+        app.include_router(auth_router, prefix="/api/v1")
+        logger.info("✅ Auth router included")
     except Exception as e:
-        logger.warning(f"⚠️  Failed to include auth router: {e}")
-
+        logger.warning(f"⚠️  Auth router failed: {e}")
+    
     try:
         from src.routers.listings import router as listings_router
-        app.include_router(listings_router, prefix="/api/v1", tags=["listings"])
-        logger.info("✅ Listings router included (migrated from Flask)")
+        app.include_router(listings_router, prefix="/api/v1")
+        logger.info("✅ Listings router included")
     except Exception as e:
-        logger.warning(f"⚠️  Failed to include listings router: {e}")
+        logger.warning(f"⚠️  Listings router failed: {e}")
+    
+    # Phase 2a: Core Features
+    try:
+        from src.routers.favorites import router as favorites_router
+        app.include_router(favorites_router, prefix="/api/v1")
+        logger.info("✅ Favorites router included")
+    except Exception as e:
+        logger.warning(f"⚠️  Favorites router failed: {e}")
+    
+    try:
+        from src.routers.notifications import router as notifications_router
+        app.include_router(notifications_router, prefix="/api/v1")
+        logger.info("✅ Notifications router included")
+    except Exception as e:
+        logger.warning(f"⚠️  Notifications router failed: {e}")
+    
+    try:
+        from src.routers.appointments import router as appointments_router
+        app.include_router(appointments_router, prefix="/api/v1")
+        logger.info("✅ Appointments router included")
+    except Exception as e:
+        logger.warning(f"⚠️  Appointments router failed: {e}")
+    
+    try:
+        from src.routers.messages import router as messages_router
+        app.include_router(messages_router, prefix="/api/v1")
+        logger.info("✅ Messages router included")
+    except Exception as e:
+        logger.warning(f"⚠️  Messages router failed: {e}")
+    
+    try:
+        from src.routers.search import router as search_router
+        app.include_router(search_router, prefix="/api/v1")
+        logger.info("✅ Search router included")
+    except Exception as e:
+        logger.warning(f"⚠️  Search router failed: {e}")
+    
+    try:
+        from src.routers.properties import router as properties_router
+        app.include_router(properties_router, prefix="/api/v1")
+        logger.info("✅ Properties router included")
+    except Exception as e:
+        logger.warning(f"⚠️  Properties router failed: {e}")
 
-    # Include existing FastAPI routes (offres, notaires, transactions)
+    # Existing FastAPI routes (offres, notaires, transactions)
     try:
         from src.routes.offres import offres_router
-        app.include_router(offres_router, prefix="/api/v1", tags=["offres"])
+        app.include_router(offres_router, prefix="/api/v1")
         logger.info("✅ Offres router included")
     except Exception as e:
-        logger.warning(f"⚠️  Failed to include offres router: {e}")
+        logger.warning(f"⚠️  Offres router failed: {e}")
 
     try:
         from src.routes.notaires import notaires_router
-        app.include_router(notaires_router, prefix="/api/v1", tags=["notaires"])
+        app.include_router(notaires_router, prefix="/api/v1")
         logger.info("✅ Notaires router included")
     except Exception as e:
-        logger.warning(f"⚠️  Failed to include notaires router: {e}")
+        logger.warning(f"⚠️  Notaires router failed: {e}")
 
     try:
         from src.routes.transactions import transactions_router
-        app.include_router(transactions_router, prefix="/api/v1", tags=["transactions"])
+        app.include_router(transactions_router, prefix="/api/v1")
         logger.info("✅ Transactions router included")
     except Exception as e:
-        logger.warning(f"⚠️  Failed to include transactions router: {e}")
+        logger.warning(f"⚠️  Transactions router failed: {e}")
 
     logger.info("✅ FastAPI application created successfully")
 
