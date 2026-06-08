@@ -17,18 +17,18 @@ logger = logging.getLogger(__name__)
 
 class ImmoUserBehavior(FastHttpUser):
     """Simulates typical user behavior"""
-    
+
     wait_time = between(1, 3)
-    
+
     def on_start(self):
         """Setup for each user"""
         self.user_id = random.randint(1, 1000)
         self.listing_id = random.randint(1, 500)
         self.api_token = "test-token-" + str(self.user_id)
         self.headers = {"Authorization": f"Bearer {self.api_token}"}
-    
+
     # ===== AUTH ENDPOINTS =====
-    
+
     @task(2)
     def register_user(self):
         """Test user registration"""
@@ -39,7 +39,7 @@ class ImmoUserBehavior(FastHttpUser):
             "last_name": "User"
         }
         self.client.post("/api/v1/auth/register", json=payload)
-    
+
     @task(3)
     def login_user(self):
         """Test user login"""
@@ -48,14 +48,14 @@ class ImmoUserBehavior(FastHttpUser):
             "password": "SecurePass123!"
         }
         self.client.post("/api/v1/auth/login", json=payload)
-    
+
     @task(1)
     def get_current_user(self):
         """Test get current user info"""
         self.client.get("/api/v1/auth/me", headers=self.headers)
-    
+
     # ===== LISTINGS ENDPOINTS =====
-    
+
     @task(5)
     def get_listings(self):
         """Test get listings with filters"""
@@ -69,12 +69,12 @@ class ImmoUserBehavior(FastHttpUser):
         }
         query_string = "&".join([f"{k}={v}" for k, v in filters.items() if v is not None])
         self.client.get(f"/api/v1/listings?{query_string}")
-    
+
     @task(3)
     def get_listing_detail(self):
         """Test get listing detail"""
         self.client.get(f"/api/v1/listings/{self.listing_id}")
-    
+
     @task(2)
     def create_listing(self):
         """Test create listing"""
@@ -92,7 +92,7 @@ class ImmoUserBehavior(FastHttpUser):
             "city": random.choice(["Paris", "Lyon", "Marseille"])
         }
         self.client.post("/api/v1/listings", json=payload, headers=self.headers)
-    
+
     @task(2)
     def update_listing(self):
         """Test update listing"""
@@ -101,35 +101,35 @@ class ImmoUserBehavior(FastHttpUser):
             "price": random.randint(100000, 1000000)
         }
         self.client.put(f"/api/v1/listings/{self.listing_id}", json=payload, headers=self.headers)
-    
+
     @task(1)
     def delete_listing(self):
         """Test delete listing"""
         self.client.delete(f"/api/v1/listings/{random.randint(1, 100)}", headers=self.headers)
-    
+
     # ===== USER FEATURES =====
-    
+
     @task(2)
     def add_favorite(self):
         """Test add favorite"""
         payload = {"listing_id": self.listing_id}
         self.client.post("/api/v1/favorites", json=payload, headers=self.headers)
-    
+
     @task(2)
     def get_favorites(self):
         """Test get favorites"""
         self.client.get("/api/v1/favorites", headers=self.headers)
-    
+
     @task(2)
     def get_notifications(self):
         """Test get notifications"""
         self.client.get("/api/v1/notifications", headers=self.headers)
-    
+
     @task(1)
     def get_appointments(self):
         """Test get appointments"""
         self.client.get("/api/v1/visits", headers=self.headers)
-    
+
     @task(1)
     def create_appointment(self):
         """Test create appointment"""
@@ -139,51 +139,51 @@ class ImmoUserBehavior(FastHttpUser):
             "time": "14:00"
         }
         self.client.post("/api/v1/visits", json=payload, headers=self.headers)
-    
+
     @task(2)
     def get_messages(self):
         """Test get message conversations"""
         self.client.get("/api/v1/messages/conversations", headers=self.headers)
-    
+
     @task(1)
     def search_history(self):
         """Test search history"""
         self.client.get("/api/v1/search-history", headers=self.headers)
-    
+
     # ===== BUSINESS FEATURES =====
-    
+
     @task(1)
     def get_admin_dashboard(self):
         """Test admin dashboard (admin only)"""
         self.client.get("/api/v1/admin/dashboard", headers=self.headers)
-    
+
     @task(1)
     def get_admin_listings(self):
         """Test admin listings view"""
         self.client.get("/api/v1/admin/listings", headers=self.headers)
-    
+
     @task(1)
     def get_alerts(self):
         """Test get alerts"""
         self.client.get("/api/v1/alerts", headers=self.headers)
-    
+
     @task(1)
     def get_analytics(self):
         """Test analytics dashboard"""
         self.client.get(f"/api/v1/analytics/listings/{self.listing_id}", headers=self.headers)
-    
+
     # ===== HEALTH ENDPOINTS =====
-    
+
     @task(1)
     def health_check(self):
         """Test basic health check"""
         self.client.get("/api/v1/health")
-    
+
     @task(1)
     def health_detailed(self):
         """Test detailed health check"""
         self.client.get("/api/v1/health/detailed")
-    
+
     @task(1)
     def readiness_check(self):
         """Test readiness check"""
@@ -192,9 +192,9 @@ class ImmoUserBehavior(FastHttpUser):
 
 class AdminUserBehavior(FastHttpUser):
     """Simulates admin user behavior"""
-    
+
     wait_time = between(2, 5)
-    
+
     def on_start(self):
         """Setup admin user"""
         self.admin_token = "admin-token-123"
@@ -202,29 +202,29 @@ class AdminUserBehavior(FastHttpUser):
             "Authorization": f"Bearer {self.admin_token}",
             "X-User-Role": "admin"
         }
-    
+
     @task(5)
     def view_dashboard(self):
         """Admin views dashboard"""
         self.client.get("/api/v1/admin/dashboard", headers=self.headers)
-    
+
     @task(3)
     def manage_listings(self):
         """Admin manages listings"""
         listing_id = random.randint(1, 500)
         self.client.get("/api/v1/admin/listings", headers=self.headers)
-    
+
     @task(2)
     def approve_listing(self):
         """Admin approves listing"""
         listing_id = random.randint(1, 500)
         self.client.post(f"/api/v1/admin/listings/{listing_id}/approve", headers=self.headers)
-    
+
     @task(2)
     def view_transactions(self):
         """Admin views transactions"""
         self.client.get("/api/v1/admin/transactions", headers=self.headers)
-    
+
     @task(1)
     def manage_users(self):
         """Admin manages users"""
@@ -233,31 +233,31 @@ class AdminUserBehavior(FastHttpUser):
 
 class BuyerUserBehavior(FastHttpUser):
     """Simulates buyer/searcher behavior"""
-    
+
     wait_time = between(1, 2)
-    
+
     def on_start(self):
         """Setup buyer user"""
         self.buyer_token = "buyer-token-" + str(random.randint(1, 1000))
         self.headers = {"Authorization": f"Bearer {self.buyer_token}"}
-    
+
     @task(10)
     def search_listings(self):
         """Buyer searches for listings"""
         city = random.choice(["Paris", "Lyon", "Marseille", "Toulouse"])
         min_price = random.choice([50000, 100000, 200000])
         max_price = min_price + random.choice([100000, 200000, 300000])
-        
+
         self.client.get(
             f"/api/v1/listings?city={city}&min_price={min_price}&max_price={max_price}"
         )
-    
+
     @task(5)
     def view_listing(self):
         """Buyer views listing details"""
         listing_id = random.randint(1, 1000)
         self.client.get(f"/api/v1/listings/{listing_id}")
-    
+
     @task(3)
     def save_favorite(self):
         """Buyer saves favorite"""
@@ -266,7 +266,7 @@ class BuyerUserBehavior(FastHttpUser):
             json={"listing_id": random.randint(1, 1000)},
             headers=self.headers
         )
-    
+
     @task(2)
     def create_alert(self):
         """Buyer creates search alert"""
@@ -278,7 +278,7 @@ class BuyerUserBehavior(FastHttpUser):
             },
             headers=self.headers
         )
-    
+
     @task(1)
     def get_loan_simulation(self):
         """Buyer checks loan simulation"""
@@ -294,19 +294,19 @@ class BuyerUserBehavior(FastHttpUser):
 
 class SellerUserBehavior(FastHttpUser):
     """Simulates seller behavior"""
-    
+
     wait_time = between(3, 5)
-    
+
     def on_start(self):
         """Setup seller user"""
         self.seller_token = "seller-token-" + str(random.randint(1, 500))
         self.headers = {"Authorization": f"Bearer {self.seller_token}"}
-    
+
     @task(3)
     def view_listings(self):
         """Seller views own listings"""
         self.client.get("/api/v1/listings", headers=self.headers)
-    
+
     @task(2)
     def create_listing(self):
         """Seller creates new listing"""
@@ -326,13 +326,13 @@ class SellerUserBehavior(FastHttpUser):
             },
             headers=self.headers
         )
-    
+
     @task(1)
     def view_analytics(self):
         """Seller views listing analytics"""
         listing_id = random.randint(1, 100)
         self.client.get(f"/api/v1/analytics/listings/{listing_id}", headers=self.headers)
-    
+
     @task(1)
     def view_messages(self):
         """Seller views buyer messages"""
@@ -353,7 +353,7 @@ def on_test_start(environment, **kwargs):
 def on_test_stop(environment, **kwargs):
     """Called when locust stops"""
     logger.info("🛑 Load testing stopped")
-    
+
     # Print statistics
     print("\n" + "="*70)
     print("LOAD TEST RESULTS")
@@ -379,19 +379,19 @@ def on_request(request_type, name, response_time, response_length, **kwargs):
 class LoadTestScenarios:
     """
     Different load test scenarios:
-    
+
     1. Light Load:
        locust -f locustfile.py -H http://localhost:8000 --users 10 --spawn-rate 2
-    
+
     2. Normal Load:
        locust -f locustfile.py -H http://localhost:8000 --users 50 --spawn-rate 5
-    
+
     3. Heavy Load:
        locust -f locustfile.py -H http://localhost:8000 --users 200 --spawn-rate 20
-    
+
     4. Spike Test:
        locust -f locustfile.py -H http://localhost:8000 --users 500 --spawn-rate 50 --run-time 10m
-    
+
     5. Stress Test:
        locust -f locustfile.py -H http://localhost:8000 --users 1000 --spawn-rate 100
     """
