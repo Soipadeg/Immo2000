@@ -179,6 +179,14 @@ def create_app(config_name: str = None) -> Flask:
     except Exception as e:
         logger.warning(f"⚠️  Failed to initialize rate limiting: {e}")
 
+    # Phase 4: CSRF Protection (Security S6)
+    try:
+        from src.middleware.csrf_protection import init_csrf_protection
+        init_csrf_protection(app)
+        logger.info("✅ CSRF protection initialized")
+    except Exception as e:
+        logger.warning(f"⚠️  Failed to initialize CSRF protection: {e}")
+
     # Logging
     if not app.debug:
         logger.setLevel(logging.INFO)
