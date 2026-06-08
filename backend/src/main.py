@@ -186,7 +186,7 @@ def create_app(config_name: str = None) -> FastAPI:
         }
 
 # ===== ROUTES (MIGRATED FROM FLASK) =====
-    
+
     # Core Auth & Listings (Phase 1)
     try:
         from src.routers.auth import router as auth_router
@@ -194,14 +194,14 @@ def create_app(config_name: str = None) -> FastAPI:
         logger.info("✅ Auth router included")
     except Exception as e:
         logger.warning(f"⚠️  Auth router failed: {e}")
-    
+
     try:
         from src.routers.listings import router as listings_router
         app.include_router(listings_router, prefix="/api/v1")
         logger.info("✅ Listings router included")
     except Exception as e:
         logger.warning(f"⚠️  Listings router failed: {e}")
-    
+
     # Phase 2a: Core Features
     try:
         from src.routers.favorites import router as favorites_router
@@ -209,41 +209,84 @@ def create_app(config_name: str = None) -> FastAPI:
         logger.info("✅ Favorites router included")
     except Exception as e:
         logger.warning(f"⚠️  Favorites router failed: {e}")
-    
+
     try:
         from src.routers.notifications import router as notifications_router
         app.include_router(notifications_router, prefix="/api/v1")
         logger.info("✅ Notifications router included")
     except Exception as e:
         logger.warning(f"⚠️  Notifications router failed: {e}")
-    
+
     try:
         from src.routers.appointments import router as appointments_router
         app.include_router(appointments_router, prefix="/api/v1")
         logger.info("✅ Appointments router included")
     except Exception as e:
         logger.warning(f"⚠️  Appointments router failed: {e}")
-    
+
     try:
         from src.routers.messages import router as messages_router
         app.include_router(messages_router, prefix="/api/v1")
         logger.info("✅ Messages router included")
     except Exception as e:
         logger.warning(f"⚠️  Messages router failed: {e}")
-    
+
     try:
         from src.routers.search import router as search_router
         app.include_router(search_router, prefix="/api/v1")
         logger.info("✅ Search router included")
     except Exception as e:
         logger.warning(f"⚠️  Search router failed: {e}")
-    
+
     try:
         from src.routers.properties import router as properties_router
         app.include_router(properties_router, prefix="/api/v1")
         logger.info("✅ Properties router included")
     except Exception as e:
         logger.warning(f"⚠️  Properties router failed: {e}")
+    
+    # Phase 2b: Secondary Features
+    try:
+        from src.routers.admin import router as admin_router
+        app.include_router(admin_router, prefix="/api/v1")
+        logger.info("✅ Admin router included")
+    except Exception as e:
+        logger.warning(f"⚠️  Admin router failed: {e}")
+    
+    try:
+        from src.routers.documents import router as documents_router
+        app.include_router(documents_router, prefix="/api/v1")
+        logger.info("✅ Documents router included")
+    except Exception as e:
+        logger.warning(f"⚠️  Documents router failed: {e}")
+    
+    try:
+        from src.routers.contracts import router as contracts_router
+        app.include_router(contracts_router, prefix="/api/v1")
+        logger.info("✅ Contracts/Alerts/Matching router included")
+    except Exception as e:
+        logger.warning(f"⚠️  Contracts router failed: {e}")
+    
+    try:
+        from src.routers.images import router as images_router
+        app.include_router(images_router, prefix="/api/v1")
+        logger.info("✅ Images/FAQ router included")
+    except Exception as e:
+        logger.warning(f"⚠️  Images router failed: {e}")
+    
+    try:
+        from src.routers.loans import router as loans_router
+        app.include_router(loans_router, prefix="/api/v1")
+        logger.info("✅ Payments/Loans router included")
+    except Exception as e:
+        logger.warning(f"⚠️  Loans router failed: {e}")
+    
+    try:
+        from src.routers.chatbot import router as chatbot_router
+        app.include_router(chatbot_router, prefix="/api/v1")
+        logger.info("✅ Chatbot/Analytics router included")
+    except Exception as e:
+        logger.warning(f"⚠️  Chatbot router failed: {e}")
 
     # Existing FastAPI routes (offres, notaires, transactions)
     try:
