@@ -38,7 +38,7 @@ from src.services.scheduler import SchedulerService
 from src.services.chatbot import init_chatbot
 from src.integrations.sentry import init_sentry
 from src.integrations.prometheus import init_prometheus
-from src.services.cache_service import init_cache
+from src.services.cache_service import RedisCache, CacheConfig
 
 # Import routes (to be migrated gradually)
 # Auth routes (will create FastAPI versions)
@@ -60,7 +60,7 @@ async def lifespan(app: FastAPI):
 
     # Initialize services
     try:
-        init_cache()
+        RedisCache()  # Initialize Redis singleton
         logger.info("✅ Cache initialized")
     except Exception as e:
         logger.warning(f"⚠️  Cache init failed: {e}")
