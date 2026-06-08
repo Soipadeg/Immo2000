@@ -3,14 +3,29 @@ Configuration centralisée pour le backend Immo2000.
 """
 
 import os
+import secrets as _secrets
 from typing import Dict, Any
+
+
+def _get_or_generate_secret(env_var: str) -> str:
+    """Récupérer un secret depuis l'environnement ou le générer en dev."""
+    value = os.getenv(env_var)
+    if not value:
+        if os.getenv("FLASK_ENV", "development") == "production":
+            raise ValueError(
+                f"❌ SECURITY ERROR: {env_var} MUST be set in production!\n"
+                f"Generate with: python -c \"import secrets; print(secrets.token_urlsafe(32))\""
+            )
+        # Dev mode: generate temporary secret
+        return f"dev-{_secrets.token_urlsafe(32)}"
+    return value
 
 
 class Config:
     """Configuration de base."""
 
     # Flask
-    SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-change-in-prod")
+    SECRET_KEY = _get_or_generate_secret("SECRET_KEY")
     DEBUG = False
     TESTING = False
 
@@ -38,7 +53,7 @@ class Config:
     REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 
     # JWT (Authentication)
-    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+    JWT_SECRET_KEY = _get_or_generate_secret("JWT_SECRET_KEY")
     JWT_ACCESS_TOKEN_EXPIRES_IN = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRES_IN", 86400))  # 24h
     JWT_REFRESH_TOKEN_EXPIRES_IN = int(os.getenv("JWT_REFRESH_TOKEN_EXPIRES_IN", 604800))  # 7 jours
 
@@ -65,7 +80,7 @@ class TestingConfig(Config):
     """Configuration de test."""
     TESTING = True
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
-    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'test-secret-key-very-secure-dev')
+    JWT_SECRET_KEY = _get_or_generate_secret('JWT_SECRET_KEY')
 
 
 class ProductionConfig(Config):
