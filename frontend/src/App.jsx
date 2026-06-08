@@ -88,6 +88,15 @@ const TransactionDetailsPage = React.lazy(() => import('./pages/TransactionDetai
 const DocuSignCallbackPage = React.lazy(() => import('./pages/DocuSignCallbackPage'));
 const EstimationPage = React.lazy(() => import('./pages/EstimationPage'));
 const SlotManagementPage = React.lazy(() => import('./pages/SlotManagementPage'));
+const AdminListingsApprovalPage = React.lazy(() => import('./pages/AdminListingsApprovalPage'));
+const VisitFeedbackPage = React.lazy(() => import('./pages/VisitFeedbackPage'));
+const MessagesPage = React.lazy(() => import('./pages/MessagesPage'));
+const TransactionActionsPage = React.lazy(() => import('./pages/TransactionActionsPage'));
+const NotificationSettingsPage = React.lazy(() => import('./pages/NotificationSettingsPage'));
+const AppointmentHistoryPage = React.lazy(() => import('./pages/AppointmentHistoryPage'));
+const CalendarExportPage = React.lazy(() => import('./pages/CalendarExportPage'));
+const PropertyStatisticsPage = React.lazy(() => import('./pages/PropertyStatisticsPage'));
+const HealthCheckPage = React.lazy(() => import('./pages/HealthCheckPage'));
 
 
 /**
@@ -155,6 +164,13 @@ function App() {
 
             {/* === PLANIFICATION DE VISITE === */}
             <Route path="/slots" element={<ProtectedRoute element={<SlotManagementPage />} />} />
+            <Route path="/feedback" element={<ProtectedRoute element={<VisitFeedbackPage />} />} />
+            <Route path="/messages" element={<ProtectedRoute element={<MessagesPage />} />} />
+            <Route path="/notification-settings" element={<ProtectedRoute element={<NotificationSettingsPage />} />} />
+            <Route path="/appointment-history" element={<ProtectedRoute element={<AppointmentHistoryPage />} />} />
+            <Route path="/calendar-export" element={<ProtectedRoute element={<CalendarExportPage />} />} />
+            <Route path="/property-statistics" element={<ProtectedRoute element={<PropertyStatisticsPage />} />} />
+            <Route path="/health-check" element={<ProtectedRoute element={<HealthCheckPage />} />} />
             <Route path="/mon-calendrier" element={<ProtectedRoute element={<MonCalendrier />} />} />
             <Route path="/mes-rendez-vous" element={<ProtectedRoute element={<MesRendezVous />} />} />
             <Route path="/conversations/:conversationId" element={<ProtectedRoute element={<Conversations />} />} />
@@ -173,6 +189,7 @@ function App() {
             <Route path="/transactions/:transactionId/sign-compromis" element={<ProtectedRoute element={<SignCompromisPage />} />} />
             <Route path="/transactions/:transactionId/payment" element={<ProtectedRoute element={<PaymentPage />} />} />
             <Route path="/transactions/:transactionId/sign-acte" element={<ProtectedRoute element={<SignActePage />} />} />
+            <Route path="/transaction-actions" element={<ProtectedRoute element={<TransactionActionsPage />} />} />
 
             {/* === DOCUSIGN OAUTH CALLBACK === */}
             <Route path="/docusign/callback" element={<ProtectedRoute element={<DocuSignCallbackPage />} />} />
@@ -231,6 +248,7 @@ function App() {
               <Route path="users" element={<AdminUsersPageNew />} />
               <Route path="moderation" element={<ModerationPage />} />
               <Route path="listings" element={<AdminListingsPage />} />
+              <Route path="listings/approval" element={<AdminListingsApprovalPage />} />
               <Route path="transactions" element={<AdminTransactionsPage />} />
               <Route path="settings" element={<AdminSettingsPage />} />
               <Route path="analytics" element={<AdminAnalyticsPage />} />

@@ -1,0 +1,275 @@
+/* AdminTransactionsPage Styling */
+
+.admin-transactions {
+  background: #f8f9fa;
+  min-height: calc(100vh - 100px);
+}
+
+.admin-transactions .page-header {
+  margin-bottom: 30px;
+}
+
+.admin-transactions .page-header h1 {
+  color: #333;
+  font-weight: 600;
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.admin-transactions .page-header p {
+  font-size: 1rem;
+  color: #666;
+}
+
+/* Statistics Cards */
+.admin-transactions .stat-card {
+  border-radius: 8px;
+  background: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.admin-transactions .stat-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+  transform: translateY(-4px);
+}
+
+.admin-transactions .stat-card .stat-icon {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+
+.admin-transactions .stat-card .stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #0066cc;
+  margin-bottom: 8px;
+}
+
+.admin-transactions .stat-card .stat-label {
+  font-size: 0.85rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Main Card */
+.admin-transactions .card {
+  border-radius: 8px;
+  border: none;
+  background: #ffffff;
+}
+
+.admin-transactions .card-header {
+  background: #ffffff;
+  padding: 20px;
+  border-bottom: 1px solid #e0e0e0;
+  border-radius: 8px 8px 0 0;
+}
+
+.admin-transactions .card-body {
+  padding: 20px;
+}
+
+/* Table */
+.admin-transactions table {
+  margin-bottom: 0;
+}
+
+.admin-transactions table thead th {
+  background: #f5f5f5;
+  color: #333;
+  font-weight: 600;
+  border-color: #e0e0e0;
+  padding: 15px;
+}
+
+.admin-transactions table tbody td {
+  padding: 15px;
+  border-color: #e0e0e0;
+  vertical-align: middle;
+}
+
+.admin-transactions table tbody tr:hover {
+  background: #f9f9f9;
+}
+
+.admin-transactions table small {
+  display: block;
+  margin-top: 4px;
+}
+
+/* Buttons */
+.admin-transactions .btn {
+  font-weight: 500;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.admin-transactions .btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.admin-transactions .btn-outline-info {
+  color: #0066cc;
+  border-color: #0066cc;
+}
+
+.admin-transactions .btn-outline-info:hover {
+  background-color: #0066cc;
+  border-color: #0066cc;
+}
+
+.admin-transactions .btn-success {
+  background-color: #27ae60;
+  border-color: #27ae60;
+}
+
+.admin-transactions .btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+/* Form Controls */
+.admin-transactions .form-control,
+.admin-transactions .form-select {
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  padding: 10px 12px;
+}
+
+.admin-transactions .form-control:focus,
+.admin-transactions .form-select:focus {
+  border-color: #0066cc;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+/* Alerts */
+.admin-transactions .alert {
+  border-radius: 8px;
+  border: none;
+  margin-bottom: 20px;
+}
+
+.admin-transactions .alert-info {
+  background: rgba(0, 102, 204, 0.1);
+  color: #0066cc;
+}
+
+.admin-transactions .alert-danger {
+  background: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+}
+
+/* Badges */
+.admin-transactions .badge {
+  padding: 6px 12px;
+  font-weight: 500;
+  border-radius: 4px;
+}
+
+.admin-transactions .bg-warning {
+  background-color: #f39c12 !important;
+  color: white;
+}
+
+.admin-transactions .bg-success {
+  background-color: #27ae60 !important;
+  color: white;
+}
+
+.admin-transactions .bg-danger {
+  background-color: #dc3545 !important;
+  color: white;
+}
+
+/* Modal */
+.admin-transactions .modal-content {
+  border-radius: 8px;
+  border: none;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+.admin-transactions .modal-header {
+  border-bottom: 1px solid #e0e0e0;
+  padding: 20px;
+}
+
+.admin-transactions .modal-body {
+  padding: 20px;
+}
+
+.admin-transactions .modal-footer {
+  border-top: 1px solid #e0e0e0;
+  padding: 15px;
+}
+
+.admin-transactions .modal-header .btn-close {
+  font-size: 1.2rem;
+}
+
+/* Transaction Details */
+.admin-transactions .transaction-details h6 {
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.admin-transactions .transaction-details p {
+  margin: 0;
+  color: #555;
+}
+
+.admin-transactions .transaction-details .bg-light {
+  background-color: #f5f5f5 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-transactions {
+    padding: 10px !important;
+  }
+
+  .admin-transactions .page-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .admin-transactions .page-header .text-end {
+    text-align: left !important;
+    margin-top: 15px;
+  }
+
+  .admin-transactions .page-header .btn {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .admin-transactions .card-header {
+    padding: 15px;
+  }
+
+  .admin-transactions table {
+    font-size: 0.85rem;
+  }
+
+  .admin-transactions table thead th,
+  .admin-transactions table tbody td {
+    padding: 10px;
+  }
+
+  .admin-transactions .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .admin-transactions .stat-card .stat-value {
+    font-size: 1.4rem;
+  }
+
+  .admin-transactions .stat-card .stat-icon {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+  }
+}

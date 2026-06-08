@@ -92,7 +92,15 @@ export const DynamicNavbar = ({
     if (userRole === 'user') {
       items.push({ label: 'Dashboard', path: '/dashboard', icon: '📊' });
       items.push({ label: 'Créneaux', path: '/slots', icon: '📅' });
+      items.push({ label: 'Feedback', path: '/feedback', icon: '💬' });
+      items.push({ label: 'Messages', path: '/messages', icon: '✉️' });
+      items.push({ label: 'Transactions', path: '/transaction-actions', icon: '💼' });
       items.push({ label: 'Notifications', path: '/notifications', icon: '🔔', badge: unreadNotifications });
+      items.push({ label: 'Param. Notif', path: '/notification-settings', icon: '⚙️' });
+      items.push({ label: 'Historique RDV', path: '/appointment-history', icon: '📅' });
+      items.push({ label: 'Exporter RDV', path: '/calendar-export', icon: '📤' });
+      items.push({ label: 'Stats Propriétés', path: '/property-statistics', icon: '📊' });
+      items.push({ label: 'Santé Système', path: '/health-check', icon: '🚀' });
     }
 
     if (userRole === 'admin') {

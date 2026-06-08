@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useAuth } from './useAuth';
-import apiClient from '../services/apiClient';
+import apiClient from '../services/api/client';
 
 /**
  * useSlots - Custom hook for managing appointment slots

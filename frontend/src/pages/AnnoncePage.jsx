@@ -10,11 +10,14 @@ import { Button, Input, Card, Modal, Alert, FormContainer } from '@/components';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { annoncesApi } from '../services/api';
+import { useAuth } from '../hooks/useAuth';
+import ListingActions from '../components/listings/ListingActions';
 import SimilarAnnoncesCarousel from '../components/SimilarAnnoncesCarousel';
 
 const AnnoncePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [annonce, setAnnonce] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -70,6 +73,22 @@ const AnnoncePage = () => {
     } catch {
       console.error('Erreur lors de la modification des favoris');
     }
+  };
+
+  /**
+   * Vérifier si l'utilisateur actuel est propriétaire de l'annonce
+   */
+  const isOwner = () => {
+    if (!user || !annonce) return false;
+    return user.id === annonce.utilisateur?.id || user.id === annonce.vendeur_id;
+  };
+
+  /**
+   * Callback après une action sur l'annonce (delete, publish, archive, etc.)
+   */
+  const handleListingActionComplete = () => {
+    // Recharger l'annonce pour réfléter les changements
+    loadAnnonce();
   };
 
   const handleShare = async () => {
@@ -327,7 +346,36 @@ const AnnoncePage = () => {
 
               <hr className="divider" />
 
-              {/* Boutons d'action */}
+              {/* Boutons d'action propriétaire */}
+              {isOwner() && (
+                <div className="owner-actions">
+                  <div className="action-label" style={{ marginBottom: '10px', fontWeight: 'bold' }}>
+                    ⚙️ Gestion de l'annonce
+                  </div>
+                  <Button
+                    fullWidth
+                    variant="secondary"
+                    onClick={() => navigate(`/annonce/${annonce.id}/editer`)}
+                    style={{ marginBottom: '10px' }}
+                  >
+                    ✏️ Éditer
+                  </Button>
+                  <ListingActions
+                    listing={annonce}
+                    onActionComplete={handleListingActionComplete}
+                    size="sm"
+                    variant="secondary"
+                    showLabel={true}
+                    className="w-100"
+                  />
+                  <hr className="divider" />
+                </div>
+              )}
+
+              {/* Boutons d'action standard */}
+              <div className="action-label" style={{ marginBottom: '10px', fontWeight: 'bold' }}>
+                {isOwner() ? '📧 Commentaires' : '✉️ Contacter'}
+              </div>
               <div className="action-buttons">
                 <Button
                   fullWidth

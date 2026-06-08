@@ -7,18 +7,28 @@ import React, { useState, useEffect } from 'react';
 import { Button, Card, Alert } from '@/components';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import ListingActions from '../components/listings/ListingActions';
 
 const UserDashboardPage = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [tabValue, setTabValue] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     if (!authLoading && (!user || !['user', 'admin'].includes(user.role))) {
       navigate('/');
     }
   }, [user, authLoading, navigate]);
+
+  /**
+   * Callback après une action sur une annonce (delete, publish, archive, etc.)
+   */
+  const handleListingActionComplete = () => {
+    // Forcer le refresh des annonces
+    setRefreshKey(prev => prev + 1);
+  };
 
   const stats = [
     {
@@ -226,9 +236,26 @@ const UserDashboardPage = () => {
                       </div>
 
                       <div className="annonce-actions">
-                        <Button size="small" variant="primary">👁️ Voir</Button>
-                        <Button size="small" variant="secondary">✏️ Éditer</Button>
-                        <Button size="small" variant="danger">🗑️ Supprimer</Button>
+                        <Button
+                          size="small"
+                          variant="primary"
+                          onClick={() => navigate(`/annonce/${annonce.id}`)}
+                        >
+                          👁️ Voir
+                        </Button>
+                        <Button
+                          size="small"
+                          variant="secondary"
+                          onClick={() => navigate(`/annonce/${annonce.id}/editer`)}
+                        >
+                          ✏️ Éditer
+                        </Button>
+                        <ListingActions
+                          listing={annonce}
+                          onActionComplete={handleListingActionComplete}
+                          size="sm"
+                          showLabel={true}
+                        />
                       </div>
                     </Card>
                   ))}
@@ -304,4 +331,3 @@ const UserDashboardPage = () => {
 };
 
 export default UserDashboardPage;
-

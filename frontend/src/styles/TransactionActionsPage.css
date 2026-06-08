@@ -1,0 +1,317 @@
+/* TRANSACTION ACTIONS PAGE */
+
+.transaction-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.page-header {
+  background: white;
+  padding: 30px 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.page-header h1 {
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.page-header p {
+  margin: 0;
+  color: #7f8c8d;
+  font-size: 14px;
+}
+
+.filters-section {
+  display: grid;
+  grid-template-columns: 1fr 250px;
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.search-input,
+.status-filter {
+  padding: 12px 16px;
+  border: 1px solid #bdc3c7;
+  border-radius: 6px;
+  font-size: 13px;
+  background-color: white;
+  color: #2c3e50;
+  font-family: inherit;
+}
+
+.search-input:focus,
+.status-filter:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.search-input::placeholder {
+  color: #95a5a6;
+}
+
+.transactions-container {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #7f8c8d;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #ecf0f1;
+  border-top-color: #007bff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  color: #7f8c8d;
+  text-align: center;
+}
+
+.empty-state p {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.empty-state small {
+  margin: 0;
+  font-size: 13px;
+  color: #95a5a6;
+}
+
+.transactions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.transaction-card {
+  border: 1px solid #ecf0f1;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.transaction-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.transaction-card.status-warning {
+  border-left: 4px solid #ffc107;
+}
+
+.transaction-card.status-success {
+  border-left: 4px solid #28a745;
+}
+
+.transaction-card.status-danger {
+  border-left: 4px solid #dc3545;
+}
+
+.transaction-card.status-info {
+  border-left: 4px solid #17a2b8;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16px;
+  border-bottom: 1px solid #ecf0f1;
+  background-color: #f8f9fa;
+  gap: 12px;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.status-badge.warning {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status-badge.success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-badge.danger {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.status-badge.info {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+.card-body {
+  padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  gap: 12px;
+}
+
+.info-row .label {
+  color: #7f8c8d;
+  font-weight: 500;
+}
+
+.info-row .value {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.info-row .price {
+  color: #28a745;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.info-row .badge {
+  background-color: #007bff;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.info-row .success {
+  color: #28a745;
+  font-weight: 600;
+}
+
+.info-row .pending {
+  color: #ffc107;
+  font-weight: 600;
+}
+
+.card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  border-top: 1px solid #ecf0f1;
+  background-color: #f9f9f9;
+}
+
+.btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #545b62;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  color: #7f8c8d;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .transactions-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .filters-section {
+    grid-template-columns: 1fr;
+  }
+
+  .transactions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page-header {
+    padding: 20px 16px;
+  }
+
+  .page-header h1 {
+    font-size: 22px;
+  }
+}

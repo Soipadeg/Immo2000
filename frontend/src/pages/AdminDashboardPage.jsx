@@ -279,6 +279,9 @@ const AdminDashboardPage = () => {
           {/* Onglet Gestion */}
           {tabValue === 3 && (
             <div className="management-grid">
+              <Button variant="primary" className="mgmt-btn" onClick={() => navigate('/admin/listings/approval')}>
+                ✅ Approuver les annonces
+              </Button>
               <Button variant="primary" className="mgmt-btn" onClick={() => navigate('/admin/users')}>
                 👥 Gérer les utilisateurs
               </Button>

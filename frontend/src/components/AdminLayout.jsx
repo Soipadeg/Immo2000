@@ -20,7 +20,11 @@ const AdminLayout = () => {
     { label: 'Accueil', path: '/admin', icon: '🏠' },
     { label: 'Dashboard', path: '/admin/dashboard', icon: '📊' },
     { label: 'Utilisateurs', path: '/admin/users', icon: '👥' },
+    { label: 'Annonces', path: '/admin/listings', icon: '🏘️' },
+    { label: 'Approbation', path: '/admin/listings/approval', icon: '✅' },
+    { label: 'Transactions', path: '/admin/transactions', icon: '💳' },
     { label: 'Modération', path: '/admin/moderation', icon: '🛡️' },
+    { label: 'Audit Logs', path: '/admin/audit', icon: '📋' },
     { label: 'Sécurité', path: '/admin/security', icon: '🔒' },
     { label: 'Paramètres', path: '/admin/settings', icon: '⚙️' },
   ];

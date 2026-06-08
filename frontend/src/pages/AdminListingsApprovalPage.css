@@ -1,0 +1,203 @@
+/* AdminListingsApprovalPage Styling */
+
+.admin-listings-approval {
+  background: #f8f9fa;
+  min-height: calc(100vh - 100px);
+}
+
+.admin-listings-approval .page-header {
+  margin-bottom: 30px;
+}
+
+.admin-listings-approval .page-header h1 {
+  color: #333;
+  font-weight: 600;
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.admin-listings-approval .page-header p {
+  font-size: 1rem;
+  color: #666;
+}
+
+/* Statistics Cards */
+.admin-listings-approval .stat-card {
+  border-radius: 8px;
+  background: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.admin-listings-approval .stat-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+  transform: translateY(-4px);
+}
+
+.admin-listings-approval .stat-card .stat-icon {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+
+.admin-listings-approval .stat-card .stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #0066cc;
+  margin-bottom: 8px;
+}
+
+.admin-listings-approval .stat-card .stat-label {
+  font-size: 0.85rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Main Card */
+.admin-listings-approval .main-card {
+  border-radius: 8px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.admin-listings-approval .main-card .card-header {
+  padding: 20px;
+  background: #ffffff;
+}
+
+.admin-listings-approval .main-card .nav-tabs {
+  border-bottom: 2px solid #e0e0e0;
+  margin-bottom: 0;
+}
+
+.admin-listings-approval .main-card .nav-tabs .nav-link {
+  color: #666;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-weight: 500;
+  padding: 12px 20px;
+  transition: all 0.3s ease;
+}
+
+.admin-listings-approval .main-card .nav-tabs .nav-link:hover {
+  color: #0066cc;
+  border-bottom-color: #0066cc;
+}
+
+.admin-listings-approval .main-card .nav-tabs .nav-link.active {
+  color: #0066cc;
+  border-bottom-color: #0066cc;
+  background: transparent;
+}
+
+.admin-listings-approval .main-card .card-body {
+  padding: 30px;
+}
+
+/* Help Section */
+.admin-listings-approval .help-section {
+  padding: 20px 0;
+}
+
+.admin-listings-approval .help-section .card {
+  border-radius: 8px;
+}
+
+.admin-listings-approval .help-section h5 {
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.admin-listings-approval .help-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.admin-listings-approval .help-section li {
+  padding: 8px 0;
+  color: #555;
+  font-size: 0.95rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.admin-listings-approval .help-section li:last-child {
+  border-bottom: none;
+}
+
+.admin-listings-approval .help-section strong {
+  color: #333;
+  font-weight: 600;
+}
+
+/* Buttons */
+.admin-listings-approval .btn-outline-primary,
+.admin-listings-approval .btn-outline-secondary {
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.admin-listings-approval .btn-outline-primary:hover,
+.admin-listings-approval .btn-outline-secondary:hover {
+  transform: translateY(-2px);
+}
+
+.admin-listings-approval .btn-outline-primary:disabled,
+.admin-listings-approval .btn-outline-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-listings-approval {
+    padding: 10px !important;
+  }
+
+  .admin-listings-approval .page-header {
+    margin-bottom: 20px;
+  }
+
+  .admin-listings-approval .page-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .admin-listings-approval .page-header .text-end {
+    text-align: left !important;
+    margin-top: 15px;
+  }
+
+  .admin-listings-approval .page-header .btn {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .admin-listings-approval .stat-card {
+    margin-bottom: 15px;
+  }
+
+  .admin-listings-approval .main-card .card-body {
+    padding: 15px;
+  }
+
+  .admin-listings-approval .main-card .nav-tabs .nav-link {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .admin-listings-approval .stat-card .stat-value {
+    font-size: 1.4rem;
+  }
+
+  .admin-listings-approval .stat-card .stat-icon {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+  }
+
+  .admin-listings-approval .help-section li {
+    font-size: 0.85rem;
+  }
+}
