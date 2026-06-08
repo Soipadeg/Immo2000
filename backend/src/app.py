@@ -114,8 +114,29 @@ def create_app(config_name: str = None) -> Flask:
     app.config["JSON_SORT_KEYS"] = False
     app.config["JSONIFY_PRETTYPRINT_REGULAR"] = os.getenv("FLASK_DEBUG", False)
 
-    # CORS
-    CORS(app, resources={r"/api/*": {"origins": "*"}, r"/auth/*": {"origins": "*"}, r"/health": {"origins": "*"}})
+    # CORS Configuration - Restrict to allowed domains (Production)
+    CORS_ALLOWED_ORIGINS = os.getenv(
+        "CORS_ALLOWED_ORIGINS",
+        "http://localhost:3000,http://localhost:5000"  # Default for development
+    ).split(",")
+
+    CORS(app, resources={
+        r"/api/*": {
+            "origins": CORS_ALLOWED_ORIGINS,
+            "allow_headers": ["Content-Type", "Authorization"],
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+            "supports_credentials": True
+        },
+        r"/auth/*": {
+            "origins": CORS_ALLOWED_ORIGINS,
+            "allow_headers": ["Content-Type", "Authorization"],
+            "methods": ["GET", "POST", "OPTIONS"],
+            "supports_credentials": True
+        },
+        r"/health": {
+            "origins": "*"  # Health check can be public
+        }
+    })
 
     # Security Headers (HTTPS, HSTS, CSP, XSS Protection)
     if Talisman:
@@ -154,7 +175,12 @@ def create_app(config_name: str = None) -> Flask:
     # Phase 3: SocketIO for real-time chat
     try:
         from flask_socketio import SocketIO
-        socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
+        socketio = SocketIO(
+            app,
+            cors_allowed_origins=CORS_ALLOWED_ORIGINS,
+            async_mode='threading',
+            cors_credentials=True
+        )
 
         # Initialiser les événements WebSocket
         from src.routes.chat import init_socketio
