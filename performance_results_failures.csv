@@ -1,0 +1,6 @@
+Method,Name,Error,Occurrences,First Seen,Last Seen
+GET,/api/v1/listings,HTTPError('404 Client Error: NOT FOUND for url: /api/v1/listings'),100,2026-06-08T08:23:52Z,2026-06-08T08:26:42Z
+GET,/api/v1/listings/[id],HTTPError('404 Client Error: NOT FOUND for url: /api/v1/listings/[id]'),46,2026-06-08T08:23:55Z,2026-06-08T08:26:43Z
+GET,/api/v1/listings/search,HTTPError('404 Client Error: NOT FOUND for url: /api/v1/listings/search'),110,2026-06-08T08:23:53Z,2026-06-08T08:26:44Z
+GET,/api/v1/admin/users,HTTPError('404 Client Error: NOT FOUND for url: /api/v1/admin/users'),117,2026-06-08T08:23:52Z,2026-06-08T08:26:44Z
+POST,/api/v1/auth/login,HTTPError('405 Client Error: METHOD NOT ALLOWED for url: /api/v1/auth/login'),53,2026-06-08T08:23:56Z,2026-06-08T08:26:33Z
