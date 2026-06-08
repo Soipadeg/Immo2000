@@ -4,7 +4,6 @@ Flask-CORS==4.0.0
 Flask-SQLAlchemy==3.1.1
 Flask-Talisman==1.1.0
 Flask-WTF==1.2.1
-# Flask-Login==0.6.3  # ❌ REMOVED - CVE-2023-4879 - Using JWT-based auth instead
 python-dotenv==1.0.0
 gunicorn==21.2.0
 
