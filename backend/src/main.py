@@ -174,16 +174,31 @@ def create_app(config_name: str = None) -> FastAPI:
             content={"detail": "Internal server error"}
         )
 
-    # ===== HEALTH CHECK =====
+    # ===== HEALTH CHECK (PHASE 3 ENHANCED) =====
 
     @app.get("/api/v1/health")
     async def health():
         """Health check endpoint"""
-        return {
-            "status": "ok",
-            "service": "immo2000-api",
-            "version": "6.0.0"
-        }
+        from src.health import get_health_check
+        return await get_health_check()
+
+    @app.get("/api/v1/health/detailed")
+    async def health_detailed():
+        """Detailed health check with dependencies"""
+        from src.health import get_detailed_health_check
+        return await get_detailed_health_check()
+
+    @app.get("/api/v1/health/ready")
+    async def readiness():
+        """Readiness check for orchestration"""
+        from src.health import get_readiness
+        return await get_readiness()
+
+    @app.get("/api/v1/metrics")
+    async def metrics():
+        """Application metrics"""
+        from src.health import health_checker
+        return await health_checker.get_metrics()
 
 # ===== ROUTES (MIGRATED FROM FLASK) =====
 
@@ -244,7 +259,7 @@ def create_app(config_name: str = None) -> FastAPI:
         logger.info("✅ Properties router included")
     except Exception as e:
         logger.warning(f"⚠️  Properties router failed: {e}")
-    
+
     # Phase 2b: Secondary Features
     try:
         from src.routers.admin import router as admin_router
@@ -252,35 +267,35 @@ def create_app(config_name: str = None) -> FastAPI:
         logger.info("✅ Admin router included")
     except Exception as e:
         logger.warning(f"⚠️  Admin router failed: {e}")
-    
+
     try:
         from src.routers.documents import router as documents_router
         app.include_router(documents_router, prefix="/api/v1")
         logger.info("✅ Documents router included")
     except Exception as e:
         logger.warning(f"⚠️  Documents router failed: {e}")
-    
+
     try:
         from src.routers.contracts import router as contracts_router
         app.include_router(contracts_router, prefix="/api/v1")
         logger.info("✅ Contracts/Alerts/Matching router included")
     except Exception as e:
         logger.warning(f"⚠️  Contracts router failed: {e}")
-    
+
     try:
         from src.routers.images import router as images_router
         app.include_router(images_router, prefix="/api/v1")
         logger.info("✅ Images/FAQ router included")
     except Exception as e:
         logger.warning(f"⚠️  Images router failed: {e}")
-    
+
     try:
         from src.routers.loans import router as loans_router
         app.include_router(loans_router, prefix="/api/v1")
         logger.info("✅ Payments/Loans router included")
     except Exception as e:
         logger.warning(f"⚠️  Loans router failed: {e}")
-    
+
     try:
         from src.routers.chatbot import router as chatbot_router
         app.include_router(chatbot_router, prefix="/api/v1")

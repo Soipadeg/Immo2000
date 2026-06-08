@@ -56,11 +56,11 @@ async def chat(
 ):
     """Envoyer un message au chatbot"""
     logger.info(f"💬 User {current_user['id']} chatting with bot")
-    
+
     try:
         # Simple echo for demo, would call ML model in production
         response_text = f"I received your message: {message[:50]}..."
-        
+
         return ChatResponse(
             message=response_text,
             confidence=0.85,
@@ -91,7 +91,7 @@ async def rate_response(
 ):
     """Noter la qualité d'une réponse du bot"""
     logger.info(f"⭐ User rating message {message_id}: {rating}/5")
-    
+
     try:
         return {"message": "Rating saved"}
     except Exception as e:
@@ -109,7 +109,7 @@ async def get_listing_analytics(
 ):
     """Récupérer les analytiques d'une annonce"""
     logger.info(f"📊 Getting analytics for listing {listing_id}")
-    
+
     try:
         return [
             AnalyticsData(
@@ -132,7 +132,7 @@ async def get_analytics_dashboard(
 ):
     """Tableau de bord des analytiques"""
     logger.info(f"📊 User {current_user['id']} viewing analytics dashboard")
-    
+
     try:
         return {
             "total_views": 1250,

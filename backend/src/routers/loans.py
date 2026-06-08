@@ -81,7 +81,7 @@ async def create_payment(
 ):
     """Créer un paiement"""
     logger.info(f"💳 User {current_user['id']} creating payment: ${data.amount}")
-    
+
     try:
         return PaymentItem(
             id=1,
@@ -138,7 +138,7 @@ async def apply_for_loan(
 ):
     """Soumettre une demande de prêt"""
     logger.info(f"💰 User {current_user['id']} applying for loan: ${loan_amount}")
-    
+
     try:
         return LoanApplication(
             id=1,
@@ -164,19 +164,19 @@ async def simulate_loan(
 ):
     """Simuler les conditions d'un prêt"""
     logger.info(f"📊 Simulating loan: property=${property_value}, {duration_months} months")
-    
+
     try:
         loan_amount = property_value * (loan_percentage / 100)
         interest_rate = 3.5  # Default rate
         monthly_rate = interest_rate / 100 / 12
-        
+
         # Calculate monthly payment using formula
         monthly_payment = loan_amount * (monthly_rate * (1 + monthly_rate) ** duration_months) / \
                          ((1 + monthly_rate) ** duration_months - 1)
-        
+
         total_payments = monthly_payment * duration_months
         total_interest = total_payments - loan_amount
-        
+
         return LoanSimulation(
             property_value=property_value,
             loan_amount=loan_amount,

@@ -83,7 +83,7 @@ class AdminActionRequest(BaseModel):
 async def get_dashboard(admin = Depends(lambda: {"id": 1, "role": "admin"})):
     """Récupérer les statistiques du tableau de bord"""
     logger.info(f"📊 Admin {admin['id']} viewing dashboard")
-    
+
     try:
         return DashboardStats(
             total_users=1250,
@@ -120,7 +120,7 @@ async def get_user_details(
 ):
     """Récupérer les détails d'un utilisateur"""
     logger.info(f"👤 Admin viewing user {user_id}")
-    
+
     try:
         return UserItem(
             id=user_id,
@@ -145,7 +145,7 @@ async def user_action(
 ):
     """Effectuer une action sur un utilisateur"""
     logger.info(f"⚡ Admin {data.action} user {user_id}")
-    
+
     try:
         return {"message": f"User {data.action}d successfully", "user_id": user_id}
     except Exception as e:
@@ -174,7 +174,7 @@ async def approve_listing(
 ):
     """Approuver une annonce en attente"""
     logger.info(f"✅ Admin approving listing {listing_id}")
-    
+
     try:
         return {"message": "Listing approved", "listing_id": listing_id}
     except Exception as e:
@@ -190,7 +190,7 @@ async def reject_listing(
 ):
     """Rejeter une annonce"""
     logger.info(f"❌ Admin rejecting listing {listing_id}")
-    
+
     try:
         return {"message": "Listing rejected", "reason": reason}
     except Exception as e:

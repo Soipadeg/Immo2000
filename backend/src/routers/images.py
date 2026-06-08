@@ -47,7 +47,7 @@ async def upload_image(
 ):
     """Uploader une image"""
     logger.info(f"🖼️  User {current_user['id']} uploading image: {file.filename}")
-    
+
     try:
         return ImageItem(
             id=1,
@@ -79,7 +79,7 @@ async def set_main_image(
 ):
     """Définir l'image principale d'une annonce"""
     logger.info(f"📌 Setting image {image_id} as main for listing {listing_id}")
-    
+
     try:
         return {"message": "Main image set", "image_id": image_id}
     except Exception as e:
@@ -97,7 +97,7 @@ async def get_faq(
 ):
     """Récupérer la FAQ"""
     logger.info(f"❓ Getting FAQ items")
-    
+
     try:
         return [
             FAQItem(
@@ -121,7 +121,7 @@ async def mark_faq_helpful(
 ):
     """Marquer une FAQ comme utile"""
     logger.info(f"👍 User {current_user['id']} marking FAQ {faq_id} as helpful")
-    
+
     try:
         return {"message": "Thank you for your feedback"}
     except Exception as e:

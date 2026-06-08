@@ -51,7 +51,7 @@ async def upload_document(
 ):
     """Uploader un document"""
     logger.info(f"📤 User {current_user['id']} uploading document: {file.filename}")
-    
+
     try:
         return DocumentItem(
             id=1,

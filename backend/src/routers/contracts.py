@@ -73,7 +73,7 @@ async def create_contract(
 ):
     """Créer un nouveau contrat"""
     logger.info(f"📝 Creating contract for listing {listing_id}")
-    
+
     try:
         return ContractItem(
             id=1,
@@ -96,7 +96,7 @@ async def sign_contract(
 ):
     """Signer un contrat"""
     logger.info(f"✍️  User {current_user['id']} signing contract {contract_id}")
-    
+
     try:
         return {"message": "Contract signed", "contract_id": contract_id}
     except Exception as e:
@@ -126,7 +126,7 @@ async def create_alert(
 ):
     """Créer une nouvelle alerte"""
     logger.info(f"🔔 User {current_user['id']} creating {alert_type} alert")
-    
+
     try:
         return AlertItem(
             id=1,
@@ -161,7 +161,7 @@ async def get_matching(
 ):
     """Récupérer les matches potentiels pour une annonce"""
     logger.info(f"🎯 Getting matches for listing {listing_id}")
-    
+
     try:
         return [
             MatchResult(
@@ -184,7 +184,7 @@ async def notify_match(
 ):
     """Notifier un acheteur d'une correspondance"""
     logger.info(f"📧 Notifying buyer {buyer_id} about listing {listing_id}")
-    
+
     try:
         return {"message": "Notification sent"}
     except Exception as e:
