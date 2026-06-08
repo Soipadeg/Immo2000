@@ -1,7 +1,7 @@
 # 🚀 PLAN DE DÉPLOIEMENT EN PRODUCTION - Immo2000 Phase 6
 
-**Date**: 2026-06-08  
-**Status**: ✅ PRÊT POUR PRODUCTION  
+**Date**: 2026-06-08
+**Status**: ✅ PRÊT POUR PRODUCTION
 **Version**: 6.0.0 (FastAPI)
 
 ---

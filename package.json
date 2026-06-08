@@ -4,6 +4,7 @@
   "description": "Immo2000 - Real estate transaction management platform",
   "private": true,
   "scripts": {
+    "start": "cd backend && uvicorn src.main:create_app --host 0.0.0.0 --port 8000 --workers 4",
     "install": "cd frontend && npm install",
     "build": "cd frontend && npm run build",
     "dev": "cd frontend && npm run dev",
