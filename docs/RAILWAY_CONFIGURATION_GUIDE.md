@@ -8,40 +8,80 @@
 
 ## ✅ Fichiers de Configuration Créés
 
-### 1. **Procfile** (Nouveau)
+### 1. **start.sh** (Nouveau - Script de démarrage)
+```bash
+#!/bin/bash
+# Démarrage FastAPI pour Railway/Heroku
+
+cd "$(dirname "$0")/backend" || exit 1
+exec uvicorn src.main:create_app \
+  --host 0.0.0.0 \
+  --port ${PORT:-8000} \
+  --workers ${WORKERS:-4}
 ```
-web: cd backend && uvicorn src.main:create_app --host 0.0.0.0 --port $PORT --workers 4
+- Script bash qui gère le changement de répertoire vers backend
+- Nécessaire car Procfile ne peut pas exécuter `cd` directement
+- Variables d'environnement: PORT et WORKERS configurables
+
+### 2. **Procfile** (Nouveau)
+```
+web: bash start.sh
 ```
 - Railway utilise ce fichier pour déterminer comment lancer l'application
-- Spécifie de naviguer vers le répertoire backend et lancer Uvicorn
+- Exécute le script de démarrage qui gère le `cd` et le lancement d'Uvicorn
 
-### 2. **Dockerfile** (Nouveau - à la racine)
+### 3. **Dockerfile** (Nouveau - à la racine)
 ```dockerfile
 # Image Python multi-stage optimisée
 FROM python:3.11-slim as builder
 # ... build stage ...
 FROM python:3.11-slim
 # ... runtime stage ...
-CMD ["uvicorn", "src.main:create_app", ...]
+COPY start.sh .
+RUN chmod +x start.sh
+CMD ["bash", "start.sh"]
 ```
 - Utilisé si Procfile n'est pas reconnu
 - Multi-stage pour optimiser la taille de l'image (~ 200MB)
+- Exécute aussi le script de démarrage
 
-### 3. **railway.json** (Nouveau)
+### 4. **railway.json** (Nouveau)
 - Configuration explicite de Railway
-- Spécifie buildCommand et startCommand
+- Spécifie buildCommand et startCommand: `bash start.sh`
 
-### 4. **.railwayignore** (Nouveau)
+### 5. **.railwayignore** (Nouveau)
 - Exclut les fichiers inutiles du build (frontend/, tests/, docs/, etc.)
 - Réduit le temps de build et la taille du contexte
 
-### 5. **package.json** (Modifié)
-- Ajout d'un script `"start"` qui lance le backend FastAPI
+### 6. **package.json** (Modifié)
+- Ajout d'un script `"start"` qui exécute: `bash start.sh`
 - Fallback si Procfile n'est pas détecté
 
 ---
 
-## 🔄 Comment Redéployer sur Railway
+## � Problème Corrigé: "The executable `cd` could not be found"
+
+**Erreur initiale**:
+```
+The executable `cd` could not be found.
+```
+
+**Cause**:
+- Le Procfile tentait d'exécuter: `web: cd backend && uvicorn ...`
+- Procfile n'est pas un shell bash - il exécute les commandes directement
+- `cd` n'est pas un exécutable, c'est une commande shell intégrée
+
+**Solution**:
+1. Créer un script `start.sh` qui contient la logique de démarrage
+2. Modifier Procfile pour exécuter: `web: bash start.sh`
+3. Faire que le script gère le `cd backend`
+
+**Résultat**:
+✅ Railway détecte correctement l'exécutable `bash`
+✅ Le script gère le changement de répertoire
+✅ Uvicorn se lance correctement
+
+---
 
 ### Option 1: Via l'Interface Railway (Simple) ✅ RECOMMANDÉ
 
