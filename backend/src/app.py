@@ -44,6 +44,7 @@ from src.routes.chatbot import chatbot_bp
 from src.routes.faq import faq_bp
 from src.routes.images import images_bp
 from src.routes.documents import documents_bp
+from src.routes.documents_requis import documents_requis_bp
 from src.routes.rendez_vous import rdv_bp
 from src.routes.creneaux import creneaux_bp
 from src.routes.annonce_views import views_bp
@@ -797,6 +798,9 @@ def create_app(config_name: str = None) -> Flask:
 
     # Blueprints - Documents (Phase 2)
     app.register_blueprint(documents_bp)
+
+    # Blueprints - Documents Obligatoires (Pour mise en ligne annonce)
+    app.register_blueprint(documents_requis_bp)
 
     # Blueprints - Annonce Views Analytics (Phase 2)
     app.register_blueprint(views_bp)

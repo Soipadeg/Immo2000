@@ -111,6 +111,8 @@ def create_annonce(db: Session, utilisateur_id: int, annonce_data: CreateAnnonce
     """
     Créer une nouvelle annonce.
 
+    ⚠️  AUTOMATIQUE: Les 5 documents obligatoires sont initialisés automatiquement.
+
     Args:
         db: Session SQLAlchemy
         utilisateur_id: ID de l'utilisateur créateur
@@ -135,6 +137,16 @@ def create_annonce(db: Session, utilisateur_id: int, annonce_data: CreateAnnonce
     db.add(annonce)
     db.commit()
     db.refresh(annonce)
+
+    # 🔐 Initialiser automatiquement les 5 documents obligatoires
+    try:
+        from src.crud.documents import initialiser_documents_requis
+        initialiser_documents_requis(db, annonce.annonce_id)
+    except Exception as e:
+        # Logguer mais ne pas bloquer la création d'annonce
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Erreur lors de l'initialisation des documents pour annonce {annonce.annonce_id}: {str(e)}", exc_info=True)
 
     return annonce
 
@@ -341,6 +353,8 @@ def publish_annonce(db: Session, annonce_id: int, utilisateur_id: int) -> Annonc
     """
     Publier une annonce (passer de "brouillon" à "publiée").
 
+    ⚠️  IMPORTANTE: Tous les 5 documents obligatoires doivent être validés.
+
     [BONUS] Endpoint : POST /api/v1/annonces/{id}/publier
 
     Args:
@@ -354,7 +368,7 @@ def publish_annonce(db: Session, annonce_id: int, utilisateur_id: int) -> Annonc
     Raises:
         AnnoncesNotFoundError: Si l'annonce n'existe pas
         AnnoncesUnauthorizedError: Si l'utilisateur n'est pas propriétaire
-        AnnoncesValidationError: Si l'annonce n'est pas en brouillon
+        AnnoncesValidationError: Si l'annonce n'est pas en brouillon OU si documents manquent
     """
     # Récupérer l'annonce
     annonce = get_annonce(db, annonce_id)
@@ -370,6 +384,15 @@ def publish_annonce(db: Session, annonce_id: int, utilisateur_id: int) -> Annonc
         raise AnnoncesValidationError(
             f"Seules les annonces en brouillon peuvent être publiées. "
             f"Statut actuel: {annonce.statut}"
+        )
+
+    # ⚠️  NOUVELLE VÉRIFICATION: Tous les documents obligatoires doivent être validés
+    from src.crud.documents import peux_publier_annonce
+    peut_publier, message = peux_publier_annonce(db, annonce_id)
+    if not peut_publier:
+        raise AnnoncesValidationError(
+            f"🔐 Impossible de publier l'annonce. {message}\n"
+            f"Vérifiez le statut des documents: GET /api/v1/annonces/{annonce_id}/documents-requis/statut"
         )
 
     # Mettre à jour le statut
