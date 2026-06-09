@@ -76,7 +76,15 @@ export const DynamicNavbar = ({
   const getNavItems = () => {
     const items = [];
 
-    // Items disponibles pour tous
+    // Pour les notaires: navbar épurée et spécifique
+    if (userRole === 'notaire') {
+      items.push({ label: 'Dashboard', path: '/notaire/dashboard', icon: '📋' });
+      items.push({ label: 'Messages', path: '/messages', icon: '💬' });
+      items.push({ label: 'Guides', path: '/guides', icon: '📚' });
+      return items;
+    }
+
+    // Items disponibles pour tous les autres (visiteur, user, admin)
     items.push({ label: 'Vendre', path: '/vendre', icon: '📝' });
     items.push({ label: 'Acheter', path: '/search', icon: '🏠' });
     items.push({ label: 'Simulateur', path: '/simulateur-pret', icon: '📈' });
@@ -85,7 +93,7 @@ export const DynamicNavbar = ({
       return items;
     }
 
-    // Items pour utilisateurs connectés
+    // Items pour utilisateurs connectés (user et admin)
     items.push({ label: 'Matching', path: '/matching', icon: '❤️' });
     items.push({ label: 'Guides', path: '/guides', icon: '📚' });
 
@@ -117,10 +125,6 @@ export const DynamicNavbar = ({
     if (userRole === 'admin') {
       items.push({ label: 'Dashboard', path: '/user/dashboard', icon: '📊' });
       items.push({ label: 'Admin', path: '/admin', icon: '⚙️' });
-    }
-
-    if (userRole === 'notaire') {
-      items.push({ label: 'Dashboard', path: '/notaire/dashboard', icon: '📋' });
     }
 
     return items;
