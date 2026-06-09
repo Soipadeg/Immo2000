@@ -386,7 +386,23 @@ def publish_annonce(db: Session, annonce_id: int, utilisateur_id: int) -> Annonc
             f"Statut actuel: {annonce.statut}"
         )
 
-    # ⚠️  NOUVELLE VÉRIFICATION: Tous les documents obligatoires doivent être validés
+    # ✅ VÉRIFICATION: Tous les champs confidentiels doivent être remplis
+    if not annonce.nom_proprietaires or annonce.nom_proprietaires.strip() == "" or annonce.nom_proprietaires == "À compléter":
+        raise AnnoncesValidationError(
+            f"❌ Le nom des propriétaires est obligatoire pour publier l'annonce"
+        )
+
+    if not annonce.reference_cadastrale or annonce.reference_cadastrale.strip() == "" or annonce.reference_cadastrale == "À compléter":
+        raise AnnoncesValidationError(
+            f"❌ La référence cadastrale est obligatoire pour publier l'annonce"
+        )
+
+    if not annonce.date_construction:
+        raise AnnoncesValidationError(
+            f"❌ La date de construction du bâtiment est obligatoire pour publier l'annonce"
+        )
+
+    # ⚠️  VÉRIFICATION: Tous les documents obligatoires doivent être validés
     from src.crud.documents import peux_publier_annonce
     peut_publier, message = peux_publier_annonce(db, annonce_id)
     if not peut_publier:

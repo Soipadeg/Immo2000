@@ -10,7 +10,7 @@ Fournit :
 
 from pydantic import BaseModel, Field, validator
 from typing import Optional, List
-from datetime import datetime
+from datetime import datetime, date
 from enum import Enum
 import re
 
@@ -61,6 +61,11 @@ class CreateAnnonce(BaseModel):
     type_bien: TypeBienEnum = Field(..., description="Type de bien")
     nombre_pieces: int = Field(..., ge=1, description="Nombre de pièces (>= 1)")
 
+    # Champs OBLIGATOIRES CONFIDENTIELS (requis, cachés sur annonce publique)
+    nom_proprietaires: str = Field(..., min_length=1, max_length=255, description="Nom des propriétaires (CONFIDENTIEL - caché)")
+    reference_cadastrale: str = Field(..., min_length=1, max_length=100, description="Référence cadastrale (CONFIDENTIEL - caché)")
+    date_construction: str = Field(..., description="Date de construction du bâtiment (format: YYYY-MM-DD)")
+
     # Champs optionnels
     photos: Optional[List[str]] = Field(default=None, description="URLs des photos")
     etage: Optional[int] = Field(default=None, description="Numéro d'étage")
@@ -87,6 +92,9 @@ class CreateAnnonce(BaseModel):
                 "ville": "Paris",
                 "type_bien": "maison",
                 "nombre_pieces": 4,
+                "nom_proprietaires": "Jean Dupont, Marie Dupont",
+                "reference_cadastrale": "75056000AL0042",
+                "date_construction": "2010-05-15",
                 "photos": ["url1", "url2"],
                 "jardin": True,
                 "dpe": "C",
@@ -109,6 +117,21 @@ class CreateAnnonce(BaseModel):
         if not isinstance(v, list):
             raise ValueError("photos doit être une liste d'URLs")
         return [str(url) for url in v if url]
+
+    @validator("date_construction")
+    def validate_date_construction(cls, v):
+        """Valide que la date de construction est au format YYYY-MM-DD."""
+        try:
+            # Accepte la date comme string au format YYYY-MM-DD
+            parsed_date = datetime.strptime(v, "%Y-%m-%d").date()
+            # Vérifier que la date est raisonnable (après 1800)
+            if parsed_date.year < 1800:
+                raise ValueError("L'année de construction doit être après 1800")
+            if parsed_date > date.today():
+                raise ValueError("La date de construction ne peut pas être dans le futur")
+            return v  # Retourner la string
+        except ValueError as e:
+            raise ValueError(f"Date de construction invalide: {str(e)}")
 
 
 class UpdateAnnonce(BaseModel):
@@ -138,6 +161,12 @@ class UpdateAnnonce(BaseModel):
     masquer_adresse_complete: Optional[bool] = Field(default=None)
     dpe: Optional[DPEEnum] = Field(default=None)
     annee_construction: Optional[int] = Field(default=None, ge=1800, le=2100)
+
+    # Champs CONFIDENTIELS (optionnels pour mise à jour)
+    nom_proprietaires: Optional[str] = Field(default=None, min_length=1, max_length=255, description="Nom des propriétaires (CONFIDENTIEL)")
+    reference_cadastrale: Optional[str] = Field(default=None, min_length=1, max_length=100, description="Référence cadastrale (CONFIDENTIEL)")
+    date_construction: Optional[str] = Field(default=None, description="Date de construction du bâtiment (format: YYYY-MM-DD)")
+
     statut: Optional[StatutEnum] = Field(default=None)
 
     class Config:
@@ -149,6 +178,21 @@ class UpdateAnnonce(BaseModel):
         if v is not None and not re.match(r"^\d{5}$", v):
             raise ValueError("Code postal invalide (doit être 5 chiffres)")
         return v
+
+    @validator("date_construction", pre=True, always=True)
+    def validate_date_construction(cls, v):
+        """Valide la date de construction si elle est fournie."""
+        if v is None:
+            return None
+        try:
+            parsed_date = datetime.strptime(v, "%Y-%m-%d").date()
+            if parsed_date.year < 1800:
+                raise ValueError("L'année de construction doit être après 1800")
+            if parsed_date > date.today():
+                raise ValueError("La date de construction ne peut pas être dans le futur")
+            return v
+        except ValueError as e:
+            raise ValueError(f"Date de construction invalide: {str(e)}")
 
 
 class AnnoncesResponse(BaseModel):

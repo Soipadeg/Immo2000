@@ -73,6 +73,11 @@ class Annonce(db.Model):
         index=True
     )
 
+    # Champs CONFIDENTIELS (requis pour publication, cachés sur annonce publique)
+    nom_proprietaires = db.Column(db.String(255), nullable=False)  # Noms des propriétaires (caché)
+    reference_cadastrale = db.Column(db.String(100), nullable=False)  # Référence cadastrale (caché)
+    date_construction = db.Column(db.Date, nullable=False)  # Date de construction du bâtiment (visible)
+
     # Relation SQLAlchemy vers les photos de l'annonce
     photos_list = db.relationship(
         "Photo",
@@ -150,17 +155,19 @@ class Annonce(db.Model):
         """Représentation lisible de l'annonce."""
         return f"<Annonce {self.annonce_id}: {self.titre} ({self.statut})>"
 
-    def to_dict(self, include_relations: bool = False) -> dict:
+    def to_dict(self, include_confidential: bool = False) -> dict:
         """
         Convertir l'annonce en dictionnaire.
 
         Args:
-            include_relations: Si True, inclut les relations (utilisateur, etc.)
+            include_confidential: Si True, inclut les infos confidentielles
+                                  (nom_proprietaires, reference_cadastrale).
+                                  À utiliser UNIQUEMENT pour le vendeur et admin.
 
         Returns:
             Dictionnaire représentant l'annonce
         """
-        return {
+        result = {
             "annonce_id": self.annonce_id,
             "titre": self.titre,
             "description": self.description,
@@ -182,6 +189,7 @@ class Annonce(db.Model):
             "parking": self.parking,
             "dpe": self.dpe,
             "annee_construction": self.annee_construction,
+            "date_construction": self.date_construction.isoformat() if self.date_construction else None,
             "statut": self.statut,
             "date_creation": self.date_creation.isoformat() if self.date_creation else None,
             "date_modification": self.date_modification.isoformat() if self.date_modification else None,
@@ -189,11 +197,23 @@ class Annonce(db.Model):
             "date_vente": self.date_vente.isoformat() if self.date_vente else None,
         }
 
+        # Ajouter les infos confidentielles si demandé
+        if include_confidential:
+            result["nom_proprietaires"] = self.nom_proprietaires
+            result["reference_cadastrale"] = self.reference_cadastrale
+
+        return result
+
     def to_dict_public(self) -> dict:
         """
         Convertir l'annonce en dictionnaire pour affichage PUBLIC.
 
-        Masque les infos sensibles (utilisateur_id, masquer_adresse_complete, etc.).
+        Masque les infos sensibles:
+        - utilisateur_id
+        - nom_proprietaires (CONFIDENTIEL)
+        - reference_cadastrale (CONFIDENTIEL)
+        - masquer_adresse_complete
+
         Utilisé par les visiteurs non connectés qui consultent les annonces.
 
         Returns:
@@ -211,7 +231,10 @@ class Annonce(db.Model):
             "ville": self.ville,
             "type_bien": self.type_bien,
             "nombre_pieces": self.nombre_pieces,
-            # NE PAS exposer utilisateur_id pour les visiteurs publics
+            # NE PAS exposer:
+            # - utilisateur_id
+            # - nom_proprietaires (CONFIDENTIEL)
+            # - reference_cadastrale (CONFIDENTIEL)
             "photos": self.photos or [],
             "etage": self.etage,
             "ascenseur": self.ascenseur,
@@ -222,5 +245,6 @@ class Annonce(db.Model):
             "parking": self.parking,
             "dpe": self.dpe,
             "annee_construction": self.annee_construction,
+            "date_construction": self.date_construction.isoformat() if self.date_construction else None,
             "date_publication": self.date_creation.isoformat() if self.date_creation else None,
         }
