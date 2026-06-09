@@ -9,9 +9,21 @@ from app_fastapi.config import settings
 router = APIRouter()
 
 
-@router.get("/health", tags=["Health"])
+@router.get("", tags=["Health"])
+@router.get("/", tags=["Health"])
 async def health_check():
     """Vérifier la santé générale de l'API."""
+    return {
+        "status": "✅ OK",
+        "service": settings.APP_NAME,
+        "version": settings.APP_VERSION,
+        "environment": "development" if settings.DEBUG else "production",
+    }
+
+
+@router.get("/health", tags=["Health"])
+async def health_check_legacy():
+    """Vérifier la santé générale de l'API (legacy route)."""
     return {
         "status": "✅ OK",
         "service": settings.APP_NAME,

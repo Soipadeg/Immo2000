@@ -328,52 +328,10 @@
 
 /* ==================== RESPONSIVE ==================== */
 
-@media (max-width: 768px) {
-  .chatbot-container {
-    width: 90vw;
-    height: 70vh;
-    max-width: 400px;
-    max-height: 500px;
-  }
 
-  .message-content {
-    max-width: 85%;
-  }
-
-  .chatbot-overlay {
-    bottom: 10px;
-    right: 10px;
-    left: 10px;
-  }
-}
-
-@media (max-width: 480px) {
-  .chatbot-container {
-    width: 100vw;
-    height: 100vh;
-    max-width: none;
-    max-height: none;
-    border-radius: 0;
-  }
-
-  .chatbot-overlay {
-    bottom: 0;
-    right: 0;
-    left: 0;
-  }
-
-  .message-content {
-    max-width: 90%;
-  }
-}
 
 /* ==================== DARK MODE (OPTIONAL) ==================== */
 
-@media (prefers-color-scheme: dark) {
-  .chatbot-container {
-    background: #2d2d2d;
-    border-color: #444;
-  }
 
   .chatbot-messages {
     background: #1a1a1a;

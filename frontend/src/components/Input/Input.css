@@ -102,25 +102,7 @@
   display: block;
 }
 
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  .input-label {
-    color: #F3F4F6;
-  }
-
-  .input-wrapper {
-    background-color: #1F2937;
-    border-color: #374151;
-  }
-
-  .input-wrapper--focused {
-    border-color: #3B82F6;
-  }
-
-  .input-wrapper--disabled {
-    background-color: #111827;
-    border-color: #374151;
-  }
+/* Dark mode disabled - light mode only */
 
   .input-control {
     color: #F3F4F6;
@@ -136,12 +118,3 @@
 }
 
 /* Responsive */
-@media (max-width: 640px) {
-  .input-wrapper {
-    height: 40px;
-  }
-
-  .input-control {
-    font-size: 16px; /* Prevent auto zoom on iOS */
-  }
-}

@@ -15,7 +15,7 @@ export const useUIStore = create(
     (set, get) => ({
       // State
       sidebarOpen: true,
-      theme: localStorage.getItem('theme') || 'light', // 'light' | 'dark'
+      theme: 'light', // Force light mode (dark mode disabled)
       mobileMenuOpen: false,
       searchQuery: '',
       activeFilters: {},
@@ -40,24 +40,19 @@ export const useUIStore = create(
       },
 
       /**
-       * Changer le thème
+       * Changer le thème (disabled - light mode only)
        */
       toggleTheme: () => {
-        set((state) => {
-          const newTheme = state.theme === 'light' ? 'dark' : 'light';
-          localStorage.setItem('theme', newTheme);
-          document.documentElement.setAttribute('data-theme', newTheme);
-          return { theme: newTheme };
-        });
+        // Dark mode is disabled - always light
+        set({ theme: 'light' });
       },
 
       /**
-       * Définir le thème
+       * Définir le thème (light mode only)
        */
       setTheme: (theme) => {
-        localStorage.setItem('theme', theme);
-        document.documentElement.setAttribute('data-theme', theme);
-        set({ theme });
+        // Always force light mode
+        set({ theme: 'light' });
       },
 
       /**

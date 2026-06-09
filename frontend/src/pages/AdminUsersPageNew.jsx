@@ -7,7 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { usersApi } from '../services/adminApi';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import { Button, Alert, Input } from '@/components';
+import { Button, Alert, Input, FormContainer } from '@/components';
 
 
 
@@ -87,37 +87,47 @@ const AdminUsersPage = () => {
   };
 
   return (
-    <div maxWidth="lg">
-      <div>
-        <div>👥 Gestion des Utilisateurs</div>
-        <div>
-          <Input
-            placeholder="Rechercher (email, nom...)"
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setPage(1);
-            }}
-            size="small"
-          />
+    <>
+      <div className="search-page-header">
+        <div className="search-page-header__content">
+          <div className="search-page-header__title-row">
+            <span className="search-page-header__icon">👥</span>
+            <h1>Gestion des Utilisateurs</h1>
+          </div>
+          <p>Recherchez et gérez les comptes utilisateurs</p>
         </div>
       </div>
 
-      {error && <Alert severity="error">{error}</Alert>}
-
-      {loading ? (
+      <FormContainer maxWidth="full-width">
         <div>
-          <div />
+          <div>
+            <Input
+              placeholder="Rechercher (email, nom...)"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setPage(1);
+              }}
+              size="small"
+            />
+          </div>
         </div>
-      ) : (
-        <>
-          <div component={Paper}>
-            <table>
-              <thead>
-                <tr>
-                  <td><strong>Email</strong></td>
-                  <td><strong>Nom</strong></td>
-                  <td><strong>Rôle</strong></td>
+
+        {error && <Alert severity="error">{error}</Alert>}
+
+        {loading ? (
+          <div>
+            <div>⏳ Chargement...</div>
+          </div>
+        ) : (
+          <>
+            <div style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '16px', backgroundColor: '#fff' }}>
+              <table>
+                <thead>
+                  <tr>
+                    <td><strong>Email</strong></td>
+                    <td><strong>Nom</strong></td>
+                    <td><strong>Rôle</strong></td>
                   <td><strong>Statut</strong></td>
                   <td><strong>Actions</strong></td>
                 </tr>
@@ -135,56 +145,61 @@ const AdminUsersPage = () => {
                       <td>{u.email}</td>
                       <td>{u.nom || '-'}</td>
                       <td>
-                        <div
-                          label={u.role}
-                          size="small"
-                          color={u.role === 'admin' ? 'error' : 'default'}
-                          variant="outlined"
-                        />
+                        <span style={{
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          backgroundColor: u.role === 'admin' ? '#ffe6e6' : '#e6f0ff',
+                          color: u.role === 'admin' ? '#c00' : '#004a99',
+                          fontSize: '12px',
+                          border: `1px solid ${u.role === 'admin' ? '#ff6b6b' : '#0066cc'}`
+                        }}>
+                          {u.role}
+                        </span>
                       </td>
                       <td>
-                        <div
-                          label={u.actif ? 'Actif' : 'Suspendu'}
-                          size="small"
-                          color={u.actif ? 'success' : 'warning'}
-                        />
+                        <span style={{
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          backgroundColor: u.actif ? '#e6ffe6' : '#fff0e6',
+                          color: u.actif ? '#004d00' : '#996600',
+                          fontSize: '12px',
+                          border: `1px solid ${u.actif ? '#66cc66' : '#ff9933'}`
+                        }}>
+                          {u.actif ? 'Actif' : 'Suspendu'}
+                        </span>
                       </td>
                       <td>
-                        <Tooltip title="Changer rôle">
-                          <Button
-                            size="small"
-                            onClick={() => setDialog({ open: true, action: 'changeRole', userId: u.utilisateur_id })}
-                          >
-                            <Edit fontSize="small" />
-                          </Button>
-                        </Tooltip>
+                        <Button
+                          size="small"
+                          title="Changer rôle"
+                          onClick={() => setDialog({ open: true, action: 'changeRole', userId: u.utilisateur_id })}
+                        >
+                          ✏️ Rôle
+                        </Button>
                         {u.actif ? (
-                          <Tooltip title="Suspendre">
-                            <Button
-                              size="small"
-                              onClick={() => setDialog({ open: true, action: 'suspend', userId: u.utilisateur_id })}
-                            >
-                              <Block fontSize="small" />
-                            </Button>
-                          </Tooltip>
-                        ) : (
-                          <Tooltip title="Réactiver">
-                            <Button
-                              size="small"
-                              onClick={() => setDialog({ open: true, action: 'reactivate', userId: u.utilisateur_id })}
-                            >
-                              <Check fontSize="small" />
-                            </Button>
-                          </Tooltip>
-                        )}
-                        <Tooltip title="Supprimer">
                           <Button
                             size="small"
-                            onClick={() => setDialog({ open: true, action: 'delete', userId: u.utilisateur_id })}
+                            title="Suspendre"
+                            onClick={() => setDialog({ open: true, action: 'suspend', userId: u.utilisateur_id })}
                           >
-                            <Delete fontSize="small" />
+                            🚫 Suspendre
                           </Button>
-                        </Tooltip>
+                        ) : (
+                          <Button
+                            size="small"
+                            title="Réactiver"
+                            onClick={() => setDialog({ open: true, action: 'reactivate', userId: u.utilisateur_id })}
+                          >
+                            ✅ Réactiver
+                          </Button>
+                        )}
+                        <Button
+                          size="small"
+                          title="Supprimer"
+                          onClick={() => setDialog({ open: true, action: 'delete', userId: u.utilisateur_id })}
+                        >
+                          🗑️ Supprimer
+                        </Button>
                       </td>
                     </tr>
                   ))
@@ -193,49 +208,87 @@ const AdminUsersPage = () => {
             </table>
           </div>
 
-          <div>
-            <Pagination count={10} page={page} onChange={(e, p) => setPage(p)} />
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '16px' }}>
+            <Button
+              onClick={() => setPage(Math.max(1, page - 1))}
+              disabled={page === 1}
+            >
+              ← Précédent
+            </Button>
+            <div style={{ padding: '8px 16px', backgroundColor: '#f0f0f0', borderRadius: '4px' }}>
+              Page {page}
+            </div>
+            <Button
+              onClick={() => setPage(page + 1)}
+            >
+              Suivant →
+            </Button>
           </div>
         </>
       )}
 
-      {/* Dialogs */}
-      <div open={dialog.open} onClose={() => setDialog({ open: false, action: null, userId: null })}>
-        <div>
-          {dialog.action === 'changeRole' && 'Changer le rôle?'}
-          {dialog.action === 'suspend' && 'Suspendre l\'utilisateur?'}
-          {dialog.action === 'reactivate' && 'Réactiver l\'utilisateur?'}
-          {dialog.action === 'delete' && 'Supprimer l\'utilisateur?'}
+      {/* Modal d'actions */}
+      {dialog.open && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: '#fff',
+            borderRadius: '8px',
+            padding: '24px',
+            maxWidth: '400px',
+            width: '90%',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.2)'
+          }}>
+            <h2 style={{ marginTop: 0 }}>
+              {dialog.action === 'changeRole' && 'Changer le rôle?'}
+              {dialog.action === 'suspend' && 'Suspendre l\'utilisateur?'}
+              {dialog.action === 'reactivate' && 'Réactiver l\'utilisateur?'}
+              {dialog.action === 'delete' && 'Supprimer l\'utilisateur?'}
+            </h2>
+            <div style={{ marginBottom: '16px' }}>
+              {dialog.action === 'suspend' && (
+                <div>
+                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Durée de suspension (heures):</label>
+                  <input
+                    type="number"
+                    value={suspendHours}
+                    onChange={(e) => setSuspendHours(parseInt(e.target.value))}
+                    style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
+                  />
+                </div>
+              )}
+              {dialog.action === 'delete' && (
+                <div style={{ padding: '12px', backgroundColor: '#ffe6e6', borderRadius: '4px', color: '#c00' }}>
+                  ⚠️ Cette action est irréversible!
+                </div>
+              )}
+            </div>
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+              <Button onClick={() => setDialog({ open: false, action: null, userId: null })}>
+                Annuler
+              </Button>
+              <Button
+                onClick={() => handleAction(dialog.action, dialog.userId)}
+                disabled={actionLoading}
+              >
+                {actionLoading ? '⏳...' : 'Confirmer'}
+              </Button>
+            </div>
+          </div>
         </div>
-        <div>
-          {dialog.action === 'suspend' && (
-            <Input
-              label="Durée de suspension (heures)"
-              type="number"
-              value={suspendHours}
-              onChange={(e) => setSuspendHours(parseInt(e.target.value))}
-              fullWidth
-            />
-          )}
-          {dialog.action === 'delete' && (
-            <div>Cette action est irréversible!</div>
-          )}
-        </div>
-        <div>
-          <Button onClick={() => setDialog({ open: false, action: null, userId: null })}>
-            Annuler
-          </Button>
-          <Button
-            onClick={() => handleAction(dialog.action, dialog.userId)}
-            disabled={actionLoading}
-            variant="contained"
-            color={dialog.action === 'delete' ? 'error' : 'primary'}
-          >
-            {actionLoading ? <div size={24} /> : 'Confirmer'}
-          </Button>
-        </div>
-      </div>
-    </div>
+      )}
+      </FormContainer>
+    </>
   );
 };
 

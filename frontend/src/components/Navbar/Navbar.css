@@ -148,45 +148,7 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
-  .navbar-container {
-    height: 56px;
-    padding: 0 1rem;
-    gap: 16px;
-  }
 
-  .navbar-links {
-    display: none;
-  }
-
-  .navbar-mobile-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .navbar--menu-open .navbar-mobile-menu {
-    display: block;
-  }
-
-  .navbar-logo__text {
-    font-size: 1.25rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .navbar-container {
-    gap: 8px;
-  }
-
-  .navbar-right {
-    gap: 8px;
-  }
-
-  .navbar-logo__text {
-    font-size: 1rem;
-  }
-}
 
 /* Animations */
 @keyframes slideDown {
@@ -201,11 +163,6 @@
 }
 
 /* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  .navbar {
-    background-color: #1F2937;
-    border-bottom-color: #374151;
-  }
 
   .navbar-logo__text {
     color: #F3F4F6;

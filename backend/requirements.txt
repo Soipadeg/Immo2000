@@ -4,6 +4,7 @@ Flask-CORS==4.0.0
 Flask-SQLAlchemy==3.1.1
 Flask-Talisman==1.1.0
 Flask-WTF==1.2.1
+Flask-Login==0.6.3
 python-dotenv==1.0.0
 gunicorn==21.2.0
 
@@ -113,6 +114,7 @@ python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
 pyotp==2.9.0
 qrcode[pil]==8.2
+bleach==6.2.0
 
 # Phase 4: Async Database & Performance (NEW)
 sqlalchemy[asyncio]==2.0.23

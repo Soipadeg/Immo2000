@@ -6,6 +6,7 @@ import './SearchPage.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Input, Card, FormContainer, Alert } from '@/components';
+import { estimationsApi } from '../services/api/estimations';
 
 const mockAnnonces = [
   {
@@ -56,6 +57,65 @@ export default function SearchPage() {
   const [selectedType, setSelectedType] = useState('');
   const [priceMin, setPriceMin] = useState('0');
   const [priceMax, setPriceMax] = useState('1000000');
+  const [codePostal, setCodePostal] = useState('');
+  const [estimation, setEstimation] = useState(null);
+  const [estimationLoading, setEstimationLoading] = useState(false);
+  const [estimationError, setEstimationError] = useState(null);
+
+  // Récupérer l'estimation au m² pour un code postal
+  const fetchEstimation = async (postal, type) => {
+    if (!postal || !type) {
+      setEstimation(null);
+      setEstimationError(null);
+      return;
+    }
+
+    try {
+      setEstimationLoading(true);
+      setEstimationError(null);
+
+      // Créer une adresse générique basée sur le code postal
+      const adresse = `${postal}, France`;
+
+      const result = await estimationsApi.create({
+        adresse: adresse,
+        surface: 100, // Utiliser 100m² comme surface de référence
+        type_bien: type.toLowerCase()
+      });
+
+      // Extraire l'estimation des données wrappées
+      const estimationData = result.data?.estimation || result.estimation || result;
+      setEstimation(estimationData);
+    } catch (err) {
+      console.error('Erreur lors de la récupération de l\'estimation:', err);
+      setEstimationError('Impossible de récupérer l\'estimation pour cette zone');
+      setEstimation(null);
+    } finally {
+      setEstimationLoading(false);
+    }
+  };
+
+  // Gérer le changement de code postal
+  const handleCodePostalChange = (e) => {
+    const value = e.target.value;
+    setCodePostal(value);
+
+    // Déclencher l'estimation si un type de bien est sélectionné
+    if (value.length >= 5 && selectedType) {
+      fetchEstimation(value, selectedType);
+    }
+  };
+
+  // Gérer le changement de type de bien
+  const handleTypeChange = (e) => {
+    const value = e.target.value;
+    setSelectedType(value);
+
+    // Déclencher l'estimation si un code postal est saisi
+    if (value && codePostal.length >= 5) {
+      fetchEstimation(codePostal, value);
+    }
+  };
 
   const filteredAnnonces = mockAnnonces.filter((annonce) => {
     const matchSearch = searchTerm === '' ||
@@ -63,7 +123,8 @@ export default function SearchPage() {
       annonce.ville.toLowerCase().includes(searchTerm.toLowerCase());
     const matchType = selectedType === '' || annonce.type_bien === selectedType;
     const matchPrice = annonce.prix >= parseInt(priceMin) && annonce.prix <= parseInt(priceMax);
-    return matchSearch && matchType && matchPrice;
+    const matchPostal = codePostal === '' || annonce.code_postal.includes(codePostal);
+    return matchSearch && matchType && matchPrice && matchPostal;
   });
 
   const toggleFavorite = (id) => {
@@ -81,9 +142,64 @@ export default function SearchPage() {
   };
 
   return (
-    <FormContainer title="🔍 Trouvez votre bien immobilier" maxWidth="large">
-      {/* Filters */}
-      <div className="search-filters">
+    <>
+      {/* Animated Header */}
+      <div className="search-page-header">
+        <div className="search-page-header__content">
+          <div className="search-page-header__title-row">
+            <span className="search-page-header__icon">🏠</span>
+            <h1>Trouvez votre bien immobilier</h1>
+          </div>
+          <p>Explorez nos annonces et découvrez la propriété de vos rêves</p>
+        </div>
+      </div>
+
+      <FormContainer maxWidth="full-width">
+        {/* Estimation Banner */}
+        {estimation && (
+          <div className="estimation-banner">
+            <div className="estimation-banner__content">
+              {estimationLoading ? (
+                <div className="estimation-loading">
+                  <span className="spinner-mini"></span> Récupération de l'estimation...
+                </div>
+              ) : (
+                <>
+                  <div className="estimation-icon">💰</div>
+                  <div className="estimation-info">
+                    <h3>Estimation du marché local</h3>
+                    <p>
+                      Pour un {selectedType.toLowerCase()} dans le {codePostal} :
+                      <strong>
+                        {estimation.estimation?.prix_m2
+                          ? ` ${estimation.estimation.prix_m2.toLocaleString('fr-FR')}€/m²`
+                          : ' Estimation indisponible'}
+                      </strong>
+                    </p>
+                  </div>
+                  <button
+                    className="estimation-close"
+                    onClick={() => setEstimation(null)}
+                    title="Fermer"
+                  >
+                    ✕
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+
+        {estimationError && (
+          <Alert
+            type="info"
+            message={estimationError}
+            style={{ marginBottom: '1.5rem' }}
+          />
+        )}
+
+        {/* Filters */}
+        <div className="search-filters">
         <Input
           label="Rechercher par ville ou titre"
           type="text"
@@ -92,13 +208,25 @@ export default function SearchPage() {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
 
-        <select className="search-select" value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
-          <option value="">Tous les types</option>
-          <option value="Appartement">Appartement</option>
-          <option value="Maison">Maison</option>
-          <option value="Studio">Studio</option>
-          <option value="Duplex">Duplex</option>
-        </select>
+        <Input
+          label="Code postal"
+          type="text"
+          placeholder="Ex: 75001, 69002..."
+          value={codePostal}
+          onChange={handleCodePostalChange}
+          maxLength="5"
+        />
+
+        <div className="search-select-wrapper">
+          <label className="search-select-label">Type de bien</label>
+          <select className="search-select" value={selectedType} onChange={handleTypeChange}>
+            <option value="">Tous les types</option>
+            <option value="Appartement">Appartement</option>
+            <option value="Maison">Maison</option>
+            <option value="Studio">Studio</option>
+            <option value="Duplex">Duplex</option>
+          </select>
+        </div>
 
         <Input
           label="Prix min"
@@ -120,6 +248,7 @@ export default function SearchPage() {
         <div>
           <strong>{filteredAnnonces.length} annonce{filteredAnnonces.length > 1 ? 's' : ''}</strong>
           {selectedType && ` • ${selectedType}`}
+          {codePostal && ` • ${codePostal}`}
         </div>
       </div>
 
@@ -188,6 +317,7 @@ export default function SearchPage() {
           ))}
         </div>
       )}
-    </FormContainer>
+      </FormContainer>
+    </>
   );
 }

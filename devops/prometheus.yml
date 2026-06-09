@@ -1,53 +1,97 @@
-# devops/prometheus.yml
+# Immo2000 Production Prometheus Configuration
+# Metrics collection and alerting for monitoring system health
 
 global:
-  scrape_interval: 15s
-  evaluation_interval: 15s
+  scrape_interval: 15s       # Default scrape interval
+  evaluation_interval: 15s   # Default evaluation interval
   external_labels:
-    monitor: immo2000
+    monitor: 'immo2000-prod'
+    environment: 'production'
 
-# Alerting
+  # For large metrics volume
+  metric_relabeling:
+    - source_labels: [__name__]
+      regex: '.*'
+      target_label: 'exported_instance'
+
+# Alerting configuration
 alerting:
   alertmanagers:
     - static_configs:
         - targets:
-            - alertmanager:9093
+            - 'alertmanager:9093'
+      path_prefix: '/'
 
-# Rule files
+# Load rules files
 rule_files:
   - 'alert_rules.yml'
 
 scrape_configs:
-  # Prometheus self-monitoring
+  # Prometheus itself
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
+    scrape_interval: 30s
 
-  # Backend application
-  - job_name: 'immo2000-backend'
+  # Backend API
+  - job_name: 'backend'
     static_configs:
-      - targets: ['localhost:5000']
+      - targets: ['backend:8000']
     metrics_path: '/metrics'
-    scrape_interval: 5s
+    scrape_interval: 10s
+    scrape_timeout: 5s
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+    metric_relabel_configs:
+      # Keep only important metrics
+      - source_labels: [__name__]
+        regex: 'http_requests_total|http_request_duration_seconds|database_query_duration_seconds|cache_hits_total|cache_misses_total'
+        action: keep
 
-  # Jaeger
-  - job_name: 'jaeger'
-    static_configs:
-      - targets: ['jaeger:14269']
-
-  # Elasticsearch
-  - job_name: 'elasticsearch'
-    static_configs:
-      - targets: ['elasticsearch:9200']
-    metrics_path: '_prometheus/metrics'
-
-  # Redis (monitoring)
-  - job_name: 'redis-monitoring'
-    static_configs:
-      - targets: ['redis-monitoring:6379']
-
-  # PostgreSQL exporter
+  # PostgreSQL Database
   - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres:5432']
+    metrics_path: '/probe'
+    params:
+      module: [postgres_databases]
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # Redis Cache
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:6379']
+    scrape_interval: 15s
+    scrape_timeout: 5s
+
+  # Nginx Reverse Proxy
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['nginx:8080']
+    metrics_path: '/nginx_status'
+    scrape_interval: 15s
+    scrape_timeout: 5s
+
+  # Docker Daemon
+  - job_name: 'docker'
+    static_configs:
+      - targets: ['localhost:9323']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # Node Exporter (if running on host)
+  - job_name: 'node'
+    static_configs:
+      - targets: ['localhost:9100']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    metric_relabel_configs:
+      # Keep only important system metrics
+      - source_labels: [__name__]
+        regex: 'node_cpu_seconds_total|node_memory_MemTotal_bytes|node_memory_MemAvailable_bytes|node_disk_io_time_seconds_total|node_filesystem_avail_bytes|node_network_receive_bytes_total'
+        action: keep
     static_configs:
       - targets: ['postgres:5432']
 

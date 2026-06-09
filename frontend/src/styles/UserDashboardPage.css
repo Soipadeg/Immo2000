@@ -6,7 +6,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 1rem;
-  font-family: var(--font-family-base);
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
 }
 
 /* Dashboard Header */
@@ -22,13 +22,13 @@
 .dashboard-title {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--color-text);
+  color: var(--text-color);
   margin: 0 0 0.5rem 0;
 }
 
 .dashboard-subtitle {
   font-size: 1rem;
-  color: var(--color-text-secondary);
+  color: #555;
   margin: 0;
 }
 
@@ -42,10 +42,11 @@
 
 .stat-card {
   border-radius: 12px;
-  border: 1px solid var(--color-border);
-  background-color: var(--color-background);
+  border: 1px solid var(--border-color);
+  background-color: #ffffff;
   overflow: hidden;
   transition: all 0.3s ease;
+  color: #333 !important;
 }
 
 .stat-card:hover {
@@ -74,7 +75,7 @@
 
 .stat-label {
   font-size: 0.875rem;
-  color: var(--color-text-secondary);
+  color: #333 !important;
   font-weight: 600;
   margin: 0;
   text-transform: uppercase;
@@ -84,7 +85,7 @@
 .stat-value {
   font-size: 1.75rem;
   font-weight: 700;
-  color: var(--color-text);
+  color: var(--text-color);
   margin: 0;
 }
 
@@ -104,23 +105,24 @@
 /* Tabs Card */
 .tabs-card {
   border-radius: 12px;
-  border: 1px solid var(--color-border);
-  background-color: var(--color-background);
+  border: 1px solid var(--border-color);
+  background-color: #ffffff;
   overflow: hidden;
   margin-bottom: 2rem;
+  color: #333 !important;
 }
 
 .tabs-nav {
   display: flex;
-  border-bottom: 2px solid var(--color-border);
-  background-color: var(--color-background-secondary);
+  border-bottom: 2px solid var(--border-color);
+  background-color: #fafafa;
 }
 
 .tab-button {
   padding: 1rem 1.5rem;
   border: none;
   background: transparent;
-  color: var(--color-text-secondary);
+  color: #555 !important;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -132,13 +134,13 @@
 }
 
 .tab-button:hover {
-  color: var(--color-text);
+  color: var(--text-color);
 }
 
 .tab-button.active {
-  color: var(--color-primary);
-  border-bottom-color: var(--color-primary);
-  background-color: var(--color-background);
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+  background-color: #ffffff;
 }
 
 /* Tab Content */
@@ -172,9 +174,10 @@
 .annonce-item {
   padding: 1.5rem;
   border-radius: 12px;
-  border: 1px solid var(--color-border);
-  background-color: var(--color-background);
+  border: 1px solid var(--border-color);
+  background-color: #ffffff;
   transition: all 0.3s ease;
+  color: #333 !important;
 }
 
 .annonce-item:hover {
@@ -193,13 +196,13 @@
 .annonce-title {
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--color-text);
+  color: #333 !important;
   margin: 0 0 0.5rem 0;
 }
 
 .annonce-location {
   font-size: 0.875rem;
-  color: var(--color-text-secondary);
+  color: #444;
   margin: 0;
 }
 
@@ -220,14 +223,14 @@
 }
 
 .status-chip.draft {
-  background-color: var(--color-background-secondary);
-  color: var(--color-text-secondary);
+  background-color: #fafafa;
+  color: #444;
 }
 
 .annonce-price {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-primary);
+  color: var(--primary-color);
   margin: 1rem 0;
 }
 
@@ -235,7 +238,7 @@
 .progression-section {
   margin: 1.5rem 0;
   padding: 1rem;
-  background-color: var(--color-background-secondary);
+  background-color: #fafafa;
   border-radius: 8px;
 }
 
@@ -248,29 +251,28 @@
 
 .progression-label {
   font-size: 0.8125rem;
-  color: var(--color-text-secondary);
+  color: #333;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .progression-value {
   font-size: 0.875rem;
   font-weight: 700;
-  color: var(--color-text);
+  color: #333 !important;
 }
 
 .progression-bar {
   width: 100%;
   height: 8px;
-  background-color: var(--color-border);
+  background-color: var(--border-color);
   border-radius: 4px;
   overflow: hidden;
 }
 
 .progression-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
+  background: linear-gradient(90deg, var(--primary-color), #42a5f5);
   transition: width 0.3s ease;
 }
 
@@ -280,7 +282,7 @@
   gap: 2rem;
   margin: 1rem 0;
   font-size: 0.9375rem;
-  color: var(--color-text-secondary);
+  color: #333 !important;
 }
 
 .stat-item {
@@ -326,13 +328,14 @@
 
 .card-header {
   padding: 1.5rem;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--border-color);
+  color: #333 !important;
 }
 
 .card-title {
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--color-text);
+  color: #333 !important;
   margin: 0;
 }
 
@@ -342,6 +345,7 @@
   grid-template-columns: 1fr;
   gap: 1rem;
   padding: 1.5rem;
+  color: #333 !important;
 }
 
 .resource-button {
@@ -355,6 +359,7 @@
   flex-direction: column;
   gap: 1rem;
   padding: 1.5rem;
+  color: #333 !important;
 }
 
 .settings-buttons button {
@@ -365,195 +370,12 @@
    RESPONSIVE DESIGN
    ======================================== */
 
-@media (max-width: 768px) {
-  .user-dashboard-page-container {
-    padding: 1rem;
-  }
 
-  .dashboard-header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
-
-  .dashboard-header button {
-    width: 100%;
-  }
-
-  .dashboard-title {
-    font-size: 1.5rem;
-  }
-
-  .dashboard-subtitle {
-    font-size: 0.875rem;
-  }
-
-  .stats-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .tabs-nav {
-    flex-wrap: wrap;
-  }
-
-  .tab-button {
-    padding: 0.75rem 1rem;
-    font-size: 0.875rem;
-  }
-
-  .tabs-content {
-    padding: 1rem;
-  }
-
-  .annonce-item {
-    padding: 1rem;
-  }
-
-  .annonce-header {
-    flex-direction: column;
-  }
-
-  .annonce-stats {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .annonce-actions {
-    flex-direction: column;
-  }
-
-  .annonce-actions button {
-    width: 100%;
-  }
-
-  .dashboard-sections {
-    grid-template-columns: 1fr;
-  }
-
-  .section-resources {
-    grid-column: 1;
-  }
-
-  .section-settings {
-    grid-column: 1;
-  }
-
-  .resources-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 640px) {
-  .user-dashboard-page-container {
-    padding: 0.75rem;
-  }
-
-  .dashboard-header {
-    gap: 0.75rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .dashboard-title {
-    font-size: 1.25rem;
-  }
-
-  .dashboard-subtitle {
-    font-size: 0.75rem;
-  }
-
-  .stats-grid {
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
-  }
-
-  .stat-card {
-    border-radius: 8px;
-  }
-
-  .stat-content {
-    padding: 1rem;
-    gap: 0.75rem;
-  }
-
-  .stat-icon {
-    font-size: 1.5rem;
-  }
-
-  .stat-value {
-    font-size: 1.25rem;
-  }
-
-  .tabs-card {
-    margin-bottom: 1.5rem;
-  }
-
-  .tab-button {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.75rem;
-  }
-
-  .tabs-content {
-    padding: 0.75rem;
-  }
-
-  .annonce-item {
-    padding: 0.75rem;
-  }
-
-  .annonce-title {
-    font-size: 1rem;
-  }
-
-  .annonce-location {
-    font-size: 0.75rem;
-  }
-
-  .annonce-price {
-    font-size: 1.25rem;
-  }
-
-  .progression-section {
-    padding: 0.75rem;
-  }
-
-  .annonce-stats {
-    gap: 1rem;
-    font-size: 0.8125rem;
-  }
-
-  .dashboard-sections {
-    gap: 1rem;
-  }
-
-  .card-header {
-    padding: 1rem;
-  }
-
-  .resources-grid {
-    padding: 1rem;
-    gap: 0.75rem;
-  }
-
-  .settings-buttons {
-    padding: 1rem;
-    gap: 0.75rem;
-  }
-
-  .card-title {
-    font-size: 1rem;
-  }
-}
 
 /* ========================================
    DARK MODE
    ======================================== */
 
-@media (prefers-color-scheme: dark) {
-  .dashboard-title {
-    color: var(--color-text);
-  }
 
   .dashboard-subtitle {
     color: var(--color-text-secondary);

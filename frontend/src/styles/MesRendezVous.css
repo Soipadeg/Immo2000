@@ -283,109 +283,12 @@
    RESPONSIVE DESIGN
    ======================================== */
 
-@media (max-width: 768px) {
-  .mes-rendez-vous-page {
-    padding: 1.5rem 1rem;
-  }
 
-  .page-header h1 {
-    font-size: 1.5rem;
-  }
-
-  .rdv-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .rdv-header {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .rdv-status {
-    align-self: flex-start;
-  }
-
-  .filters-bar {
-    gap: 0.5rem;
-  }
-
-  .filter-btn {
-    padding: 0.375rem 0.75rem;
-    font-size: 0.8125rem;
-  }
-}
-
-@media (max-width: 640px) {
-  .mes-rendez-vous-page {
-    padding: 1rem 0.75rem;
-  }
-
-  .page-header h1 {
-    font-size: 1.25rem;
-  }
-
-  .page-header p {
-    font-size: 0.875rem;
-  }
-
-  .rdv-card {
-    border-radius: 8px;
-  }
-
-  .rdv-header {
-    padding: 1rem;
-  }
-
-  .rdv-header h3 {
-    font-size: 1rem;
-  }
-
-  .rdv-content {
-    padding: 1rem;
-  }
-
-  .rdv-actions {
-    padding: 1rem;
-    flex-direction: column;
-  }
-
-  .rdv-actions button {
-    width: 100%;
-  }
-
-  .filters-bar {
-    gap: 0.375rem;
-    justify-content: center;
-  }
-
-  .filter-btn {
-    padding: 0.35rem 0.625rem;
-    font-size: 0.75rem;
-  }
-
-  .modal-form {
-    padding: 1rem;
-    gap: 1rem;
-  }
-
-  .modal-actions {
-    gap: 0.75rem;
-    flex-direction: column;
-  }
-
-  .modal-actions button {
-    width: 100%;
-  }
-}
 
 /* ========================================
    DARK MODE
    ======================================== */
 
-@media (prefers-color-scheme: dark) {
-  .page-header h1 {
-    color: var(--color-text);
-  }
 
   .page-header p {
     color: var(--color-text-secondary);

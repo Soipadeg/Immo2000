@@ -179,21 +179,3 @@
 }
 
 /* Responsive */
-@media (max-width: 640px) {
-  .button {
-    padding: 8px 16px;
-    font-size: 0.875rem;
-  }
-
-  .button--medium {
-    padding: 8px 16px;
-    font-size: 0.875rem;
-    height: 40px;
-  }
-
-  .button--large {
-    padding: 12px 24px;
-    font-size: 1rem;
-    height: 44px;
-  }
-}

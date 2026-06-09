@@ -250,102 +250,12 @@
    RESPONSIVE DESIGN
    ======================================== */
 
-@media (max-width: 768px) {
-  .offres-page {
-    padding: 1.5rem 1rem;
-  }
 
-  .page-header h1 {
-    font-size: 1.5rem;
-  }
-
-  .offer-header {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .offer-status {
-    align-self: flex-start;
-  }
-
-  .price-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .tabs-nav {
-    gap: 0.25rem;
-  }
-
-  .tab-btn {
-    padding: 0.75rem 0.5rem;
-    font-size: 0.8125rem;
-  }
-}
-
-@media (max-width: 640px) {
-  .offres-page {
-    padding: 1rem 0.75rem;
-  }
-
-  .page-header h1 {
-    font-size: 1.25rem;
-  }
-
-  .offer-header {
-    padding: 1rem;
-  }
-
-  .offer-id {
-    font-size: 1rem;
-  }
-
-  .offer-content {
-    padding: 1rem;
-  }
-
-  .price-grid {
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
-  }
-
-  .offer-actions {
-    padding: 1rem;
-    flex-direction: column;
-  }
-
-  .offer-actions button {
-    width: 100%;
-  }
-
-  .tabs-nav {
-    gap: 0;
-    margin-bottom: 1rem;
-  }
-
-  .tab-btn {
-    padding: 0.75rem;
-    font-size: 0.75rem;
-    flex: 1;
-    min-width: 80px;
-  }
-
-  .modal-actions {
-    flex-direction: column;
-  }
-
-  .modal-actions button {
-    width: 100%;
-  }
-}
 
 /* ========================================
    DARK MODE
    ======================================== */
 
-@media (prefers-color-scheme: dark) {
-  .page-header h1 {
-    color: var(--color-text);
-  }
 
   .tabs-nav {
     border-bottom-color: var(--color-border);

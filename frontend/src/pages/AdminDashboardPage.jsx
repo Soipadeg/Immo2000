@@ -4,10 +4,14 @@ import '../styles/AdminDashboardPage.css';
  */
 
 import React, { useState, useEffect } from 'react';
-import { Button, Alert } from '@/components';
+import { Button, Alert, FormContainer } from '@/components';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { dashboardApi, analyticsApi } from '../services/adminApi';
+import {
+  LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
+} from 'recharts';
 
 const AdminDashboardPage = () => {
   const { user, loading: authLoading } = useAuth();
@@ -72,10 +76,10 @@ const AdminDashboardPage = () => {
 
   if (authLoading) {
     return (
-      <div className="admin-container">
-        <div className="loading-spinner">⏳ Chargement...</div>
-      </div>
-    );
+    <div className="admin-loading">
+      <div className="spinner">⏳ Chargement...</div>
+    </div>
+  );
   }
 
   if (!user || user.role !== 'admin') {
@@ -87,6 +91,23 @@ const AdminDashboardPage = () => {
     { id: 1, prenom: 'Jean', nom: 'Dupont', email: 'jean.dupont@email.com', date: new Date().toISOString() },
     { id: 2, prenom: 'Marie', nom: 'Martin', email: 'marie.martin@email.com', date: new Date().toISOString() },
     { id: 3, prenom: 'Pierre', nom: 'Bernard', email: 'pierre.bernard@email.com', date: new Date().toISOString() },
+  ];
+
+  // Données graphiques
+  const activityData = [
+    { date: 'Lun', utilisateurs: 45, annonces: 23, offres: 8 },
+    { date: 'Mar', utilisateurs: 52, annonces: 28, offres: 12 },
+    { date: 'Mer', utilisateurs: 48, annonces: 35, offres: 15 },
+    { date: 'Jeu', utilisateurs: 61, annonces: 42, offres: 18 },
+    { date: 'Ven', utilisateurs: 55, annonces: 38, offres: 14 },
+    { date: 'Sam', utilisateurs: 67, annonces: 45, offres: 22 },
+    { date: 'Dim', utilisateurs: 43, annonces: 30, offres: 10 },
+  ];
+
+  const roleDistribution = [
+    { name: 'Admin', value: 5, color: '#667eea' },
+    { name: 'Vendeurs', value: 120, color: '#764ba2' },
+    { name: 'Acheteurs', value: 125, color: '#f093fb' },
   ];
 
   const handleTabChange = (event, newValue) => {
@@ -101,14 +122,20 @@ const AdminDashboardPage = () => {
   ];
 
   return (
-    <div className="admin-dashboard-page">
-      <div className="page-header">
-        <div>🔐 Dashboard Admin</div>
-        <div>Bienvenue, Admin {user.nom}</div>
+    <>
+      <div className="search-page-header">
+        <div className="search-page-header__content">
+          <div className="search-page-header__title-row">
+            <span className="search-page-header__icon">🔐</span>
+            <h1>Dashboard Admin</h1>
+          </div>
+          <p>Bienvenue, {user?.nom}! Gérez la plateforme en un seul endroit</p>
+        </div>
       </div>
 
-      {/* Statistiques principales */}
-      <div className="stats-grid">
+      <FormContainer maxWidth="full-width">
+        {/* Statistiques principales */}
+        <div className="stats-grid">
         {stats.map((stat, index) => (
           <div key={index} className="stat-card">
             <div className="stat-label">{stat.label}</div>
@@ -141,13 +168,42 @@ const AdminDashboardPage = () => {
           {tabValue === 0 && (
             <div className="overview-grid">
               <div className="chart-box">
-                <div>📈 Activité utilisateurs</div>
-                <div className="chart-placeholder">[Graphique d'activité]</div>
+                <div>📈 Activité utilisateurs (7 derniers jours)</div>
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={activityData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line type="monotone" dataKey="utilisateurs" stroke="#667eea" strokeWidth={2} />
+                    <Line type="monotone" dataKey="annonces" stroke="#764ba2" strokeWidth={2} />
+                    <Line type="monotone" dataKey="offres" stroke="#f093fb" strokeWidth={2} />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
 
               <div className="chart-box">
                 <div>📊 Distribution des rôles</div>
-                <div className="chart-placeholder">[Graphique circulaire]</div>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={roleDistribution}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, value }) => `${name}: ${value}`}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {roleDistribution.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
               </div>
 
               <div className="metrics-box">
@@ -223,6 +279,9 @@ const AdminDashboardPage = () => {
           {/* Onglet Gestion */}
           {tabValue === 3 && (
             <div className="management-grid">
+              <Button variant="primary" className="mgmt-btn" onClick={() => navigate('/admin/listings/approval')}>
+                ✅ Approuver les annonces
+              </Button>
               <Button variant="primary" className="mgmt-btn" onClick={() => navigate('/admin/users')}>
                 👥 Gérer les utilisateurs
               </Button>
@@ -245,7 +304,8 @@ const AdminDashboardPage = () => {
           )}
         </div>
       </div>
-    </div>
+      </FormContainer>
+    </>
   );
 };
 

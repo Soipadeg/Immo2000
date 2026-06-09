@@ -6,14 +6,14 @@
   align-items: center;
   justify-content: center;
   padding: 2rem 1rem;
-  background: linear-gradient(135deg, #F9FAFB 0%, #FFFFFF 100%);
+  background: linear-gradient(135deg, #dbe9f4 0%, #8fa7c8 100%) !important;
 }
 
 .form-container-inner {
   width: 100%;
-  background-color: #FFFFFF;
+  background-color: transparent !important;
   border-radius: 12px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
   overflow: hidden;
 }
 
@@ -29,12 +29,37 @@
   max-width: 700px;
 }
 
+/* Full-width layout - content takes entire page width */
+.form-container--full-width {
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 0;
+  min-height: auto;
+}
+
+.form-container--full-width .form-container-inner {
+  max-width: 100%;
+  width: 100%;
+  border-radius: 0;
+}
+
+.form-container--full-width .form-container-header {
+  border-radius: 0;
+  padding: 2rem;
+  background-color: transparent;
+}
+
+.form-container--full-width .form-container-content {
+  padding: 2rem;
+  width: 100%;
+}
+
 /* Header */
 .form-container-header {
   padding: 2rem;
   text-align: center;
   border-bottom: 1px solid #E5E7EB;
-  background-color: #FFFFFF;
+  background-color: transparent;
 }
 
 .form-container-title {
@@ -58,49 +83,8 @@
 }
 
 /* Responsive */
-@media (max-width: 640px) {
-  .form-container {
-    padding: 1rem;
-  }
 
-  .form-container-inner {
-    border-radius: 8px;
-  }
-
-  .form-container-header {
-    padding: 1.5rem;
-  }
-
-  .form-container-title {
-    font-size: 1.5rem;
-  }
-
-  .form-container-content {
-    padding: 1.5rem;
-  }
-
-  .form-container--small,
-  .form-container--medium,
-  .form-container--large {
-    max-width: 100%;
-  }
-}
-
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  .form-container {
-    background: linear-gradient(135deg, #111827 0%, #1F2937 100%);
-  }
-
-  .form-container-inner {
-    background-color: #1F2937;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-  }
-
-  .form-container-header {
-    background-color: #1F2937;
-    border-bottom-color: #374151;
-  }
+/* Dark mode disabled - light mode only */
 
   .form-container-title {
     color: #F3F4F6;

@@ -75,10 +75,6 @@
 
 /* Dark Mode Support */
 
-@media (prefers-color-scheme: dark) {
-  .form-description {
-    color: #9CA3AF;
-  }
 
   .form-description strong {
     color: #F3F4F6;
@@ -109,13 +105,3 @@
 
 /* Responsive */
 
-@media (max-width: 640px) {
-  .security-tip {
-    padding: 12px;
-    font-size: 0.8rem;
-  }
-
-  .form-description {
-    font-size: 0.85rem;
-  }
-}

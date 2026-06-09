@@ -19,7 +19,7 @@ import { io } from 'socket.io-client';
 import { useNotificationStore } from '../store/notificationStore';
 import { useAuthStore } from '../store/authStore';
 
-const SOCKET_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const SOCKET_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 /**
  * Hook principal pour WebSocket

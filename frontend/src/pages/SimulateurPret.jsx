@@ -2,10 +2,12 @@ import './SimulateurPret.css';
 /**
  * Simulateur de Prêt Immobilier
  * Calcul de mensualité et taux d'endettement selon règles bancaires françaises
+ * Utilise PageLayout pour cohérence visuelle
  */
 
 import React, { useState, useMemo } from 'react';
 import { Button, Input, Card, Alert, FormContainer } from '@/components';
+import PageLayout from '../layouts/PageLayout';
 
 const SimulateurPret = () => {
   const [formData, setFormData] = useState({
@@ -104,20 +106,20 @@ const SimulateurPret = () => {
     // ===== STATUS ENDETTEMENT =====
     let statusEndettement = {
       color: 'success',
-      icon: <CheckCircleIcon />,
+      icon: '✅',
       message: 'Taux d\'endettement acceptable',
     };
 
     if (tauxEndettement > 33) {
       statusEndettement = {
         color: 'error',
-        icon: <ErrorIcon />,
+        icon: '❌',
         message: 'Taux d\'endettement trop élevé (> 33%)',
       };
     } else if (tauxEndettement > 25) {
       statusEndettement = {
         color: 'warning',
-        icon: <InfoIcon />,
+        icon: '⚠️',
         message: 'Taux d\'endettement dans la limite acceptable (25-33%)',
       };
     }
@@ -191,15 +193,23 @@ const SimulateurPret = () => {
   };
 
   return (
-    <FormContainer
-      title="🏠 Simulateur de Prêt Immobilier"
-      subtitle="Calculez votre mensualité et votre capacité d'emprunt selon les critères bancaires français"
-      maxWidth="large"
-    >
-      <div className="simulateur-pret-container">
-        {/* Form Section */}
-        <div className="pret-form-section">
-          <div>📝 Informations du bien et financement</div>
+    <>
+      {/* Animated Header */}
+      <div className="simulateur-pret-header">
+        <div className="simulateur-pret-header__content">
+          <div className="simulateur-pret-header__title-row">
+            <span className="simulateur-pret-header__icon">📈</span>
+            <h1>Simulateur de Prêt Immobilier</h1>
+          </div>
+          <p>Calculez votre mensualité et votre capacité d'emprunt selon les critères bancaires français</p>
+        </div>
+      </div>
+
+      <FormContainer maxWidth="full-width">
+        <div className="simulateur-pret-container">
+          {/* Form Section */}
+          <div className="pret-form-section">
+            <div className="section-title">📝 Le bien immobilier</div>
 
           <div className="form-grid">
             <Input
@@ -210,6 +220,15 @@ const SimulateurPret = () => {
               onChange={handleInputChange}
               placeholder="Ex: 400000"
               required
+            />
+
+            <Input
+              label="Apport du foyer (€)"
+              name="apport"
+              type="number"
+              value={formData.apport}
+              onChange={handleInputChange}
+              placeholder="Ex: 80000"
             />
 
             <div className="form-toggle">
@@ -230,6 +249,42 @@ const SimulateurPret = () => {
               </div>
             </div>
 
+            <div style={{ gridColumn: '1 / -1' }}>
+              <label style={{ display: 'block', marginBottom: '12px', fontSize: '0.9rem', fontWeight: '600', color: '#1F2937' }}>Région (frais de notaire) *</label>
+              <select
+                className="form-select"
+                name="region"
+                value={formData.region}
+                onChange={handleInputChange}
+                style={{ width: '100%' }}
+              >
+                <option value="Île-de-France">Île-de-France</option>
+                <option value="PACA">PACA (Provence-Alpes-Côte d'Azur)</option>
+                <option value="Auvergne-Rhône-Alpes">Auvergne-Rhône-Alpes</option>
+                <option value="Bretagne">Bretagne</option>
+                <option value="Nouvelle-Aquitaine">Nouvelle-Aquitaine</option>
+                <option value="Occitanie">Occitanie</option>
+                <option value="Pays-de-la-Loire">Pays-de-la-Loire</option>
+                <option value="Bourgogne-Franche-Comté">Bourgogne-Franche-Comté</option>
+                <option value="Centre-Val-de-Loire">Centre-Val-de-Loire</option>
+                <option value="Corse">Corse</option>
+              </select>
+            </div>
+
+            <Input
+              label="Budget travaux/rénovation (€)"
+              name="budgetTravaux"
+              type="number"
+              value={formData.budgetTravaux}
+              onChange={handleInputChange}
+              placeholder="Optionnel"
+              hint="Estimez les travaux, rénovations ou améliorations prévues"
+            />
+          </div>
+
+          <div className="section-title" style={{ marginTop: '24px' }}>💰 Financement du prêt</div>
+
+          <div className="form-grid">
             <div className="form-duration">
               <label>Durée du prêt *</label>
               <div className="duration-buttons">
@@ -245,33 +300,6 @@ const SimulateurPret = () => {
               </div>
             </div>
 
-            <select
-              className="form-select"
-              name="region"
-              value={formData.region}
-              onChange={handleInputChange}
-            >
-              <option value="Île-de-France">Île-de-France</option>
-              <option value="PACA">PACA (Provence-Alpes-Côte d'Azur)</option>
-              <option value="Auvergne-Rhône-Alpes">Auvergne-Rhône-Alpes</option>
-              <option value="Bretagne">Bretagne</option>
-              <option value="Nouvelle-Aquitaine">Nouvelle-Aquitaine</option>
-              <option value="Occitanie">Occitanie</option>
-              <option value="Pays-de-la-Loire">Pays-de-la-Loire</option>
-              <option value="Bourgogne-Franche-Comté">Bourgogne-Franche-Comté</option>
-              <option value="Centre-Val-de-Loire">Centre-Val-de-Loire</option>
-              <option value="Corse">Corse</option>
-            </select>
-
-            <Input
-              label="Apport du foyer (€)"
-              name="apport"
-              type="number"
-              value={formData.apport}
-              onChange={handleInputChange}
-              placeholder="Ex: 80000"
-            />
-
             <Input
               label="Taux d'intérêt (%)"
               name="tauxInteret"
@@ -280,21 +308,11 @@ const SimulateurPret = () => {
               onChange={handleInputChange}
               placeholder="Ex: 3.5"
             />
+          </div>
 
-            <Input
-              label="Budget travaux/rénovation (€)"
-              name="budgetTravaux"
-              type="number"
-              value={formData.budgetTravaux}
-              onChange={handleInputChange}
-              placeholder="Optionnel"
-              hint="Estimez les travaux, rénovations ou améliorations prévues"
-            />
+          <div className="section-title" style={{ marginTop: '24px' }}>👥 Revenus nets mensuels</div>
 
-            <div className="section-divider">
-              <div>💰 Revenus nets mensuels avant impôt</div>
-            </div>
-
+          <div className="form-grid">
             <Input
               label="Vôtres (€) *"
               name="revenuMensuel"
@@ -323,24 +341,24 @@ const SimulateurPret = () => {
               placeholder="Ex: 500"
               hint="Loyer, crédits auto, crédits conso, etc."
             />
+          </div>
 
-            <div className="form-actions">
-              <Button
-                variant="primary"
-                size="medium"
-                fullWidth
-                disabled={!calculations.isValid}
-              >
-                Calculer
-              </Button>
-              <Button
-                variant="secondary"
-                size="medium"
-                onClick={handleReset}
-              >
-                Réinitialiser
-              </Button>
-            </div>
+          <div style={{ display: 'flex', gap: '12px', marginTop: '32px', gridColumn: '1 / -1' }}>
+            <Button
+              variant="primary"
+              size="medium"
+              disabled={!calculations.isValid}
+              style={{ flex: 1 }}
+            >
+              Calculer
+            </Button>
+            <Button
+              variant="secondary"
+              size="medium"
+              onClick={handleReset}
+            >
+              Réinitialiser
+            </Button>
           </div>
         </div>
 
@@ -508,7 +526,8 @@ const SimulateurPret = () => {
           />
         </div>
       </div>
-    </FormContainer>
+      </FormContainer>
+    </>
   );
 };
 

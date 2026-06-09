@@ -5,7 +5,7 @@
 
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
 
 class ErrorLogger {
   constructor() {
@@ -37,7 +37,7 @@ class ErrorLogger {
     this.flushQueue();
 
     // Afficher en console en développement
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.MODE === 'development') {
       console.error('[Frontend Error]', errorInfo);
     }
 
@@ -67,7 +67,7 @@ class ErrorLogger {
     this.queue.push(errorInfo);
     this.flushQueue();
 
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.MODE === 'development') {
       console.error('[API Error]', errorInfo);
     }
 

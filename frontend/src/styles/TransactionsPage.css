@@ -180,119 +180,13 @@
    RESPONSIVE DESIGN
    ======================================== */
 
-@media (max-width: 1024px) {
-  .table-header,
-  .table-row {
-    grid-template-columns: 1.2fr 0.9fr 1.2fr 1.2fr 0.7fr;
-    gap: 0.75rem;
-  }
 
-  .table-cell {
-    font-size: 0.875rem;
-  }
-}
 
-@media (max-width: 768px) {
-  .transactions-page {
-    padding: 1.5rem 1rem;
-  }
-
-  .page-header h1 {
-    font-size: 1.5rem;
-  }
-
-  .table-header,
-  .table-row {
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
-    padding: 0.75rem;
-  }
-
-  .table-header {
-    font-size: 0.75rem;
-  }
-
-  .table-cell {
-    font-size: 0.8125rem;
-  }
-
-  /* Hide Notaire column on tablets */
-  .table-header > :nth-child(4),
-  .table-row > :nth-child(4) {
-    display: none;
-  }
-
-  .table-header,
-  .table-row {
-    grid-template-columns: 1.2fr 0.8fr 1fr 0.7fr;
-  }
-}
-
-@media (max-width: 640px) {
-  .transactions-page {
-    padding: 1rem 0.75rem;
-  }
-
-  .page-header h1 {
-    font-size: 1.25rem;
-  }
-
-  .tabs-nav {
-    flex-wrap: wrap;
-    gap: 0.25rem;
-  }
-
-  .tab-btn {
-    padding: 0.75rem;
-    font-size: 0.75rem;
-    flex: 1;
-    min-width: 100px;
-  }
-
-  .table-header,
-  .table-row {
-    grid-template-columns: 1fr 0.7fr;
-    gap: 0.35rem;
-    padding: 0.5rem;
-  }
-
-  .table-header {
-    font-size: 0.7rem;
-  }
-
-  .table-cell {
-    font-size: 0.75rem;
-  }
-
-  /* Hide Price and Notaire columns on mobile */
-  .table-header > :nth-child(2),
-  .table-row > :nth-child(2),
-  .table-header > :nth-child(4),
-  .table-row > :nth-child(4),
-  .table-header > :nth-child(5),
-  .table-row > :nth-child(5) {
-    display: none;
-  }
-
-  .table-header,
-  .table-row {
-    grid-template-columns: 1fr 0.6fr;
-  }
-
-  .status-badge {
-    font-size: 0.65rem;
-    padding: 0.25rem 0.5rem;
-  }
-}
 
 /* ========================================
    DARK MODE
    ======================================== */
 
-@media (prefers-color-scheme: dark) {
-  .page-header h1 {
-    color: var(--color-text);
-  }
 
   .tabs-nav {
     border-bottom-color: var(--color-border);

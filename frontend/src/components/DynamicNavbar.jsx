@@ -5,6 +5,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { notificationsApi } from '../services/api';
+import ProfileSwitcher from './ProfileSwitcher';
 import './DynamicNavbar.css';
 
 /**
@@ -75,6 +76,7 @@ export const DynamicNavbar = ({
     const items = [];
 
     // Items disponibles pour tous
+    items.push({ label: 'Vendre', path: '/vendre', icon: '📝' });
     items.push({ label: 'Acheter', path: '/search', icon: '🏠' });
     items.push({ label: 'Simulateur', path: '/simulateur-pret', icon: '📈' });
 
@@ -84,22 +86,26 @@ export const DynamicNavbar = ({
 
     // Items pour utilisateurs connectés
     items.push({ label: 'Matching', path: '/matching', icon: '❤️' });
-    items.push({ label: 'Alertes', path: '/alertes', icon: '🔔' });
     items.push({ label: 'Guides', path: '/guides', icon: '📚' });
     items.push({ label: 'Modèles', path: '/modeles', icon: '📄' });
 
     if (userRole === 'user') {
       items.push({ label: 'Dashboard', path: '/dashboard', icon: '📊' });
-      items.push({ label: 'Favoris', path: '/favoris', icon: '⭐' });
-      items.push({ label: 'Historique', path: '/historique', icon: '📋' });
+      items.push({ label: 'Créneaux', path: '/slots', icon: '📅' });
+      items.push({ label: 'Feedback', path: '/feedback', icon: '💬' });
+      items.push({ label: 'Messages', path: '/messages', icon: '✉️' });
+      items.push({ label: 'Transactions', path: '/transaction-actions', icon: '💼' });
       items.push({ label: 'Notifications', path: '/notifications', icon: '🔔', badge: unreadNotifications });
+      items.push({ label: 'Param. Notif', path: '/notification-settings', icon: '⚙️' });
+      items.push({ label: 'Historique RDV', path: '/appointment-history', icon: '📅' });
+      items.push({ label: 'Exporter RDV', path: '/calendar-export', icon: '📤' });
+      items.push({ label: 'Stats Propriétés', path: '/property-statistics', icon: '📊' });
+      items.push({ label: 'Santé Système', path: '/health-check', icon: '🚀' });
     }
 
     if (userRole === 'admin') {
       items.push({ label: 'Dashboard', path: '/dashboard', icon: '📊' });
       items.push({ label: 'Admin', path: '/admin', icon: '⚙️' });
-      items.push({ label: 'Utilisateurs', path: '/admin/users', icon: '👥' });
-      items.push({ label: 'Modération', path: '/admin/moderation', icon: '🛡️' });
     }
 
     if (userRole === 'notaire') {
@@ -192,6 +198,9 @@ export const DynamicNavbar = ({
 
         {/* Spacer */}
         <div style={{ flex: isMobile ? 1 : 0 }} />
+
+        {/* Profile Switcher (Mode Dev) */}
+        <ProfileSwitcher />
 
         {/* User Menu ou Login Buttons */}
         {isAuthenticated && user ? (

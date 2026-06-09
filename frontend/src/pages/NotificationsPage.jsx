@@ -1,14 +1,16 @@
 import '../styles/NotificationsPage.css';
 /**
  * Page de Notifications - Gestion des notifications et préférences
+ * Interface harmonisée pour notifications et settings
  */
 
 import React, { useState, useEffect } from 'react';
-import { Button, Alert, Input } from '@/components';
-// TODO: Replace MUI icons if used
+import { Button, Alert, Card, Input } from '@/components';
+import { useAuth } from '../hooks/useAuth';
 import { notificationsApi } from '../services/api';
 
 const NotificationsPage = () => {
+  const { user, loading: authLoading } = useAuth();
   const [tabValue, setTabValue] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -25,16 +27,18 @@ const NotificationsPage = () => {
     email_on_feedback: true,
     email_on_message: true,
     email_newsletter: false,
-    notification_frequency: 'immediate', // 'immediate', 'daily', 'weekly'
+    notification_frequency: 'immediate',
   });
 
   const [testEmail, setTestEmail] = useState('');
 
   // Charger les notifications et préférences
   useEffect(() => {
-    loadNotifications();
-    loadPreferences();
-  }, []);
+    if (user) {
+      loadNotifications();
+      loadPreferences();
+    }
+  }, [user]);
 
   const loadNotifications = async () => {
     setLoading(true);
@@ -62,7 +66,6 @@ const NotificationsPage = () => {
   };
 
   const loadPreferences = async () => {
-    // Les préférences peuvent être stockées localement ou récupérées du backend
     const savedPreferences = localStorage.getItem('notification_preferences');
     if (savedPreferences) {
       setPreferences(JSON.parse(savedPreferences));
@@ -103,9 +106,7 @@ const NotificationsPage = () => {
       setTestEmail('');
       setTimeout(() => setSuccess(''), 5000);
     } catch (err) {
-      setError(
-        err.response?.data?.detail || 'Erreur lors de l\'envoi de l\'email de test'
-      );
+      setError(err.response?.data?.detail || 'Erreur lors de l\'envoi de l\'email de test');
     } finally {
       setLoading(false);
     }
@@ -140,301 +141,279 @@ const NotificationsPage = () => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer toutes les notifications ?')) {
       setNotifications([]);
       setUnreadCount(0);
+      setSuccess('Toutes les notifications ont été supprimées');
+      setTimeout(() => setSuccess(''), 3000);
     }
   };
 
+  if (authLoading || loading) {
+    return (
+      <div className="notifications-page-container">
+        <div className="loading-page">
+          <div className="spinner"></div>
+          <p>⏳ Chargement des notifications...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div maxWidth="lg" sx={{ py: 4 }}>
-      <div sx={{ mb: 4 }}>
-        <div sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-          <Badge badgeContent={unreadCount} color="error">
-            <BellIcon sx={{ fontSize: '2rem', color: '#1976d2' }} />
-          </Badge>
-          <div>
-            🔔 Notifications
+    <div className="notifications-page-container">
+      {/* Page Header Banner */}
+      <div className="search-page-header">
+        <div className="search-page-header__content">
+          <div className="search-page-header__title-row">
+            <span className="search-page-header__icon">🔔</span>
+            <h1>Notifications</h1>
           </div>
-        </div>
-        <div>
-          Gérez vos notifications et vos préférences de communication
+          <p>Gérez vos notifications et vos préférences de communication</p>
         </div>
       </div>
 
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-      {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
+      {/* Alertes */}
+      {error && <Alert type="error" title="Erreur" message={error} />}
+      {success && <Alert type="success" title="Succès" message={success} />}
 
-      <div className="tabs" value={tabValue} onChange={(e, val) => setTabValue(val)} sx={{ mb: 3 }}>
-        <div className="tab" icon={<BellIcon />} label="Notifications" />
-        <div className="tab" icon={<SettingsIcon />} label="Préférences" />
-        <div className="tab" icon={<MailIcon />} label="Test Email" />
-      </div>
+      {/* Conteneur des onglets */}
+      <Card className="tabs-card">
+        <div className="tabs-nav">
+          <button
+            className={`tab-button ${tabValue === 0 ? 'active' : ''}`}
+            onClick={() => setTabValue(0)}
+          >
+            🔔 Notifications {unreadCount > 0 && <span className="tab-badge">{unreadCount}</span>}
+          </button>
+          <button
+            className={`tab-button ${tabValue === 1 ? 'active' : ''}`}
+            onClick={() => setTabValue(1)}
+          >
+            ⚙️ Préférences
+          </button>
+          <button
+            className={`tab-button ${tabValue === 2 ? 'active' : ''}`}
+            onClick={() => setTabValue(2)}
+          >
+            ✉️ Test Email
+          </button>
+        </div>
 
-      {/* Onglet 1: Notifications */}
-      {tabValue === 0 && (
-        <div>
-          {notifications.length > 0 && (
-            <Button
-              variant="outlined"
-              color="error"
-              size="small"
-              onClick={handleClearAll}
-              sx={{ mb: 2 }}
-            >
-              Effacer toutes les notifications
-            </Button>
-          )}
-
-          {loading ? (
-            <div sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-              <CircularProgress />
-            </div>
-          ) : notifications.length === 0 ? (
-            <Paper sx={{ p: 3, textAlign: 'center' }}>
-              <BellIcon sx={{ fontSize: '3rem', color: '#ccc', mb: 1 }} />
-              <div>
-                Aucune notification pour le moment
-              </div>
-            </Paper>
-          ) : (
-            <ul>
-              {notifications.map((notif) => (
-                <React.Fragment key={notif.id}>
-                <li
-                    sx={{
-                      backgroundColor: notif.read ? 'transparent' : '#f0f7ff',
-                      borderLeft: notif.read ? 'none' : '4px solid #1976d2',
-                      mb: 1,
-                      borderRadius: 1,
-                    }}
+        <div className="tabs-content">
+          {/* Onglet 0: Notifications */}
+          {tabValue === 0 && (
+            <>
+              {notifications.length > 0 && (
+                <div className="notification-actions">
+                  <Button
+                    variant="danger"
+                    size="small"
+                    onClick={handleClearAll}
                   >
-                    <ListItemIcon>
-                      {notif.read ? (
-                        <CheckIcon color="success" />
-                      ) : (
-                        <Badge
-                          color="error"
-                          variant="dot"
-                          sx={{ mr: 1 }}
-                        >
-                          <BellIcon color="primary" />
-                        </Badge>
-                      )}
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={notif.titre}
-                      secondary={
-                        <div sx={{ mt: 1 }}>
-                          <div>
-                            {notif.message}
-                          </div>
-                          <div>
-                            {new Date(notif.date).toLocaleString('fr-FR')}
-                          </div>
+                    🗑️ Effacer toutes les notifications
+                  </Button>
+                </div>
+              )}
+
+              {notifications.length === 0 ? (
+                <div className="empty-state">
+                  <div className="empty-icon">🔔</div>
+                  <h3>Aucune notification</h3>
+                  <p>Vous n'avez aucune notification pour le moment</p>
+                </div>
+              ) : (
+                <div className="notifications-list">
+                  {notifications.map((notif) => (
+                    <div
+                      key={notif.notification_id}
+                      className={`notification-item ${!notif.is_read ? 'unread' : ''}`}
+                    >
+                      <div className="notification-icon">
+                        {notif.is_read ? '✓' : '🔵'}
+                      </div>
+                      <div className="notification-content">
+                        <h4 className="notification-title">{notif.titre}</h4>
+                        <p className="notification-message">{notif.message}</p>
+                        <div className="notification-date">
+                          {new Date(notif.date).toLocaleString('fr-FR')}
                         </div>
-                      }
-                    />
-                    <div sx={{ display: 'flex', gap: 1 }}>
-                      {!notif.read && (
-                        <Button
-                          size="small"
-                          variant="outlined"
-                          onClick={() => handleMarkAsRead(notif.id)}
+                      </div>
+                      <div className="notification-actions">
+                        {!notif.is_read && (
+                          <Button
+                            variant="secondary"
+                            size="small"
+                            onClick={() => handleMarkAsRead(notif.notification_id)}
+                          >
+                            Marquer comme lue
+                          </Button>
+                        )}
+                        <button
+                          className="delete-button"
+                          onClick={() => handleDeleteNotification(notif.notification_id)}
+                          title="Supprimer"
+                          aria-label="Supprimer"
                         >
-                          Lire
-                        </Button>
-                      )}
-                      <IconButton
-                        size="small"
-                        onClick={() => handleDeleteNotification(notif.id)}
-                      >
-                        <CloseIcon />
-                      </IconButton>
+                          ✕
+                        </button>
+                      </div>
                     </div>
-                  </li>
-                  <Divider />
-                </React.Fragment>
-              ))}
-            </ul>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+
+          {/* Onglet 1: Préférences */}
+          {tabValue === 1 && (
+            <>
+              <div className="preferences-section">
+                <h3 className="section-title">📧 Notifications par Email</h3>
+                <div className="preferences-list">
+                  <label className="preference-item">
+                    <input
+                      type="checkbox"
+                      checked={preferences.email_on_new_visite}
+                      onChange={() => handlePreferenceChange('email_on_new_visite')}
+                    />
+                    <span className="preference-label">
+                      <strong>Nouvelles visites</strong>
+                      <small>Recevoir une notification pour chaque nouvelle visite</small>
+                    </span>
+                  </label>
+
+                  <label className="preference-item">
+                    <input
+                      type="checkbox"
+                      checked={preferences.email_on_new_annonce}
+                      onChange={() => handlePreferenceChange('email_on_new_annonce')}
+                    />
+                    <span className="preference-label">
+                      <strong>Nouvelles annonces</strong>
+                      <small>Recevoir les nouvelles annonces selon vos critères</small>
+                    </span>
+                  </label>
+
+                  <label className="preference-item">
+                    <input
+                      type="checkbox"
+                      checked={preferences.email_on_message}
+                      onChange={() => handlePreferenceChange('email_on_message')}
+                    />
+                    <span className="preference-label">
+                      <strong>Nouveaux messages</strong>
+                      <small>Recevoir une notification pour chaque nouveau message</small>
+                    </span>
+                  </label>
+
+                  <label className="preference-item">
+                    <input
+                      type="checkbox"
+                      checked={preferences.email_on_feedback}
+                      onChange={() => handlePreferenceChange('email_on_feedback')}
+                    />
+                    <span className="preference-label">
+                      <strong>Commentaires et évaluations</strong>
+                      <small>Recevoir les commentaires sur vos annonces</small>
+                    </span>
+                  </label>
+
+                  <label className="preference-item">
+                    <input
+                      type="checkbox"
+                      checked={preferences.email_newsletter}
+                      onChange={() => handlePreferenceChange('email_newsletter')}
+                    />
+                    <span className="preference-label">
+                      <strong>Newsletter</strong>
+                      <small>Recevoir notre newsletter hebdomadaire</small>
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="preferences-section">
+                <h3 className="section-title">⏱️ Fréquence des Notifications</h3>
+                <div className="frequency-options">
+                  <label className="frequency-item">
+                    <input
+                      type="radio"
+                      name="frequency"
+                      value="immediate"
+                      checked={preferences.notification_frequency === 'immediate'}
+                      onChange={() => handleFrequencyChange('immediate')}
+                    />
+                    <span>Immédiat</span>
+                  </label>
+                  <label className="frequency-item">
+                    <input
+                      type="radio"
+                      name="frequency"
+                      value="daily"
+                      checked={preferences.notification_frequency === 'daily'}
+                      onChange={() => handleFrequencyChange('daily')}
+                    />
+                    <span>Quotidien</span>
+                  </label>
+                  <label className="frequency-item">
+                    <input
+                      type="radio"
+                      name="frequency"
+                      value="weekly"
+                      checked={preferences.notification_frequency === 'weekly'}
+                      onChange={() => handleFrequencyChange('weekly')}
+                    />
+                    <span>Hebdomadaire</span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="preferences-actions">
+                <Button
+                  variant="primary"
+                  size="medium"
+                  onClick={handleSavePreferences}
+                >
+                  💾 Enregistrer les préférences
+                </Button>
+              </div>
+            </>
+          )}
+
+          {/* Onglet 2: Test Email */}
+          {tabValue === 2 && (
+            <>
+              <div className="test-email-section">
+                <h3 className="section-title">✉️ Envoyer un Email de Test</h3>
+                <p>Testez vos préférences de notifications en envoyant un email de test</p>
+
+                <div className="form-group">
+                  <label className="form-label">Adresse Email</label>
+                  <Input
+                    type="email"
+                    placeholder="votre@email.com"
+                    value={testEmail}
+                    onChange={(e) => setTestEmail(e.target.value)}
+                  />
+                </div>
+
+                <div className="form-actions">
+                  <Button
+                    variant="primary"
+                    size="medium"
+                    onClick={handleTestEmail}
+                    disabled={!testEmail || loading}
+                  >
+                    ✉️ Envoyer l'email de test
+                  </Button>
+                </div>
+
+                <div className="info-box">
+                  <p>💡 Les emails de test seront envoyés avec la même mise en forme que vos notifications réelles.</p>
+                </div>
+              </div>
+            </>
           )}
         </div>
-      )}
-
-      {/* Onglet 2: Préférences */}
-      {tabValue === 1 && (
-        <div>
-          <div className="grid-container">
-            {/* Notifications par Email */}
-            <div className="grid-item">
-              <div className="card">
-                <div className="card"Content>
-                  <div>
-                    📧 Notifications par Email
-                  </div>
-                  <Divider sx={{ mb: 2 }} />
-
-                  <div sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={preferences.email_on_new_visite}
-                          onChange={() => handlePreferenceChange('email_on_new_visite')}
-                        />
-                      }
-                      label="Nouvelles visites programmées"
-                    />
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={preferences.email_on_new_annonce}
-                          onChange={() =>
-                            handlePreferenceChange('email_on_new_annonce')
-                          }
-                        />
-                      }
-                      label="Nouvelles annonces publiées"
-                    />
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={preferences.email_on_feedback}
-                          onChange={() => handlePreferenceChange('email_on_feedback')}
-                        />
-                      }
-                      label="Avis et commentaires reçus"
-                    />
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={preferences.email_on_message}
-                          onChange={() => handlePreferenceChange('email_on_message')}
-                        />
-                      }
-                      label="Messages privés"
-                    />
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={preferences.email_newsletter}
-                          onChange={() =>
-                            handlePreferenceChange('email_newsletter')
-                          }
-                        />
-                      }
-                      label="Newsletter hebdomadaire"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Fréquence des Notifications */}
-            <div className="grid-item">
-              <div className="card">
-                <div className="card"Content>
-                  <div>
-                    ⏰ Fréquence des Notifications
-                  </div>
-                  <Divider sx={{ mb: 2 }} />
-
-                  <div sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                    <Button
-                      variant={
-                        preferences.notification_frequency === 'immediate'
-                          ? 'contained'
-                          : 'outlined'
-                      }
-                      fullWidth
-                      onClick={() => handleFrequencyChange('immediate')}
-                    >
-                      Immédiate
-                    </Button>
-                    <Button
-                      variant={
-                        preferences.notification_frequency === 'daily'
-                          ? 'contained'
-                          : 'outlined'
-                      }
-                      fullWidth
-                      onClick={() => handleFrequencyChange('daily')}
-                    >
-                      Quotidienne
-                    </Button>
-                    <Button
-                      variant={
-                        preferences.notification_frequency === 'weekly'
-                          ? 'contained'
-                          : 'outlined'
-                      }
-                      fullWidth
-                      onClick={() => handleFrequencyChange('weekly')}
-                    >
-                      Hebdomadaire
-                    </Button>
-                  </div>
-
-                  <div>
-                    Les notifications seront envoyées selon la fréquence sélectionnée.
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Bouton d'enregistrement */}
-            <div className="grid-item">
-              <Button
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={handleSavePreferences}
-              >
-                💾 Enregistrer les préférences
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Onglet 3: Test Email */}
-      {tabValue === 2 && (
-        <div>
-          <Paper sx={{ p: 3 }}>
-            <div>
-              🧪 Tester l'Envoi d'Emails
-            </div>
-            <Divider sx={{ mb: 2 }} />
-
-            <div>
-              Envoyez un email de test à votre adresse pour vérifier que vous recevez
-              bien les notifications.
-            </div>
-
-            <div sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
-              <Input
-                label="Adresse email"
-                type="email"
-                value={testEmail}
-                onChange={(e) => setTestEmail(e.target.value)}
-                placeholder="votre@email.com"
-                sx={{ flex: 1 }}
-              />
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleTestEmail}
-                disabled={loading}
-                sx={{ mt: 1 }}
-              >
-                {loading ? <CircularProgress size={24} /> : '📨 Envoyer'}
-              </Button>
-            </div>
-
-            <Alert severity="info" sx={{ mt: 3 }}>
-              💡 Un email de test sera envoyé à l'adresse fournie. Vérifiez votre
-              dossier de courrier indésirable si vous ne le recevez pas dans quelques
-              secondes.
-            </Alert>
-          </Paper>
-        </div>
-      )}
+      </Card>
     </div>
   );
 };

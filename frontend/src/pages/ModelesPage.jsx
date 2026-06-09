@@ -4,7 +4,7 @@ import '../styles/ModelesPage.css';
  */
 
 import React, { useState } from 'react';
-import { Button, Card, Modal } from '@/components';
+import { Button, Card, Modal, FormContainer } from '@/components';
 
 const ModelesPage = () => {
   const [openDialog, setOpenDialog] = useState(null);
@@ -75,15 +75,20 @@ const ModelesPage = () => {
   };
 
   return (
-    <div className="modeles-page-container">
-      <div className="modeles-header">
-        <div>📄 Modèles de Documents</div>
-        <div className="modeles-subtitle">
-          Téléchargez les modèles de documents dont vous avez besoin
+    <>
+      {/* Animated Header - Exact same structure as SearchPage */}
+      <div className="search-page-header">
+        <div className="search-page-header__content">
+          <div className="search-page-header__title-row">
+            <span className="search-page-header__icon">📄</span>
+            <h1>Modèles de Documents</h1>
+          </div>
+          <p>Téléchargez les modèles de documents dont vous avez besoin pour votre projet immobilier</p>
         </div>
       </div>
 
-      <div className="modeles-grid">
+      <FormContainer maxWidth="full-width">
+        <div className="search-grid">
         {modeles.map((modele) => (
           <Card key={modele.id} className="modele-card">
             <div className="modele-header">
@@ -118,15 +123,16 @@ const ModelesPage = () => {
             </div>
           </Card>
         ))}
-      </div>
-
-      <div className="legal-section">
-        <div>⚖️ Avis légal important</div>
-        <div className="legal-text">
-          Ces modèles sont fournis à titre informatif. Pour une transaction immobilière, nous
-          recommandons de consulter un notaire ou un avocat spécialisé en droit immobilier.
         </div>
-      </div>
+
+        <Card style={{ marginTop: '48px', padding: '24px', backgroundColor: '#fff3cd' }}>
+          <div style={{ fontWeight: 600, marginBottom: '12px' }}>⚖️ Avis légal important</div>
+          <div style={{ color: '#666' }}>
+            Ces modèles sont fournis à titre informatif. Pour une transaction immobilière, nous
+            recommandons de consulter un notaire ou un avocat spécialisé en droit immobilier.
+          </div>
+        </Card>
+      </FormContainer>
 
       {/* Modal de téléchargement */}
       {openDialog && (
@@ -152,7 +158,7 @@ const ModelesPage = () => {
           </div>
         </Modal>
       )}
-    </div>
+    </>
   );
 };
 

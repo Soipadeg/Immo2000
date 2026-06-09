@@ -17,13 +17,6 @@
 .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; }
 .modal-content { background: var(--color-background); border-radius: 12px; padding: 2rem; max-width: 400px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); }
 .modal-actions { display: flex; gap: 1rem; justify-content: flex-end; }
-@media (max-width: 768px) { .page-header { flex-direction: column; align-items: flex-start; gap: 1rem; } .settings-table th, .settings-table td { padding: 0.5rem; font-size: 0.75rem; } }
-
-.admin-settings-page {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
-}
 
 .settings-header {
   display: flex;
@@ -169,39 +162,6 @@
   color: var(--color-text-secondary);
 }
 
-@media (max-width: 1024px) {
-  .table-header, .table-row {
-    grid-template-columns: 1fr 1fr 1fr;
-  }
-}
 
-@media (max-width: 768px) {
-  .admin-settings-page {
-    padding: 1.5rem 1rem;
-  }
 
-  .settings-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .table-header, .table-row {
-    grid-template-columns: 1fr;
-  }
-
-  .modal-actions {
-    flex-direction: column;
-  }
-
-  .modal-actions button {
-    width: 100%;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .modal-input {
-    border-color: var(--color-border);
-    background-color: var(--color-background);
-    color: var(--color-text);
-  }
 }

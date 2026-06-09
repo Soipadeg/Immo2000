@@ -1,31 +1,55 @@
 version: '3.8'
 
+# Production Docker Compose Configuration
+# Optimized for performance, security, and reliability
+
 services:
-  # PostgreSQL Database
+  # PostgreSQL Database - Production Grade
   postgres:
-    image: postgres:14-alpine
-    container_name: immo2000-postgres
+    image: postgres:15-alpine
+    container_name: immo2000-postgres-prod
     environment:
-      POSTGRES_DB: ${DATABASE_DB:-immo2000}
-      POSTGRES_USER: ${DATABASE_USER:-postgres}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+      POSTGRES_DB: ${DATABASE_DB:-immo2000_db}
+      POSTGRES_USER: ${DATABASE_USER:-immobilier}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_INITDB_ARGS: "-c max_connections=100 -c shared_buffers=256MB -c effective_cache_size=1GB -c maintenance_work_mem=64MB -c checkpoint_completion_target=0.9 -c wal_buffers=16MB -c default_statistics_target=100 -c random_page_cost=1.1 -c effective_io_concurrency=200"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data_prod:/var/lib/postgresql/data
+      - postgres_backups:/var/backups/postgresql
       - ./database/immo2000_schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
     ports:
-      - "${DATABASE_PORT:-5432}:5432"
+      - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER:-postgres}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER:-immobilier} -d ${DATABASE_DB:-immo2000_db}"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 20s
+    restart: unless-stopped
     networks:
       - immo2000-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
-  # Redis Cache
+  # Redis Cache - Production Grade
   redis:
     image: redis:7-alpine
-    container_name: immo2000-redis
+    container_name: immo2000-redis-prod
+    command:
+      - redis-server
+      - "--appendonly"
+      - "yes"
+      - "--appendfsync"
+      - "everysec"
+      - "--maxmemory"
+      - "512mb"
+      - "--maxmemory-policy"
+      - "allkeys-lru"
+    volumes:
+      - redis_data_prod:/data
     ports:
       - "6379:6379"
     healthcheck:
@@ -33,91 +57,179 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 10s
+    restart: unless-stopped
     networks:
       - immo2000-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
-  # FastAPI Backend
-  backend-fastapi:
+  # FastAPI Backend - Production Grade
+  backend:
     build:
       context: .
       dockerfile: Dockerfile.backend
-    container_name: immo2000-backend-fastapi
+      cache_from:
+        - backend:latest
+    image: immo2000-backend:latest
+    container_name: immo2000-backend-prod
     environment:
-      DATABASE_URL: postgresql://${DATABASE_USER:-postgres}:${DATABASE_PASSWORD:-postgres}@postgres:5432/${DATABASE_DB:-immo2000}
+      # Database
+      DATABASE_URL: postgresql://${DATABASE_USER:-immobilier}:${DATABASE_PASSWORD}@postgres:5432/${DATABASE_DB:-immo2000_db}
+      # Redis
       REDIS_URL: redis://redis:6379/0
+      # App Config
+      ENVIRONMENT: production
+      DEBUG: "false"
+      LOG_LEVEL: info
       PORT: 8000
-      FLASK_ENV: ${FLASK_ENV:-production}
-      SECRET_KEY: ${SECRET_KEY:-dev-key-change-in-prod}
+      # Security
+      SECRET_KEY: ${SECRET_KEY}
+      JWT_SECRET: ${JWT_SECRET}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+      # External Services
       DOCUSIGN_CLIENT_ID: ${DOCUSIGN_CLIENT_ID}
       DOCUSIGN_USER_ID: ${DOCUSIGN_USER_ID}
       DOCUSIGN_ACCOUNT_ID: ${DOCUSIGN_ACCOUNT_ID}
       DOCUSIGN_PRIVATE_KEY: ${DOCUSIGN_PRIVATE_KEY}
-      DOCUSIGN_BASE_URL: ${DOCUSIGN_BASE_URL:-demo.docusign.com}
       SENDGRID_API_KEY: ${SENDGRID_API_KEY}
-      SENDGRID_FROM_EMAIL: ${SENDGRID_FROM_EMAIL}
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       AWS_S3_BUCKET: ${AWS_S3_BUCKET}
-    ports:
-      - "8000:8000"
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
+    ports:
+      - "8000:8000"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 5s
+      start_period: 20s
+    restart: unless-stopped
     networks:
       - immo2000-network
-    volumes:
-      - ./backend:/app
-    command: python run_server.py
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+    # Security: read-only filesystem except /tmp
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /app/logs
 
-  # React Frontend
+  # React Frontend - Production Grade
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: immo2000-frontend
+      context: .
+      dockerfile: Dockerfile.frontend
+      cache_from:
+        - frontend:latest
+    image: immo2000-frontend:latest
+    container_name: immo2000-frontend-prod
     environment:
-      REACT_APP_API_URL: http://localhost:8000/api/v1
-      REACT_APP_FASTAPI_URL: http://localhost:8000/api/v1
-    ports:
-      - "3001:3000"
+      # API endpoints - will be served by nginx reverse proxy
+      REACT_APP_API_URL: /api
+      REACT_APP_FASTAPI_URL: /api/v1
     depends_on:
-      - backend-fastapi
+      - backend
+    restart: unless-stopped
     networks:
       - immo2000-network
-    environment:
-      - REACT_APP_API_URL=http://backend-fastapi:8000/api/v1
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
 
-  # Nginx Reverse Proxy
+  # Nginx Reverse Proxy & Load Balancer
   nginx:
     image: nginx:alpine
-    container_name: immo2000-nginx
+    container_name: immo2000-nginx-prod
     ports:
       - "80:80"
       - "443:443"
     volumes:
+      - ./devops/nginx-prod.conf:/etc/nginx/conf.d/default.conf:ro
       - ./devops/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./devops/ssl:/etc/nginx/ssl:ro
+      - nginx_cache:/var/cache/nginx
+    environment:
+      - BACKEND_HOST=backend
+      - BACKEND_PORT=8000
+      - FRONTEND_HOST=frontend
+      - FRONTEND_PORT=80
     depends_on:
-      - backend-fastapi
+      - backend
       - frontend
-    networks:
-      - immo2000-network
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - immo2000-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  # Prometheus - Metrics Collection (Optional but recommended)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: immo2000-prometheus-prod
+    volumes:
+      - ./devops/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=7d"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9090"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - immo2000-network
+    depends_on:
+      - backend
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  postgres_data_prod:
+    driver: local
+  postgres_backups:
+    driver: local
+  redis_data_prod:
+    driver: local
+  nginx_cache:
+    driver: local
+  prometheus_data:
+    driver: local
 
 networks:
   immo2000-network:
+    driver: bridge
     driver: bridge
 
 volumes:

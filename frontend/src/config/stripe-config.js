@@ -3,7 +3,7 @@
  * Initialisation et options pour Stripe.js
  */
 
-export const STRIPE_PUBLIC_KEY = process.env.REACT_APP_STRIPE_PUBLIC_KEY || 'pk_test_demo';
+export const STRIPE_PUBLIC_KEY = import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_demo';
 
 export const stripePromise = typeof window !== 'undefined' && window.Stripe
   ? Promise.resolve(window.Stripe(STRIPE_PUBLIC_KEY))

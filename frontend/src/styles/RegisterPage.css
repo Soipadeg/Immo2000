@@ -36,11 +36,6 @@
   gap: 1rem;
 }
 
-@media (max-width: 480px) {
-  .register-row {
-    grid-template-columns: 1fr;
-  }
-}
 
 .register-checkbox-container {
   display: flex;

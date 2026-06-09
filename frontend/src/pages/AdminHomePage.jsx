@@ -1,7 +1,7 @@
 import '../styles/AdminHomePage.css';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Alert } from '@/components';
+import { Button, Alert, FormContainer } from '@/components';
 import { dashboardApi } from '../services/adminApi';
 import { useAuth } from '../hooks/useAuth';
 
@@ -122,32 +122,37 @@ const AdminHomePage = () => {
   const activeUsers = dashboard?.utilisateurs_actifs || 0;
 
   return (
-    <div className="admin-home-page">
-      {/* Header */}
-      <div className="page-header">
-        <div>👋 Bienvenue, {user?.nom || 'Admin'}!</div>
-        <div>Tableau de bord administrateur - {new Date().toLocaleDateString('fr-FR', {
-          weekday: 'long',
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        })}</div>
+    <>
+      <div className="search-page-header">
+        <div className="search-page-header__content">
+          <div className="search-page-header__title-row">
+            <span className="search-page-header__icon">🏠</span>
+            <h1>Bienvenue, {user?.nom || 'Admin'}!</h1>
+          </div>
+          <p>Tableau de bord administrateur - {new Date().toLocaleDateString('fr-FR', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })}</p>
+        </div>
       </div>
 
-      {error && (
-        <Alert type="error" title="Erreur" message={error} />
-      )}
+      <FormContainer maxWidth="full-width">
+        {error && (
+          <Alert type="error" title="Erreur" message={error} />
+        )}
 
-      {/* KPI Summary Cards */}
-      <div className="kpi-grid">
-        <div className="stat-card stat-primary">
-          <div className="stat-label">👥 Utilisateurs Total</div>
-          <div className="stat-value">{totalUsers}</div>
-        </div>
+        {/* KPI Summary Cards */}
+        <div className="kpi-grid">
+          <div className="stat-card stat-primary">
+            <div className="stat-label">👥 Utilisateurs Total</div>
+            <div className="stat-value">{totalUsers}</div>
+          </div>
 
-        <div className="stat-card stat-success">
-          <div className="stat-label">🏠 Annonces Publiées</div>
-          <div className="stat-value">{totalListings}</div>
+          <div className="stat-card stat-success">
+            <div className="stat-label">🏠 Annonces Publiées</div>
+            <div className="stat-value">{totalListings}</div>
         </div>
 
         <div className="stat-card stat-secondary">
@@ -232,7 +237,8 @@ const AdminHomePage = () => {
           </Button>
         </div>
       </div>
-    </div>
+      </FormContainer>
+    </>
   );
 };
 

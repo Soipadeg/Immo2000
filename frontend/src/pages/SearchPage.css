@@ -1,5 +1,152 @@
 /* SearchPage Styles */
 
+/* Animated Header */
+.search-page-header {
+  text-align: center;
+  padding: 10px 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px;
+  animation: slideDown 0.5s ease-out;
+  margin-bottom: 24px;
+}
+
+.search-page-header__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.search-page-header__title-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.search-page-header__icon {
+  font-size: 1.8rem;
+}
+
+.search-page-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.search-page-header p {
+  margin: 0;
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+/* Animation d'entrée */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Estimation Banner */
+.estimation-banner {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  margin-bottom: 24px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+  animation: slideDown 0.5s ease-out;
+}
+
+.estimation-banner__content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  gap: 16px;
+  color: white;
+}
+
+.estimation-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.estimation-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.estimation-info h3 {
+  margin: 0 0 4px 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.estimation-info p {
+  margin: 0;
+  font-size: 0.95rem;
+  opacity: 0.95;
+}
+
+.estimation-info strong {
+  font-weight: 700;
+  display: block;
+  font-size: 1.2rem;
+  margin-top: 4px;
+}
+
+.estimation-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+
+.spinner-mini {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.estimation-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.8;
+  transition: opacity 200ms ease;
+  flex-shrink: 0;
+}
+
+.estimation-close:hover {
+  opacity: 1;
+}
+
+/* Page container */
+.search-page {
+  min-height: 100vh;
+  padding: 20px;
+  background: linear-gradient(135deg, #dbe9f4 0%, #8fa7c8 100%) !important;
+}
+
 /* Filters Section */
 
 .search-filters {
@@ -9,17 +156,32 @@
   margin-bottom: 24px;
   padding-bottom: 24px;
   border-bottom: 1px solid #E5E7EB;
+  background-color: #ffffff !important;
 }
 
 .search-select {
-  padding: 10px 12px;
+  width: 100%;
+  padding: 12px;
   border: 1px solid #D1D5DB;
-  border-radius: 6px;
-  font-size: 0.9rem;
+  border-radius: 8px;
+  font-size: 1rem;
   background-color: #FFFFFF;
   color: #1F2937;
   cursor: pointer;
   transition: all 300ms ease;
+}
+
+.search-select-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.search-select-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1F2937;
+  display: block;
 }
 
 .search-select:hover {
@@ -32,18 +194,7 @@
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-/* Dark Mode */
-@media (prefers-color-scheme: dark) {
-  .search-select {
-    background-color: #1F2937;
-    border-color: #374151;
-    color: #F3F4F6;
-  }
-
-  .search-select:hover {
-    border-color: #3B82F6;
-  }
-}
+/* Dark mode disabled - light mode only */
 
 /* Summary */
 
@@ -60,12 +211,7 @@
   margin: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  .search-summary {
-    background-color: #0F172A;
-    color: #60A5FA;
-  }
-}
+/* Dark mode disabled - light mode only */
 
 /* Empty State */
 
@@ -81,15 +227,7 @@
   font-size: 0.95rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  .search-empty {
-    background-color: #111827;
-  }
-
-  .search-empty p {
-    color: #D1D5DB;
-  }
-}
+/* Dark mode disabled - light mode only */
 
 /* Results Grid */
 
@@ -100,18 +238,7 @@
   margin-bottom: 32px;
 }
 
-@media (max-width: 640px) {
-  .search-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-}
 
-@media (max-width: 1024px) {
-  .search-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
 
 /* Annonce Card */
 
@@ -204,10 +331,6 @@
   -webkit-box-orient: vertical;
 }
 
-@media (prefers-color-scheme: dark) {
-  .annonce-content h3 {
-    color: #F3F4F6;
-  }
 }
 
 /* Price */
@@ -219,10 +342,6 @@
   margin-bottom: 8px;
 }
 
-@media (prefers-color-scheme: dark) {
-  .annonce-price {
-    color: #60A5FA;
-  }
 }
 
 /* Description */
@@ -238,10 +357,6 @@
   -webkit-box-orient: vertical;
 }
 
-@media (prefers-color-scheme: dark) {
-  .annonce-description {
-    color: #9CA3AF;
-  }
 }
 
 /* Details Grid */
@@ -256,10 +371,6 @@
   border-bottom: 1px solid #E5E7EB;
 }
 
-@media (prefers-color-scheme: dark) {
-  .annonce-details {
-    border-color: #374151;
-  }
 }
 
 .detail {
@@ -281,10 +392,6 @@
   color: #1F2937;
 }
 
-@media (prefers-color-scheme: dark) {
-  .detail {
-    color: #F3F4F6;
-  }
 
   .detail-label {
     color: #6B7280;
@@ -301,28 +408,49 @@
 
 /* Responsive Mobile */
 
-@media (max-width: 640px) {
-  .annonce-image {
-    height: 180px;
+/* Estimation Banner - Mobile */
+@media (max-width: 768px) {
+  .estimation-banner__content {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px 16px;
+    gap: 8px;
   }
 
-  .annonce-content {
+  .estimation-icon {
+    width: 100%;
+    text-align: center;
+  }
+
+  .estimation-info {
+    width: 100%;
+  }
+
+  .estimation-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .estimation-banner__content {
     padding: 12px;
   }
 
-  .annonce-content h3 {
-    font-size: 0.95rem;
+  .estimation-info h3 {
+    font-size: 0.9rem;
   }
 
-  .annonce-price {
-    font-size: 1.1rem;
+  .estimation-info p {
+    font-size: 0.85rem;
   }
 
-  .annonce-details {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .search-filters {
-    grid-template-columns: 1fr;
+  .estimation-info strong {
+    font-size: 1rem;
   }
 }

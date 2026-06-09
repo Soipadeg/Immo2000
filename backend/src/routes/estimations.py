@@ -198,3 +198,34 @@ def get_estimations(current_user):
 
 
 __all__ = ["estimations_bp"]
+
+
+# ====== TEST ENDPOINT (Development only) ======
+@estimations_bp.route("/test", methods=["POST"])
+@handle_errors()
+def test_estimation():
+    """
+    Test endpoint for estimation without authentication.
+    Development only - remove before production.
+    """
+    data = request.get_json()
+
+    if not data:
+        raise ValidationError("Request body must be JSON")
+
+    adresse = data.get("adresse", "75001, France")
+    surface = int(data.get("surface", 100))
+    type_bien = data.get("type_bien", "appartement")
+
+    result = get_estimation_melo(adresse, surface, type_bien)
+
+    if result.get("metadata", {}).get("status") == "success":
+        return {
+            "message": "Test estimation created successfully",
+            "estimation": result.get("estimation"),
+            "adresse": adresse,
+            "timestamp": datetime.utcnow().isoformat()
+        }, 201
+    else:
+        error_msg = result.get("metadata", {}).get("error", "Unknown error")
+        raise ValidationError(f"Melo API error: {error_msg}")

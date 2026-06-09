@@ -164,26 +164,7 @@
   color: var(--color-text-secondary);
 }
 
-@media (max-width: 768px) {
-  .login-page {
-    align-items: flex-start;
-    padding-top: 2rem;
-  }
 
-  .login-form {
-    padding: 1.5rem;
-  }
-
-  .login-container h1 {
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .login-page {
-    background: linear-gradient(135deg, rgba(63, 81, 181, 0.1), rgba(33, 150, 243, 0.1));
-  }
 
   .form-group input:focus {
     box-shadow: 0 0 0 3px rgba(100, 200, 255, 0.2);

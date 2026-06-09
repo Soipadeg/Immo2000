@@ -209,40 +209,8 @@
   justify-content: flex-end;
 }
 
-@media (max-width: 1024px) {
-  .table-header,
-  .table-row {
-    grid-template-columns: 80px 1fr 1fr 120px;
-  }
-}
 
-@media (max-width: 768px) {
-  .admin-transactions-page {
-    padding: 1.5rem 1rem;
-  }
 
-  .page-header h1 {
-    font-size: 1.5rem;
-  }
-
-  .table-header,
-  .table-row {
-    grid-template-columns: 1fr;
-  }
-
-  .modal-actions {
-    flex-direction: column;
-  }
-
-  .modal-actions button {
-    width: 100%;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .table-row:hover {
-    background-color: rgba(255, 255, 255, 0.02);
-  }
 }
 
 .admin-transactions-page {
@@ -397,24 +365,5 @@
   justify-content: flex-end;
 }
 
-@media (max-width: 768px) {
-  .table-header, .table-row {
-    grid-template-columns: 1fr;
-  }
 
-  .modal-actions {
-    flex-direction: column;
-  }
-
-  .modal-actions button {
-    width: 100%;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .filter-select {
-    border-color: var(--color-border);
-    background-color: var(--color-background);
-    color: var(--color-text);
-  }
 }

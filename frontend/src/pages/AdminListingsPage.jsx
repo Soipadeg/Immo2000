@@ -4,7 +4,7 @@ import '../styles/AdminListingsPage.css';
  */
 
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Alert } from '@/components';
+import { Button, Input, Alert, FormContainer } from '@/components';
 import { listingsApi } from '../services/adminApi';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -71,28 +71,35 @@ const AdminListingsPage = () => {
   };
 
   return (
-    <div className="admin-listings-page">
-      <div className="page-header">
-        <div>🏠 Modération des Annonces</div>
+    <>
+      <div className="search-page-header">
+        <div className="search-page-header__content">
+          <div className="search-page-header__title-row">
+            <span className="search-page-header__icon">📋</span>
+            <h1>Modération des Annonces</h1>
+          </div>
+          <p>Vérifiez et approuvez les annonces en attente</p>
+        </div>
       </div>
 
-      {error && <Alert type="error" title="Erreur" message={error} />}
+      <FormContainer maxWidth="full-width">
+        {error && <Alert type="error" title="Erreur" message={error} />}
 
-      {loading ? (
-        <div className="admin-container">
-          <div className="loading-spinner">⏳ Chargement...</div>
-        </div>
-      ) : (
-        <>
-          {listings.length === 0 ? (
-            <Alert type="success" title="Succès" message="✅ Toutes les annonces en attente ont été modérées" />
-          ) : (
-            <>
-              <Alert type="info" title="Info" message={`${listings.length} annonce(s) en attente de modération`} />
+        {loading ? (
+          <div className="admin-container">
+            <div className="loading-spinner">⏳ Chargement...</div>
+          </div>
+        ) : (
+          <>
+            {listings.length === 0 ? (
+              <Alert type="success" title="Succès" message="✅ Toutes les annonces en attente ont été modérées" />
+            ) : (
+              <>
+                <Alert type="info" title="Info" message={`${listings.length} annonce(s) en attente de modération`} />
 
-              <div className="listings-grid">
-                {listings.map((listing) => (
-                  <div key={listing.annonce_id} className="listing-card">
+                <div className="listings-grid">
+                  {listings.map((listing) => (
+                    <div key={listing.annonce_id} className="listing-card">
                     <div>{listing.titre || 'Sans titre'}</div>
                     <div className="listing-meta">
                       <div className="price-badge">€{listing.prix || 0}</div>
@@ -159,7 +166,8 @@ const AdminListingsPage = () => {
           </div>
         </div>
       )}
-    </div>
+      </FormContainer>
+    </>
   );
 };
 

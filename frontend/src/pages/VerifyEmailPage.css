@@ -106,11 +106,6 @@
 
 /* Dark Mode Support */
 
-@media (prefers-color-scheme: dark) {
-  .spinner {
-    border-color: #374151;
-    border-top-color: #3B82F6;
-  }
 
   .verifying-loader p {
     color: #9CA3AF;
@@ -149,18 +144,3 @@
 
 /* Responsive */
 
-@media (max-width: 640px) {
-  .verifying-loader {
-    padding: 24px 0;
-  }
-
-  .spinner {
-    width: 32px;
-    height: 32px;
-  }
-
-  .verify-email-info {
-    padding: 12px;
-    font-size: 0.8rem;
-  }
-}

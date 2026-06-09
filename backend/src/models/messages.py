@@ -58,12 +58,13 @@ class Message(db.Model):
         index=True
     )
 
-    conversation_id = db.Column(
-        db.Integer,
-        ForeignKey("conversations.conversation_id", ondelete="CASCADE"),
-        nullable=True,  # Nullable car les anciens messages n'auront pas de conversation
-        index=True
-    )
+    # TODO: conversation_id commented out - waiting for Conversation model
+    # conversation_id = db.Column(
+    #     db.Integer,
+    #     ForeignKey("conversations.conversation_id", ondelete="CASCADE"),
+    #     nullable=True,
+    #     index=True
+    # )
 
     # Contenu
     contenu = db.Column(db.String(2000), nullable=False)
@@ -76,7 +77,8 @@ class Message(db.Model):
     supprime_par_destinataire = db.Column(db.Boolean, default=False)
 
     # Relations
-    conversation = relationship("Conversation", back_populates="messages", foreign_keys=[conversation_id])
+    # TODO: Uncomment when Conversation model is created
+    # conversation = relationship("Conversation", back_populates="messages", foreign_keys=[conversation_id])
 
     # Phase 3.1: Performance indexes (composites)
     __table_args__ = (
