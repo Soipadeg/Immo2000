@@ -1,6 +1,6 @@
 # 🔐 Nouvelles Informations Obligatoires pour Annonces
 
-**Date**: 9 Juin 2026  
+**Date**: 9 Juin 2026
 **Statut**: ✅ Implémenté et validé
 
 ---
@@ -10,7 +10,7 @@
 Ajout de **3 informations obligatoires** pour la création et la publication d'annonces:
 
 1. **Nom des propriétaires** (caché)
-2. **Référence cadastrale** (caché)  
+2. **Référence cadastrale** (caché)
 3. **Date de construction du bâtiment** (visible)
 
 Ces informations sont:

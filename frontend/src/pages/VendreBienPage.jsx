@@ -39,6 +39,9 @@ export default function VendreBienPage() {
     etage: '',
     annee_construction: new Date().getFullYear(),
     description: '',
+    nom_proprietaires: '',
+    reference_cadastrale: '',
+    date_construction: '',
   });
 
   // Étape 3: Détails spécifiques
@@ -128,6 +131,17 @@ export default function VendreBienPage() {
       return 'Le nombre de pièces doit être au moins 1';
     }
     if (!step2Data.description.trim()) return 'La description est obligatoire';
+    if (!step2Data.nom_proprietaires.trim()) return 'Le nom des propriétaires est obligatoire';
+    if (!step2Data.reference_cadastrale.trim()) return 'La référence cadastrale est obligatoire';
+    if (!step2Data.date_construction.trim()) return 'La date de construction est obligatoire';
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(step2Data.date_construction)) {
+      return 'La date doit être au format YYYY-MM-DD';
+    }
+    const year = parseInt(step2Data.date_construction.split('-')[0]);
+    if (year < 1800 || year > new Date().getFullYear()) {
+      return `L'année doit être entre 1800 et ${new Date().getFullYear()}`;
+    }
     return null;
   };
 
@@ -210,6 +224,9 @@ export default function VendreBienPage() {
         jardin: step3Data.jardin,
         piscine: step3Data.piscine,
         parking: step3Data.parking,
+        nom_proprietaires: step2Data.nom_proprietaires,
+        reference_cadastrale: step2Data.reference_cadastrale,
+        date_construction: step2Data.date_construction,
       };
 
       const response = await completerAnnonce(annonceId, dataToSend);
@@ -523,6 +540,55 @@ export default function VendreBienPage() {
                 maxLength={1000}
               />
               <small>{step2Data.description.length}/1000 caractères</small>
+            </div>
+
+            <hr style={{ margin: '30px 0', border: 'none', borderTop: '1px solid #e0e0e0' }} />
+            <h3 style={{ marginTop: '20px', marginBottom: '15px' }}>📋 Informations confidentielles du bien</h3>
+            <p style={{ color: '#666', fontSize: '0.9em', marginBottom: '20px' }}>
+              Ces informations ne seront jamais visibles publiquement. Elles sont réservées aux propriétaires et aux notaires après acceptation d'une offre.
+            </p>
+
+            <div className="form-group">
+              <label htmlFor="nom_proprietaires">Nom des propriétaires *</label>
+              <input
+                id="nom_proprietaires"
+                type="text"
+                placeholder="ex: Jean Dupont, Marie Dupont"
+                value={step2Data.nom_proprietaires}
+                onChange={(e) =>
+                  setStep2Data({ ...step2Data, nom_proprietaires: e.target.value })
+                }
+                maxLength={255}
+              />
+              <small style={{ color: '#999' }}>🔒 Caché dans l'annonce publique</small>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="reference_cadastrale">Référence cadastrale *</label>
+              <input
+                id="reference_cadastrale"
+                type="text"
+                placeholder="ex: 75056000AL0042"
+                value={step2Data.reference_cadastrale}
+                onChange={(e) =>
+                  setStep2Data({ ...step2Data, reference_cadastrale: e.target.value })
+                }
+                maxLength={100}
+              />
+              <small style={{ color: '#999' }}>🔒 Caché dans l'annonce publique</small>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="date_construction">Date de construction du bâtiment *</label>
+              <input
+                id="date_construction"
+                type="date"
+                value={step2Data.date_construction}
+                onChange={(e) =>
+                  setStep2Data({ ...step2Data, date_construction: e.target.value })
+                }
+              />
+              <small style={{ color: '#999' }}>📅 Visible dans l'annonce publique | Format: YYYY-MM-DD</small>
             </div>
 
             <div className="form-actions">
