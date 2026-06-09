@@ -1,0 +1,117 @@
+version: '3.9'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: immo2000_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-immo2000}
+      POSTGRES_USER: ${DB_USER:-immo2000}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-immo2000_secure_password_change_me}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/migrations:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-immo2000}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - immo2000_network
+
+  # Flask Backend API
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: immo2000_backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Database
+      DATABASE_URL: postgresql://${DB_USER:-immo2000}:${DB_PASSWORD:-immo2000_secure_password_change_me}@postgres:5432/${DB_NAME:-immo2000}
+      SQLALCHEMY_DATABASE_URI: postgresql://${DB_USER:-immo2000}:${DB_PASSWORD:-immo2000_secure_password_change_me}@postgres:5432/${DB_NAME:-immo2000}
+
+      # Flask
+      FLASK_ENV: ${FLASK_ENV:-production}
+      FLASK_APP: src.app
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-change-me-in-production}
+
+      # Email/SMTP
+      SMTP_HOST: ${SMTP_HOST:-localhost}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_FROM_EMAIL: ${SMTP_FROM_EMAIL:-noreply@immo2000.com}
+
+      # API Configuration
+      API_CORS_ORIGINS: ${API_CORS_ORIGINS:-http://localhost:3000,http://localhost:8000}
+
+      # Logging
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    ports:
+      - "${API_PORT:-5000}:5000"
+    volumes:
+      - ./backend:/app/backend
+      - ./static:/app/static
+      - app_logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - immo2000_network
+    command: bash -c "cd /app/backend && python -m flask run --host=0.0.0.0 --port=5000"
+
+  # Frontend React/Vite
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: immo2000_frontend
+    restart: unless-stopped
+    environment:
+      - VITE_API_URL=http://localhost:5000/api/v1
+    ports:
+      - "${FRONTEND_PORT:-3000}:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - immo2000_network
+
+  # Optional: Redis for caching (future enhancement)
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: immo2000_redis
+  #   restart: unless-stopped
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis_data:/data
+  #   networks:
+  #     - immo2000_network
+
+volumes:
+  postgres_data:
+    driver: local
+  app_logs:
+    driver: local
+  # redis_data:
+  #   driver: local
+
+networks:
+  immo2000_network:
+    driver: bridge
