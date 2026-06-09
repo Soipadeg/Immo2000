@@ -115,7 +115,7 @@ export const DynamicNavbar = ({
     }
 
     if (userRole === 'admin') {
-      items.push({ label: 'Dashboard', path: '/dashboard', icon: '📊' });
+      items.push({ label: 'Dashboard', path: '/user/dashboard', icon: '📊' });
       items.push({ label: 'Admin', path: '/admin', icon: '⚙️' });
     }
 
