@@ -14,7 +14,13 @@ export default defineConfig({
     },
   },
   server: {
-    port: 3000,
+    port: 5173,
+    host: '0.0.0.0',
+    hmr: process.env.VITE_HMR_HOST ? {
+      host: process.env.VITE_HMR_HOST,
+      port: 3000,
+      protocol: 'ws'
+    } : undefined,
     proxy: {
       '/api': {
         target: 'http://backend:5000',

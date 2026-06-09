@@ -267,7 +267,7 @@ print(f\"✅ RGPD: {report['compliance_status']}\")
 
 ## Documentation
 
-Voir: `docs/NOTAIRE_ENCRYPTION_RGPD.md`
+Voir: [docs/NOTAIRE/README.md](../docs/NOTAIRE/README.md)
 """
 
     print(guide)
@@ -311,7 +311,7 @@ def main():
     print("\n📝 Prochaines étapes:")
     print("  1. Copier la clé générée dans votre .env")
     print("  2. Redémarrer l'application")
-    print("  3. Consulter docs/NOTAIRE_ENCRYPTION_RGPD.md pour plus de détails")
+    print("  3. Consulter docs/NOTAIRE/README.md pour plus de détails")
     print("  4. Configurer les tâches de rétention")
     print("  5. Configurer les alertes RGPD")
 

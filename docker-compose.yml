@@ -82,6 +82,7 @@ services:
     restart: unless-stopped
     environment:
       - VITE_API_URL=http://localhost:5000/api/v1
+      - VITE_HMR_HOST=localhost
     ports:
       - "${FRONTEND_PORT:-3000}:5173"
     volumes:

@@ -138,8 +138,7 @@ if __name__ == "__main__":
         print("      GET /api/v1/admin/analytics")
         print("      POST /api/v1/notaires (créer un notaire)")
         print("\n   3. Consultez la documentation:")
-        print("      docs/ADMIN_SYSTEM.md")
-        print("      docs/NOTAIRE_PROFILE_SETUP.md")
+        print("      docs/NOTAIRE/README.md")
         print("\n" + "=" * 70)
     else:
         print("\n❌ Une erreur s'est produite. Assurez-vous que PostgreSQL est en cours d'exécution.")

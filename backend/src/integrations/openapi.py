@@ -40,7 +40,7 @@ Pour ajouter de la documentation à vos endpoints, utilisez:
 Documentation:
 - https://github.com/flasgger/flasgger
 - https://swagger.io/
-- docs/API_DOCUMENTATION.md
+- docs/API/REFERENCE.md
 """
 
 from flasgger import Swagger
