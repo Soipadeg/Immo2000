@@ -214,7 +214,7 @@ docker-compose up -d
 
 ## 📚 Related Documentation
 
-- [Phase 1: Security Fixes](../PHASES/PHASE1.md) - Previous phase
+- Phase 1: Security Fixes - Previous phase (legacy, not consolidated)
 - [Phase 3: Notaire System](../PHASES/PHASE3.md) - Next phase
 - [Deployment Guide](../DEPLOYMENT.md#docker--containerization) - Deployment instructions
 

@@ -101,11 +101,11 @@ const HealthCheckPage = React.lazy(() => import('./pages/HealthCheckPage'));
 
 
 /**
- * Redirection pour le login (vers port 5000)
+ * Redirection pour le login (vers la page d'accueil)
  */
 const LoginRedirect = () => {
   React.useEffect(() => {
-    window.location.href = 'http://localhost:5000/login.html';
+    window.location.href = '/';
   }, []);
   return null;
 };
