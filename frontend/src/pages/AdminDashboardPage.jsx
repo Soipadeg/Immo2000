@@ -1,28 +1,15 @@
-import '../styles/AdminDashboardPage.css';
 /**
- * TÂCHE 1: Dashboard Admin - Tableau de bord administrateur
+ * AdminDashboardPage - Dashboard administrateur
+ * Même structure que UserDashboardPage avec 6 cartes sections
  */
 
 import React, { useState, useEffect } from 'react';
-import { Button, Alert, FormContainer } from '@/components';
-import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import { dashboardApi, analyticsApi } from '../services/adminApi';
-import {
-  LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
-  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
-} from 'recharts';
+import { useAuth } from '../hooks/useAuth';
 
 const AdminDashboardPage = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const [tabValue, setTabValue] = useState(0);
-  const [data, setData] = useState(null);
-  const [analytics, setAnalytics] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [suspiciousAccounts, setSuspiciousAccounts] = useState([]);
-
 
   useEffect(() => {
     if (!authLoading && (!user || user.role !== 'admin')) {
@@ -30,282 +17,338 @@ const AdminDashboardPage = () => {
     }
   }, [user, authLoading, navigate]);
 
-  useEffect(() => {
-    // Ne charger les données que si l'utilisateur est authentifié et admin
-    if (!authLoading && user && user.role === 'admin') {
-      loadData();
-    }
-  }, [user, authLoading]);
-
-  const loadData = async () => {
-    setLoading(true);
-    setError('');
-    try {
-      // Skip API calls in dev mode
-      const devMode = localStorage.getItem('dev_mode') === 'true';
-      if (devMode) {
-        // Use mock data in dev mode
-        setData({
-          utilisateurs: { total: 250 },
-          annonces: { total: 1200 },
-          offres: { total: 45 },
-          revenus: { valeur_totale_offres: 2750000 },
-        });
-        setAnalytics({
-          utilisateurs_nouveaux: 15,
-          annonces_creees: 23,
-          offres_creees: 8,
-        });
-        setLoading(false);
-        return;
-      }
-
-      const [dashRes, anaRes] = await Promise.all([
-        dashboardApi.getSummary(),
-        analyticsApi.getSummary(),
-      ]);
-      setData(dashRes.data?.data);
-      setAnalytics(anaRes.data?.data);
-    } catch (err) {
-      setError(err.response?.data?.error || 'Erreur lors du chargement');
-      console.error('Error:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (authLoading) {
-    return (
-    <div className="admin-loading">
-      <div className="spinner">⏳ Chargement...</div>
-    </div>
-  );
-  }
-
-  if (!user || user.role !== 'admin') {
+  if (authLoading || !user || user.role !== 'admin') {
     return null;
   }
 
-  // Données hardcodées
-  const recentUsers = [
-    { id: 1, prenom: 'Jean', nom: 'Dupont', email: 'jean.dupont@email.com', date: new Date().toISOString() },
-    { id: 2, prenom: 'Marie', nom: 'Martin', email: 'marie.martin@email.com', date: new Date().toISOString() },
-    { id: 3, prenom: 'Pierre', nom: 'Bernard', email: 'pierre.bernard@email.com', date: new Date().toISOString() },
+  // Sections du dashboard admin
+  const dashboardSections = [
+    {
+      id: 'users',
+      label: 'Utilisateurs',
+      icon: '👥',
+      description: 'Gérez tous les utilisateurs et leurs rôles',
+      path: '/admin/users',
+      color: '#FF6B6B'
+    },
+    {
+      id: 'listings',
+      label: 'Annonces',
+      icon: '🏘️',
+      description: 'Visualisez et approuvez les annonces',
+      path: '/admin/listings',
+      color: '#4ECDC4'
+    },
+    {
+      id: 'transactions',
+      label: 'Transactions',
+      icon: '💳',
+      description: 'Suivi des transactions et paiements',
+      path: '/admin/transactions',
+      color: '#45B7D1'
+    },
+    {
+      id: 'security',
+      label: 'Sécurité',
+      icon: '🔒',
+      description: 'Audit logs et incidents de sécurité',
+      path: '/admin/security',
+      color: '#F7DC6F'
+    },
+    {
+      id: 'audit',
+      label: 'Audit Logs',
+      icon: '📋',
+      description: 'Consultez les logs d\'audit du système',
+      path: '/admin/audit',
+      color: '#BB8FCE'
+    },
+    {
+      id: 'settings',
+      label: 'Paramètres',
+      icon: '⚙️',
+      description: 'Configuration du système et intégrations',
+      path: '/admin/settings',
+      color: '#85C1E2'
+    },
   ];
 
-  // Données graphiques
-  const activityData = [
-    { date: 'Lun', utilisateurs: 45, annonces: 23, offres: 8 },
-    { date: 'Mar', utilisateurs: 52, annonces: 28, offres: 12 },
-    { date: 'Mer', utilisateurs: 48, annonces: 35, offres: 15 },
-    { date: 'Jeu', utilisateurs: 61, annonces: 42, offres: 18 },
-    { date: 'Ven', utilisateurs: 55, annonces: 38, offres: 14 },
-    { date: 'Sam', utilisateurs: 67, annonces: 45, offres: 22 },
-    { date: 'Dim', utilisateurs: 43, annonces: 30, offres: 10 },
-  ];
-
-  const roleDistribution = [
-    { name: 'Admin', value: 5, color: '#667eea' },
-    { name: 'Vendeurs', value: 120, color: '#764ba2' },
-    { name: 'Acheteurs', value: 125, color: '#f093fb' },
-  ];
-
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
-
-  const stats = [
-    { label: '👥 Utilisateurs', value: data?.utilisateurs?.total || 0 },
-    { label: '🏠 Annonces', value: data?.annonces?.total || 0 },
-    { label: '💰 Offres', value: data?.offres?.total || 0 },
-    { label: '💵 Revenus', value: `€${(data?.revenus?.valeur_totale_offres || 0).toLocaleString()}` },
+  // Statistiques rapides
+  const quickStats = [
+    { label: 'Utilisateurs', value: 1250, icon: '👥' },
+    { label: 'Annonces', value: 487, icon: '🏘️' },
+    { label: 'Transactions', value: 156, icon: '💳' },
+    { label: 'Alertes', value: 23, icon: '🚨' },
   ];
 
   return (
-    <>
-      <div className="search-page-header">
-        <div className="search-page-header__content">
-          <div className="search-page-header__title-row">
-            <span className="search-page-header__icon">🔐</span>
-            <h1>Dashboard Admin</h1>
-          </div>
-          <p>Bienvenue, {user?.nom}! Gérez la plateforme en un seul endroit</p>
-        </div>
+    <div style={{
+      padding: '24px',
+      maxWidth: '1200px',
+      margin: '0 auto',
+    }}>
+      {/* En-tête */}
+      <div style={{
+        marginBottom: '32px',
+      }}>
+        <h1 style={{
+          fontSize: '32px',
+          fontWeight: 'bold',
+          margin: '0 0 8px 0',
+          color: '#333',
+        }}>
+          📊 Tableau de Bord Admin
+        </h1>
+        <p style={{
+          fontSize: '16px',
+          color: '#666',
+          margin: '0',
+        }}>
+          Bienvenue <strong>{user?.prenom}</strong> 👋 — Centre de gestion administratif
+        </p>
       </div>
 
-      <FormContainer maxWidth="full-width">
-        {/* Statistiques principales */}
-        <div className="stats-grid">
-        {stats.map((stat, index) => (
-          <div key={index} className="stat-card">
-            <div className="stat-label">{stat.label}</div>
-            <div className="stat-value">{stat.value}</div>
+      {/* Statistiques rapides */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: '16px',
+        marginBottom: '32px',
+      }}>
+        {quickStats.map((stat) => (
+          <div
+            key={stat.label}
+            onClick={() => navigate(`/admin/${stat.label.toLowerCase().replace(' ', '-')}`)}
+            style={{
+              padding: '16px',
+              backgroundColor: '#fff',
+              border: '1px solid #eee',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = 'none';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            <div style={{ fontSize: '24px' }}>{stat.icon}</div>
+            <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#333' }}>
+              {stat.value}
+            </div>
+            <div style={{ fontSize: '12px', color: '#999' }}>{stat.label}</div>
           </div>
         ))}
       </div>
 
-      {/* Alertes de sécurité */}
-      {suspiciousAccounts.length > 0 && (
-        <Alert type="warning" title="Alerte sécurité" message={`🚨 ${suspiciousAccounts.length} compte${suspiciousAccounts.length > 1 ? 's' : ''} suspect${suspiciousAccounts.length > 1 ? 's' : ''} détecté${suspiciousAccounts.length > 1 ? 's' : ''}. Veuillez vérifier l'onglet Sécurité.`} />
-      )}
+      {/* Sections principales */}
+      <div style={{
+        marginBottom: '24px',
+      }}>
+        <h2 style={{
+          fontSize: '18px',
+          fontWeight: 'bold',
+          margin: '0 0 16px 0',
+          color: '#333',
+        }}>
+          🎯 Sections Principales
+        </h2>
 
-      {/* Onglets */}
-      <div className="dashboard-card">
-        <div className="tabs-nav">
-          {['Aperçu', 'Utilisateurs récents', 'Sécurité', 'Gestion'].map((label, index) => (
-            <button
-              key={index}
-              className={`tab-btn ${tabValue === index ? 'active' : ''}`}
-              onClick={() => setTabValue(index)}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '16px',
+        }}>
+          {dashboardSections.map((section) => (
+            <div
+              key={section.id}
+              onClick={() => navigate(section.path)}
+              style={{
+                cursor: 'pointer',
+                borderRadius: '8px',
+                overflow: 'hidden',
+                backgroundColor: '#fff',
+                border: '1px solid #eee',
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-8px)';
+                e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
             >
-              {label}
-            </button>
+              {/* Barre colorée */}
+              <div style={{
+                height: '6px',
+                backgroundColor: section.color,
+              }} />
+
+              {/* Contenu */}
+              <div style={{
+                padding: '16px',
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '12px',
+              }}>
+                <div style={{
+                  fontSize: '48px',
+                  lineHeight: '1',
+                }}>
+                  {section.icon}
+                </div>
+
+                <h3 style={{
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  color: '#333',
+                  margin: '0',
+                }}>
+                  {section.label}
+                </h3>
+
+                <p style={{
+                  fontSize: '13px',
+                  color: '#666',
+                  margin: '0',
+                  flex: 1,
+                }}>
+                  {section.description}
+                </p>
+
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(section.path);
+                  }}
+                  style={{
+                    padding: '8px 12px',
+                    backgroundColor: section.color,
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                    transition: 'all 0.2s',
+                    alignSelf: 'flex-start',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.opacity = '0.9';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.opacity = '1';
+                  }}
+                >
+                  Accéder →
+                </button>
+              </div>
+            </div>
           ))}
         </div>
+      </div>
 
-        <div className="tab-content">
-          {/* Onglet Aperçu */}
-          {tabValue === 0 && (
-            <div className="overview-grid">
-              <div className="chart-box">
-                <div>📈 Activité utilisateurs (7 derniers jours)</div>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={activityData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="utilisateurs" stroke="#667eea" strokeWidth={2} />
-                    <Line type="monotone" dataKey="annonces" stroke="#764ba2" strokeWidth={2} />
-                    <Line type="monotone" dataKey="offres" stroke="#f093fb" strokeWidth={2} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
+      {/* Actions rapides */}
+      <div style={{
+        marginBottom: '24px',
+      }}>
+        <h2 style={{
+          fontSize: '18px',
+          fontWeight: 'bold',
+          margin: '0 0 16px 0',
+          color: '#333',
+        }}>
+          ⚡ Actions rapides
+        </h2>
 
-              <div className="chart-box">
-                <div>📊 Distribution des rôles</div>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={roleDistribution}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, value }) => `${name}: ${value}`}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {roleDistribution.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
+        <div style={{
+          display: 'flex',
+          gap: '12px',
+          flexWrap: 'wrap',
+        }}>
+          <button
+            onClick={() => navigate('/admin/users')}
+            style={{
+              padding: '10px 16px',
+              backgroundColor: '#f0f0f0',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: 'bold',
+              color: '#333',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#e0e0e0';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#f0f0f0';
+            }}
+          >
+            👥 Gérer les utilisateurs
+          </button>
 
-              <div className="metrics-box">
-                <div>🎯 Métriques clés</div>
-                <div className="metrics-grid">
-                  <div className="metric-item metric-primary">
-                    <div className="metric-label">Taux de croissance</div>
-                    <div className="metric-value">+12.5%</div>
-                  </div>
-                  <div className="metric-item metric-success">
-                    <div className="metric-label">Utilisateurs actifs</div>
-                    <div className="metric-value">856</div>
-                  </div>
-                  <div className="metric-item metric-warning">
-                    <div className="metric-label">Annonces en attente</div>
-                    <div className="metric-value">23</div>
-                  </div>
-                  <div className="metric-item metric-error">
-                    <div className="metric-label">Incidents signalés</div>
-                    <div className="metric-value">5</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+          <button
+            onClick={() => navigate('/admin/listings/approval')}
+            style={{
+              padding: '10px 16px',
+              backgroundColor: '#f0f0f0',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: 'bold',
+              color: '#333',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#e0e0e0';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#f0f0f0';
+            }}
+          >
+            ✅ Approuver les annonces
+          </button>
 
-          {/* Onglet Utilisateurs récents */}
-          {tabValue === 1 && (
-            <div className="users-section">
-              <div>👥 Nouveaux utilisateurs</div>
-              <div className="divider"></div>
-              <div className="users-list">
-                {recentUsers.map((u) => (
-                  <div key={u.id} className="user-item">
-                    <div>
-                      <div className="user-name">{u.prenom} {u.nom}</div>
-                      <div className="user-meta">{u.email} • {new Date(u.date).toLocaleDateString('fr-FR')}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <Button variant="secondary" className="view-all-btn">
-                Voir tous les utilisateurs
-              </Button>
-            </div>
-          )}
-
-          {/* Onglet Sécurité */}
-          {tabValue === 2 && (
-            <div className="security-section">
-              <div>🛡️ Comptes suspects</div>
-              <div className="divider"></div>
-              {suspiciousAccounts.length === 0 ? (
-                <Alert type="success" title="Aucun problème" message="✅ Aucun compte suspect détecté" />
-              ) : (
-                <div className="suspicious-list">
-                  {suspiciousAccounts.map((account) => (
-                    <div key={account.id} className="suspicious-item">
-                      <div className="suspicious-header">
-                        <div className="suspicious-email">{account.email}</div>
-                        <div className={`severity-badge severity-${account.severity}`}>
-                          {account.severity === 'high' ? 'Critique' : 'Moyen'}
-                        </div>
-                      </div>
-                      <div className="suspicious-reason">{account.raison}</div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Onglet Gestion */}
-          {tabValue === 3 && (
-            <div className="management-grid">
-              <Button variant="primary" className="mgmt-btn" onClick={() => navigate('/admin/listings/approval')}>
-                ✅ Approuver les annonces
-              </Button>
-              <Button variant="primary" className="mgmt-btn" onClick={() => navigate('/admin/users')}>
-                👥 Gérer les utilisateurs
-              </Button>
-              <Button variant="primary" className="mgmt-btn" onClick={() => navigate('/admin/moderation')}>
-                🛡️ Modérer les annonces
-              </Button>
-              <Button variant="secondary" className="mgmt-btn">
-                📊 Rapport mensuel
-              </Button>
-              <Button variant="secondary" className="mgmt-btn">
-                ⚙️ Paramètres système
-              </Button>
-              <Button variant="secondary" className="mgmt-btn">
-                📧 Gestion des emails
-              </Button>
-              <Button variant="secondary" className="mgmt-btn">
-                🔑 Clés API
-              </Button>
-            </div>
-          )}
+          <button
+            onClick={() => navigate('/admin/settings')}
+            style={{
+              padding: '10px 16px',
+              backgroundColor: '#f0f0f0',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: 'bold',
+              color: '#333',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#e0e0e0';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#f0f0f0';
+            }}
+          >
+            ⚙️ Paramètres
+          </button>
         </div>
       </div>
-      </FormContainer>
-    </>
+    </div>
   );
 };
 

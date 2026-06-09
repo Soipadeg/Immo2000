@@ -8,6 +8,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useSessionTimeout } from '../hooks/useSessionTimeout';
 import SessionTimeoutDialog from './SessionTimeoutDialog';
 import DevModeWaitingWrapper from './DevModeWaitingWrapper';
+import AdminHealthMonitor from './AdminHealthMonitor';
 import '../styles/AdminLayout.css';
 
 const AdminLayout = () => {
@@ -18,12 +19,12 @@ const AdminLayout = () => {
 
   const menuItems = [
     { label: 'Accueil', path: '/admin', icon: '🏠' },
-    { label: 'Dashboard', path: '/admin/dashboard', icon: '📊' },
     { label: 'Utilisateurs', path: '/admin/users', icon: '👥' },
     { label: 'Annonces', path: '/admin/listings', icon: '🏘️' },
     { label: 'Approbation', path: '/admin/listings/approval', icon: '✅' },
     { label: 'Transactions', path: '/admin/transactions', icon: '💳' },
     { label: 'Modération', path: '/admin/moderation', icon: '🛡️' },
+    { label: 'Notifications', path: '/admin/notifications', icon: '📢' },
     { label: 'Audit Logs', path: '/admin/audit', icon: '📋' },
     { label: 'Sécurité', path: '/admin/security', icon: '🔒' },
     { label: 'Paramètres', path: '/admin/settings', icon: '⚙️' },
@@ -78,6 +79,8 @@ const AdminLayout = () => {
               </li>
             ))}
           </ul>
+          {/* Health Monitor */}
+          <AdminHealthMonitor />
         </nav>
 
         {/* Main Content Area */}

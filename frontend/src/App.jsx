@@ -56,6 +56,7 @@ const AdminSettingsPage = React.lazy(() => import('./pages/AdminSettingsPage'));
 const AdminAnalyticsPage = React.lazy(() => import('./pages/AdminAnalyticsPage'));
 const AdminAuditPage = React.lazy(() => import('./pages/AdminAuditPage'));
 const AdminSecurityPage = React.lazy(() => import('./pages/AdminSecurityPage'));
+const AdminNotificationsPage = React.lazy(() => import('./pages/AdminNotificationsPage'));
 const DevAccessPage = React.lazy(() => import('./pages/DevAccessPage'));
 const DevTransitionPage = React.lazy(() => import('./pages/DevTransitionPage'));
 const DashboardRedirectPage = React.lazy(() => import('./pages/DashboardRedirectPage'));
@@ -247,6 +248,7 @@ function App() {
               <Route path="dashboard" element={<AdminDashboardPage />} />
               <Route path="users" element={<AdminUsersPageNew />} />
               <Route path="moderation" element={<ModerationPage />} />
+              <Route path="notifications" element={<AdminNotificationsPage />} />
               <Route path="listings" element={<AdminListingsPage />} />
               <Route path="listings/approval" element={<AdminListingsApprovalPage />} />
               <Route path="transactions" element={<AdminTransactionsPage />} />

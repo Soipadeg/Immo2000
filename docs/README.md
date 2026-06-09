@@ -1,115 +1,124 @@
-# 📚 Documentation Index
+# 📚 Immo2000 Documentation
 
-## Quick Navigation
-
-### 🚀 Getting Started
-- **[README.md](../README.md)** - Project overview & setup instructions
-- **[DEV_MODE.md](DEV_MODE.md)** - Development mode configuration
-
-### 📊 Project Status
-- **[PROJECT_STATUS_COMPLETE.md](phases/PROJECT_STATUS_COMPLETE.md)** - Full project status & architecture overview
-- **[STATUS.md](STATUS.md)** - Current development status
-
-### 📁 Project Phases
-All phase documentation is organized in [`phases/`](phases/):
-
-| Phase | Status | Files |
-|-------|--------|-------|
-| **1-6 Complete** | ✅ | [Complete summary](phases/PROJECT_PHASES_1-6_COMPLETE.md) |
-| **Phase 2** | ✅ | [PHASE2_IMPLEMENTATION.md](phases/PHASE2_IMPLEMENTATION.md) |
-| **Phase 5** | ✅ | [PHASE_5_COMPLETE.md](phases/PHASE_5_COMPLETE.md), [Plan](phases/PHASE_5_PLAN.md) |
-| **Phase 6** | ✅ | [PHASE_6_PLAN.md](phases/PHASE_6_PLAN.md) |
-| **Phase 7** | ✅ | [Implementation](phases/PHASE_7_IMPLEMENTATION.md), [Quick Start](phases/PHASE_7_QUICKSTART.md), [Index](phases/PHASE_7_INDEX.md), [Summary](phases/PHASE_7_FINAL_SUMMARY.md) |
-
-👉 **See [phases/](phases/) for all phase documentation**
-
-### 🏗️ Architecture & Design
-- **[architecture/](architecture/)** - System architecture docs
-- **[advanced/](advanced/)** - Advanced features documentation
-
-### 🔒 Security & Authentication
-- **[auth/](auth/)** - Authentication & authorization docs
-- **[NOTAIRE_ENCRYPTION_RGPD.md](NOTAIRE_ENCRYPTION_RGPD.md)** - RGPD compliance & encryption
-
-### 🎯 Specific Features
-- **[CHATBOT_INTEGRATION.md](CHATBOT_INTEGRATION.md)** - Chatbot setup
-- **[IMAGES_OPTIMIZATION.md](IMAGES_OPTIMIZATION.md)** - Image optimization
-- **[NOTAIRE_SYSTEM.md](NOTAIRE_SYSTEM.md)** - Notaire system documentation
-- **[OAuth_Configuration.md](OAuth_Configuration.md)** - OAuth setup
-
-### 🔄 Integration & Changes
-- **[CHANGES.md](CHANGES.md)** - Recent changes & updates
-- **[FRONTEND_OFFRES_INTEGRATION.md](FRONTEND_OFFRES_INTEGRATION.md)** - Frontend integration docs
-- **[TUNNEL_CHANGES.md](TUNNEL_CHANGES.md)** - Tunnel configuration changes
-
-### 📂 Directory Structure
-```
-docs/
-├── README.md (this file)
-├── phases/                    # All phase documentation
-│   ├── PHASE2_IMPLEMENTATION.md
-│   ├── PHASE_5_COMPLETE.md
-│   ├── PHASE_5_PLAN.md
-│   ├── PHASE_6_PLAN.md
-│   ├── PHASE_7_IMPLEMENTATION.md
-│   ├── PHASE_7_QUICKSTART.md
-│   ├── PHASE_7_INDEX.md
-│   ├── PHASE_7_FINAL_SUMMARY.md
-│   ├── PHASE_7_PLAN.md
-│   ├── PROJECT_PHASES_1-5_COMPLETE.md
-│   ├── PROJECT_PHASES_1-6_COMPLETE.md
-│   ├── PROJECT_COMPLETE.md
-│   └── IMPLEMENTATION_*.md
-├── architecture/              # System architecture
-├── auth/                      # Authentication docs
-├── advanced/                  # Advanced features
-├── deploy/                    # Deployment guides
-├── setup/                     # Setup instructions
-├── guides/                    # How-to guides
-├── reference/                 # API & reference docs
-├── legal/                     # Legal & compliance
-├── outils/                    # Tools documentation
-├── faq/                       # Frequently asked questions
-└── [other feature folders]
-```
+**Version**: 2.0.0 | **Last Updated**: 2026-06-09 | **Status**: ✅ PRODUCTION READY
 
 ---
 
-## 🎯 By Role
+## 📖 Documentation Structure
 
-### **Frontend Developers**
-1. Start with [../README.md](../README.md)
-2. Read [architecture/](architecture/)
-3. Check [FRONTEND_OFFRES_INTEGRATION.md](FRONTEND_OFFRES_INTEGRATION.md)
-4. Phase docs in [phases/](phases/)
+This documentation is organized thematically for easy navigation:
 
-### **Backend Developers**
-1. Start with [../README.md](../README.md)
-2. Read [auth/](auth/) & [NOTAIRE_SYSTEM.md](NOTAIRE_SYSTEM.md)
-3. Check [architecture/](architecture/)
-4. Phase docs in [phases/](phases/)
+### 🏗️ Core Documentation
 
-### **DevOps Engineers**
-1. [deploy/](deploy/) - Deployment guides
-2. [setup/](setup/) - Infrastructure setup
-3. Phase docs in [phases/](phases/)
+| Category | File | Description |
+|----------|------|-------------|
+| **Architecture** | [ARCHITECTURE.md](./ARCHITECTURE.md) | System design, patterns, and data flows |
+| **API Reference** | [API/REFERENCE.md](./API/REFERENCE.md) | Complete API documentation (Flask + FastAPI) |
+| **Deployment** | [DEPLOYMENT.md](./DEPLOYMENT.md) | Deployment guides (local, Railway, production) |
+| **Security** | [SECURITY.md](./SECURITY.md) | Authentication, authorization, GDPR compliance |
+| **Ports Configuration** | [DEPLOYMENT.md#infrastructure--ports](./DEPLOYMENT.md#infrastructure--ports) | All ports used by services |
 
-### **Product Managers**
-1. [PROJECT_STATUS_COMPLETE.md](phases/PROJECT_STATUS_COMPLETE.md) - Full overview
-2. [phases/](phases/) - What's been done
-3. [faq/](faq/) - Common questions
+### 📜 Domain-Specific Documentation
+
+| Domain | Location | Description |
+|--------|----------|-------------|
+| **Notaire System** | [NOTAIRE/README.md](./NOTAIRE/README.md) | Partner notary integration, encryption, RGPD |
+| **Legal Documents** | [LEGAL/](./LEGAL/) | Terms of service, privacy policy |
+| **User Guides** | [GUIDES/](./GUIDES/) | Buying, selling, and usage guides |
+| **Core Models** | [CORE/](./CORE/) | Annonces, Biens, Visites, Auth, Feedback |
+| **Models Reference** | [MODELES/](./MODELES/) | Data models and schemas |
+
+### 📅 Project Phases
+
+| Phase | File | Description |
+|-------|------|-------------|
+| **Phase 2** | [PHASES/PHASE2.md](./PHASES/PHASE2.md) | Initial setup and dependencies cleanup |
+| **Phase 3** | [PHASES/PHASE3.md](./PHASES/PHASE3.md) | Notaire system implementation |
+| **Phase 4** | [PHASES/PHASE4.md](./PHASES/PHASE4.md) | Security implementation (S5, S6) |
+| **Phase 5** | [PHASES/PHASE5.md](./PHASES/PHASE5.md) | Optimizations (M1-M8) |
+| **Phase 6** | [PHASES/PHASE6.md](./PHASES/PHASE6.md) | FastAPI migration, complete deployment |
+| **Phase 7** | [PHASES/PHASE7.md](./PHASES/PHASE7.md) | Scheduler, email integration |
+| **Phase 8** | [PHASES/PHASE8.md](./PHASES/PHASE8.md) | Performance and analytics |
+| **Phase 9** | [PHASES/PHASE9.md](./PHASES/PHASE9.md) | Final production readiness |
+
+### 🚀 Quick Start Guides
+
+| Guide | Location | Description |
+|-------|----------|-------------|
+| **Launch Guide** | [START/LAUNCH_GUIDE.md](./START/LAUNCH_GUIDE.md) | Get the project running quickly |
+| **Integration Guide** | [START/INTEGRATION_GUIDE.md](./START/INTEGRATION_GUIDE.md) | Integrate matching and simulator |
+| **Chatbot Quickstart** | [START/CHATBOT_QUICKSTART.md](./START/CHATBOT_QUICKSTART.md) | Chatbot integration |
+| **FAQ** | [START/FAQ_QUICKSTART.md](./START/FAQ_QUICKSTART.md) | Frequently asked questions |
+| **Navigation** | [START/NAVIGATION.md](./START/NAVIGATION.md) | App navigation guide |
+
+### 📊 Additional Resources
+
+| Resource | Location | Description |
+|----------|----------|-------------|
+| **Reference Materials** | [REFERENCE/](./REFERENCE/) | Architecture refs, audit reports, algorithms |
+| **Announcements System** | [ANNONCES/](./ANNONCES/) | Annonce matching and management |
+| **Authentication** | [AUTH/](./AUTH/) | JWT, 2FA, rate limiting guides |
+| **Deployment Configs** | [DEPLOY/](./DEPLOY/) | Specific deployment configurations |
 
 ---
 
-## 🚀 Quick Links
+## 🎯 Quick Navigation
 
-- 📖 **Setup**: [setup/](setup/)
-- 🔧 **Development**: [DEV_MODE.md](DEV_MODE.md)
-- 📊 **Status**: [STATUS.md](STATUS.md)
-- 🏗️ **Architecture**: [architecture/](architecture/)
-- 🔒 **Security**: [auth/](auth/)
-- 📚 **Phases**: [phases/](phases/)
+### For Developers
+1. **First time?** → [DEPLOYMENT.md#quick-start](./DEPLOYMENT.md#quick-start)
+2. **Need API docs?** → [API/REFERENCE.md](./API/REFERENCE.md)
+3. **Understanding architecture?** → [ARCHITECTURE.md](./ARCHITECTURE.md)
+4. **Working on authentication?** → [SECURITY.md#authentication--authorization](./SECURITY.md#authentication--authorization)
+
+### For Notaire Partners
+1. **Setup guide** → [NOTAIRE/README.md#quick-start](./NOTAIRE/README.md#quick-start)
+2. **Profile configuration** → [NOTAIRE/README.md#profile-setup](./NOTAIRE/README.md#profile-setup)
+3. **Document encryption** → [NOTAIRE/README.md#document-encryption--rgpd-compliance](./NOTAIRE/README.md#document-encryption--rgpd-compliance)
+
+### For DevOps
+1. **Deploy to Railway** → [DEPLOYMENT.md#deploy-to-railway-recommended-simplest](./DEPLOYMENT.md#deploy-to-railway-recommended-simplest)
+2. **Production checklist** → [DEPLOYMENT.md#production-checklist](./DEPLOYMENT.md#production-checklist)
+3. **Ports configuration** → [DEPLOYMENT.md#infrastructure--ports](./DEPLOYMENT.md#infrastructure--ports)
 
 ---
 
-**Last Updated**: 2024 | All Phases Complete ✅
+## 📝 Changelog & Status
+
+| Version | Date | Description |
+|---------|------|-------------|
+| 2.0.0 | 2026-06-09 | Complete documentation restructuring and consolidation |
+| 1.0.0 | 2024-06-09 | Initial documentation |
+
+**Current Status**: All documentation has been consolidated into thematic files. Redundant files have been archived.
+
+---
+
+## 🗂️ Archived Documentation
+
+Old and redundant documentation files have been moved to:
+- [archived/](./archived/) - Historical documents and old versions
+- [_archives/](./_archives/) - Duplicate files and legacy content
+
+> ⚠️ **Note**: Archived files are kept for reference but may contain outdated information. Always refer to the consolidated documentation in the main structure first.
+
+---
+
+## 🔍 Search Tips
+
+1. **Use your IDE's search**: `Ctrl+Shift+F` (VS Code) to search across all documentation
+2. **Table of Contents**: Each main file has a comprehensive TOC at the top
+3. **Cross-references**: Files link to each other for related topics
+
+---
+
+## 🤝 Contributing to Documentation
+
+1. **Before adding new files**: Check if the content fits in existing consolidated files
+2. **Update the README**: Add new files to the appropriate section above
+3. **Remove redundancy**: If adding content, check for and remove duplicates
+4. **Keep it organized**: Use the thematic structure, not project phases
+
+---
+
+**Maintained by**: Immo2000 Team  
+**Contact**: See project root for contact information
