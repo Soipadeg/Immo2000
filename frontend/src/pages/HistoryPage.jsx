@@ -54,7 +54,7 @@ const HistoryPage = () => {
         </div>
       </div>
 
-      {/* Conteneur des onglets */}}
+      {/* Conteneur des onglets */}
       <Card className="tabs-card">
         <div className="tabs-nav">
           {[

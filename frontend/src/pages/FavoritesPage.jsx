@@ -82,7 +82,7 @@ const FavoritesPage = () => {
         </div>
       </div>
 
-      {/* Alertes */}}
+      {/* Alertes */}
       {error && <Alert type="error" title="Erreur" message={error} />}
       {success && <Alert type="success" title="Succès" message={success} />}
 

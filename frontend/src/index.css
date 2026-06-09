@@ -2,6 +2,9 @@
  * Style global de l'application
  */
 
+/* Import light mode override - force all colors to light mode */
+@import url('./styles/light-mode-override.css');
+
 /* Force light mode - disable dark mode completely */
 html, body, :root {
   color-scheme: light !important;
@@ -79,6 +82,3 @@ input, textarea, select {
 ::-webkit-scrollbar-thumb:hover {
   background: #888;
 }
-
-/* Import light mode override - force all colors to light mode */
-@import url('./styles/light-mode-override.css');
