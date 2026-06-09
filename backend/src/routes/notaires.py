@@ -60,8 +60,11 @@ def notaire_required(f):
             # Passer notaire_id au endpoint
             kwargs['notaire_obj'] = notaire
             return f(*args, **kwargs)
+        except ValueError as e:
+            logger.error(f"Erreur notaire_required (validation): {str(e)}", exc_info=True)
+            return jsonify({'erreur': 'Erreur authentification'}), 401
         except Exception as e:
-            logger.error(f"Erreur notaire_required: {str(e)}")
+            logger.error(f"Erreur notaire_required: {str(e)}", exc_info=True)
             return jsonify({'erreur': 'Erreur authentification'}), 401
 
     return decorated_function
@@ -84,6 +87,8 @@ def create_notaire(utilisateur_id, **kwargs):
     data = request.get_json()
     try:
         validated = NotaireCreate(**data)
+    except ValueError as e:
+        raise ValidationError(f"Validation error: {str(e)}")
     except Exception as e:
         raise ValidationError(f"Validation error: {str(e)}")
 

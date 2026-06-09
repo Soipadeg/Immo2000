@@ -219,6 +219,9 @@ def monitor_function(func):
         start = time.time()
         try:
             return func(*args, **kwargs)
+        except ValueError as e:
+            record_exception(type(e).__name__, getattr(func, '__name__', 'unknown'))
+            raise
         except Exception as e:
             record_exception(type(e).__name__, getattr(func, '__name__', 'unknown'))
             raise
@@ -274,6 +277,9 @@ def init_prometheus(app):
         print(f"✅ Prometheus initialized - metrics available at /metrics")
         return True
 
+    except ValueError as e:
+        print(f"❌ Failed to initialize Prometheus (validation): {e}")
+        return False
     except Exception as e:
         print(f"❌ Failed to initialize Prometheus: {e}")
         return False

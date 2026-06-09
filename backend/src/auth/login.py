@@ -113,8 +113,11 @@ def login():
             200,
         )
 
+    except ValueError as e:
+        current_app.logger.error(f"Login error (validation): {str(e)}", exc_info=True)
+        return jsonify({"error": "Validation error"}), 400
     except Exception as e:
-        current_app.logger.error(f"Login error: {str(e)}")
+        current_app.logger.error(f"Login error: {str(e)}", exc_info=True)
         return jsonify({"error": "Internal server error"}), 500
 
 
@@ -192,9 +195,13 @@ def verify_email():
             200,
         )
 
+    except ValueError as e:
+        db.session.rollback()
+        current_app.logger.error(f"Email verification error (validation): {str(e)}", exc_info=True)
+        return jsonify({"error": "Validation error"}), 400
     except Exception as e:
         db.session.rollback()
-        current_app.logger.error(f"Email verification error: {str(e)}")
+        current_app.logger.error(f"Email verification error: {str(e)}", exc_info=True)
         return jsonify({"error": "Internal server error"}), 500
 
 
@@ -286,9 +293,13 @@ def verify_2fa():
             200,
         )
 
+    except ValueError as e:
+        db.session.rollback()
+        current_app.logger.error(f"Verify 2FA error (code invalide): {str(e)}", exc_info=True)
+        return jsonify({"error": "Invalid 2FA code"}), 401
     except Exception as e:
         db.session.rollback()
-        current_app.logger.error(f"Verify 2FA error: {str(e)}")
+        current_app.logger.error(f"Verify 2FA error: {str(e)}", exc_info=True)
         return jsonify({"error": "Internal server error"}), 500
 
 
@@ -349,8 +360,10 @@ def resend_2fa_code():
                 corps_html=email_html
             )
             current_app.logger.info(f"✅ Code 2FA envoyé à {user.email}")
+        except ValueError as e:
+            current_app.logger.error(f"⚠️ Erreur envoi code 2FA (email invalide): {str(e)}", exc_info=True)
         except Exception as e:
-            current_app.logger.error(f"⚠️ Erreur envoi code 2FA: {str(e)}")
+            current_app.logger.error(f"⚠️ Erreur envoi code 2FA: {str(e)}", exc_info=True)
 
         return (
             jsonify(
@@ -361,7 +374,11 @@ def resend_2fa_code():
             200,
         )
 
+    except ValueError as e:
+        db.session.rollback()
+        current_app.logger.error(f"Request 2FA error (validation): {str(e)}", exc_info=True)
+        return jsonify({"error": "Validation error"}), 400
     except Exception as e:
         db.session.rollback()
-        current_app.logger.error(f"Resend 2FA error: {str(e)}")
+        current_app.logger.error(f"Resend 2FA error: {str(e)}", exc_info=True)
         return jsonify({"error": "Internal server error"}), 500

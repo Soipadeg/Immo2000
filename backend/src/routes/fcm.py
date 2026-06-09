@@ -42,9 +42,13 @@ def register_fcm_token():
         logger.info(f"Token FCM enregistré pour l'utilisateur {current_user.id}")
         return jsonify({'success': True, 'message': 'Token enregistré'}), 200
 
+    except ValueError as e:
+        db.session.rollback()
+        logger.error(f"Erreur enregistrement token (validation): {str(e)}", exc_info=True)
+        return jsonify({'error': 'Erreur lors de l\'enregistrement'}), 500
     except Exception as e:
         db.session.rollback()
-        logger.error(f"Erreur enregistrement token: {str(e)}")
+        logger.error(f"Erreur enregistrement token: {str(e)}", exc_info=True)
         return jsonify({'error': 'Erreur lors de l\'enregistrement'}), 500
 
 
@@ -59,9 +63,13 @@ def unregister_fcm_token():
         logger.info(f"Token FCM supprimé pour l'utilisateur {current_user.id}")
         return jsonify({'success': True}), 200
 
+    except AttributeError as e:
+        db.session.rollback()
+        logger.error(f"Erreur désinscription (attribut): {str(e)}", exc_info=True)
+        return jsonify({'error': 'Erreur lors de la désinscription'}), 500
     except Exception as e:
         db.session.rollback()
-        logger.error(f"Erreur désinscription: {str(e)}")
+        logger.error(f"Erreur désinscription: {str(e)}", exc_info=True)
         return jsonify({'error': 'Erreur lors de la désinscription'}), 500
 
 
@@ -84,8 +92,11 @@ def send_test_notification():
         logger.info(f"Notification de test envoyée à {current_user.id}")
         return jsonify({'success': True, 'message': 'Notification de test envoyée'}), 200
 
+    except ValueError as e:
+        logger.error(f"Erreur envoi notification test (validation): {str(e)}", exc_info=True)
+        return jsonify({'error': 'Erreur lors de l\'envoi'}), 500
     except Exception as e:
-        logger.error(f"Erreur envoi notification test: {str(e)}")
+        logger.error(f"Erreur envoi notification test: {str(e)}", exc_info=True)
         return jsonify({'error': 'Erreur lors de l\'envoi'}), 500
 
 
@@ -139,8 +150,11 @@ def admin_send_to_users():
         logger.info(f"Notification admin envoyée à {len(tokens)} utilisateurs")
         return jsonify(result), 200
 
+    except ValueError as e:
+        logger.error(f"Erreur envoi admin (validation): {str(e)}", exc_info=True)
+        return jsonify({'error': 'Erreur lors de l\'envoi'}), 500
     except Exception as e:
-        logger.error(f"Erreur envoi admin: {str(e)}")
+        logger.error(f"Erreur envoi admin: {str(e)}", exc_info=True)
         return jsonify({'error': 'Erreur lors de l\'envoi'}), 500
 
 
@@ -180,6 +194,9 @@ def admin_send_to_topic():
         logger.info(f"Notification envoyée au topic {topic}")
         return jsonify(result), 200
 
+    except ValueError as e:
+        logger.error(f"Erreur envoi topic (validation): {str(e)}", exc_info=True)
+        return jsonify({'error': 'Erreur'}), 500
     except Exception as e:
-        logger.error(f"Erreur envoi topic: {str(e)}")
+        logger.error(f"Erreur envoi topic: {str(e)}", exc_info=True)
         return jsonify({'error': 'Erreur'}), 500

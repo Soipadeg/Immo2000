@@ -60,8 +60,11 @@ class LoanSimulator:
             elif self.provider == 'melo':
                 return await self._simulate_melo(amount, duration, rate, contribution)
 
+        except ValueError as e:
+            logger.error(f"Erreur simulation prêt (validation): {str(e)}", exc_info=True)
+            return self._fallback_simulation(amount, duration, rate)
         except Exception as e:
-            logger.error(f"Erreur simulation prêt: {str(e)}")
+            logger.error(f"Erreur simulation prêt: {str(e)}", exc_info=True)
             return self._fallback_simulation(amount, duration, rate)
 
     async def _simulate_pretto(
@@ -274,8 +277,11 @@ class LoanSimulator:
                 '30_years': 3.8,
             }
 
+        except httpx.HTTPError as e:
+            logger.error(f"Erreur récupération taux (HTTP): {str(e)}", exc_info=True)
+            return {}
         except Exception as e:
-            logger.error(f"Erreur récupération taux: {str(e)}")
+            logger.error(f"Erreur récupération taux: {str(e)}", exc_info=True)
             return {}
 
 

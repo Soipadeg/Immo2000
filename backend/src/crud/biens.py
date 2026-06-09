@@ -98,9 +98,13 @@ def create_bien(
         logger.info(f"Bien créé: {bien.bien_id} par utilisateur {utilisateur_id}")
         return bien
 
+    except ValueError as e:
+        db.session.rollback()
+        logger.error(f"Erreur création bien (validation): {str(e)}", exc_info=True)
+        raise
     except Exception as e:
         db.session.rollback()
-        logger.error(f"Erreur création bien: {str(e)}")
+        logger.error(f"Erreur création bien: {str(e)}", exc_info=True)
         raise
 
 
@@ -222,9 +226,17 @@ def update_bien(bien_id: int, utilisateur_id: int, **kwargs) -> Optional[Bien]:
         logger.info(f"Bien {bien_id} mis à jour par utilisateur {utilisateur_id}")
         return bien
 
+    except PermissionError as e:
+        db.session.rollback()
+        logger.error(f"Erreur mise à jour bien (autorisation): {str(e)}", exc_info=True)
+        raise
+    except ValueError as e:
+        db.session.rollback()
+        logger.error(f"Erreur mise à jour bien (validation): {str(e)}", exc_info=True)
+        raise
     except Exception as e:
         db.session.rollback()
-        logger.error(f"Erreur mise à jour bien: {str(e)}")
+        logger.error(f"Erreur mise à jour bien: {str(e)}", exc_info=True)
         raise
 
 
@@ -260,9 +272,13 @@ def delete_bien(bien_id: int, utilisateur_id: int) -> bool:
         logger.info(f"Bien {bien_id} supprimé par utilisateur {utilisateur_id}")
         return True
 
+    except PermissionError as e:
+        db.session.rollback()
+        logger.error(f"Erreur suppression bien (autorisation): {str(e)}", exc_info=True)
+        raise
     except Exception as e:
         db.session.rollback()
-        logger.error(f"Erreur suppression bien: {str(e)}")
+        logger.error(f"Erreur suppression bien: {str(e)}", exc_info=True)
         raise
 
 
@@ -293,8 +309,16 @@ def get_bien_stats() -> Dict[str, Any]:
             "surface_moyenne": float(avg_surface),
         }
 
+    except ValueError as e:
+        logger.error(f"Erreur calcul stats (validation): {str(e)}", exc_info=True)
+        return {
+            "total_biens": 0,
+            "total_utilisateurs_vendeurs": 0,
+            "distribution_types": {},
+            "surface_moyenne": 0,
+        }
     except Exception as e:
-        logger.error(f"Erreur calcul stats: {str(e)}")
+        logger.error(f"Erreur calcul stats: {str(e)}", exc_info=True)
         return {
             "total_biens": 0,
             "total_utilisateurs_vendeurs": 0,

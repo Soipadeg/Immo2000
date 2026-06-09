@@ -83,15 +83,18 @@ class EmailService:
             return True
 
         except smtplib.SMTPAuthenticationError as e:
-            logger.error(f"❌ Erreur authentification SMTP: {e}")
+            logger.error(f"❌ Erreur authentification SMTP: {e}", exc_info=True)
             raise EmailServiceError(f"Authentification SMTP échouée: {e}")
 
         except smtplib.SMTPException as e:
-            logger.error(f"❌ Erreur SMTP: {e}")
+            logger.error(f"❌ Erreur SMTP: {e}", exc_info=True)
             raise EmailServiceError(f"Erreur SMTP: {e}")
 
+        except ValueError as e:
+            logger.error(f"❌ Erreur envoi email à {destinataire} (validation): {e}", exc_info=True)
+            raise EmailServiceError(f"Erreur envoi email: {e}")
         except Exception as e:
-            logger.error(f"❌ Erreur envoi email à {destinataire}: {e}")
+            logger.error(f"❌ Erreur envoi email à {destinataire}: {e}", exc_info=True)
             raise EmailServiceError(f"Erreur envoi email: {e}")
 
     @staticmethod

@@ -113,13 +113,23 @@ def log_admin_action(action: str, resource_type: str, resource_id=None,
                 )
                 db.session.add(audit_log)
                 db.session.commit()
+            except ValueError as e:
+                db.session.rollback()
+                audit_logger.error(
+                    'Failed to log admin action (validation)',
+                    action=action,
+                    admin_id=admin_id,
+                    error=str(e),
+                    exc_info=True
+                )
             except Exception as e:
                 db.session.rollback()
                 audit_logger.error(
                     'Failed to log admin action',
                     action=action,
                     admin_id=admin_id,
-                    error=str(e)
+                    error=str(e),
+                    exc_info=True
                 )
 
             # Log structuré

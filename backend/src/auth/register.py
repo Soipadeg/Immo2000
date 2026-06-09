@@ -230,8 +230,10 @@ def register():
                                 ordre=len(annonce.photos_list)  # Ajouter à la suite
                             )
                             db.session.add(photo)
+                        except IOError as e:
+                            current_app.logger.error(f"Erreur déplacement photo (fichier introuvable): {e}", exc_info=True)
                         except Exception as e:
-                            current_app.logger.error(f"Erreur déplacement photo: {e}")
+                            current_app.logger.error(f"Erreur déplacement photo: {e}", exc_info=True)
 
                 db.session.commit()
 
@@ -245,8 +247,10 @@ def register():
                 corps_html=email_html
             )
             current_app.logger.info(f"✅ Email de vérification envoyé à {email}")
+        except ValueError as e:
+            current_app.logger.error(f"⚠️ Erreur envoi email vérification (email invalide): {str(e)}", exc_info=True)
         except Exception as e:
-            current_app.logger.error(f"⚠️ Erreur envoi email vérification: {str(e)}")
+            current_app.logger.error(f"⚠️ Erreur envoi email vérification: {str(e)}", exc_info=True)
             # Ne pas bloquer l'inscription si l'email échoue
 
         return (
@@ -266,9 +270,13 @@ def register():
     except IntegrityError:
         db.session.rollback()
         return jsonify({"error": "Email already exists"}), 400
+    except ValueError as e:
+        db.session.rollback()
+        current_app.logger.error(f"Register error (validation): {str(e)}", exc_info=True)
+        return jsonify({"error": "Validation error"}), 400
     except Exception as e:
         db.session.rollback()
-        current_app.logger.error(f"Register error: {str(e)}")
+        current_app.logger.error(f"Register error: {str(e)}", exc_info=True)
         return jsonify({"error": "Internal server error"}), 500
 
 
@@ -358,7 +366,11 @@ def update_buyer_profile(current_user):
             200,
         )
 
+    except ValueError as e:
+        db.session.rollback()
+        current_app.logger.error(f"Update buyer profile error (validation): {str(e)}", exc_info=True)
+        return jsonify({"error": "Validation error"}), 400
     except Exception as e:
         db.session.rollback()
-        current_app.logger.error(f"Update buyer profile error: {str(e)}")
+        current_app.logger.error(f"Update buyer profile error: {str(e)}", exc_info=True)
         return jsonify({"error": "Internal server error"}), 500

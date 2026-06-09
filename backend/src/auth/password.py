@@ -100,8 +100,10 @@ def forgot_password():
                 corps_html=email_html
             )
             current_app.logger.info(f"✅ Email de réinitialisation envoyé à {email}")
+        except ValueError as e:
+            current_app.logger.error(f"⚠️ Erreur envoi email réinitialisation (email invalide): {str(e)}", exc_info=True)
         except Exception as e:
-            current_app.logger.error(f"⚠️ Erreur envoi email réinitialisation: {str(e)}")
+            current_app.logger.error(f"⚠️ Erreur envoi email réinitialisation: {str(e)}", exc_info=True)
 
         return (
             jsonify(
@@ -112,9 +114,13 @@ def forgot_password():
             200,
         )
 
+    except ValueError as e:
+        db.session.rollback()
+        current_app.logger.error(f"Forgot password error (validation): {str(e)}", exc_info=True)
+        return jsonify({"error": "Validation error"}), 400
     except Exception as e:
         db.session.rollback()
-        current_app.logger.error(f"Forgot password error: {str(e)}")
+        current_app.logger.error(f"Forgot password error: {str(e)}", exc_info=True)
         return jsonify({"error": "Internal server error"}), 500
 
 
@@ -190,8 +196,11 @@ def verify_reset_code():
             200,
         )
 
+    except ValueError as e:
+        current_app.logger.error(f"Verify reset code error (code invalide): {str(e)}", exc_info=True)
+        return jsonify({"error": "Invalid code"}), 400
     except Exception as e:
-        current_app.logger.error(f"Verify reset code error: {str(e)}")
+        current_app.logger.error(f"Verify reset code error: {str(e)}", exc_info=True)
         return jsonify({"error": "Internal server error"}), 500
 
 
@@ -271,9 +280,13 @@ def reset_password():
             200,
         )
 
+    except ValueError as e:
+        db.session.rollback()
+        current_app.logger.error(f"Reset password error (validation): {str(e)}", exc_info=True)
+        return jsonify({"error": "Validation error"}), 400
     except Exception as e:
         db.session.rollback()
-        current_app.logger.error(f"Reset password error: {str(e)}")
+        current_app.logger.error(f"Reset password error: {str(e)}", exc_info=True)
         return jsonify({"error": "Internal server error"}), 500
 
 
@@ -340,9 +353,18 @@ def resend_verification_email():
                 sujet="Vérifiez votre adresse email - Immo2000",
                 corps_html=email_html
             )
+        except ValueError as e:
+            current_app.logger.error(f"⚠️ Erreur envoi email (adresse invalide): {str(e)}", exc_info=True)
         except Exception as e:
-            current_app.logger.error(f"⚠️ Erreur envoi email: {str(e)}")
+            current_app.logger.error(f"⚠️ Erreur envoi email: {str(e)}", exc_info=True)
 
+    except ValueError as e:
+        db.session.rollback()
+        current_app.logger.error(f"Resend verification error (validation): {str(e)}", exc_info=True)
+        return jsonify({"error": "Validation error"}), 400
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Resend verification error: {str(e)}", exc_info=True)
         return (
             jsonify(
                 {
@@ -354,5 +376,5 @@ def resend_verification_email():
 
     except Exception as e:
         db.session.rollback()
-        current_app.logger.error(f"Resend verification error: {str(e)}")
+        current_app.logger.error(f"Resend verification error: {str(e)}", exc_info=True)
         return jsonify({"error": "Internal server error"}), 500

@@ -106,8 +106,11 @@ def refresh():
             200,
         )
 
+    except ValueError as e:
+        current_app.logger.error(f"Refresh error (validation): {str(e)}", exc_info=True)
+        return jsonify({"error": "Internal server error"}), 500
     except Exception as e:
-        current_app.logger.error(f"Refresh error: {str(e)}")
+        current_app.logger.error(f"Refresh error: {str(e)}", exc_info=True)
         return jsonify({"error": "Internal server error"}), 500
 
 
@@ -288,6 +291,9 @@ def validate_captcha():
             ),
             200,
         )
+    except ValueError as e:
+        current_app.logger.error(f"Validate captcha error (validation): {str(e)}", exc_info=True)
+        return jsonify({"error": "Internal server error"}), 500
     except Exception as e:
-        current_app.logger.error(f"Validate captcha error: {str(e)}")
+        current_app.logger.error(f"Validate captcha error: {str(e)}", exc_info=True)
         return jsonify({"error": "Internal server error"}), 500

@@ -59,8 +59,11 @@ def send_email_async(self, to, subject, html_body, text_body=None, attachments=N
         logger.info(f"Email envoyé à {to}")
         return {'status': 'success', 'to': to}
 
+    except ValueError as exc:
+        logger.error(f"Erreur envoi email (paramètres invalides): {str(exc)}", exc_info=True)
+        raise self.retry(exc=exc, countdown=60)
     except Exception as exc:
-        logger.error(f"Erreur envoi email: {str(exc)}")
+        logger.error(f"Erreur envoi email: {str(exc)}", exc_info=True)
         # Retry avec backoff exponentiel
         raise self.retry(exc=exc, countdown=60 * (self.request.retries + 1))
 
@@ -107,8 +110,11 @@ def send_notification_email(user_id, notification_type, data):
 
         return {'status': 'success', 'user_id': user_id}
 
+    except ValueError as exc:
+        logger.error(f"Erreur notification email (utilisateur introuvable): {str(exc)}", exc_info=True)
+        return {'status': 'error', 'message': 'Utilisateur introuvable'}
     except Exception as exc:
-        logger.error(f"Erreur notification email: {str(exc)}")
+        logger.error(f"Erreur notification email: {str(exc)}", exc_info=True)
         return {'status': 'error', 'message': str(exc)}
 
 
@@ -134,8 +140,11 @@ def generate_pdf_async(self, template_name, data, filename=None):
         logger.info(f"PDF généré: {pdf_path}")
         return {'status': 'success', 'pdf_path': pdf_path}
 
+    except ValueError as exc:
+        logger.error(f"Erreur génération PDF (template introuvable): {str(exc)}", exc_info=True)
+        raise self.retry(exc=exc, countdown=10)
     except Exception as exc:
-        logger.error(f"Erreur génération PDF: {str(exc)}")
+        logger.error(f"Erreur génération PDF: {str(exc)}", exc_info=True)
         raise self.retry(exc=exc, countdown=30)
 
 
@@ -184,8 +193,11 @@ def generate_compromis_pdf(self, transaction_id):
         logger.info(f"Compromis généré pour transaction {transaction_id}")
         return {'status': 'success', 'pdf_url': pdf_url}
 
+    except ValueError as exc:
+        logger.error(f"Erreur génération compromis (transaction introuvable): {str(exc)}", exc_info=True)
+        return {'status': 'error', 'message': 'Transaction introuvable'}
     except Exception as exc:
-        logger.error(f"Erreur génération compromis: {str(exc)}")
+        logger.error(f"Erreur génération compromis: {str(exc)}", exc_info=True)
         raise self.retry(exc=exc, countdown=60)
 
 
@@ -219,8 +231,11 @@ def upload_file_async(self, file_path, s3_key, delete_local=True):
         logger.info(f"Fichier uploadé vers S3: {s3_url}")
         return {'status': 'success', 's3_url': s3_url}
 
+    except IOError as exc:
+        logger.error(f"Erreur upload S3 (fichier introuvable): {str(exc)}", exc_info=True)
+        raise self.retry(exc=exc, countdown=10)
     except Exception as exc:
-        logger.error(f"Erreur upload S3: {str(exc)}")
+        logger.error(f"Erreur upload S3: {str(exc)}", exc_info=True)
         raise self.retry(exc=exc, countdown=30)
 
 
@@ -257,8 +272,11 @@ def send_to_docusign_async(self, transaction_id):
         logger.info(f"Transaction {transaction_id} envoyée à DocuSign: {envelope_id}")
         return {'status': 'success', 'envelope_id': envelope_id}
 
+    except ValueError as exc:
+        logger.error(f"Erreur DocuSign (transaction introuvable): {str(exc)}", exc_info=True)
+        return {'status': 'error', 'message': 'Transaction introuvable'}
     except Exception as exc:
-        logger.error(f"Erreur DocuSign: {str(exc)}")
+        logger.error(f"Erreur DocuSign: {str(exc)}", exc_info=True)
         raise self.retry(exc=exc, countdown=60)
 
 
@@ -286,8 +304,11 @@ def cleanup_old_files():
         logger.info(f"Nettoyage: {deleted_count} fichiers anciens supprimés")
         return {'status': 'success', 'deleted_files': deleted_count}
 
+    except OSError as exc:
+        logger.error(f"Erreur nettoyage (dossier introuvable): {str(exc)}", exc_info=True)
+        return {'status': 'error', 'message': 'Dossier temporaire introuvable'}
     except Exception as exc:
-        logger.error(f"Erreur nettoyage: {str(exc)}")
+        logger.error(f"Erreur nettoyage: {str(exc)}", exc_info=True)
         return {'status': 'error', 'message': str(exc)}
 
 
@@ -322,8 +343,11 @@ def send_push_notification_async(user_id, title, body, data=None):
         logger.info(f"Notification push envoyée à {user_id}")
         return {'status': 'success', 'user_id': user_id}
 
+    except ValueError as exc:
+        logger.error(f"Erreur notification push (utilisateur introuvable): {str(exc)}", exc_info=True)
+        return {'status': 'error', 'message': 'Utilisateur introuvable'}
     except Exception as exc:
-        logger.error(f"Erreur notification push: {str(exc)}")
+        logger.error(f"Erreur notification push: {str(exc)}", exc_info=True)
         return {'status': 'error', 'message': str(exc)}
 
 
@@ -339,8 +363,11 @@ def sync_search_index():
         logger.info(f"Index de recherche synchronisé: {count} annonces indexées")
         return {'status': 'success', 'indexed_count': count}
 
+    except ConnectionError as exc:
+        logger.error(f"Erreur synchronisation index (Elasticsearch indisponible): {str(exc)}", exc_info=True)
+        return {'status': 'error', 'message': 'Service de recherche indisponible'}
     except Exception as exc:
-        logger.error(f"Erreur synchronisation index: {str(exc)}")
+        logger.error(f"Erreur synchronisation index: {str(exc)}", exc_info=True)
         return {'status': 'error', 'message': str(exc)}
 
 
@@ -369,6 +396,8 @@ def update_user_activity():
         logger.info(f"Activité utilisateurs mise à jour")
         return {'status': 'success', 'users_updated': len(users)}
 
+    except ValueError as exc:
+        logger.error(f"Erreur mise à jour activité (erreur de calcul): {str(exc)}", exc_info=True)
     except Exception as exc:
-        logger.error(f"Erreur mise à jour activité: {str(exc)}")
+        logger.error(f"Erreur mise à jour activité: {str(exc)}", exc_info=True)
         return {'status': 'error', 'message': str(exc)}

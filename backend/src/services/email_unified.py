@@ -124,13 +124,16 @@ class EmailService:
             return True
 
         except smtplib.SMTPAuthenticationError as e:
-            logger.error(f"❌ Erreur SMTP auth: {e}")
+            logger.error(f"❌ Erreur SMTP auth: {e}", exc_info=True)
             raise EmailError(f"Erreur SMTP: Authentification échouée")
         except smtplib.SMTPException as e:
-            logger.error(f"❌ Erreur SMTP: {e}")
+            logger.error(f"❌ Erreur SMTP: {e}", exc_info=True)
             raise EmailError(f"Erreur SMTP: {str(e)}")
+        except ValueError as e:
+            logger.error(f"❌ Erreur email à {destinataire} (validation): {e}", exc_info=True)
+            raise EmailError(f"Erreur d'envoi d'email: {str(e)}")
         except Exception as e:
-            logger.error(f"❌ Erreur email à {destinataire}: {e}")
+            logger.error(f"❌ Erreur email à {destinataire}: {e}", exc_info=True)
             raise EmailError(f"Erreur d'envoi d'email: {str(e)}")
 
     def send_annonce_published(

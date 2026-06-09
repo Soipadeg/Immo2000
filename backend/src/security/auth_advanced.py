@@ -130,8 +130,11 @@ class IdentityVerification:
                 "verification_id": result.get("id"),
                 "url": result.get("url")
             }
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Yousign verification error (request): {str(e)}", exc_info=True)
+            return {"error": str(e)}
         except Exception as e:
-            logger.error(f"Yousign verification error: {str(e)}")
+            logger.error(f"Yousign verification error: {str(e)}", exc_info=True)
             return {"error": str(e)}
 
     @staticmethod
@@ -173,8 +176,11 @@ class IdentityVerification:
                 "verification_id": result.get("session", {}).get("id"),
                 "url": result.get("session", {}).get("url")
             }
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Veriff verification error (request): {str(e)}", exc_info=True)
+            return {"error": str(e)}
         except Exception as e:
-            logger.error(f"Veriff verification error: {str(e)}")
+            logger.error(f"Veriff verification error: {str(e)}", exc_info=True)
             return {"error": str(e)}
 
     @staticmethod

@@ -58,6 +58,10 @@ def sign_contrat_exclusivite(current_user):
             "has_exclusivity_contract": True
         }), 200
 
+    except ValueError as e:
+        db.session.rollback()
+        print(f"[ERROR] sign_contrat_exclusivite (validation): {e}")
+        return jsonify({"error": str(e)}), 500
     except Exception as e:
         db.session.rollback()
         print(f"[ERROR] sign_contrat_exclusivite: {e}")

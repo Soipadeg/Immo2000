@@ -86,8 +86,11 @@ def google_callback():
             'user': user.to_dict()
         }), 200
 
+    except ValueError as e:
+        current_app.logger.error(f'Google OAuth error (token invalide): {str(e)}', exc_info=True)
+        return jsonify({'error': 'Invalid token'}), 401
     except Exception as e:
-        current_app.logger.error(f'Google OAuth error: {str(e)}')
+        current_app.logger.error(f'Google OAuth error: {str(e)}', exc_info=True)
         return jsonify({'error': 'Authentication failed'}), 500
 
 
@@ -117,8 +120,11 @@ def verify_google_token(id_token: str) -> dict:
             return None
 
         return idinfo
+    except ValueError as e:
+        current_app.logger.error(f'Google token verification error (token invalide): {str(e)}', exc_info=True)
+        return None
     except Exception as e:
-        current_app.logger.error(f'Google token verification error: {str(e)}')
+        current_app.logger.error(f'Google token verification error: {str(e)}', exc_info=True)
         return None
 
 
@@ -192,8 +198,11 @@ def facebook_callback():
             'user': user.to_dict()
         }), 200
 
+    except ValueError as e:
+        current_app.logger.error(f'Facebook OAuth error (token invalide): {str(e)}', exc_info=True)
+        return jsonify({'error': 'Invalid token'}), 401
     except Exception as e:
-        current_app.logger.error(f'Facebook OAuth error: {str(e)}')
+        current_app.logger.error(f'Facebook OAuth error: {str(e)}', exc_info=True)
         return jsonify({'error': 'Authentication failed'}), 500
 
 
@@ -221,8 +230,14 @@ def get_facebook_user_info(access_token: str) -> dict:
             return None
 
         return response.json()
+    except requests.exceptions.RequestException as e:
+        current_app.logger.error(f'Facebook user info error (requête échouée): {str(e)}', exc_info=True)
+        return None
+    except ValueError as e:
+        current_app.logger.error(f'Facebook user info error (JSON invalide): {str(e)}', exc_info=True)
+        return None
     except Exception as e:
-        current_app.logger.error(f'Facebook user info error: {str(e)}')
+        current_app.logger.error(f'Facebook user info error: {str(e)}', exc_info=True)
         return None
 
 
@@ -296,8 +311,11 @@ def apple_callback():
             'user': user.to_dict()
         }), 200
 
+    except ValueError as e:
+        current_app.logger.error(f'Apple OAuth error (token invalide): {str(e)}', exc_info=True)
+        return jsonify({'error': 'Invalid token'}), 401
     except Exception as e:
-        current_app.logger.error(f'Apple OAuth error: {str(e)}')
+        current_app.logger.error(f'Apple OAuth error: {str(e)}', exc_info=True)
         return jsonify({'error': 'Authentication failed'}), 500
 
 
@@ -353,6 +371,9 @@ def verify_apple_token(id_token_str: str) -> dict:
 
         return payload
 
+    except ValueError as e:
+        current_app.logger.error(f'Apple token verification error (token invalide): {str(e)}', exc_info=True)
+        return None
     except Exception as e:
-        current_app.logger.error(f'Apple token verification error: {str(e)}')
+        current_app.logger.error(f'Apple token verification error: {str(e)}', exc_info=True)
         return None

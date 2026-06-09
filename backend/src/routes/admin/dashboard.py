@@ -62,7 +62,7 @@ def get_admin_dashboard(current_user):
         offers_this_month = db.session.query(Offre).filter(Offre.date_offre >= last_30_days).count()
         new_offers_7d = db.session.query(Offre).filter(Offre.date_offre >= last_7_days).count()
     except Exception as e:
-        logger.warning(f"Offres unavailable: {str(e)}")
+        logger.warning(f"Offres unavailable: {str(e)}", exc_info=True)
         db.session.rollback()
 
     messages_7d = 0
@@ -70,7 +70,7 @@ def get_admin_dashboard(current_user):
         from src.models.messages import Message
         messages_7d = db.session.query(Message).filter(Message.date_creation >= last_7_days).count()
     except Exception as e:
-        logger.warning(f"Messages unavailable: {str(e)}")
+        logger.warning(f"Messages unavailable: {str(e)}", exc_info=True)
         db.session.rollback()
 
     top_listings_data = []
@@ -78,7 +78,7 @@ def get_admin_dashboard(current_user):
         top_listings = db.session.query(Annonce).order_by(desc(Annonce.nombre_vues)).limit(5).all()
         top_listings_data = [{"annonce_id": l.annonce_id, "titre": l.titre, "nombre_vues": l.nombre_vues or 0, "adresse": l.adresse, "prix": l.prix} for l in top_listings]
     except Exception as e:
-        logger.warning(f"Top listings unavailable: {str(e)}")
+        logger.warning(f"Top listings unavailable: {str(e)}", exc_info=True)
         db.session.rollback()
 
     return {
@@ -327,8 +327,11 @@ def get_audit_logs_endpoint(current_user):
             }
         }
 
+    except ValueError as e:
+        logger.error(f"Error getting audit logs (paramètres invalides): {str(e)}", exc_info=True)
+        raise ValidationError(f"Erreur: {str(e)}")
     except Exception as e:
-        logger.error(f"Error getting audit logs: {str(e)}")
+        logger.error(f"Error getting audit logs: {str(e)}", exc_info=True)
         raise ValidationError(f"Erreur: {str(e)}")
 
 
@@ -357,8 +360,11 @@ def export_audit_logs(current_user):
             'csv': csv_content
         }
 
+    except ValueError as e:
+        logger.error(f"Error exporting audit logs (erreur de format): {str(e)}", exc_info=True)
+        raise ValidationError(f"Erreur: {str(e)}")
     except Exception as e:
-        logger.error(f"Error exporting audit logs: {str(e)}")
+        logger.error(f"Error exporting audit logs: {str(e)}", exc_info=True)
         raise ValidationError(f"Erreur: {str(e)}")
 
 
@@ -407,8 +413,8 @@ def get_security_status(current_user):
             ] if top_admins else []
         }
 
-    except Exception as e:
-        logger.error(f"Error getting security status: {str(e)}")
+    except ValueError as e:
+        logger.error(f"Error getting security status (erreur de calcul): {str(e)}", exc_info=True)
         return {
             'status': 'error',
             'message': str(e),

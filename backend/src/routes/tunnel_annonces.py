@@ -67,6 +67,11 @@ def resize_image(file_obj, max_width=1280, max_height=960):
         output.seek(0)
 
         return output
+    except IOError as e:
+        print(f"[ERROR] Erreur redimensionnement image (IO): {e}")
+        # Retourner le fichier original en cas d'erreur
+        file_obj.seek(0)
+        return file_obj
     except Exception as e:
         print(f"[ERROR] Erreur redimensionnement image: {e}")
         # Retourner le fichier original en cas d'erreur
@@ -183,6 +188,9 @@ def create_brouillon():
             "temp_photo_urls": temp_photo_urls
         }), 201
 
+    except ValueError as e:
+        print(f"[ERROR] create_brouillon (validation): {e}")
+        return jsonify({"error": str(e)}), 500
     except Exception as e:
         print(f"[ERROR] create_brouillon: {e}")
         return jsonify({"error": str(e)}), 500
@@ -270,6 +278,10 @@ def completer_annonce(current_user, annonce_id):
             "annonce": annonce.to_dict()
         }), 200
 
+    except ValueError as e:
+        db.session.rollback()
+        print(f"[ERROR] completer_annonce (validation): {e}")
+        return jsonify({"error": str(e)}), 500
     except Exception as e:
         db.session.rollback()
         print(f"[ERROR] completer_annonce: {e}")
@@ -314,6 +326,9 @@ def get_mes_annonces(current_user):
             "annonces": [a.to_dict() for a in annonces]
         }), 200
 
+    except ValueError as e:
+        print(f"[ERROR] get_mes_annonces (validation): {e}")
+        return jsonify({"error": str(e)}), 500
     except Exception as e:
         print(f"[ERROR] get_mes_annonces: {e}")
         return jsonify({"error": str(e)}), 500

@@ -129,6 +129,9 @@ class AlertService:
                 timeout=5
             )
             return response.status_code == 202
+        except requests.exceptions.RequestException as e:
+            print(f'PagerDuty error (request): {e}')
+            return False
         except Exception as e:
             print(f'PagerDuty error: {e}')
             return False

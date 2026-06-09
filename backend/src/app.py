@@ -169,8 +169,10 @@ def create_app(config_name: str = None) -> Flask:
 
         celery_app.Task = ContextTask
         logger.info("✅ Celery initialized")
+    except ImportError as e:
+        logger.warning(f"⚠️  Failed to initialize Celery (module manquant): {e}", exc_info=True)
     except Exception as e:
-        logger.warning(f"⚠️  Failed to initialize Celery: {e}")
+        logger.warning(f"⚠️  Failed to initialize Celery: {e}", exc_info=True)
 
     # Phase 3: SocketIO for real-time chat
     try:
@@ -188,8 +190,10 @@ def create_app(config_name: str = None) -> Flask:
 
         app.socketio = socketio
         logger.info("✅ SocketIO initialized")
+    except ImportError as e:
+        logger.warning(f"⚠️  Failed to initialize SocketIO (module manquant): {e}", exc_info=True)
     except Exception as e:
-        logger.warning(f"⚠️  Failed to initialize SocketIO: {e}")
+        logger.warning(f"⚠️  Failed to initialize SocketIO: {e}", exc_info=True)
         app.socketio = None
 
     # Phase 3: Elasticsearch for advanced search
@@ -199,8 +203,11 @@ def create_app(config_name: str = None) -> Flask:
         search_engine = init_search_engine(es_url)
         app.search_engine = search_engine
         logger.info(f"✅ Elasticsearch initialized at {es_url}")
+    except ImportError as e:
+        logger.warning(f"⚠️  Failed to initialize Elasticsearch (module manquant): {e}", exc_info=True)
+        app.search_engine = None
     except Exception as e:
-        logger.warning(f"⚠️  Failed to initialize Elasticsearch: {e}")
+        logger.warning(f"⚠️  Failed to initialize Elasticsearch: {e}", exc_info=True)
         app.search_engine = None
 
     # Phase 3.2: Redis Cache Service
@@ -213,8 +220,10 @@ def create_app(config_name: str = None) -> Flask:
         else:
             logger.warning("⚠️  Redis cache not available - using app without caching")
             app.redis = None
+    except ImportError as e:
+        logger.warning(f"⚠️  Failed to initialize Redis (module manquant): {e}", exc_info=True)
     except Exception as e:
-        logger.warning(f"⚠️  Failed to initialize Redis: {e}")
+        logger.warning(f"⚠️  Failed to initialize Redis: {e}", exc_info=True)
         app.redis = None
 
     # Phase 3.3: Rate Limiting
@@ -222,8 +231,10 @@ def create_app(config_name: str = None) -> Flask:
         from src.services.rate_limiter import init_rate_limiting
         init_rate_limiting(app)
         logger.info("✅ Rate limiting initialized")
+    except ImportError as e:
+        logger.warning(f"⚠️  Failed to initialize rate limiting (module manquant): {e}", exc_info=True)
     except Exception as e:
-        logger.warning(f"⚠️  Failed to initialize rate limiting: {e}")
+        logger.warning(f"⚠️  Failed to initialize rate limiting: {e}", exc_info=True)
 
     # Phase 4: CSRF Protection (Security S6)
     try:
@@ -254,6 +265,8 @@ def create_app(config_name: str = None) -> Flask:
             from sqlalchemy import text
             db.session.execute(text("SELECT 1"))
             health_status["database"] = "connected"
+        except ConnectionError as e:
+            health_status["database"] = f"error: connection failed"
         except Exception as e:
             health_status["database"] = f"error: {str(e)[:50]}"
             health_status["status"] = "degraded"

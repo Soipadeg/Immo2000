@@ -50,8 +50,14 @@ class DocuSignService:
             # oauth = docusign.OAuth.from_file(...)
             # self.access_token = oauth.get_token()
             return self.access_token
+        except ImportError as e:
+            logger.error(f"❌ DocuSign: Module manquant: {e}", exc_info=True)
+            return None
+        except ValueError as e:
+            logger.error(f"❌ DocuSign: Configuration invalide: {e}", exc_info=True)
+            return None
         except Exception as e:
-            logger.error(f"❌ DocuSign: Erreur authentification: {e}")
+            logger.error(f"❌ DocuSign: Erreur authentification: {e}", exc_info=True)
             return None
 
     def generer_lien_signature(
@@ -76,7 +82,7 @@ class DocuSignService:
         try:
             token = self.get_access_token()
             if not token:
-                raise Exception("Impossible d'obtenir le token DocuSign")
+                raise ValueError("Impossible d'obtenir le token DocuSign")
 
             logger.info(f"📝 DocuSign: Génération lien signature pour {email_signataire}")
 
@@ -90,8 +96,14 @@ class DocuSignService:
             signature_url = f"https://demo.docusign.net/ds/consume/{type_document}..."
             return signature_url
 
+        except ValueError as e:
+            logger.error(f"❌ DocuSign: Erreur de validation: {e}", exc_info=True)
+            return None
+        except requests.exceptions.RequestException as e:
+            logger.error(f"❌ DocuSign: Erreur requête HTTP: {e}", exc_info=True)
+            return None
         except Exception as e:
-            logger.error(f"❌ DocuSign: Erreur génération lien: {e}")
+            logger.error(f"❌ DocuSign: Erreur génération lien: {e}", exc_info=True)
             return None
 
     def verifier_signature(self, envelope_id: str) -> bool:
@@ -108,8 +120,11 @@ class DocuSignService:
             # TODO: Implémenter la vérification
             logger.info(f"✅ DocuSign: Vérification signature {envelope_id}")
             return True
+        except requests.exceptions.RequestException as e:
+            logger.error(f"❌ DocuSign: Erreur vérification: {e}", exc_info=True)
+            return False
         except Exception as e:
-            logger.error(f"❌ DocuSign: Erreur vérification: {e}")
+            logger.error(f"❌ DocuSign: Erreur vérification: {e}", exc_info=True)
             return False
 
     def telecharger_document_signe(self, envelope_id: str) -> Optional[bytes]:
@@ -126,8 +141,11 @@ class DocuSignService:
             # TODO: Implémenter le téléchargement
             logger.info(f"📥 DocuSign: Téléchargement document {envelope_id}")
             return None
+        except requests.exceptions.RequestException as e:
+            logger.error(f"❌ DocuSign: Erreur téléchargement: {e}", exc_info=True)
+            return None
         except Exception as e:
-            logger.error(f"❌ DocuSign: Erreur téléchargement: {e}")
+            logger.error(f"❌ DocuSign: Erreur téléchargement: {e}", exc_info=True)
             return None
 
 
@@ -171,7 +189,7 @@ class StripeService:
         """
         try:
             if not self.stripe:
-                raise Exception("Stripe non configuré")
+                raise RuntimeError("Stripe non configuré")
 
             # Convertir montant en centimes pour Stripe
             amount_cents = int(montant * 100)
@@ -192,8 +210,17 @@ class StripeService:
                 'currency': devise
             }
 
+        except RuntimeError as e:
+            logger.error(f"❌ Stripe: Configuration manquante: {e}", exc_info=True)
+            return None
+        except ValueError as e:
+            logger.error(f"❌ Stripe: Montant invalide: {e}", exc_info=True)
+            return None
+        except stripe.error.StripeError as e:
+            logger.error(f"❌ Stripe: Erreur API Stripe: {e}", exc_info=True)
+            return None
         except Exception as e:
-            logger.error(f"❌ Stripe: Erreur création PaymentIntent: {e}")
+            logger.error(f"❌ Stripe: Erreur création PaymentIntent: {e}", exc_info=True)
             return None
 
     def confirmer_payment(self, payment_intent_id: str) -> Optional[Dict[str, Any]]:
@@ -208,7 +235,7 @@ class StripeService:
         """
         try:
             if not self.stripe:
-                raise Exception("Stripe non configuré")
+                raise RuntimeError("Stripe non configuré")
 
             intent = self.stripe.PaymentIntent.retrieve(payment_intent_id)
 
@@ -223,8 +250,14 @@ class StripeService:
                 logger.warning(f"⚠️  Stripe: Paiement pas confirmé {payment_intent_id} ({intent['status']})")
                 return None
 
+        except RuntimeError as e:
+            logger.error(f"❌ Stripe: Configuration manquante: {e}", exc_info=True)
+            return None
+        except stripe.error.StripeError as e:
+            logger.error(f"❌ Stripe: Erreur API Stripe: {e}", exc_info=True)
+            return None
         except Exception as e:
-            logger.error(f"❌ Stripe: Erreur confirmation: {e}")
+            logger.error(f"❌ Stripe: Erreur confirmation: {e}", exc_info=True)
             return None
 
     def creer_remboursement(
@@ -246,7 +279,7 @@ class StripeService:
         """
         try:
             if not self.stripe:
-                raise Exception("Stripe non configuré")
+                raise RuntimeError("Stripe non configuré")
 
             kwargs = {
                 'charge': charge_id,
@@ -266,8 +299,17 @@ class StripeService:
                 'amount': refund['amount'] / 100
             }
 
+        except RuntimeError as e:
+            logger.error(f"❌ Stripe: Configuration manquante: {e}", exc_info=True)
+            return None
+        except ValueError as e:
+            logger.error(f"❌ Stripe: Montant invalide: {e}", exc_info=True)
+            return None
+        except stripe.error.StripeError as e:
+            logger.error(f"❌ Stripe: Erreur API Stripe: {e}", exc_info=True)
+            return None
         except Exception as e:
-            logger.error(f"❌ Stripe: Erreur remboursement: {e}")
+            logger.error(f"❌ Stripe: Erreur remboursement: {e}", exc_info=True)
             return None
 
 
@@ -284,8 +326,8 @@ class SendGridService:
             self.client = SendGridAPIClient(self.api_key)
             self.Mail = Mail
             logger.info("✅ SendGrid: Service initialisé")
-        except ImportError:
-            logger.error("❌ SendGrid: Module non installé")
+        except ImportError as e:
+            logger.error(f"❌ SendGrid: Module non installé: {e}", exc_info=True)
             self.client = None
             self.Mail = None
 
@@ -312,7 +354,7 @@ class SendGridService:
         """
         try:
             if not self.client:
-                raise Exception("SendGrid non configuré")
+                raise RuntimeError("SendGrid non configuré")
 
             message = self.Mail(
                 from_email=(expediteur, nom_expediteur),
@@ -330,8 +372,14 @@ class SendGridService:
                 logger.warning(f"⚠️  SendGrid: Status {response.status_code}")
                 return False
 
+        except RuntimeError as e:
+            logger.error(f"❌ SendGrid: Configuration manquante: {e}", exc_info=True)
+            return False
+        except ValueError as e:
+            logger.error(f"❌ SendGrid: Email invalide: {e}", exc_info=True)
+            return False
         except Exception as e:
-            logger.error(f"❌ SendGrid: Erreur envoi email: {e}")
+            logger.error(f"❌ SendGrid: Erreur envoi email: {e}", exc_info=True)
             return False
 
     def envoyer_email_offre_proposee(self, vendeur_email: str, acheteur_nom: str, montant: Decimal) -> bool:
@@ -381,8 +429,8 @@ class S3Service:
                 region_name=self.region
             )
             logger.info("✅ AWS S3: Service initialisé")
-        except ImportError:
-            logger.error("❌ AWS S3: Module boto3 non installé")
+        except ImportError as e:
+            logger.error(f"❌ AWS S3: Module boto3 non installé: {e}", exc_info=True)
             self.client = None
 
     def upload_fichier(
@@ -406,7 +454,7 @@ class S3Service:
         """
         try:
             if not self.client:
-                raise Exception("S3 non configuré")
+                raise RuntimeError("S3 non configuré")
 
             # Chemin: transactions/{transaction_id}/{type_document}/{nom_fichier}
             key = f"transactions/{transaction_id}/{type_document}/{nom_fichier}"
@@ -422,8 +470,14 @@ class S3Service:
             logger.info(f"✅ S3: Fichier uploadé {key}")
             return url
 
+        except RuntimeError as e:
+            logger.error(f"❌ S3: Configuration manquante: {e}", exc_info=True)
+            return None
+        except botocore.exceptions.ClientError as e:
+            logger.error(f"❌ S3: Erreur AWS: {e}", exc_info=True)
+            return None
         except Exception as e:
-            logger.error(f"❌ S3: Erreur upload: {e}")
+            logger.error(f"❌ S3: Erreur upload: {e}", exc_info=True)
             return None
 
     def telecharger_fichier(self, key: str) -> Optional[bytes]:
@@ -438,7 +492,7 @@ class S3Service:
         """
         try:
             if not self.client:
-                raise Exception("S3 non configuré")
+                raise RuntimeError("S3 non configuré")
 
             response = self.client.get_object(Bucket=self.bucket, Key=key)
             contenu = response['Body'].read()
@@ -446,8 +500,14 @@ class S3Service:
             logger.info(f"✅ S3: Fichier téléchargé {key}")
             return contenu
 
+        except RuntimeError as e:
+            logger.error(f"❌ S3: Configuration manquante: {e}", exc_info=True)
+            return None
+        except botocore.exceptions.ClientError as e:
+            logger.error(f"❌ S3: Erreur AWS: {e}", exc_info=True)
+            return None
         except Exception as e:
-            logger.error(f"❌ S3: Erreur téléchargement: {e}")
+            logger.error(f"❌ S3: Erreur téléchargement: {e}", exc_info=True)
             return None
 
     def supprimer_fichier(self, key: str) -> bool:
@@ -469,7 +529,7 @@ class S3Service:
             return True
 
         except Exception as e:
-            logger.error(f"❌ S3: Erreur suppression: {e}")
+            logger.error(f"❌ S3: Erreur suppression: {e}", exc_info=True)
             return False
 
 

@@ -85,8 +85,11 @@ class ThumbnailGenerator:
 
                 stats['images_processed'] += 1
 
+            except IOError as e:
+                logger.error(f"Erreur regénération {jpeg_file} (IO): {str(e)}", exc_info=True)
+                stats['errors'].append(str(e))
             except Exception as e:
-                logger.error(f"Erreur regénération {jpeg_file}: {str(e)}")
+                logger.error(f"Erreur regénération {jpeg_file}: {str(e)}", exc_info=True)
                 stats['errors'].append(str(e))
 
         logger.info(f"Regénération annonce {annonce_id}: {stats}")
@@ -126,8 +129,15 @@ class ThumbnailGenerator:
 
             except ValueError:
                 continue
+            except IOError as e:
+                logger.error(f"Erreur annonce {annonce_folder.name} (IO): {str(e)}", exc_info=True)
+                results.append({
+                    'annonce_id': annonce_folder.name,
+                    'status': 'error',
+                    'message': str(e)
+                })
             except Exception as e:
-                logger.error(f"Erreur annonce {annonce_folder.name}: {str(e)}")
+                logger.error(f"Erreur annonce {annonce_folder.name}: {str(e)}", exc_info=True)
                 results.append({
                     'annonce_id': annonce_folder.name,
                     'status': 'error',

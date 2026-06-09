@@ -460,8 +460,14 @@ def compare_biens(
                 estimations.append(estimation)
                 save_estimation(estimation, output_dir)
 
+        except ValueError as e:
+            logger.error(f"Erreur pour {bien.get('adresse')} (validation) : {str(e)}", exc_info=True)
+            erreurs.append({
+                "adresse": bien.get("adresse"),
+                "erreur": str(e)
+            })
         except Exception as e:
-            logger.error(f"Erreur pour {bien.get('adresse')} : {str(e)}")
+            logger.error(f"Erreur pour {bien.get('adresse')} : {str(e)}", exc_info=True)
             erreurs.append({
                 "adresse": bien.get("adresse"),
                 "erreur": str(e)
