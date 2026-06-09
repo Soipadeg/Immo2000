@@ -16,13 +16,14 @@ Endpoints:
 - DELETE /api/v1/documents-requis/{id}                    → Supprimer
 """
 
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify, current_app, send_from_directory
 from typing import Dict, Any, Tuple
 import os
 from werkzeug.utils import secure_filename
 from datetime import datetime
+from pathlib import Path
 
-from src.auth.models import db
+from src.auth.models import db, RoleEnum
 from src.auth.decorators import token_required
 from src.models.annonces import Annonce
 from src.models.documents import DocumentRequis
@@ -44,6 +45,10 @@ documents_requis_bp = Blueprint("documents_requis", __name__, url_prefix="/api/v
 # Configuration
 ALLOWED_EXTENSIONS = {"pdf"}
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
+UPLOAD_FOLDER = os.path.abspath(os.getenv("UPLOAD_FOLDER", "./backend/storage/documents"))
+
+# Créer le dossier d'upload s'il n'existe pas
+Path(UPLOAD_FOLDER).mkdir(parents=True, exist_ok=True)
 
 
 def allowed_file(filename: str) -> bool:
@@ -115,14 +120,21 @@ def uploader_document(current_user: Dict[str, Any], annonce_id: int) -> Tuple[Di
         if taille == 0:
             raise ValidationError("Fichier vide")
 
-        # Uploader le document
+# Uploader le document (LOCAL FILESYSTEM)
         filename = secure_filename(file.filename)
-
-        # TODO: Implémenter le stockage du fichier (S3, local, etc.)
-        # Pour l'instant: URL de placeholder
-        from datetime import datetime
         timestamp = int(datetime.utcnow().timestamp())
-        url_document = f"/uploads/annonces/{annonce_id}/documents/{type_document}_{timestamp}_{filename}"
+
+        # Créer le dossier annonce
+        annonce_folder = f"{UPLOAD_FOLDER}/annonce_{annonce_id}"
+        Path(annonce_folder).mkdir(parents=True, exist_ok=True)
+
+        # Sauvegarder le fichier
+        new_filename = f"{type_document}_{timestamp}_{filename}"
+        filepath = f"{annonce_folder}/{new_filename}"
+        file.save(filepath)
+
+        # URL pour téléchargement
+        url_document = f"/api/v1/documents-requis/download/{annonce_id}/{type_document}/{new_filename}"
 
         # Créer/mettre à jour le document
         document = uploader_document_requis(
@@ -223,8 +235,9 @@ def valider_document_endpoint(current_user: Dict[str, Any], doc_id: int) -> Tupl
         Confirmation de validation (statut SANS contenu du fichier)
     """
     try:
-        # Vérifier que l'utilisateur est admin
-        if current_user.get("role") != "admin":
+        # Vérifier que l'utilisateur est admin (supporte "admin" ou "administrateur")
+        user_role = current_user.get("role", "").lower()
+        if user_role not in ["admin", "administrateur"]:
             raise ForbiddenError("Seuls les administrateurs peuvent valider les documents")
 
         document = DocumentRequis.query.get(doc_id)
@@ -317,8 +330,9 @@ def telecharger_document_notaire(current_user: Dict[str, Any], annonce_id: int, 
         URL de téléchargement du document (confidentiel)
     """
     try:
-        # 1. Vérifier que l'utilisateur est un notaire
-        if current_user.get("role") != "notaire":
+        # 1. Vérifier que l'utilisateur est un notaire (supporte "notaire")
+        user_role = current_user.get("role", "").lower()
+        if user_role != "notaire":
             raise ForbiddenError("Accès réservé aux notaires")
 
         # 2. Vérifier qu'il existe une offre ACCEPTÉE pour cette annonce
@@ -388,7 +402,8 @@ def statut_documents_admin(current_user: Dict[str, Any], annonce_id: int) -> Tup
     """
     try:
         # Vérifier que l'utilisateur est admin
-        if current_user.get("role") != "admin":
+        user_role = current_user.get("role", "").lower()
+        if user_role not in ["admin", "administrateur"]:
             raise ForbiddenError("Accès réservé aux administrateurs")
 
         annonce = Annonce.query.get(annonce_id)
@@ -427,4 +442,72 @@ def statut_documents_admin(current_user: Dict[str, Any], annonce_id: int) -> Tup
 
     except Exception as e:
         current_app.logger.error(f"Erreur vue admin: {str(e)}", exc_info=True)
+        raise
+
+
+@documents_requis_bp.route("/documents-requis/download/<int:annonce_id>/<type_document>/<filename>", methods=["GET"])
+@token_required
+@handle_errors
+def telecharger_document(annonce_id: int, type_document: str, filename: str, current_user: Dict[str, Any]):
+    """
+    📥 Télécharger un document (LOCAL FILESYSTEM).
+
+    Sécurité:
+    - Notaire UNIQUEMENT (après offre acceptée)
+    - Vendeur peut télécharger ses propres docs
+    - Admin peut télécharger pour consultation
+
+    Args:
+        annonce_id (int): ID de l'annonce
+        type_document (str): Type de document
+        filename (str): Nom du fichier sécurisé
+
+    Returns:
+        Fichier PDF téléchargé
+    """
+    try:
+        annonce = Annonce.query.get(annonce_id)
+        if not annonce:
+            raise NotFoundError(f"Annonce {annonce_id} non trouvée")
+
+        # Vérifier les droits d'accès
+        user_id = current_user.get("id")
+        user_role = current_user.get("role", "").lower()
+
+        # Seul le vendeur, admin et notaire peuvent télécharger
+        is_vendeur = annonce.utilisateur_id == user_id
+        is_admin = user_role in ["admin", "administrateur"]
+        is_notaire = user_role == "notaire"
+
+        if not (is_vendeur or is_admin or is_notaire):
+            raise ForbiddenError("Accès non autorisé")
+
+        # Pour les notaires: vérifier que l'offre est acceptée
+        if is_notaire and not is_admin:
+            offre = Offre.query.filter_by(
+                annonce_id=annonce_id,
+                statut="acceptee"
+            ).first()
+            if not offre:
+                raise ForbiddenError("Aucune offre acceptée pour cette annonce")
+
+        # Construire le chemin du fichier sécurisé
+        filepath = f"{UPLOAD_FOLDER}/annonce_{annonce_id}/{filename}"
+
+        # Vérifier que le fichier existe et est dans le bon dossier (sécurité)
+        real_path = os.path.realpath(filepath)
+        expected_root = os.path.realpath(f"{UPLOAD_FOLDER}/annonce_{annonce_id}")
+
+        if not real_path.startswith(expected_root) or not os.path.exists(filepath):
+            raise NotFoundError(f"Document non trouvé")
+
+        return send_from_directory(
+            directory=f"{UPLOAD_FOLDER}/annonce_{annonce_id}",
+            path=filename,
+            as_attachment=True,
+            download_name=filename
+        )
+
+    except Exception as e:
+        current_app.logger.error(f"Erreur téléchargement: {str(e)}", exc_info=True)
         raise
