@@ -29,6 +29,7 @@ export const DynamicNavbar = ({
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const [openDropdown, setOpenDropdown] = useState(null);
 
   // Détecter les changements de taille d'écran
   useEffect(() => {
@@ -87,20 +88,30 @@ export const DynamicNavbar = ({
     // Items pour utilisateurs connectés
     items.push({ label: 'Matching', path: '/matching', icon: '❤️' });
     items.push({ label: 'Guides', path: '/guides', icon: '📚' });
-    items.push({ label: 'Modèles', path: '/modeles', icon: '📄' });
 
     if (userRole === 'user') {
-      items.push({ label: 'Dashboard', path: '/dashboard', icon: '📊' });
-      items.push({ label: 'Créneaux', path: '/slots', icon: '📅' });
-      items.push({ label: 'Feedback', path: '/feedback', icon: '💬' });
-      items.push({ label: 'Messages', path: '/messages', icon: '✉️' });
-      items.push({ label: 'Transactions', path: '/transaction-actions', icon: '💼' });
-      items.push({ label: 'Notifications', path: '/notifications', icon: '🔔', badge: unreadNotifications });
-      items.push({ label: 'Param. Notif', path: '/notification-settings', icon: '⚙️' });
-      items.push({ label: 'Historique RDV', path: '/appointment-history', icon: '📅' });
-      items.push({ label: 'Exporter RDV', path: '/calendar-export', icon: '📤' });
-      items.push({ label: 'Stats Propriétés', path: '/property-statistics', icon: '📊' });
-      items.push({ label: 'Santé Système', path: '/health-check', icon: '🚀' });
+      // Dashboard avec sous-menus
+      items.push({
+        label: 'Dashboard',
+        icon: '📊',
+        path: '/user/dashboard',
+        children: [
+          { label: 'Créneaux', path: '/slots', icon: '📅' },
+          { label: 'Feedback', path: '/feedback', icon: '💬' },
+          { label: 'Messages', path: '/messages', icon: '✉️' },
+          { label: 'Transactions', path: '/transaction-actions', icon: '💼' },
+          { label: 'Historique RDV', path: '/appointment-history', icon: '📅' },
+          { label: 'Exporter RDV', path: '/calendar-export', icon: '📤' },
+        ],
+      });
+
+      // Notifications avec badge
+      items.push({
+        label: 'Notifications',
+        path: '/notifications',
+        icon: '🔔',
+        badge: unreadNotifications,
+      });
     }
 
     if (userRole === 'admin') {
@@ -163,35 +174,91 @@ export const DynamicNavbar = ({
 
         {/* Navigation Desktop */}
         {!isMobile && (
-          <div style={{ display: 'flex', gap: '8px', flex: 1 }}>
+          <div style={{ display: 'flex', gap: '8px', flex: 1, alignItems: 'center' }}>
             {navItems.map((item) => (
-              <button
-                key={item.path}
-                onClick={() => handleNavigate(item.path)}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: '6px 12px',
-                  opacity: location.pathname === item.path ? 1 : 0.7,
-                  fontSize: '14px',
-                  fontWeight: 500,
-                }}
-              >
-                {item.icon} {item.label}
-                {item.badge !== undefined && item.badge > 0 && (
+              <div key={item.label} style={{ position: 'relative' }}>
+                <button
+                  onClick={() => {
+                    if (item.path) {
+                      handleNavigate(item.path);
+                    } else if (item.children) {
+                      setOpenDropdown(openDropdown === item.label ? null : item.label);
+                    }
+                  }}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: '6px 12px',
+                    opacity: location.pathname === item.path ? 1 : 0.7,
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                  }}
+                >
+                  {item.icon} {item.label}
+                  {item.children && !item.path && (
+                    <span style={{ fontSize: '10px' }}>
+                      {openDropdown === item.label ? '▲' : '▼'}
+                    </span>
+                  )}
+                  {item.badge !== undefined && item.badge > 0 && (
+                    <div style={{
+                      backgroundColor: '#ff4444',
+                      color: '#fff',
+                      borderRadius: '50%',
+                      padding: '2px 6px',
+                      fontSize: '10px',
+                      marginLeft: '4px',
+                    }}>
+                      {item.badge}
+                    </div>
+                  )}
+                </button>
+
+                {/* Dropdown Menu */}
+                {item.children && openDropdown === item.label && (
                   <div style={{
-                    backgroundColor: '#ff4444',
-                    color: '#fff',
-                    borderRadius: '50%',
-                    padding: '2px 6px',
-                    fontSize: '10px',
-                    marginLeft: '4px',
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    backgroundColor: '#fff',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                    minWidth: '180px',
+                    zIndex: 1000,
                   }}>
-                    {item.badge}
+                    {item.children.map((child) => (
+                      <button
+                        key={child.path}
+                        onClick={() => {
+                          handleNavigate(child.path);
+                          setOpenDropdown(null);
+                        }}
+                        style={{
+                          display: 'block',
+                          width: '100%',
+                          background: 'none',
+                          border: 'none',
+                          padding: '10px 16px',
+                          textAlign: 'left',
+                          cursor: 'pointer',
+                          fontSize: '13px',
+                          opacity: location.pathname === child.path ? 1 : 0.7,
+                          borderBottom: '1px solid #f0f0f0',
+                        }}
+                        onMouseEnter={(e) => e.target.style.backgroundColor = '#f9f9f9'}
+                        onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                      >
+                        {child.icon} {child.label}
+                      </button>
+                    ))}
                   </div>
                 )}
-              </button>
+              </div>
             ))}
           </div>
         )}
@@ -295,33 +362,80 @@ export const DynamicNavbar = ({
           gap: '8px',
         }}>
           {navItems.map((item) => (
-            <button
-              key={item.path}
-              onClick={() => handleNavigate(item.path)}
-              style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                padding: '12px',
-                textAlign: 'left',
-                fontSize: '14px',
-                opacity: location.pathname === item.path ? 1 : 0.7,
-              }}
-            >
-              {item.icon} {item.label}
-              {item.badge !== undefined && item.badge > 0 && (
-                <div style={{
-                  backgroundColor: '#ff4444',
-                  color: '#fff',
-                  borderRadius: '50%',
-                  padding: '2px 6px',
-                  fontSize: '10px',
-                  marginLeft: '4px',
-                }}>
-                  {item.badge}
+            <div key={item.label}>
+              <button
+                onClick={() => {
+                  if (item.path) {
+                    handleNavigate(item.path);
+                  } else if (item.children) {
+                    setOpenDropdown(openDropdown === item.label ? null : item.label);
+                  }
+                }}
+                style={{
+                  width: '100%',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '12px',
+                  textAlign: 'left',
+                  fontSize: '14px',
+                  opacity: location.pathname === item.path ? 1 : 0.7,
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <span>
+                  {item.icon} {item.label}
+                  {item.badge !== undefined && item.badge > 0 && (
+                    <span style={{
+                      backgroundColor: '#ff4444',
+                      color: '#fff',
+                      borderRadius: '50%',
+                      padding: '2px 6px',
+                      fontSize: '10px',
+                      marginLeft: '4px',
+                      display: 'inline-block',
+                    }}>
+                      {item.badge}
+                    </span>
+                  )}
+                </span>
+                {item.children && !item.path && (
+                  <span style={{ fontSize: '10px' }}>
+                    {openDropdown === item.label ? '▲' : '▼'}
+                  </span>
+                )}
+              </button>
+
+              {/* Mobile Dropdown Menu */}
+              {item.children && openDropdown === item.label && (
+                <div style={{ paddingLeft: '16px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  {item.children.map((child) => (
+                    <button
+                      key={child.path}
+                      onClick={() => {
+                        handleNavigate(child.path);
+                        setOpenDropdown(null);
+                      }}
+                      style={{
+                        width: '100%',
+                        background: 'none',
+                        border: 'none',
+                        padding: '8px 12px',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        fontSize: '13px',
+                        opacity: location.pathname === child.path ? 1 : 0.7,
+                        color: '#666',
+                      }}
+                    >
+                      {child.icon} {child.label}
+                    </button>
+                  ))}
                 </div>
               )}
-            </button>
+            </div>
           ))}
 
           {isAuthenticated && user ? (

@@ -1,20 +1,16 @@
 import '../styles/UserDashboardPage.css';
 /**
- * Dashboard Utilisateur (Vendeur/Acheteur)
+ * Dashboard Utilisateur - Centre névralgique
+ * Accès centralisé à toutes les options de l'utilisateur
  */
 
 import React, { useState, useEffect } from 'react';
-import { Button, Card, Alert } from '@/components';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import ListingActions from '../components/listings/ListingActions';
 
 const UserDashboardPage = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const [tabValue, setTabValue] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     if (!authLoading && (!user || !['user', 'admin'].includes(user.role))) {
@@ -22,112 +18,76 @@ const UserDashboardPage = () => {
     }
   }, [user, authLoading, navigate]);
 
-  /**
-   * Callback après une action sur une annonce (delete, publish, archive, etc.)
-   */
-  const handleListingActionComplete = () => {
-    // Forcer le refresh des annonces
-    setRefreshKey(prev => prev + 1);
-  };
-
-  const stats = [
+  // Sections du dashboard avec navigation
+  const dashboardSections = [
     {
-      label: 'Annonces actives',
-      value: 12,
-      icon: '📝',
-      trend: '+2 ce mois',
-      trendUp: true
+      id: 'creneaux',
+      label: 'Créneaux',
+      icon: '📅',
+      description: 'Gérez vos créneaux de visite',
+      path: '/slots',
+      color: '#FF6B6B',
     },
     {
-      label: 'Vues totales',
-      value: 1245,
-      icon: '👁️',
-      trend: '+340 cette semaine',
-      trendUp: true
-    },
-    {
-      label: 'Messages reçus',
-      value: 47,
+      id: 'feedback',
+      label: 'Feedback',
       icon: '💬',
-      trend: '8 non lus',
-      trendUp: false
+      description: 'Consultez les avis et commentaires',
+      path: '/feedback',
+      color: '#4ECDC4',
     },
     {
-      label: 'Alertes',
-      value: 5,
-      icon: '🔔',
-      trend: '2 nouvelles',
-      trendUp: false
+      id: 'messages',
+      label: 'Messages',
+      icon: '✉️',
+      description: 'Conversations avec acheteurs/vendeurs',
+      path: '/messages',
+      color: '#45B7D1',
+    },
+    {
+      id: 'transactions',
+      label: 'Transactions',
+      icon: '💼',
+      description: 'Suivi des transactions en cours',
+      path: '/transaction-actions',
+      color: '#F7DC6F',
+    },
+    {
+      id: 'historique-rdv',
+      label: 'Historique RDV',
+      icon: '📋',
+      description: 'Consultez l\'historique de vos visites',
+      path: '/appointment-history',
+      color: '#BB8FCE',
+    },
+    {
+      id: 'exporter-rdv',
+      label: 'Exporter RDV',
+      icon: '📤',
+      description: 'Téléchargez vos rendez-vous',
+      path: '/calendar-export',
+      color: '#85C1E2',
     },
   ];
 
-  const annonces = [
-    {
-      id: 1,
-      titre: 'Appartement 3 pièces Paris 15ème',
-      prix: 450000,
-      ville: 'Paris',
-      statut: 'Actif',
-      vues: 145,
-      messages: 8,
-      dateCreation: '2026-03-15',
-      progression: 85,
-    },
-    {
-      id: 2,
-      titre: 'Maison 4 pièces Lyon Fourvière',
-      prix: 380000,
-      ville: 'Lyon',
-      statut: 'Actif',
-      vues: 289,
-      messages: 15,
-      dateCreation: '2026-02-01',
-      progression: 92,
-    },
-    {
-      id: 3,
-      titre: 'Studio Marseille Vieux-Port',
-      prix: 320000,
-      ville: 'Marseille',
-      statut: 'Brouillon',
-      vues: 0,
-      messages: 0,
-      dateCreation: '2026-04-20',
-      progression: 40,
-    },
+  const quickStats = [
+    { label: 'Messages', value: 12, icon: '💬' },
+    { label: 'Rendez-vous', value: 5, icon: '📅' },
+    { label: 'Transactions', value: 3, icon: '💼' },
+    { label: 'Notifications', value: 8, icon: '🔔' },
   ];
 
-  const alertes = [
-    {
-      id: 1,
-      titre: 'Alerte prix',
-      description: 'Propriétés similaires trouvées 15% moins chères',
-      type: 'warning'
-    },
-    {
-      id: 2,
-      titre: 'Alerte localité',
-      description: 'Nouvelles annonces dans Paris 15ème',
-      type: 'info'
-    },
-    {
-      id: 3,
-      titre: 'Offre reçue',
-      description: 'Une nouvelle offre pour votre appartement',
-      type: 'success'
-    },
-  ];
-
-  const operations = [
-    { label: 'Consulter les guides', icon: '📚' },
-    { label: 'Télécharger les modèles', icon: '📁' },
-    { label: 'Utiliser le simulateur', icon: '📊' },
-  ];
-
-  if (authLoading || loading) {
+  if (authLoading) {
     return (
-      <div className="loading-page">
-        <div className="spinner"></div>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        fontSize: '18px',
+        color: '#666',
+      }}>
+        ⏳ Chargement...
       </div>
     );
   }
@@ -137,193 +97,285 @@ const UserDashboardPage = () => {
   }
 
   return (
-    <div className="user-dashboard-page-container">
-      {/* En-tête */}
-      <div className="dashboard-header">
-        <div>
-          <div>📊 Dashboard</div>
-          <div className="dashboard-subtitle">
-            Bienvenue, <strong>{user.prenom} {user.nom}</strong> 👋
-          </div>
-        </div>
-        <Button
-          variant="primary"
-          size="medium"
-          onClick={() => navigate('/annonces/create')}
-        >
-          ➕ Créer une annonce
-        </Button>
+    <div style={{
+      maxWidth: '1200px',
+      margin: '0 auto',
+      padding: '40px 20px',
+      backgroundColor: '#f8f9fa',
+      minHeight: '100vh',
+    }}>
+      {/* En-tête du dashboard */}
+      <div style={{
+        marginBottom: '40px',
+        paddingBottom: '30px',
+        borderBottom: '2px solid #e0e0e0',
+      }}>
+        <h1 style={{
+          fontSize: '32px',
+          fontWeight: 'bold',
+          margin: '0 0 10px 0',
+          color: '#333',
+        }}>
+          📊 Tableau de Bord
+        </h1>
+        <p style={{
+          fontSize: '16px',
+          color: '#666',
+          margin: '0',
+        }}>
+          Bienvenue <strong>{user.prenom}</strong> 👋 — Centre de gestion de tous vos éléments immobiliers
+        </p>
       </div>
 
-      {/* Statistiques principales */}
-      <div className="stats-grid">
-        {stats.map((stat, index) => (
-          <Card key={index} className="stat-card">
-            <div className="stat-content">
-              <div className="stat-icon">{stat.icon}</div>
-              <div className="stat-text">
-                <div className="stat-label">{stat.label}</div>
-                <div>{stat.value.toLocaleString('fr-FR')}</div>
-
-                <div className={`stat-trend ${stat.trendUp ? 'up' : 'down'}`}>
-                  {stat.trendUp ? '📈' : '📉'} {stat.trend}
-                </div>
-              </div>
+      {/* Statistiques rapides */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: '16px',
+        marginBottom: '40px',
+      }}>
+        {quickStats.map((stat, idx) => (
+          <div
+            key={idx}
+            style={{
+              background: '#fff',
+              padding: '24px',
+              borderRadius: '12px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+              textAlign: 'center',
+              transition: 'transform 0.2s, box-shadow 0.2s',
+              cursor: 'pointer',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-4px)';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.12)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+            }}
+          >
+            <div style={{ fontSize: '32px', marginBottom: '12px' }}>
+              {stat.icon}
             </div>
-          </Card>
+            <div style={{
+              fontSize: '28px',
+              fontWeight: 'bold',
+              color: '#1976d2',
+              marginBottom: '8px',
+            }}>
+              {stat.value}
+            </div>
+            <div style={{
+              fontSize: '14px',
+              color: '#888',
+              fontWeight: '500',
+            }}>
+              {stat.label}
+            </div>
+          </div>
         ))}
       </div>
 
-      {/* Contenu principal - Onglets */}
-      <Card className="tabs-card">
-        <div className="tabs-nav">
-          <button
-            className={`tab-button ${tabValue === 0 ? 'active' : ''}`}
-            onClick={() => setTabValue(0)}
-          >
-            🔍 Mes annonces
-          </button>
-          <button
-            className={`tab-button ${tabValue === 1 ? 'active' : ''}`}
-            onClick={() => setTabValue(1)}
-          >
-            🔔 Mes alertes
-          </button>
-        </div>
+      {/* Grille de sections du dashboard */}
+      <div style={{ marginBottom: '40px' }}>
+        <h2 style={{
+          fontSize: '20px',
+          fontWeight: 'bold',
+          color: '#333',
+          marginBottom: '24px',
+          marginTop: '0',
+        }}>
+          🎯 Sections Principales
+        </h2>
 
-        <div className="tabs-content">
-          {/* Onglet Annonces */}
-          {tabValue === 0 && (
-            <div className="tab-pane">
-              {annonces.length === 0 ? (
-                <Alert type="info" title="Aucune annonce" message="Créer votre première annonce" />
-              ) : (
-                <div className="annonces-list">
-                  {annonces.map((annonce) => (
-                    <Card key={annonce.id} className="annonce-item">
-                      <div className="annonce-header">
-                        <div>
-                          <div>{annonce.titre}</div>
-                          <div className="annonce-location">
-                            📍 {annonce.ville} • Créée le {new Date(annonce.dateCreation).toLocaleDateString('fr-FR')}
-                          </div>
-                        </div>
-                        <div className={`status-chip ${annonce.statut === 'Actif' ? 'active' : 'draft'}`}>
-                          {annonce.statut}
-                        </div>
-                      </div>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '20px',
+        }}>
+          {dashboardSections.map((section) => (
+            <div
+              key={section.id}
+              onClick={() => navigate(section.path)}
+              style={{
+                background: '#fff',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer',
+                border: '1px solid #f0f0f0',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-8px)';
+                e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.12)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+              }}
+            >
+              {/* Barre de couleur en haut */}
+              <div
+                style={{
+                  height: '6px',
+                  backgroundColor: section.color,
+                }}
+              />
 
-                      <div>
-                        {annonce.prix.toLocaleString('fr-FR')} €
-                      </div>
-
-                      <div className="progression-section">
-                        <div className="progression-header">
-                          <div className="progression-label">Progression du profil</div>
-                          <div className="progression-value">{annonce.progression}%</div>
-                        </div>
-                        <div className="progression-bar">
-                          <div
-                            className="progression-fill"
-                            style={{ width: `${annonce.progression}%` }}
-                          ></div>
-                        </div>
-                      </div>
-
-                      <div className="annonce-stats">
-                        <div className="stat-item">👁️ {annonce.vues} vues</div>
-                        <div className="stat-item">💬 {annonce.messages} messages</div>
-                      </div>
-
-                      <div className="annonce-actions">
-                        <Button
-                          size="small"
-                          variant="primary"
-                          onClick={() => navigate(`/annonce/${annonce.id}`)}
-                        >
-                          👁️ Voir
-                        </Button>
-                        <Button
-                          size="small"
-                          variant="secondary"
-                          onClick={() => navigate(`/annonce/${annonce.id}/editer`)}
-                        >
-                          ✏️ Éditer
-                        </Button>
-                        <ListingActions
-                          listing={annonce}
-                          onActionComplete={handleListingActionComplete}
-                          size="sm"
-                          showLabel={true}
-                        />
-                      </div>
-                    </Card>
-                  ))}
+              {/* Contenu de la carte */}
+              <div style={{ padding: '24px' }}>
+                <div style={{
+                  fontSize: '48px',
+                  marginBottom: '16px',
+                  textAlign: 'center',
+                }}>
+                  {section.icon}
                 </div>
-              )}
-            </div>
-          )}
 
-          {/* Onglet Alertes */}
-          {tabValue === 1 && (
-            <div className="tab-pane">
-              {alertes.length === 0 ? (
-                <Alert type="info" title="Aucune alerte" message="Aucune alerte pour le moment" />
-              ) : (
-                <div className="alertes-list">
-                  {alertes.map((alerte) => (
-                    <Alert
-                      key={alerte.id}
-                      type={alerte.type}
-                      title={alerte.titre}
-                      message={alerte.description}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </Card>
+                <h3 style={{
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                  color: '#333',
+                  margin: '0 0 12px 0',
+                  textAlign: 'center',
+                }}>
+                  {section.label}
+                </h3>
 
-      {/* Sections rapides */}
-      <div className="dashboard-sections">
-        <div className="section-resources">
-          <Card>
-            <div className="card-header">
-              <div>📚 Ressources utiles</div>
-            </div>
-            <div className="resources-grid">
-              {operations.map((op, idx) => (
-                <Button
-                  key={idx}
-                  variant="secondary"
-                  className="resource-button"
+                <p style={{
+                  fontSize: '14px',
+                  color: '#666',
+                  margin: '0 0 20px 0',
+                  textAlign: 'center',
+                  lineHeight: '1.5',
+                }}>
+                  {section.description}
+                </p>
+
+                {/* Bouton d'accès */}
+                <button
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    backgroundColor: section.color,
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.opacity = '0.9';
+                    e.currentTarget.style.transform = 'scale(1.02)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.opacity = '1';
+                    e.currentTarget.style.transform = 'scale(1)';
+                  }}
                 >
-                  {op.icon} {op.label}
-                </Button>
-              ))}
+                  Accéder →
+                </button>
+              </div>
             </div>
-          </Card>
+          ))}
         </div>
+      </div>
 
-        <div className="section-settings">
-          <Card>
-            <div className="card-header">
-              <div>⚙️ Paramètres</div>
-            </div>
-            <div className="settings-buttons">
-              <Button
-                variant="secondary"
-                onClick={() => navigate('/profile')}
-              >
-                ⚙️ Profil
-              </Button>
-              <Button variant="secondary">
-                📥 Télécharger données
-              </Button>
-            </div>
-          </Card>
+      {/* Section supplémentaire - Actions rapides */}
+      <div style={{
+        background: '#fff',
+        borderRadius: '12px',
+        padding: '32px',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+      }}>
+        <h2 style={{
+          fontSize: '20px',
+          fontWeight: 'bold',
+          color: '#333',
+          marginTop: '0',
+          marginBottom: '20px',
+        }}>
+          ⚡ Actions rapides
+        </h2>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+          gap: '12px',
+        }}>
+          <button
+            onClick={() => navigate('/profile')}
+            style={{
+              padding: '12px 16px',
+              backgroundColor: '#f0f0f0',
+              border: '1px solid #ddd',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#e0e0e0';
+              e.currentTarget.style.borderColor = '#bbb';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#f0f0f0';
+              e.currentTarget.style.borderColor = '#ddd';
+            }}
+          >
+            ⚙️ Mon Profil
+          </button>
+          <button
+            onClick={() => navigate('/notifications')}
+            style={{
+              padding: '12px 16px',
+              backgroundColor: '#f0f0f0',
+              border: '1px solid #ddd',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#e0e0e0';
+              e.currentTarget.style.borderColor = '#bbb';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#f0f0f0';
+              e.currentTarget.style.borderColor = '#ddd';
+            }}
+          >
+            🔔 Notifications
+          </button>
+          <button
+            onClick={() => navigate('/guides')}
+            style={{
+              padding: '12px 16px',
+              backgroundColor: '#f0f0f0',
+              border: '1px solid #ddd',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#e0e0e0';
+              e.currentTarget.style.borderColor = '#bbb';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#f0f0f0';
+              e.currentTarget.style.borderColor = '#ddd';
+            }}
+          >
+            📚 Guides
+          </button>
         </div>
       </div>
     </div>
