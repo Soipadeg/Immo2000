@@ -28,6 +28,7 @@ from src.auth.models import db
 from src.auth import register_bp, login_bp, password_bp, tokens_bp
 from src.auth.oauth import oauth_bp
 from src.auth.decorators import token_required
+from src.routes.auth_oauth import auth_oauth_bp
 from src.routes.annonces import annonces_bp
 from src.routes.tunnel_annonces import tunnel_bp
 from src.routes.contrats import contrats_bp
@@ -740,6 +741,7 @@ def create_app(config_name: str = None) -> Flask:
     app.register_blueprint(password_bp)
     app.register_blueprint(tokens_bp)
     app.register_blueprint(oauth_bp)
+    app.register_blueprint(auth_oauth_bp)  # Phase 3: Google OAuth integration
 
     # Blueprints - Annonces
     app.register_blueprint(annonces_bp)
