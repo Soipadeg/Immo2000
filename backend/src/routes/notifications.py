@@ -135,7 +135,7 @@ def mark_as_read(current_user, notification_id):
         notification.read_at = datetime.utcnow()
         db.session.commit()
 
-        logger.info(f"Notification {notification_id} marquée comme lue par user {current_user["user_id"]}")
+        logger.info(f"Notification {notification_id} marquée comme lue par user {current_user['user_id']}")
 
         return jsonify({
             "success": True,
@@ -187,7 +187,7 @@ def delete_notification(current_user, notification_id):
         db.session.delete(notification)
         db.session.commit()
 
-        logger.info(f"Notification {notification_id} supprimée par user {current_user["user_id"]}")
+        logger.info(f"Notification {notification_id} supprimée par user {current_user['user_id']}")
 
         return jsonify({
             "success": True,
