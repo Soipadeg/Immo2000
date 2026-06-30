@@ -1,0 +1,16 @@
+# Immo2000 Production Backup Schedule
+#
+# Install this crontab with: crontab -e
+# Then paste the relevant lines below
+
+# Daily backup at 2 AM (uploads to S3)
+0 2 * * * cd /home/immo2000/Immo2000 && bash scripts/backup-postgres.sh s3 >> logs/backup.log 2>&1
+
+# Weekly backup at 1 AM on Sunday (to local storage only)
+0 1 * * 0 cd /home/immo2000/Immo2000 && bash scripts/backup-postgres.sh >> logs/backup.log 2>&1
+
+# Backup health check - alert if no recent backup
+0 10 * * * cd /home/immo2000/Immo2000 && bash -c 'LATEST=$(ls -t backups/*.sql.gz 2>/dev/null | head -1); AGE=$(($(date +%s) - $(date -r "$LATEST" +%s))); if [ $AGE -gt 86400 ]; then echo "ALERT: No backup in last 24 hours" | mail -s "Immo2000 Backup Alert" admin@immo2000.fr; fi'
+
+# Alternative: Using systemd timer (recommended for modern systems)
+# See: setup-backup-timer.sh

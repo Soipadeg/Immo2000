@@ -69,11 +69,27 @@ class Config:
     # Logging
     LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 
+    # Connection Pooling
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "pool_size": int(os.getenv("DB_POOL_SIZE", 20)),
+        "pool_recycle": int(os.getenv("DB_POOL_RECYCLE", 3600)),
+        "pool_pre_ping": True,  # Verify connection before using
+        "max_overflow": 40,
+    }
+
+    # Security
+    SESSION_COOKIE_SECURE = os.getenv("FLASK_ENV", "development") == "production"
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = "Strict"
+    PERMANENT_SESSION_LIFETIME = 86400  # 24 hours
+
 
 class DevelopmentConfig(Config):
     """Configuration de développement."""
     DEBUG = True
     SQLALCHEMY_ECHO = True
+    LOG_LEVEL = "DEBUG"
+    SESSION_COOKIE_SECURE = False
 
 
 class TestingConfig(Config):
@@ -81,12 +97,29 @@ class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
     JWT_SECRET_KEY = _get_or_generate_secret('JWT_SECRET_KEY')
+    LOG_LEVEL = "INFO"
 
 
 class ProductionConfig(Config):
-    """Configuration de production."""
+    """Configuration de production - STRICT SECURITY."""
     DEBUG = False
     SQLALCHEMY_ECHO = False
+    LOG_LEVEL = "INFO"
+
+    # Enforce production security
+    SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = "Strict"
+    PERMANENT_SESSION_LIFETIME = 86400
+
+    # Connection Pool optimized for production
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "pool_size": 30,
+        "pool_recycle": 3600,
+        "pool_pre_ping": True,
+        "max_overflow": 60,
+        "echo_pool": False,
+    }
 
 
 def get_config(env: str = None) -> Config:
